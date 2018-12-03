@@ -1,0 +1,52 @@
+// Structure.scss
+// Scaffolding and flex styles for basic structure of page
+
+
+#outer{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+
+    header#main{
+        display: flex;
+        height: 54px;
+        min-height: 54px;
+        width: 100%;
+        background-color: $black;
+    }
+    footer#main{
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 58px;
+        min-height: 58px;
+        width: 100%;
+        background-color: $black;
+    }
+
+    // Body wrapper
+    //  Includes sidebar and main content
+    #body{
+        display: flex;
+        flex-grow: 3;
+
+
+        #sidebar{
+            display: block;
+            width: 280px;
+            background-color: $white;
+            border-right: 1px solid $borderColor;
+            box-sizing: border-box;
+            padding: 15px;
+            overflow: auto;
+        }
+
+        main{
+            display: block;
+            flex-grow: 3;
+            overflow: auto;
+        }
+    }
+}

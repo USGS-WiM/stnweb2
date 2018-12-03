@@ -30,8 +30,16 @@ npm install
 ```
 
 ## Building and testing
+
+Serve files with hot module replacement (live reload):
+
 ```
-ng serve to build and run the application.
+npm run live
+```
+Basic server with:
+
+```
+npm run start
 ```
 ## Deployment
 

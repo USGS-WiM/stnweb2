@@ -1,0 +1,43 @@
+// Main SCSS file.
+// Do not add anything directly to this file.
+// Find the appropriate file within the /styles folder
+
+
+// Variables
+$black: #050920;
+$white: #fff;
+$bg: #F9FAFE;
+$red: #F23D47;
+$blue: #3E3BFB;
+
+$borderColor: fade-out($black, 0.85);
+
+
+$transition: 0.15s;
+$borderRadius: 4px;
+
+
+// Universal Imports
+@import '/styles/structure.scss';
+@import '/styles/text.scss';
+@import '/styles/modals.scss';
+@import '/styles/header.scss';
+@import '/styles/sidebar.scss';
+
+// Specific imports
+header#main{
+    display: flex;
+    height: 54px;
+    min-height: 54px;
+    width: 100%;
+    background-color: $black;
+}
+footer#main{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 58px;
+    min-height: 58px;
+    width: 100%;
+    background-color: $black;
+}
