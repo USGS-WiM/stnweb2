@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { EventSubmissionComponent } from '../event-submission/event-submission.component';
+
 
 import * as L from 'leaflet';
-import * as esri from 'esri-leaflet';
+
 
 @Component({
   selector: 'app-home',

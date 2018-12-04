@@ -3,7 +3,7 @@
     Main body wrapper 
     Main body wrapper 
   -->
-  <div id="outer">
+<div id="outer">
   <div id="body">
 
     <!-- 
@@ -12,7 +12,10 @@
      -->
     <div id="sidebar">
 
-      <b>Sidebar</b>
+      <button (click)="navigateToEventSubmitModal()">
+        <!-- *ngIf="currentUser.username != ''" -->
+        <span class="header-button-text">+ Add Ice Jam Event</span>
+      </button>
 
     </div> <!-- End Sidebar -->
 
@@ -41,12 +44,13 @@
 
 
       <div class="block">
-        Main content
+        Map filters?
+        OR list of Ice Jam events?
       </div>
 
 
     </main> <!-- End Main Content -->
 
-    
+
   </div><!-- End Main Body Wrapper-->
 </div>

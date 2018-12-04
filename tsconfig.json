@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -10,6 +9,21 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
+    "baseUrl": "src",
+    "paths": {
+      "@app/*": [
+        "app/*"
+      ],
+      "@event-submission/*": [
+        "app/interfaces/*"
+      ],
+      "@services/*": [
+        "app/services/*"
+      ],
+      "@search-dialog/*": [
+        "app/search-dialog/*"
+      ]
+    },
     "typeRoots": [
       "node_modules/@types"
     ],
