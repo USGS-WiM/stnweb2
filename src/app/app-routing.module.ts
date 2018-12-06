@@ -6,7 +6,7 @@ import { EventSubmissionComponent } from './event-submission/event-submission.co
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
-  { path: 'eventsubmission', component: EventSubmissionComponent },
+  { path: 'addEvent', component: EventSubmissionComponent },
   /* { path: 'event/:id', component: EventDetailsComponent },
   { path: 'userdashboard', component: UserDashboardComponent, canActivate: [AuthenticationGuard] }, */
 ];

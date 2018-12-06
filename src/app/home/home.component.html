@@ -12,9 +12,9 @@
      -->
     <div id="sidebar">
 
-      <button (click)="navigateToEventSubmitModal()">
+      <button (click)="navigateToEventSubmitPage()">
         <!-- *ngIf="currentUser.username != ''" -->
-        <span class="header-button-text">+ Add Ice Jam Event</span>
+        <span class="header-button-text"><a routerLink="/addEvent">+ Add Ice Jam Event</a></span>
       </button>
 
     </div> <!-- End Sidebar -->

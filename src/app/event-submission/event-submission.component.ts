@@ -1,35 +1,46 @@
 import { Component, OnInit } from '@angular/core';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, FormArray, Validators, PatternValidator, AbstractControl } from '@angular/forms/';
+import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
+import { MatBottomSheetModule, MatBottomSheet, MatBottomSheetRef } from '@angular/material';
+
+import { MatStepperModule, MatStepper } from '@angular/material/stepper';
+
+import { MatSnackBar } from '@angular/material';
+
+export interface Food {
+  value: string;
+  viewValue: string;
+}
 
 @Component({
   selector: 'app-event-submission',
   templateUrl: './event-submission.component.html',
   styleUrls: ['./event-submission.component.scss']
 })
-export class EventSubmissionComponent {
-  closeResult: string;
+export class EventSubmissionComponent implements OnInit {
+  selectedValue: string;
+  selectFormControl = new FormControl('', Validators.required);
 
-  constructor(private modalService: NgbModal) {}
+  checked = false;
+  indeterminate = false;
 
-  open(content) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-    }, (reason) => {
-      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-    });
-  }
+  foods: Food[] = [
+    {value: 'steak-0', viewValue: 'Steak'},
+    {value: 'pizza-1', viewValue: 'Pizza'},
+    {value: 'tacos-2', viewValue: 'Tacos'}
+  ];
 
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
-    } else {
-      return  `with: ${reason}`;
-    }
-  }
+  constructor(
+    public route: ActivatedRoute,
+    public location: Location,
+  ) {}
 
+  eventSubmissionForm: FormGroup;
   ngOnInit() {
   }
 
 }
+
+

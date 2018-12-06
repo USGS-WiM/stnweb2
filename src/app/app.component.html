@@ -4,33 +4,35 @@
 -->
 
 <!-- <div id="outer"> -->
-  
 
-  <!-- 
+
+<!-- 
     Page header 
       - Nav, links, branding, etc
   -->
-  <header id="main">
-    <a href="/" class="icejam-title">
-      <div id="logo">
-          <img src=""/>
-      </div>
-      <span style="color: white;">Ice Jams</span>
-    </a>
-    <span class="subtitle" style="color: white;">
-      <span>real-time information about ice jams.</span>
-            <!-- <small></small> -->
-    </span>
-  </header>
-
-  <footer id="main">
-      <div>USGS</div>
-    </footer>
-
+<header class="header">
+  <mat-toolbar-row color="primary" class="mat-typography ice-jams-header">
+    <div class="ice-jam-header">
+      <a href="/" class="ice-jam-title">
+        <div id="logo">
+          <img src="" />
+        </div>
+        <span>Ice Jams</span>
+      </a>
+      <span class="ice-jam-subtitle">
+        <span>real-time information about ice jams.</span>
+      </span>
+    </div>
+  </mat-toolbar-row>
+</header>
 <!-- </div> -->
 
 <router-outlet></router-outlet>
 
+
+<footer id="main">
+    <div>USGS</div>
+  </footer>
 <!-- <div class="grid">
   <aside class="sidebar">Sidebar</aside>
   <article class="content">
@@ -38,4 +40,3 @@
     <p>This example uses line-based positioning, to position the header and footer, stretching them across the grid.</p>
   </article>
 </div> -->
-

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { EventSubmissionComponent } from '../event-submission/event-submission.component';
 
 
@@ -21,6 +21,8 @@ export class HomeComponent implements OnInit {
   latitude;
   longitude;
   zoomLevel;
+
+  @Input() eventmod: EventSubmissionComponent;
 
   constructor() { }
 

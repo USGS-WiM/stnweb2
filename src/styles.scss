@@ -1,10 +1,31 @@
+@import "~@angular/material/theming";
+@include mat-core();
+
+body { 
+    margin: 0px !important;
+    color: black;
+}
+
+// $ice-jam-app-primary: mat-palette($mat-green, 900, 800, 700);
+// $ice-jam-app-accent:  mat-palette($mat-green, 700, 200, 500);
+// $ice-jam-app-warn:    mat-palette($mat-red);
+
+$ice-jam-app-primary: mat-palette($mat-indigo, A700, A400, A200);
+$ice-jam-app-accent:  mat-palette($mat-indigo, A700, A400, A200);
+$ice-jam-app-warn:    mat-palette($mat-red);
+
+$ice-jam-app-theme: mat-light-theme($ice-jam-app-primary, $ice-jam-app-accent, $ice-jam-app-warn);
+
+@include angular-material-theme($ice-jam-app-theme);
+
+
 // styles.scss
 // Default styling for body, html, links, etc
 
 // Import fonts
 // Poppins wt 300,400,700 - headers etc
 // Source Sans Pro wt 400,600,700 - Body text
-@import url('https://fonts.googleapis.com/css?family=Poppins:300,400,700|Source+Sans+Pro:400,600,700');
+/* @import url('https://fonts.googleapis.com/css?family=Poppins:300,400,700|Source+Sans+Pro:400,600,700');
 
 
 body,html{
@@ -29,4 +50,4 @@ body,html{
     &:active{
         outline: none;
     }
-}
+} */

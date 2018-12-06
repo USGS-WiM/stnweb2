@@ -1,30 +1,113 @@
-<ng-template #content let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
+<div>
+  <div id="eventSubmissionPage">
+    <mat-card>
+      <div id="eventSubmissionHeader">
+        <b>Create Event</b>
+        <small>Submit an Ice Jam event</small>
+      </div>
+      <!-- <mat-card-content> -->
       <form>
-        <div class="form-group">
-          <label for="dateOfBirth">Date of birth</label>
-          <div class="input-group">
-            <input id="dateOfBirth" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #dp="ngbDatepicker">
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
-            </div>
-          </div>
+        <h4>Basic Information</h4>
+
+        <div class="horizontal-form-container">
+          <mat-form-field class="form-control">
+            <mat-select placeholder="Jam Type" [formControl] name="food" required>
+              <mat-option *ngFor="let food of foods" [value]="food.value">
+                {{food.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="form-control">
+            <input matInput [matDatepicker]="picker" placeholder="Jam Date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
         </div>
+
+        <div class="horizontal-form-container">
+          <mat-form-field class="form-control-shortest">
+            <mat-select placeholder="State" [formControl] name="food" required>
+              <mat-option *ngFor="let food of foods" [value]="food.value">
+                {{food.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="form-control-short">
+              <mat-select placeholder="City" [formControl] name="food" required>
+                <mat-option *ngFor="let food of foods" [value]="food.value">
+                  {{food.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="form-control-short">
+                <mat-select placeholder="County" [formControl] name="food" required>
+                  <mat-option *ngFor="let food of foods" [value]="food.value">
+                    {{food.viewValue}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+        </div>
+
+        <div class="horizontal-form-container">
+            <mat-form-field class="form-control-short">
+              <mat-select placeholder="River" [formControl] name="food" required>
+                <mat-option *ngFor="let food of foods" [value]="food.value">
+                  {{food.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+  
+            <mat-form-field class="form-control-shortest">
+                <mat-select placeholder="HUC" [formControl] name="food" required>
+                  <mat-option *ngFor="let food of foods" [value]="food.value">
+                    {{food.viewValue}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+  
+              <mat-form-field class="form-control-shortest">
+                  <mat-select placeholder="USGSID" [formControl] name="food" required>
+                    <mat-option *ngFor="let food of foods" [value]="food.value">
+                      {{food.viewValue}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+              <mat-form-field class="form-control-shortest">
+                  <mat-select placeholder="AHPSID" [formControl] name="food" required>
+                    <mat-option *ngFor="let food of foods" [value]="food.value">
+                      {{food.viewValue}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+          </div>
+
+        <h4>Conditions</h4>
+
+        <div class="horizontal-form-container">
+                <h5 class="checkbox">Surface Roughness</h5>
+                <section class="section">
+                  <mat-checkbox class="margin">Checked</mat-checkbox>
+                  <mat-checkbox class="margin">Indeterminate</mat-checkbox>
+                </section>
+        </div>
+
+        <h4>Observer</h4>
+
+        <div class="horizontal-form-container">
+                <h5 class="checkbox">Surface Roughness</h5>
+                <section class="section">
+                  <mat-checkbox class="margin">Checked</mat-checkbox>
+                  <mat-checkbox class="margin">Indeterminate</mat-checkbox>
+                </section>
+        </div>
+
+
       </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
-    </div>
-  </ng-template>
-  
-  <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch demo modal</button>
-  
-  <hr>
-  
-  <pre>{{closeResult}}</pre>
+      <!-- </mat-card-content> -->
+    </mat-card>
+  </div>
+</div>
