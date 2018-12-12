@@ -35,77 +35,119 @@
           </mat-form-field>
 
           <mat-form-field class="form-control-short">
-              <mat-select placeholder="City" [formControl] name="food" required>
-                <mat-option *ngFor="let food of foods" [value]="food.value">
-                  {{food.viewValue}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <mat-select placeholder="City" [formControl] name="food" required>
+              <mat-option *ngFor="let food of foods" [value]="food.value">
+                {{food.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-            <mat-form-field class="form-control-short">
-                <mat-select placeholder="County" [formControl] name="food" required>
-                  <mat-option *ngFor="let food of foods" [value]="food.value">
-                    {{food.viewValue}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+          <mat-form-field class="form-control-short">
+            <mat-select placeholder="County" [formControl] name="food" required>
+              <mat-option *ngFor="let food of foods" [value]="food.value">
+                {{food.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <div class="horizontal-form-container">
-            <mat-form-field class="form-control-short">
-              <mat-select placeholder="River" [formControl] name="food" required>
-                <mat-option *ngFor="let food of foods" [value]="food.value">
-                  {{food.viewValue}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-  
-            <mat-form-field class="form-control-shortest">
-                <mat-select placeholder="HUC" [formControl] name="food" required>
-                  <mat-option *ngFor="let food of foods" [value]="food.value">
-                    {{food.viewValue}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-  
-              <mat-form-field class="form-control-shortest">
-                  <mat-select placeholder="USGSID" [formControl] name="food" required>
-                    <mat-option *ngFor="let food of foods" [value]="food.value">
-                      {{food.viewValue}}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+          <mat-form-field class="form-control-short">
+            <mat-select placeholder="River" [formControl] name="food" required>
+              <mat-option *ngFor="let food of foods" [value]="food.value">
+                {{food.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-              <mat-form-field class="form-control-shortest">
-                  <mat-select placeholder="AHPSID" [formControl] name="food" required>
-                    <mat-option *ngFor="let food of foods" [value]="food.value">
-                      {{food.viewValue}}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-          </div>
+          <mat-form-field class="form-control-shortest">
+            <mat-select placeholder="HUC" [formControl] name="food" required>
+              <mat-option *ngFor="let food of foods" [value]="food.value">
+                {{food.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
+          <mat-form-field class="form-control-shortest">
+            <mat-select placeholder="USGSID" [formControl] name="food" required>
+              <mat-option *ngFor="let food of foods" [value]="food.value">
+                {{food.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="form-control-shortest">
+            <mat-select placeholder="AHPSID" [formControl] name="food" required>
+              <mat-option *ngFor="let food of foods" [value]="food.value">
+                {{food.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <hr>
         <h4>Conditions</h4>
 
+        <!-- UpstreamEndLocation & DownstreamEndLocation -->
         <div class="horizontal-form-container">
-                <h5 class="checkbox">Surface Roughness</h5>
-                <section class="section">
-                  <mat-checkbox class="margin">Checked</mat-checkbox>
-                  <mat-checkbox class="margin">Indeterminate</mat-checkbox>
-                </section>
+          <h5>Location of downstream <br>end of ice cover:</h5>
+          <br>
+          <mat-form-field class="form-control-shortest">
+            <input matInput placeholder="Latitude"> <!--  formControlName="latitude" -->
+            <mat-error>Invalid
+              latitude</mat-error>
+          </mat-form-field>
+          <mat-form-field class="form-control-shortest">
+            <input matInput placeholder="Longitude"> <!--  formControlName="longitude" -->
+            <mat-error>Invalid
+              longitude</mat-error>
+          </mat-form-field>
         </div>
 
+        <div class="horizontal-form-container">
+          <h5>Location of upstream <br>end of ice cover:</h5>
+          <mat-form-field class="form-control-shortest">
+            <input matInput placeholder="Latitude"> <!--  formControlName="latitude" -->
+            <mat-error>Invalid
+              latitude</mat-error>
+          </mat-form-field>
+          <mat-form-field class="form-control-shortest">
+            <input matInput placeholder="Longitude"> <!--  formControlName="longitude" -->
+            <mat-error>Invalid
+              longitude</mat-error>
+          </mat-form-field>
+        </div>
+
+
+        <div class="horizontal-form-container">
+
+          <mat-radio-group class="example-radio-group">
+            <h5>Surface Roughness:</h5>
+            <mat-radio-button class="example-radio-button" *ngFor="let rough of roughness" [value]="rough">
+              {{rough}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <div class="horizontal-form-container">
+          <mat-form-field class="form-control">
+            <mat-select placeholder="Ice Conditions" [formControl] name="ice" required>
+              <mat-option *ngFor="let ice of iceconditions" [value]="ice.value">
+                {{ice.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <hr>
         <h4>Observer</h4>
-
         <div class="horizontal-form-container">
-                <h5 class="checkbox">Surface Roughness</h5>
-                <section class="section">
-                  <mat-checkbox class="margin">Checked</mat-checkbox>
-                  <mat-checkbox class="margin">Indeterminate</mat-checkbox>
-                </section>
+          <mat-form-field class="form-control-shortest">
+            <input matInput placeholder="Name"> <!--  formControlName="latitude" -->
+          </mat-form-field>
         </div>
-
-
+        <div style="text-align: center;">
+          <button mat-raised-button color="accent" style="font-weight: bold;">Submit</button>
+        </div>
       </form>
       <!-- </mat-card-content> -->
     </mat-card>

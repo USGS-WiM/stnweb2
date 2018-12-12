@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { EventSubmissionComponent } from './event-submission/event-submission.component';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
+import { AboutComponent } from './about/about.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {CdkTableModule} from '@angular/cdk/table';
 import {CdkTreeModule} from '@angular/cdk/tree';
@@ -51,9 +52,10 @@ import {
 @NgModule({
   declarations: [
     AppComponent,
+    AboutComponent,
     HomeComponent,
     EventSubmissionComponent,
-    SearchDialogComponent
+    SearchDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -100,6 +102,9 @@ import {
     CdkTreeModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [
+    AboutComponent
+  ]
 })
 export class AppModule { }

@@ -94,7 +94,6 @@ export class HomeComponent implements OnInit {
       // end latLngScale utility logic/////////
 
   }
-  
   scaleLookup(mapZoom) {
     switch (mapZoom) {
       case 19: return '1,128';

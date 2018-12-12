@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { AboutComponent } from './about/about.component';
+
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-root',
@@ -8,9 +11,19 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'ICEJAMS';
 
-  ngOnInit() {
-      
-    }
-    
-}
+  aboutDialogRef: MatDialogRef<AboutComponent>;
 
+  constructor(public dialog: MatDialog, ) {}
+
+  openAboutDialog(): void {
+    const dialogRef = this.dialog.open(AboutComponent, {
+      width: '250px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+  ngOnInit() { }
+}

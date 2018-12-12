@@ -11,28 +11,44 @@
       - Nav, links, branding, etc
   -->
 <header class="header">
-  <mat-toolbar-row color="primary" class="mat-typography ice-jams-header">
-    <div class="ice-jam-header">
-      <a href="/" class="ice-jam-title">
-        <div id="logo">
-          <img src="" />
-        </div>
-        <span>Ice Jams</span>
-      </a>
-      <span class="ice-jam-subtitle">
-        <span>real-time information about ice jams.</span>
-      </span>
-    </div>
-  </mat-toolbar-row>
+  <mat-toolbar color="primary">
+    <mat-toolbar-row color="primary" class="mat-typography ice-jams-header">
+      <div class="ice-jam-header">
+        <a href="/" class="ice-jam-title">
+          <div class="ice-jam-logo">
+            <img src="./assets/ice_white.png" />
+          </div>
+          <!-- <div class="ice-jam-logo">
+            <img src="./assets/jam_white.png"/>
+        </div> -->
+          <span>Ice Jams</span>
+        </a>
+        <span class="ice-jam-subtitle">
+          <span>real-time information about ice jams.</span>
+        </span>
+      </div>
+      <span class="navbar-spacer"></span>
+      <span flex></span>
+      <span flex></span>
+      <div class="nav-buttons">
+        <span class="about-button-span">
+          <button mat-button (click)="openAboutDialog()" aria-label="About this application">
+            <mat-icon class="icon">info_outline</mat-icon>
+            <span class="header-button-text"> About</span>
+          </button>
+        </span>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
 </header>
 <!-- </div> -->
 
 <router-outlet></router-outlet>
 
 
-<footer id="main">
+<!-- <footer id="main">
     <div>USGS</div>
-  </footer>
+  </footer> -->
 <!-- <div class="grid">
   <aside class="sidebar">Sidebar</aside>
   <article class="content">

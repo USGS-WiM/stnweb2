@@ -6,12 +6,19 @@ body {
     color: black;
 }
 
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+mat-icon {
+    font-family: 'Material Icons' !important;
+  }
 // $ice-jam-app-primary: mat-palette($mat-green, 900, 800, 700);
 // $ice-jam-app-accent:  mat-palette($mat-green, 700, 200, 500);
 // $ice-jam-app-warn:    mat-palette($mat-red);
 
-$ice-jam-app-primary: mat-palette($mat-indigo, A700, A400, A200);
-$ice-jam-app-accent:  mat-palette($mat-indigo, A700, A400, A200);
+$ice-jam-app-primary: mat-palette($mat-blue-grey, 900, 500, 900);
+$ice-jam-app-accent:  mat-palette($mat-cyan, 100);
 $ice-jam-app-warn:    mat-palette($mat-red);
 
 $ice-jam-app-theme: mat-light-theme($ice-jam-app-primary, $ice-jam-app-accent, $ice-jam-app-warn);

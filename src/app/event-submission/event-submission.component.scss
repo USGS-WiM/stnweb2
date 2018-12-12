@@ -1,3 +1,5 @@
+$lightgrey: #f0f3f4;
+
 #eventSubmissionPage{
     display: block;
     width: 94%;
@@ -5,7 +7,7 @@
     margin: 40px auto;
     border-radius: 4px;
     box-shadow: 0 1px 0 1.35px rgba(10,16,64,.08);
-    background-color: white;
+    background-color: $lightgrey;
 
     #eventSubmissionHeader{
         display: block;

@@ -11,15 +11,33 @@
       Sidebar
      -->
     <div id="sidebar">
+      <div id="newEventButton">
+        <a mat-raised-button color="accent" style="font-weight: bold;" routerLink="/addEvent">
+          <mat-icon>add</mat-icon>New Ice Jam Event
+        </a>
+      </div>
+      <div style="text-align: center;">
+        <hr>
+        <h4>Show currently forming Ice Jams:</h4>
+        <mat-slide-toggle></mat-slide-toggle>
+      </div>
 
-      <button (click)="navigateToEventSubmitPage()">
-        <!-- *ngIf="currentUser.username != ''" -->
-        <span class="header-button-text"><a routerLink="/addEvent">+ Add Ice Jam Event</a></span>
-      </button>
-
+      <mat-expansion-panel id="sidebarFilter">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h3>Quick Filters?</h3>
+            </mat-panel-title>
+            <mat-panel-description>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+    
+          <div>
+            <span>bleep. bloop.</span>
+          </div>
+        </mat-expansion-panel>
     </div> <!-- End Sidebar -->
 
-
+    
     <!-- 
       Content 
       Content 
