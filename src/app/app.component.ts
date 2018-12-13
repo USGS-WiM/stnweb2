@@ -17,7 +17,7 @@ export class AppComponent {
 
   openAboutDialog(): void {
     const dialogRef = this.dialog.open(AboutComponent, {
-      width: '250px',
+
     });
 
     dialogRef.afterClosed().subscribe(result => {
