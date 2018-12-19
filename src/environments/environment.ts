@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  hmr: false
+  hmr: false,
+  api_root: 'https://google.com/' // add service endpoint once they're ready
 };
 
 /*

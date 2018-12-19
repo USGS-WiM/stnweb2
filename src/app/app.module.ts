@@ -48,6 +48,8 @@ import {
   MatBottomSheetModule,
   MatStepperModule
 } from '@angular/material';
+import { LoginComponent } from './login/login.component';
+import { RegistrationComponent } from './registration/registration.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,8 @@ import {
     HomeComponent,
     EventSubmissionComponent,
     SearchDialogComponent,
+    LoginComponent,
+    RegistrationComponent,
   ],
   imports: [
     BrowserModule,
@@ -104,7 +108,8 @@ import {
   providers: [],
   bootstrap: [AppComponent],
   entryComponents: [
-    AboutComponent
+    AboutComponent,
+    LoginComponent
   ]
 })
 export class AppModule { }
