@@ -8,4 +8,4 @@ export interface User {
     username: string;
     salt: string;
     password: string;
-}
+} 
