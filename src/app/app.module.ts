@@ -109,7 +109,8 @@ import { RegistrationComponent } from './registration/registration.component';
   bootstrap: [AppComponent],
   entryComponents: [
     AboutComponent,
-    LoginComponent
+    LoginComponent,
+    RegistrationComponent
   ]
 })
 export class AppModule { }

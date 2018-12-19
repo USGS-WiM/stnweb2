@@ -1,0 +1,27 @@
+<div class="example-container">
+  <h3>Login to Ice Jams</h3>
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="Username" value="">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Password" [type]="hide ? 'password' : 'text'">
+    <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+  </mat-form-field>
+
+  <div id="signinButton">
+      <a class="loginorcancel" mat-raised-button color="accent">
+        Sign In
+      </a>
+      <button class="loginorcancel" mat-stroked-button>
+        Cancel
+      </button>
+    </div>
+    <h5 style="text-align: center;">Don't have an account yet?</h5>
+  <div id="registerButton">
+      <button (click)="openRegDialog()" mat-stroked-button color="primary" style="font-weight: bold;">Register</button>
+      <!-- <a mat-raised-button color="accent" style="font-weight: bold;" routerLink="/addEvent">
+        Register
+      </a> -->
+    </div>
+</div>
