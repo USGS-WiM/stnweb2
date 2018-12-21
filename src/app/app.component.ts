@@ -22,11 +22,9 @@ export class AppComponent implements OnInit {
   // about dialog
   openAboutDialog(): void {
     const dialogRef = this.dialog.open(AboutComponent, {
-
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 

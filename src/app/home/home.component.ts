@@ -3,6 +3,8 @@ import { EventSubmissionComponent } from '../event-submission/event-submission.c
 
 
 import * as L from 'leaflet';
+import { IceJamService } from '../services/ice-jam.service';
+import { APPSETTINGS } from '../app.settings';
 
 
 @Component({
@@ -24,7 +26,9 @@ export class HomeComponent implements OnInit {
 
   @Input() eventmod: EventSubmissionComponent;
 
-  constructor() { }
+  constructor(
+    private iceJamService: IceJamService,
+  ) { }
 
   ngOnInit() {
 

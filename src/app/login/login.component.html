@@ -13,7 +13,7 @@
       <a class="loginorcancel" mat-raised-button color="accent">
         Sign In
       </a>
-      <button class="loginorcancel" mat-stroked-button>
+      <button class="loginorcancel" mat-stroked-button (click)="this.loginDialogRef.close('cancel');">
         Cancel
       </button>
     </div>

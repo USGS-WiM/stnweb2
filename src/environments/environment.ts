@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   hmr: false,
-  api_root: 'https://google.com/' // add service endpoint once they're ready
+  api_root: 'http://icejamsservices-1026238103.us-east-1.elb.amazonaws.com/' // add service endpoint once they're ready
 };
 
 /*
