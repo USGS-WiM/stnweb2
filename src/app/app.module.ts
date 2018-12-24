@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -9,9 +10,9 @@ import { HomeComponent } from './home/home.component';
 import { EventSubmissionComponent } from './event-submission/event-submission.component';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 import { AboutComponent } from './about/about.component';
-import {ScrollingModule} from '@angular/cdk/scrolling';
-import {CdkTableModule} from '@angular/cdk/table';
-import {CdkTreeModule} from '@angular/cdk/tree';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CdkTableModule } from '@angular/cdk/table';
+import { CdkTreeModule } from '@angular/cdk/tree';
 
 import {
   MatAutocompleteModule,
@@ -50,6 +51,7 @@ import {
 } from '@angular/material';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
+import { IceJamService } from './services/ice-jam.service';
 
 @NgModule({
   declarations: [
@@ -65,6 +67,7 @@ import { RegistrationComponent } from './registration/registration.component';
     BrowserModule,
     AppRoutingModule,
     NgbModule,
+    HttpModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -105,7 +108,8 @@ import { RegistrationComponent } from './registration/registration.component';
     CdkTableModule,
     CdkTreeModule
   ],
-  providers: [],
+  providers: [
+    IceJamService],
   bootstrap: [AppComponent],
   entryComponents: [
     AboutComponent,
