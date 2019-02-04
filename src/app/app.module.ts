@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -52,6 +53,7 @@ import {
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { IceJamService } from './services/ice-jam.service';
+import { SiteService } from './services/site.service';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,7 @@ import { IceJamService } from './services/ice-jam.service';
     AppRoutingModule,
     NgbModule,
     HttpModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -109,7 +112,7 @@ import { IceJamService } from './services/ice-jam.service';
     CdkTreeModule
   ],
   providers: [
-    IceJamService],
+    SiteService],
   bootstrap: [AppComponent],
   entryComponents: [
     AboutComponent,

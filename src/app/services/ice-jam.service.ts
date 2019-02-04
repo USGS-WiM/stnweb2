@@ -19,11 +19,11 @@ export class IceJamService {
 
   }
 
-  public getOneEvent(eventID): Observable<IceJam> {
+  /* public getOneEvent(eventID): Observable<IceJam> {
     return this._http.get(APPSETTINGS.EVENTS_URL + eventID)
     .map ((response: Response) => <IceJam>response.json())
     .catch(this.handleError);
-  }
+  } */
 
   private handleError(error: Response) {
     console.error(error);

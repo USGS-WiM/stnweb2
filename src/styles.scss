@@ -1,6 +1,8 @@
 @import "~@angular/material/theming";
 @include mat-core();
 
+@import "./assets/styles/makers.css";
+
 body { 
     margin: 0px !important;
     color: black;
@@ -17,7 +19,7 @@ mat-icon {
 // $ice-jam-app-accent:  mat-palette($mat-green, 700, 200, 500);
 // $ice-jam-app-warn:    mat-palette($mat-red);
 
-$ice-jam-app-primary: mat-palette($mat-blue-grey, 900, 500, 900);
+$ice-jam-app-primary: mat-palette($mat-blue-grey, 900, 500, 900); // #263238
 $ice-jam-app-accent:  mat-palette($mat-cyan, 100);
 $ice-jam-app-warn:    mat-palette($mat-red);
 

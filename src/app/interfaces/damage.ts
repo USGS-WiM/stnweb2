@@ -1,6 +1,6 @@
 export interface Damage {
     id: number;
-    icejamid: number;
+    iceJamId: number;
     damagetypeid: number;
     datetimereported: string;
     description: string;

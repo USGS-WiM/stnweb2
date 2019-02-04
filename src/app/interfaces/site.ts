@@ -1,14 +1,15 @@
+import { Location } from './location';
+
 export interface Site {
     id: number;
     name: string;
-    location: any;
-    state: number;
-    isestimated: string;
+    location: Location; // uses Location interface to verify coords
+    state: string;
     county: string;
-    rivername: string;
-    huc: string;
-    usgsid: string;
-    ahpsid: string;
-    comments: string;
-    landmarks: string;
+    riverName?: string;
+    huc?: string;
+    usgsid?: string;
+    ahpsid?: string;
+    comments?: string[];
+    landmarks?: string[];
 }

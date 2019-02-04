@@ -3,7 +3,10 @@ import { EventSubmissionComponent } from '../event-submission/event-submission.c
 
 
 import * as L from 'leaflet';
-import { IceJamService } from '../services/ice-jam.service';
+// import { IceJam } from '@app/interfaces/ice-jam';
+// import { IceJamService } from '../services/ice-jam.service';
+import { Site } from '../interfaces/site';
+import { SiteService } from '../services/site.service';
 import { APPSETTINGS } from '../app.settings';
 
 
@@ -14,6 +17,7 @@ import { APPSETTINGS } from '../app.settings';
 })
 export class HomeComponent implements OnInit {
 
+  errorMessage: string;
   map;
   icon;
 
@@ -24,11 +28,45 @@ export class HomeComponent implements OnInit {
   longitude;
   zoomLevel;
 
-  @Input() eventmod: EventSubmissionComponent;
+  markers;
+
+  results = [];
+
+  // @Input() eventmod: EventSubmissionComponent;
 
   constructor(
-    private iceJamService: IceJamService,
-  ) { }
+    private siteService: SiteService,
+  ) {
+
+
+    this.siteService.getAllSites()
+          .subscribe(
+            sites => {
+              this.results = sites;
+
+              setTimeout(() => {
+                /*this.map = new L.Map('map', {
+                  center: new L.LatLng(39.8283, -98.5795),
+                  zoom: 4,
+                });*/
+
+
+                // this.locationMarkers.clearLayers();
+
+
+                this.mapResults(this.results);
+
+
+              }, 500);
+
+            },
+            error => {
+              this.errorMessage = <any>error;
+              // this.openSnackBar('Query failed due to web service error. Please try again later.', 'OK', 8000);
+            }
+          );
+
+   }
 
   ngOnInit() {
 
@@ -47,7 +85,7 @@ export class HomeComponent implements OnInit {
         zoom: 4,
         layers: [osm]
       });
-      /* this.locationMarkers = L.featureGroup().addTo(this.map); */
+      /* this.markers = L.featureGroup().addTo(this.map); */
 
       const baseMaps = {
         'Open Street Map': osm,
@@ -120,6 +158,40 @@ export class HomeComponent implements OnInit {
       case 2: return '147,914,387';
       case 1: return '295,828,775';
       case 0: return '591,657,550';
+    }
+  }
+  mapResults(results: any) {
+
+    // set/reset resultsMarker var to an empty array
+    const markers = [];
+
+    const iconClass = ' wmm-icon-diamond wmm-icon-white ';
+
+    // tslint:disable-next-line:forin
+    // loop through results repsonse from a search query
+    for (const sites in results) {
+      if (sites.length > 0) {
+        const long = Number(results[sites]['location']['coordinates']['0']);
+        const lat = Number(results[sites]['location']['coordinates']['1']);
+
+        const myicon = L.divIcon({
+          className: ' wmm-pin wmm-B2EBF2 wmm-icon-circle wmm-icon-white wmm-size-25'
+        });
+
+        let popupContent = '';
+
+        popupContent = popupContent + '<h3>Event ' + String(results[sites]['name']) + '</h3>' +
+            '<span class="popupLabel text-larger">' + String(results[sites]['name']) +
+            '<span class="popupLabel">Type:</span> ' + String(results[sites]['name']) + '<br/>' +
+            '<a href="./event/' + 'TODO' + '">TODO Link to Event Details </a>';
+
+        const popup = L.popup()
+        .setContent(popupContent);
+
+        L.marker([lat, long], {icon : myicon})
+          .addTo(this.map)
+          .bindPopup(popup);
+      }
     }
   }
 

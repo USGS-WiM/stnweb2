@@ -14,14 +14,11 @@
       "@app/*": [
         "app/*"
       ],
-      "@event-submission/*": [
-        "app/interfaces/*"
-      ],
       "@services/*": [
         "app/services/*"
       ],
-      "@search-dialog/*": [
-        "app/search-dialog/*"
+      "@interfaces/*": [
+        "app/interfaces/*"
       ]
     },
     "typeRoots": [
