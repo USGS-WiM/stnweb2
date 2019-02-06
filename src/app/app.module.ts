@@ -112,7 +112,8 @@ import { SiteService } from './services/site.service';
     CdkTreeModule
   ],
   providers: [
-    SiteService],
+    SiteService,
+    IceJamService],
   bootstrap: [AppComponent],
   entryComponents: [
     AboutComponent,

@@ -15,10 +15,11 @@ export class IceJamService {
 
   constructor(private _http: Http) { }
 
-  public getEventIceCondtion(eventQuery) {
-
+  public getAllEvents(): Observable<IceJam[]> {
+    return this._http.get(APPSETTINGS.EVENTS_URL)
+      .map((response: Response) => <IceJam[]>response.json())
+      .catch(this.handleError);
   }
-
   /* public getOneEvent(eventID): Observable<IceJam> {
     return this._http.get(APPSETTINGS.EVENTS_URL + eventID)
     .map ((response: Response) => <IceJam>response.json())

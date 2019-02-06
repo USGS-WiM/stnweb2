@@ -1,17 +1,13 @@
 export interface IceJam {
     id: number;
     observationdatetime: string;
-    jamtypeid: number;
-    siteid: number;
-    observerid: number;
+    jamTypeId: number;
+    siteID: number;
+    observerID: number;
     description: string;
     comments: string;
-    site: string;
-    type: string; // Jam Type
+    type: []; // Jam Type
     observer: string;
-    iceconditions: any;
-    riverconditions: any;
-    weatherconditions: any;
-    damages: any;
-    files: any; // will need to be changed depending on how we deal with files
+    damages: [];
+    files: []; // will need to be changed depending on how we deal with files
 }
