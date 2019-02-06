@@ -37,8 +37,8 @@ export class HomeComponent implements OnInit {
 
   markers;
 
-  eventresults: any;
-  siteresults: any;
+  eventresults: IceJam[];
+  siteresults: Site[];
   eventSites: any;
 
   // @Input() eventmod: EventSubmissionComponent;
@@ -48,38 +48,18 @@ export class HomeComponent implements OnInit {
     private eventService: IceJamService,
   ) {
 
-    /* const request1$ = Rx.Observable.of('response1').delay(2000);
-    const request2$ = Rx.Observable.of('response2').delay(100);
-
-    Rx.Observable.forkJoin(request1$, request2$)
-      .subscribe(res => console.log(`forkJoin: ${res}`));
-
-    request1$.switchMap(res1 => {
-      console.log(`switchMap: ${res1}`);
-      return request2$;
-    }).subscribe(res2 => console.log(`switchMap: ${res2}`)); */
-
     this.eventService.getAllEvents()
       .subscribe(eventresults => {
           this.eventresults = eventresults;
+          // Need to further refine at some point so that it's only pulling all sites for events during a winter season
+
           if (eventresults.length >= 0) {
             this.siteService.getAllSites()
             .subscribe(siteresults => {
                 this.siteresults = siteresults;
-                /* if (eventresults.length > 0) {
-                  eventresults.filter(function(siteID) {
-                    return siteresults.indexOf() - 1;
-                  });
-                } */
-                setTimeout(() => {
+                  // grabbing all the sites for each event
+                  // after grabbing the sites we combine all fields into 1 array. This is used to populate the popup
                   const ret = [];
-                  /*this.map = new L.Map('map', {
-                    center: new L.LatLng(39.8283, -98.5795),
-                    zoom: 4,
-                  });*/
-                  // this.locationMarkers.clearLayers();
-                  // Getting the sites for events
-                  // this.getEventSites(this.eventresults, this.siteresults);
                   this.eventresults.forEach((itm, i) => {
                     ret.push(Object.assign({}, itm, this.siteresults[i]));
                     this.eventSites = ret;
@@ -87,11 +67,8 @@ export class HomeComponent implements OnInit {
                   console.log(this.eventSites);
                   // console.log(this.mergeEventSites(this.eventresults, this.siteresults));
                   this.mapResults(this.eventSites);
-                }, 100);
               });
           }
-          // let siteIDs = [];
-          // Number(results[events]['location']['coordinates']['0']);
         },
         error => {
           this.errorMessage = <any>error;
@@ -99,10 +76,7 @@ export class HomeComponent implements OnInit {
         }
       );
   }
-  /* ngOnInit() {
-    this.booksByStoreID = this.books.filter(
-            book => book.store_id === this.store.id);
-  } */
+
   ngOnInit() {
 
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -198,6 +172,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  // another method to get event sites
   /* getEventSites(arr, arr2) {
     const ret = [];
     for (const i in arr2) {
@@ -231,9 +206,9 @@ export class HomeComponent implements OnInit {
         let popupContent = '';
 
         popupContent = popupContent + '<h3>' + String(eventSites[events]['name']) + '</h3>' +
-          '<span class="popupLabel">Date:</span> ' + String(eventSites[events]['observationDateTime']) + '<br/>' +
-          '<span class="popupLabel">River:</span> ' + String(eventSites[events]['riverName']) + '<br/>' +
-          '<span class="popupLabel">Description:</span> ' + String(eventSites[events]['description']) + '<br/>' +
+          '<span class="popupLabel"><b>Date</b>:</span> ' + String(eventSites[events]['observationDateTime']) + '<br/>' +
+          '<span class="popupLabel"><b>River</b>:</span> ' + String(eventSites[events]['riverName']) + '<br/>' +
+          '<span class="popupLabel"><b>Description</b>:</span> ' + String(eventSites[events]['description']) + '<br/>' +
           '<a href="./event/' + 'TODO' + '">TODO Link to Site Details </a>';
 
         const popup = L.popup()

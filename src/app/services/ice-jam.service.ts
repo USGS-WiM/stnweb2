@@ -20,11 +20,28 @@ export class IceJamService {
       .map((response: Response) => <IceJam[]>response.json())
       .catch(this.handleError);
   }
-  /* public getOneEvent(eventID): Observable<IceJam> {
+
+  public getEventDetails(eventID): Observable<IceJam> {
+    /* if (sessionStorage.username !== undefined) {
+      options = new RequestOptions({
+        headers: APP_SETTINGS.MIN_AUTH_JSON_HEADERS
+      });
+    } else {
+      options = new RequestOptions({
+        headers: APP_SETTINGS.JSON_HEADERS
+      });
+    } */
+
     return this._http.get(APPSETTINGS.EVENTS_URL + eventID)
-    .map ((response: Response) => <IceJam>response.json())
-    .catch(this.handleError);
-  } */
+      .map((response: Response) => <IceJam>response.json())
+      .catch(this.handleError);
+  }
+
+  public create(formValue): Observable<IceJam> {
+    return this._http.post(APPSETTINGS.EVENTS_URL, formValue)
+      .map((response: Response) => <IceJam>response.json())
+      .catch(this.handleError);
+  }
 
   private handleError(error: Response) {
     console.error(error);

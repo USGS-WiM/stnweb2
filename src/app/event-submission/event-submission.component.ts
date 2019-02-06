@@ -9,6 +9,52 @@ import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 
 import { MatSnackBar } from '@angular/material';
 
+import { Site } from '../interfaces/site';
+import { SiteService } from '../services/site.service';
+
+// events
+import { IceJam } from '../interfaces/ice-jam';
+import { IceJamService } from '../services/ice-jam.service';
+
+import { Agency } from '../interfaces/agency';
+import { AgencyService } from '../services/agency.service';
+
+import { DamageType } from '../interfaces/damage-type';
+import { DamageTypeService } from '../services/damage-type.service';
+
+import { FileType } from '../interfaces/filetype';
+import { FiletypeService } from '../services/filetype.service';
+
+import { File } from '../interfaces/file';
+import { FileService } from '../services/file.service';
+
+import { IceCondition } from '../interfaces/ice-condition';
+import { IceConditionService } from '../services/ice-condition.service';
+
+import { IceConditionType } from '../interfaces/ice-condition-type';
+import { IceConditionTypeService } from '../services/ice-condition-type.service';
+
+import { Observer } from '../interfaces/observer';
+import { ObserverService } from '../services/observer.service';
+
+import { RiverCondition } from '../interfaces/river-condition';
+import { RiverConditionService } from '../services/river-condition.service';
+
+import { RiverConditionType } from '../interfaces/river-condition-type';
+import { RiverConditionTypeService } from '../services/river-condition-type.service';
+
+import { RoughnessType } from '../interfaces/roughness-type';
+import { RoughnessTypeService } from '../services/roughness-type.service';
+
+import { StageType } from '../interfaces/stage-type';
+import { StageTypeService } from '../services/stage-type.service';
+
+import { WeatherCondition } from '../interfaces/weather-condition';
+import { WeatherConditionService } from '../services/weather-condition.service';
+
+import { WeatherConditionType } from '../interfaces/weather-condition-type';
+import { WeatherConditionTypeService } from '../services/weather-condition-type.service';
+
 export interface Food {
   value: string;
   viewValue: string;
