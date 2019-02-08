@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   loginDialogRef: MatDialogRef<AboutComponent>;
   regDialogRef: MatDialogRef<AboutComponent>;
 
-  constructor(public dialog: MatDialog, ) {}
+  constructor(public dialog: MatDialog ) {}
 
   // about dialog
   openAboutDialog(): void {

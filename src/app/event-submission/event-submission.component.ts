@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators, PatternValidator, AbstractControl } from '@angular/forms/';
 import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
 import { MatBottomSheetModule, MatBottomSheet, MatBottomSheetRef } from '@angular/material';
+import { CreateSiteComponent } from '../create-site/create-site.component';
 
 import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 
@@ -70,6 +71,25 @@ export interface Ice {
   styleUrls: ['./event-submission.component.scss']
 })
 export class EventSubmissionComponent implements OnInit {
+  eventResults: IceJam[];
+  siteResults: Site[];
+  weatherConditionsResults: WeatherCondition[];
+  WeatherConditionTypes: WeatherConditionType[];
+  roughnessTypes: RoughnessType[];
+  riverConditionResults: RiverCondition[];
+  riverConditionTypes: RiverConditionType[];
+  stageTypes: StageType[];
+  iceConditionResults: IceCondition[];
+  iceConditionTypes: IceConditionType[];
+  agencyResults: Agency[];
+  damageTypes: DamageType[];
+  // damageResults: Damage[];
+  fileTypes: FileType[];
+  observerResults: Observer[];
+  fileResutls: File[];
+
+  addSiteDialogRef: MatDialogRef<CreateSiteComponent>;
+
   selectFormControl = new FormControl('', Validators.required);
 
   roughness: string[] = ['< 0 ft', '< 0.5 ft', '< 1 ft', '> 1.5 ft'];
@@ -99,9 +119,21 @@ export class EventSubmissionComponent implements OnInit {
   constructor(
     public route: ActivatedRoute,
     public location: Location,
+    public dialog: MatDialog
   ) {}
 
   eventSubmissionForm: FormGroup;
+
+  // registration dialog
+  openSiteDialog(): void {
+    // this.addSiteDialogRef.close();
+    const dialogRef = this.dialog.open(CreateSiteComponent, {
+
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+    });
+  }
   ngOnInit() {
   }
 

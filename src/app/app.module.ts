@@ -54,6 +54,7 @@ import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { IceJamService } from './services/ice-jam.service';
 import { SiteService } from './services/site.service';
+import { CreateSiteComponent } from './create-site/create-site.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { SiteService } from './services/site.service';
     SearchDialogComponent,
     LoginComponent,
     RegistrationComponent,
+    CreateSiteComponent,
   ],
   imports: [
     BrowserModule,
@@ -118,7 +120,8 @@ import { SiteService } from './services/site.service';
   entryComponents: [
     AboutComponent,
     LoginComponent,
-    RegistrationComponent
+    RegistrationComponent,
+    CreateSiteComponent
   ]
 })
 export class AppModule { }

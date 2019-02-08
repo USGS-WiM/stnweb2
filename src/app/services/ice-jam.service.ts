@@ -15,12 +15,14 @@ export class IceJamService {
 
   constructor(private _http: Http) { }
 
+  // GET ALL EVENTS
   public getAllEvents(): Observable<IceJam[]> {
     return this._http.get(APPSETTINGS.EVENTS_URL)
       .map((response: Response) => <IceJam[]>response.json())
       .catch(this.handleError);
   }
 
+  // GET ONE EVENT
   public getEventDetails(eventID): Observable<IceJam> {
     /* if (sessionStorage.username !== undefined) {
       options = new RequestOptions({
@@ -37,8 +39,16 @@ export class IceJamService {
       .catch(this.handleError);
   }
 
+  // POST NEW EVENT
   public create(formValue): Observable<IceJam> {
     return this._http.post(APPSETTINGS.EVENTS_URL, formValue)
+      .map((response: Response) => <IceJam>response.json())
+      .catch(this.handleError);
+  }
+
+  // UPDATE EVENT
+  public update(formValue): Observable<IceJam> {
+    return this._http.put(APPSETTINGS.EVENTS_URL + formValue.id + '/', formValue)
       .map((response: Response) => <IceJam>response.json())
       .catch(this.handleError);
   }

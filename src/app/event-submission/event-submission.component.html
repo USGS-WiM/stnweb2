@@ -150,6 +150,15 @@
             <textarea matInput placeholder="Comments"></textarea>
           </mat-form-field>
         </div>
+
+        <hr>
+        <h4>Sites</h4>
+        <div class="horizontal-form-container">
+          <button mat-stroked-button (click)="openSiteDialog()" aria-label="Add a new site">
+            <mat-icon class="icon">add_outline</mat-icon>
+            <span class="header-button-text"> Add a new Site</span>
+          </button>
+        </div>
         <div style="text-align: center;">
           <button mat-raised-button color="accent" style="font-weight: bold;">Submit</button>
         </div>
