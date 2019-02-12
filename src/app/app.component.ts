@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AboutComponent } from './about/about.component';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
+import { CurrentUserService } from './services/current-user.service';
 
 import { MatDialog, MatDialogRef } from '@angular/material';
 
@@ -17,7 +18,13 @@ export class AppComponent implements OnInit {
   loginDialogRef: MatDialogRef<AboutComponent>;
   regDialogRef: MatDialogRef<AboutComponent>;
 
-  constructor(public dialog: MatDialog ) {}
+  public currentUser;
+
+  constructor(public dialog: MatDialog ) {
+    /* CurrentUserService.currentUser.subscribe(user => {
+      this.currentUser = user;
+    }); */
+  }
 
   // about dialog
   openAboutDialog(): void {

@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { EventSubmissionComponent } from '../event-submission/event-submission.component';
+import {NestedTreeControl} from '@angular/cdk/tree';
+import {ArrayDataSource} from '@angular/cdk/collections';
 
 
 import * as L from 'leaflet';
@@ -15,6 +17,38 @@ import 'rxjs/add/observable/forkJoin';
 import { switchMap } from 'rxjs/operators';
 import { TestBed } from '@angular/core/testing';
 
+interface FoodNode {
+  name: string;
+  children?: FoodNode[];
+}
+
+const TREE_DATA: FoodNode[] = [
+  {
+    name: 'Fruit',
+    children: [
+      {name: 'Apple'},
+      {name: 'Banana'},
+      {name: 'Fruit loops'},
+    ]
+  }, {
+    name: 'Vegetables',
+    children: [
+      {
+        name: 'Green',
+        children: [
+          {name: 'Broccoli'},
+          {name: 'Brussel sprouts'},
+        ]
+      }, {
+        name: 'Orange',
+        children: [
+          {name: 'Pumpkins'},
+          {name: 'Carrots'},
+        ]
+      },
+    ]
+  },
+];
 
 @Component({
   selector: 'app-home',
@@ -29,6 +63,7 @@ export class HomeComponent implements OnInit {
 
   // events = [];
   sites = [];
+  siteSelected;
 
   mapScale;
   latitude;
@@ -41,6 +76,10 @@ export class HomeComponent implements OnInit {
   siteresults: Site[];
   eventSites: any;
 
+  treeControl = new NestedTreeControl<FoodNode> (node => node.children);
+  dataSource = new ArrayDataSource(TREE_DATA);
+
+  hasChild = (_: number, node: FoodNode) => !!node.children && node.children.length > 0;
   // @Input() eventmod: EventSubmissionComponent;
 
   constructor(
@@ -48,7 +87,13 @@ export class HomeComponent implements OnInit {
     private eventService: IceJamService,
   ) {
 
-    this.eventService.getAllEvents()
+    this.siteService.getAllSites()
+      .subscribe(siteresults => {
+        this.siteresults = siteresults;
+        this.mapResults(this.siteresults);
+      });
+
+    /* this.eventService.getAllEvents()
       .subscribe(eventresults => {
           this.eventresults = eventresults;
           // Need to further refine at some point so that it's only pulling all sites for events during a winter season
@@ -74,7 +119,7 @@ export class HomeComponent implements OnInit {
           this.errorMessage = <any>error;
           // this.openSnackBar('Query failed due to web service error. Please try again later.', 'OK', 8000);
         }
-      );
+      ); */
   }
 
   ngOnInit() {
@@ -186,7 +231,7 @@ export class HomeComponent implements OnInit {
     return ret;
   } */
 
-  mapResults(eventSites: any) {
+  mapResults(siteresults: any) {
     console.log('we in it');
     // set/reset resultsMarker var to an empty array
     const markers = [];
@@ -194,10 +239,10 @@ export class HomeComponent implements OnInit {
 
     // tslint:disable-next-line:forin
     // loop through results repsonse from a search query
-    for (const events in this.eventSites) {
-      if (events.length > 0) {
-        const long = Number(eventSites[events]['location']['coordinates']['0']);
-        const lat = Number(eventSites[events]['location']['coordinates']['1']);
+    for (const sites in this.siteresults) {
+      if (sites.length > 0) {
+        const long = Number(this.siteresults[sites]['location']['coordinates']['0']);
+        const lat = Number(this.siteresults[sites]['location']['coordinates']['1']);
 
         const myicon = L.divIcon({
           className: ' wmm-pin wmm-B2EBF2 wmm-icon-circle wmm-icon-white wmm-size-25'
@@ -205,10 +250,12 @@ export class HomeComponent implements OnInit {
 
         let popupContent = '';
 
-        popupContent = popupContent + '<h3>' + String(eventSites[events]['name']) + '</h3>' +
-          '<span class="popupLabel"><b>Date</b>:</span> ' + String(eventSites[events]['observationDateTime']) + '<br/>' +
-          '<span class="popupLabel"><b>River</b>:</span> ' + String(eventSites[events]['riverName']) + '<br/>' +
-          '<span class="popupLabel"><b>Description</b>:</span> ' + String(eventSites[events]['description']) + '<br/>' +
+        popupContent = popupContent + '<h3>' + String(siteresults[sites]['name']) + '</h3>' +
+          '<span class="popupLabel"><b>State</b>:</span> ' + String(siteresults[sites]['state']) + '<br/>' +
+          '<span class="popupLabel"><b>County</b>:</span> ' + String(siteresults[sites]['county']) + '<br/>' +
+          '<span class="popupLabel"><b>River</b>:</span> ' + String(siteresults[sites]['riverName']) + '<br/>' +
+          '<span class="popupLabel"><b>USGSID</b>:</span> ' + String(siteresults[sites]['usgsid']) + '<br/>' +
+          '<span class="popupLabel"><b>Events at this site:</b></span><br/>' +
           '<a href="./event/' + 'TODO' + '">TODO Link to Site Details </a>';
 
         const popup = L.popup()
@@ -216,7 +263,13 @@ export class HomeComponent implements OnInit {
 
         L.marker([lat, long], { icon: myicon })
           .addTo(this.map)
-          .bindPopup(popup);
+          .bindPopup(popup)
+          .on('click',
+            (data) => {
+              this.siteSelected = siteresults[sites]['state'];
+              alert('clicked' + this.siteSelected );
+            });
+
       }
     }
   }

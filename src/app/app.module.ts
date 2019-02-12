@@ -48,13 +48,17 @@ import {
   MatToolbarModule,
   MatTooltipModule,
   MatBottomSheetModule,
-  MatStepperModule
+  MatStepperModule,
+  MatTreeModule
 } from '@angular/material';
+
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { IceJamService } from './services/ice-jam.service';
 import { SiteService } from './services/site.service';
 import { CreateSiteComponent } from './create-site/create-site.component';
+import { JamTypeService } from './services/jam-type.service';
+import { ConfirmComponent } from './confirm/confirm.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +70,7 @@ import { CreateSiteComponent } from './create-site/create-site.component';
     LoginComponent,
     RegistrationComponent,
     CreateSiteComponent,
+    ConfirmComponent,
   ],
   imports: [
     BrowserModule,
@@ -111,17 +116,21 @@ import { CreateSiteComponent } from './create-site/create-site.component';
     MatStepperModule,
     ScrollingModule,
     CdkTableModule,
-    CdkTreeModule
+    CdkTreeModule,
+    MatTreeModule
   ],
   providers: [
     SiteService,
-    IceJamService],
+    IceJamService,
+    JamTypeService
+],
   bootstrap: [AppComponent],
   entryComponents: [
     AboutComponent,
     LoginComponent,
     RegistrationComponent,
-    CreateSiteComponent
+    CreateSiteComponent,
+    ConfirmComponent
   ]
 })
 export class AppModule { }

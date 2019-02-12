@@ -1,0 +1,88 @@
+<div>
+  <div id="siteSubmissionPage">
+    <mat-card>
+      <div id="siteSubmissionHeader">
+        <b>Create Event</b>
+        <small>Submit an Ice Jam event</small>
+      </div>
+<form [formGroup]="addSiteForm">
+  <div id="addSiteDialog">
+    <mat-form-field class="form-control-shortest">
+      <input matInput placeholder="Name" formControlName="name">
+    </mat-form-field>
+
+    <div class="horizontal-form-container" formGroupName="location">
+      <mat-form-field class="form-control" formGroupName="coordinates">
+        <input matInput placeholder="latitude" formControlName="0">
+        <!--  formControlName="latitude" -->
+        <mat-error>Invalid
+          latitude</mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-control" formGroupName="coordinates">
+        <input matInput placeholder="longitude" formControlName="1">
+        <!--  formControlName="latitude" -->
+        <mat-error>Invalid
+          longitude</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="horizontal-form-container">
+      <mat-form-field class="form-control-shortest">
+        <input matInput placeholder="HUC" formControlName="huc">
+      </mat-form-field>
+      <mat-form-field class="form-control-shortest">
+        <input matInput placeholder="USGSID" formControlName="usgsid">
+      </mat-form-field>
+      <mat-form-field class="form-control-shortest">
+        <input matInput placeholder="AHPSID" formControlName="ahpsid">
+      </mat-form-field>
+    </div>
+
+    <div class="horizontal-form-container">
+      <mat-form-field class="form-control-shortest">
+        <mat-select placeholder="State" [formControl] name="stateAbbreviation" (selectionChange)="changeState($event.value)" required>
+          <mat-option *ngFor="let stateAbbreviation of stateAbbreviations" [value]="stateAbbreviation.abbreviation">
+            {{stateAbbreviation.abbreviation}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+        <mat-form-field class="form-control-shortest">
+          <input matInput placeholder="County" formControlName="county">
+        </mat-form-field>
+
+        <mat-form-field class="form-control-shortest">
+          <input matInput placeholder="River Name" formControlName="riverName">
+        </mat-form-field>
+        
+    </div>
+
+    <div class="horizontal-form-container" style="display: block;">
+      <mat-form-field class="comments-section">
+        <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="form-control-shortest">
+        <input matInput placeholder="Landmarks" formControlName="landmarks">
+      </mat-form-field>
+    </div>
+
+
+      <div class="form-buttons-flex center">
+        <button mat-button color="primary" type="submit" (click)="submitEvent(addSiteForm.value)">
+          &nbsp;Submit
+        </button>
+      </div>
+
+
+  </div>
+</form>
+<div class="temporary-form-value-display ">
+  <h3>Temporary Form Value display (not for production)</h3>
+  <p>Form Site:
+    <pre> {{addSiteForm.value | json}} </pre>
+</div>
+
+</mat-card>
+</div>
+</div>
