@@ -14,6 +14,7 @@ import { AboutComponent } from './about/about.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
+import { CommonModule } from '@angular/common';
 
 import {
   MatAutocompleteModule,
@@ -49,7 +50,7 @@ import {
   MatTooltipModule,
   MatBottomSheetModule,
   MatStepperModule,
-  MatTreeModule
+  MatTreeModule,
 } from '@angular/material';
 
 import { LoginComponent } from './login/login.component';
@@ -117,7 +118,8 @@ import { ConfirmComponent } from './confirm/confirm.component';
     ScrollingModule,
     CdkTableModule,
     CdkTreeModule,
-    MatTreeModule
+    MatTreeModule,
+    CommonModule
   ],
   providers: [
     SiteService,

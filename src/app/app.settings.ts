@@ -17,7 +17,7 @@ export class APPSETTINGS {
 
     public static get DEFAULT_COUNTRY(): string { return 'USA'; }
 
-    // public static get AUTH_URL(): string { return this.API_ROOT + 'auth/'; }
+    public static get AUTH_URL(): string { return this.API_ROOT + 'auth/'; }
 
     public static get AGENCIES_URL(): string { return this.API_ROOT + 'agencies/'; }
     public static get DAMAGE_TYPES_URL(): string { return this.API_ROOT + 'damagetypes/'; }

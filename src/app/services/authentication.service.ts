@@ -5,11 +5,11 @@ import 'rxjs/observable/of';
 import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import { Router } from '@angular/router';
 import { APPSETTINGS } from '../app.settings';
-import { User } from '@interfaces/user';
+import { User } from '../interfaces/user';
 import { EventEmitter } from 'events';
 
 import { BehaviorSubject } from 'rxjs';
-import { CurrentUserService } from '@services/current-user.service';
+import { CurrentUserService } from '../services/current-user.service';
 
 @Injectable()
 

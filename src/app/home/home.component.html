@@ -10,34 +10,17 @@
       Sidebar
       Sidebar
      -->
-    <div id="sidebar">
-      <div id="newEventButton">
-        <a mat-raised-button color="accent" style="font-weight: bold;" routerLink="/addSite">
-          <mat-icon>add</mat-icon>New Site
-        </a>
-      </div>
+    <!-- <div id="sidebar">
+
       <div style="text-align: center;">
         <hr>
         <h4>Show currently forming Ice Jams:</h4>
         <mat-slide-toggle></mat-slide-toggle>
       </div>
+    </div> -->
+    <!-- End Sidebar -->
 
-      <mat-expansion-panel id="sidebarFilter">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <h3>Quick Filters?</h3>
-            </mat-panel-title>
-            <mat-panel-description>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-    
-          <div>
-            <span>bleep. bloop.</span>
-          </div>
-        </mat-expansion-panel>
-    </div> <!-- End Sidebar -->
 
-    
     <!-- 
       Content 
       Content 
@@ -59,29 +42,128 @@
         </div>
       </div>
 
+      <a mat-raised-button color="accent" id="newEventButton" style="font-weight: bold;" routerLink="/addSite">
+        <mat-icon>add</mat-icon>New Site
+      </a>
 
 
+      <!-- TO DO NEED TO FIGURE HOW TO DEAL WITH MULTIPLE RIVERCONDITIONS,ICECONDTIONS, ETC...-->
       <div class="block">
-        <cdk-tree [dataSource]="dataSource" [treeControl]="treeControl">
-          <!-- This is the tree node template for leaf nodes -->
-          <cdk-nested-tree-node *cdkTreeNodeDef="let node" class="example-tree-node">
-            <!-- use a disabled button to provide padding for tree leaf -->
-            <button mat-icon-button disabled></button>
-            {{node.name}}
-          </cdk-nested-tree-node>
-          <!-- This is the tree node template for expandable nodes -->
-          <cdk-nested-tree-node *cdkTreeNodeDef="let node; when: hasChild" class="example-tree-node">
-            <button mat-icon-button [attr.aria-label]="'toggle ' + node.name" cdkTreeNodeToggle>
-              <mat-icon class="mat-icon-rtl-mirror">
-                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-              </mat-icon>
-            </button>
-            {{node.name}}
-            <div [class.example-tree-invisible]="!treeControl.isExpanded(node)">
-              <ng-container cdkTreeNodeOutlet></ng-container>
-            </div>
-          </cdk-nested-tree-node>
-        </cdk-tree>
+        Select a site to see a list of Ice Jam Events at that site.
+        <mat-accordion style="overflow-y: auto">
+          <mat-spinner *ngIf="eventsLoading" [diameter]="20"></mat-spinner>
+          <mat-expansion-panel *ngFor="let event of eventtest">
+            <mat-expansion-panel-header>
+              <b>Ice Jam Date: </b> &nbsp;{{event.observationDateTime | date: 'EEEE, MMMM d, h:mm' }}
+            </mat-expansion-panel-header>
+            <b>Description: </b>{{event.description || 'n/a' }}<br>
+            <b>Comments: </b>{{event.comments || 'n/a' }}<br>
+            <span><b>Jam Type: </b>{{event.type.name || 'n/a' }}<br></span> 
+
+            <!-- RIVER -->
+            <span *ngIf="event.riverConditions">
+              <hr>
+              <b>River Conditions </b><br>
+              <b>Date: </b>{{ (event.riverConditions[0].dateTime | date:'mediumDate') || 'n/a' }}<br>
+              <span [ngSwitch]="event.riverConditions[0].riverConditionTypeID">
+                <span *ngSwitchCase="1"><b>Condition type:</b> Bankfull<br></span>
+                <span *ngSwitchCase="2"><b>Condition type: </b>Flooding<br></span>
+                <span *ngSwitchDefault><b>Condition type: </b>n/a</span>
+              </span>
+              <!-- <b>Condition type: </b>{{ event.riverConditions[0].riverConditionTypeID || 'n/a' }}<br> -->
+              <span [ngSwitch]="event.riverConditions[0].stageTypeID">
+                <span *ngSwitchCase="1"><b>Stage:</b> Drop down<br></span>
+                <span *ngSwitchCase="2"><b>Stage:</b> Gage reading<br></span>
+                <span *ngSwitchDefault><b>Stage:</b> n/a</span>
+              </span>
+              <span [ngSwitch]="event.riverConditions[0].isChanging">
+                  <span *ngSwitchCase="true"><b>Is it changing?</b> Yes<br></span>
+                  <span *ngSwitchCase="false"><b>Is it changing?</b> No<br></span>
+                  <span *ngSwitchDefault><b>Is it changing?</b> n/a</span>
+              </span>
+              <b>Measurement: </b>{{ event.riverConditions[0].measurement || 'n/a' }}<br>
+              <b>Comments: </b>{{ event.riverConditions[0].comments || 'n/a'}}<br>
+            </span>
+            <!-- ICE -->
+            <span *ngIf="event.iceConditions">
+              <hr>
+              <b>Ice Conditions: </b><br>
+              <b>Date: </b>{{ (event.iceConditions[0].dateTime | date:'mediumDate') || 'n/a' }}<br>
+              <span [ngSwitch]="event.iceConditions[0].iceConditionType">
+                  <span *ngSwitchCase="true"><b>Ice condition:</b> Snow showing signs of melting<br></span>
+                  <span *ngSwitchCase="false"><b>Ice condition:</b> Ice showing signs of melting<br></span>
+                  <span *ngSwitchCase="false"><b>Ice condition:</b> Ice showing signs of candling<br></span>
+                  <span *ngSwitchCase="false"><b>Ice condition:</b> Ice showing signs of cracking<br></span>
+                  <span *ngSwitchCase="false"><b>Ice condition:</b> Ice showing signs of candling<br></span>
+                  <span *ngSwitchCase="false"><b>Ice condition:</b> Ice showing signs of breakup<br></span>
+                  <span *ngSwitchDefault><b>Ice condition:</b> n/a</span>
+              </span><br>
+              <b>Measurement: </b>{{ event.iceConditions[0].measurement || 'n/a' }}<br>
+              <span [ngSwitch]="event.iceConditions[0].isEstimated">
+                  <span *ngSwitchCase="true"><b>Is it estimated?</b> Yes<br></span>
+                  <span *ngSwitchCase="false"><b>Is it estimated?</b> No<br></span>
+                  <span *ngSwitchDefault><b>Is it estimated?</b> n/a</span>
+              </span>
+              <span [ngSwitch]="event.iceConditions[0].isChanging">
+                  <span *ngSwitchCase="true"><b>Is it changing?</b> Yes<br></span>
+                  <span *ngSwitchCase="false"><b>Is it changing?</b> No<br></span>
+                  <span *ngSwitchDefault><b>Is it changing?</b> n/a</span>
+              </span>
+              <b>Comments: </b>{{ event.iceConditions[0].comments || 'n/a'}}<br>
+              <b>Up stream end location: </b>{{ event.iceConditions[0].upstreamEndLocation || 'n/a'}}<br>
+              <b>Down stream end location: </b>{{ event.iceConditions[0].downstreamEndLocation || 'n/a'}}<br>
+              <span [ngSwitch]="event.iceConditions[0].roughnessType">
+                  <span *ngSwitchCase="1"><b>Roughness:</b> Smooth<br></span>
+                  <span *ngSwitchCase="2"><b>Roughness:</b> < 0.5 <br></span>
+                  <span *ngSwitchCase="3"><b>Roughness:</b> < 1.0 <br></span>
+                  <span *ngSwitchCase="4"><b>Roughness:</b> < 1.5 <br></span>
+                  <span *ngSwitchCase="5"><b>Roughness:</b> > 1.5 <br></span>
+                  <span *ngSwitchDefault><b>Roughness:</b> n/a</span>
+              </span>
+            </span>
+            <!-- WEATHER -->
+            <span *ngIf="event.weatherConditions">
+              <hr>
+              <b>Weather Conditions </b><br>
+              <b>Date: </b>{{ (event.weatherConditions[0].dateTime | date:'mediumDate') || 'n/a' }}<br>
+              <span [ngSwitch]="event.weatherConditions[0].weatherConditionType">
+                  <span *ngSwitchCase="1"><b>Weather conditions:</b> Water Temperature (F)<br></span>
+                  <span *ngSwitchCase="2"><b>Weather conditions:</b> Air Temperature (F)<br></span>
+                  <span *ngSwitchCase="3"><b>Weather conditions:</b> Rain<br></span>
+                  <span *ngSwitchCase="4"><b>Weather conditions:</b> Snow depth (in)<br></span>
+                  <span *ngSwitchCase="5"><b>Weather conditions:</b> Average Wind speed (mph)<br></span>
+                  <span *ngSwitchCase="6"><b>Weather conditions:</b> Wind Direction<br></span>
+                  <span *ngSwitchDefault><b>Weather conditions:</b> n/a</span>
+              </span>
+              <span [ngSwitch]="event.weatherConditions[0].isEstimated">
+                  <span *ngSwitchCase="true"><b>Is it estimated?</b> Yes<br></span>
+                  <span *ngSwitchCase="false"><b>Is it estimated?</b> No<br></span>
+                  <span *ngSwitchDefault><b>Is it estimated?</b> n/a</span>
+              </span>
+              <span [ngSwitch]="event.weatherConditions[0].isChanging">
+                  <span *ngSwitchCase="true"><b>Is it changing?</b> Yes<br></span>
+                  <span *ngSwitchCase="false"><b>Is it changing?</b> No<br></span>
+                  <span *ngSwitchDefault><b>Is it changing?</b> n/a</span>
+              </span>
+            </span>
+            <!-- DAMAGES -->
+            <span *ngIf="event.damages">
+              <hr>
+              <b>Damages </b><br>
+              <b>Date: </b>{{ (event.weatherConditions[0].dateTime | date:'mediumDate') || 'n/a' }}<br>
+              <span [ngSwitch]="event.damages[0].isChanging">
+                  <span *ngSwitchCase="1"><b>Damage type:</b> Flooding<br></span>
+                  <span *ngSwitchCase="2"><b>Damage type:</b> Infrastructure<br></span>
+                  <span *ngSwitchCase="3"><b>Damage type:</b> Mortality<br></span>
+                  <span *ngSwitchCase="4"><b>Damage type:</b> Property<br></span>
+                  <span *ngSwitchCase="5"><b>Damage type:</b> Other<br></span>
+                  <span *ngSwitchDefault><b>Damage type:</b> n/a</span>
+              </span>
+              <b>Damage Type: </b>{{event.damages.isFlooding}}<br>
+            </span>
+          </mat-expansion-panel>
+
+        </mat-accordion>
       </div>
 
 

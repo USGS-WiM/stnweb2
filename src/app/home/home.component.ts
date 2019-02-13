@@ -17,46 +17,13 @@ import 'rxjs/add/observable/forkJoin';
 import { switchMap } from 'rxjs/operators';
 import { TestBed } from '@angular/core/testing';
 
-interface FoodNode {
-  name: string;
-  children?: FoodNode[];
-}
-
-const TREE_DATA: FoodNode[] = [
-  {
-    name: 'Fruit',
-    children: [
-      {name: 'Apple'},
-      {name: 'Banana'},
-      {name: 'Fruit loops'},
-    ]
-  }, {
-    name: 'Vegetables',
-    children: [
-      {
-        name: 'Green',
-        children: [
-          {name: 'Broccoli'},
-          {name: 'Brussel sprouts'},
-        ]
-      }, {
-        name: 'Orange',
-        children: [
-          {name: 'Pumpkins'},
-          {name: 'Carrots'},
-        ]
-      },
-    ]
-  },
-];
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-
+  panelOpenState = false;
   errorMessage: string;
   map;
   icon;
@@ -70,16 +37,16 @@ export class HomeComponent implements OnInit {
   longitude;
   zoomLevel;
 
+  riverCondType;
+
+  eventsLoading = false;
+
   markers;
 
   eventresults: IceJam[];
   siteresults: Site[];
+  eventtest: any;
   eventSites: any;
-
-  treeControl = new NestedTreeControl<FoodNode> (node => node.children);
-  dataSource = new ArrayDataSource(TREE_DATA);
-
-  hasChild = (_: number, node: FoodNode) => !!node.children && node.children.length > 0;
   // @Input() eventmod: EventSubmissionComponent;
 
   constructor(
@@ -236,6 +203,7 @@ export class HomeComponent implements OnInit {
     // set/reset resultsMarker var to an empty array
     const markers = [];
     const iconClass = ' wmm-icon-diamond wmm-icon-white ';
+    const riverConditions = [];
 
     // tslint:disable-next-line:forin
     // loop through results repsonse from a search query
@@ -266,10 +234,15 @@ export class HomeComponent implements OnInit {
           .bindPopup(popup)
           .on('click',
             (data) => {
-              this.siteSelected = siteresults[sites]['state'];
-              alert('clicked' + this.siteSelected );
+              this.siteSelected = siteresults[sites]['id'];
+              this.eventService.getAllEvents()
+              .subscribe(eventresults => {
+                this.eventresults = eventresults;
+                this.eventtest = eventresults.filter(event => event['siteID'] === this.siteSelected);
+                  // TODO write code for if there are no events
+              });
+              // this.eventsLoading = false;
             });
-
       }
     }
   }
