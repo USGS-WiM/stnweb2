@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
   // events = [];
   sites = [];
   siteSelected;
+  siteName;
 
   mapScale;
   latitude;
@@ -235,6 +236,7 @@ export class HomeComponent implements OnInit {
           .on('click',
             (data) => {
               this.siteSelected = siteresults[sites]['id'];
+              this.siteName = siteresults[sites]['name'];
               this.eventService.getAllEvents()
               .subscribe(eventresults => {
                 this.eventresults = eventresults;

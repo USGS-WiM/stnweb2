@@ -61,6 +61,24 @@ $borderRadius: 4px;
     /* } */
 }
 
+.mat-row,
+.mat-header-row {
+  display: flex;
+  max-width: 60%;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 24px;
+}
+
+.mat-cell,
+.mat-header-cell {
+  flex: 1;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
 #map{
     display: block;
     width: 100%;
@@ -92,6 +110,26 @@ $borderRadius: 4px;
     cursor: pointer;
     opacity: 0.87;
 }
+table {
+    border-collapse: collapse;
+    max-width: 90%;
+    empty-cells: show;
+    border: 1px solid #dddddd;
+  }
+  
+  td, th {
+    
+    text-align: left;
+    padding: 8px;
+    empty-cells: show;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd;
+    empty-cells: show;
+  }
+
+
 
 .latLngScale {
     position: absolute;
