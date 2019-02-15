@@ -13,6 +13,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 })
 export class AppComponent implements OnInit {
   title = 'ICEJAMS';
+  siteid = '';
 
   aboutDialogRef: MatDialogRef<AboutComponent>;
   loginDialogRef: MatDialogRef<AboutComponent>;

@@ -21,7 +21,7 @@ export class APPSETTINGS {
 
     public static get AGENCIES_URL(): string { return this.API_ROOT + 'agencies/'; }
     public static get DAMAGE_TYPES_URL(): string { return this.API_ROOT + 'damagetypes/'; }
-    public static get EVENTS_URL(): string { return this.API_ROOT + 'events/'; } // i.e ice-jams
+    public static get EVENTS_URL(): string { return this.API_ROOT + 'sitevisits/'; } // i.e ice-jams
     public static get FILE_TYPES_URL(): string { return this.API_ROOT + 'filetypes/'; }
     public static get ICE_CONDITION_TYPES_URL(): string { return this.API_ROOT + 'iceconditiontypes/'; }
     public static get JAM_TYPES_URL(): string { return this.API_ROOT + 'jamtypes/'; }

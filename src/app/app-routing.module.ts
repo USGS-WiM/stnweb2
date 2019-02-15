@@ -7,8 +7,8 @@ import { CreateSiteComponent } from './create-site/create-site.component';
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
-  // { path: 'addEvent', component: EventSubmissionComponent }
-  { path: 'addSite', component: CreateSiteComponent },
+  { path: 'addEvent', component: EventSubmissionComponent },
+  { path: 'addSite', component: CreateSiteComponent }
   /* { path: 'event/:id', component: EventDetailsComponent },
   { path: 'userdashboard', component: UserDashboardComponent, canActivate: [AuthenticationGuard] }, */
 ];

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { RegistrationComponent } from '../registration/registration.component';
-import { CurrentUserService } from '../services/current-user.service';
+// import { CurrentUserService } from '../services/current-user.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
     public loginDialogRef: MatDialogRef<LoginComponent>,
     public regDialogRef: MatDialogRef<RegistrationComponent>,
     public formBuilder: FormBuilder,
-    public currentUserService: CurrentUserService
+    // public currentUserService: CurrentUserService
   ) { }
 
   onNoClick(): void {

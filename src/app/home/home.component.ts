@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { EventSubmissionComponent } from '../event-submission/event-submission.component';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {ArrayDataSource} from '@angular/cdk/collections';
+import {SelectedSiteService} from '../services/selected-site.service';
 
 
 import * as L from 'leaflet';
@@ -14,8 +15,6 @@ import { IceJamService } from '../services/ice-jam.service';
 import { APPSETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
-import { switchMap } from 'rxjs/operators';
-import { TestBed } from '@angular/core/testing';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +22,7 @@ import { TestBed } from '@angular/core/testing';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  siteid: string;
   panelOpenState = false;
   errorMessage: string;
   map;
@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
   // events = [];
   sites = [];
   siteSelected;
+  siteClicked = false;
   siteName;
 
   mapScale;
@@ -44,7 +45,7 @@ export class HomeComponent implements OnInit {
 
   markers;
 
-  eventresults: IceJam[];
+  eventresults: IceJam[]; // sitevisits
   siteresults: Site[];
   eventtest: any;
   eventSites: any;
@@ -53,6 +54,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private siteService: SiteService,
     private eventService: IceJamService,
+    private selectedSiteService: SelectedSiteService
   ) {
 
     this.siteService.getAllSites()
@@ -60,6 +62,10 @@ export class HomeComponent implements OnInit {
         this.siteresults = siteresults;
         this.mapResults(this.siteresults);
       });
+
+      selectedSiteService.currentID.subscribe(siteid => {
+        this.siteid = siteid;
+        });
 
     /* this.eventService.getAllEvents()
       .subscribe(eventresults => {
@@ -91,6 +97,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
 
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors.'
@@ -235,12 +242,18 @@ export class HomeComponent implements OnInit {
           .bindPopup(popup)
           .on('click',
             (data) => {
+              this.siteClicked = true;
               this.siteSelected = siteresults[sites]['id'];
+              console.log(this.siteSelected);
               this.siteName = siteresults[sites]['name'];
+              this.selectedSiteService.currentID = siteresults[sites]['id'];
+              console.log(this.selectedSiteService.currentID);
               this.eventService.getAllEvents()
               .subscribe(eventresults => {
                 this.eventresults = eventresults;
+                console.log(eventresults);
                 this.eventtest = eventresults.filter(event => event['siteID'] === this.siteSelected);
+                console.log(this.eventtest);
                   // TODO write code for if there are no events
               });
               // this.eventsLoading = false;

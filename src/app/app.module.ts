@@ -60,6 +60,7 @@ import { SiteService } from './services/site.service';
 import { CreateSiteComponent } from './create-site/create-site.component';
 import { JamTypeService } from './services/jam-type.service';
 import { ConfirmComponent } from './confirm/confirm.component';
+import { SelectedSiteService } from './services/selected-site.service';
 
 @NgModule({
   declarations: [
@@ -124,7 +125,8 @@ import { ConfirmComponent } from './confirm/confirm.component';
   providers: [
     SiteService,
     IceJamService,
-    JamTypeService
+    JamTypeService,
+    SelectedSiteService
 ],
   bootstrap: [AppComponent],
   entryComponents: [

@@ -42,52 +42,74 @@
         </div>
       </div>
 
-      <a mat-raised-button color="accent" id="newEventButton" style="font-weight: bold;" routerLink="/addSite">
+      <a mat-raised-button color="accent" id="newSiteButton" style="font-weight: bold;" routerLink="/addSite">
         <mat-icon>add</mat-icon>New Site
       </a>
 
-
-      <!-- TO DO NEED TO FIGURE HOW TO DEAL WITH MULTIPLE RIVERCONDITIONS,ICECONDTIONS, ETC...-->
       <div class="block">
         Select a site to see a list of Ice Jam Events at that site. <span>{{ this.siteName }}</span>
+        <a mat-raised-button color="accent" id="newIceJamButton" style="font-weight: bold;" routerLink="/addEvent" *ngIf="siteClicked">
+          <mat-icon>add</mat-icon>New Site Visit
+        </a>
         <mat-accordion style="overflow-y: auto">
           <mat-spinner *ngIf="eventsLoading" [diameter]="20"></mat-spinner>
           <mat-expansion-panel *ngFor="let event of eventtest">
             <mat-expansion-panel-header>
-              <b>Ice Jam Date: </b> &nbsp;{{event.observationDateTime | date: 'EEEE, MMMM d, h:mm' }}
+              <b>Ice Jam Date: </b> &nbsp;{{event.observationDateTime | date }}
             </mat-expansion-panel-header>
             <b>Description: </b>{{event.description || 'n/a' }}<br>
             <b>Comments: </b>{{event.comments || 'n/a' }}<br>
             <span><b>Jam Type: </b>{{event.type.name || 'n/a' }}<br></span>
 
             <!-- RIVER -->
-            <span *ngFor="let riverCondition of event.riverConditions; let i = index">
-              <hr>
-              <b>River Conditions </b><br>
-              <b>Date: </b>{{ (riverCondition.dateTime | date:'mediumDate') || 'n/a' }}<br>
-              <span [ngSwitch]="riverCondition.riverConditionTypeID">
-                <span *ngSwitchCase="1"><b>Condition type:</b> Bankfull<br></span>
-                <span *ngSwitchCase="2"><b>Condition type: </b>Flooding<br></span>
-                <span *ngSwitchDefault><b>Condition type: </b>n/a</span>
-              </span>
-              <!-- <b>Condition type: </b>{{ event.riverConditions[0].riverConditionTypeID || 'n/a' }}<br> -->
-              <span [ngSwitch]="riverCondition.stageTypeID">
-                <span *ngSwitchCase="1"><b>Stage:</b> Drop down<br></span>
-                <span *ngSwitchCase="2"><b>Stage:</b> Gage reading<br></span>
-                <span *ngSwitchDefault><b>Stage:</b> n/a</span>
-              </span>
-              <span [ngSwitch]="riverCondition.isChanging">
-                <span *ngSwitchCase="true"><b>Is it changing?</b> Yes<br></span>
-                <span *ngSwitchCase="false"><b>Is it changing?</b> No<br></span>
-                <span *ngSwitchDefault><b>Is it changing?</b> n/a</span>
-              </span>
-              <b>Measurement: </b>{{ riverCondition.measurement || 'n/a' }}<br>
-              <b>Comments: </b>{{ riverCondition.comments || 'n/a'}}<br>
+            <span *ngIf="event.riverConditions">
+              <h3>River Conditions</h3>
+              <div class="mat-table">
+                <div class="mat-header-row">
+                  <div class="mat-header-cell">Date</div>
+                  <div class="mat-header-cell">River Condition</div>
+                  <div class="mat-header-cell">Stage</div>
+                  <div class="mat-header-cell">Is Changing?</div>
+                  <div class="mat-header-cell">Measurement</div>
+                  <div class="mat-header-cell">Comments</div>
+
+                </div>
+                <span *ngFor="let riverCondition of event.riverConditions; let i = index">
+                  <div class="mat-row">
+                    <div class="mat-cell">{{(riverCondition.dateTime | date: 'EEEE, MMMM d, h:mm') || 'n/a' }}</div>
+                    <div class="mat-cell">
+                      <span [ngSwitch]="riverCondition.riverConditionTypeID">
+                        <span *ngSwitchCase="1">Bankfull</span>
+                        <span *ngSwitchCase="2">Flooding</span>
+                        <span *ngSwitchCase="false">n/a</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
+                    </div>
+                    <div class="mat-cell">
+                      <span [ngSwitch]="riverCondition.stageTypeID">
+                        <span *ngSwitchCase="1">Drop down</span>
+                        <span *ngSwitchCase="2">Gage reading</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
+                    </div>
+                    <div class="mat-cell">
+                      <span [ngSwitch]="riverCondition.isChanging">
+                        <span *ngSwitchCase="true">Yes</span>
+                        <span *ngSwitchCase="false">No</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
+                    </div>
+                    <div class="mat-cell">{{ riverCondition.measurement || 'n/a'}}</div>
+                    <div class="mat-cell">{{ riverCondition.comments || 'n/a'}}</div>
+                  </div>
+                </span>
+              </div>
             </span>
 
             <!-- ICE -->
             <span *ngIf="event.iceConditions">
-            <div class="mat-table">
+              <h3>Ice Conditions</h3>
+              <div class="mat-table">
                 <div class="mat-header-row">
                   <div class="mat-header-cell">Date</div>
                   <div class="mat-header-cell">Ice Condition</div>
@@ -101,7 +123,7 @@
                 </div>
                 <span *ngFor="let iceCondition of event.iceConditions; let i = index">
                   <div class="mat-row">
-                    <div class="mat-cell">{{(iceCondition.dateTime | date) || 'n/a' }}</div>
+                    <div class="mat-cell">{{(iceCondition.dateTime | date: 'EEEE, MMMM d, h:mm') || 'n/a' }}</div>
                     <div class="mat-cell">
                       <span [ngSwitch]="iceCondition.iceConditionTypeID">
                         <span *ngSwitchCase="1">Ice decaying</span>
@@ -116,22 +138,22 @@
                     </div>
                     <div class="mat-cell">{{iceCondition.measurement || 'n/a'}}</div>
                     <div class="mat-cell">
-                        <span [ngSwitch]="iceCondition.isEstimated">
-                            <span *ngSwitchCase="true">Yes</span>
-                            <span *ngSwitchCase="false">No</span>
-                            <span *ngSwitchDefault>n/a</span>
-                          </span>
+                      <span [ngSwitch]="iceCondition.isEstimated">
+                        <span *ngSwitchCase="true">Yes</span>
+                        <span *ngSwitchCase="false">No</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
                     </div>
                     <div class="mat-cell">
-                        <span [ngSwitch]="iceCondition.isChanging">
-                            <span *ngSwitchCase="true">Yes</span>
-                            <span *ngSwitchCase="false">No</span>
-                            <span *ngSwitchDefault>n/a</span>
-                          </span>
+                      <span [ngSwitch]="iceCondition.isChanging">
+                        <span *ngSwitchCase="true">Yes</span>
+                        <span *ngSwitchCase="false">No</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
                     </div>
                     <div class="mat-cell">{{iceCondition.comments || 'n/a'}}</div>
-                    <div class="mat-cell">{{iceCondition.upstreamEndLocation || 'n/a'}}</div>
-                    <div class="mat-cell">{{iceCondition.downstreamEndLocation || 'n/a'}}</div>
+                    <div class="mat-cell">{{iceCondition.upstreamEndLocation.coordinates[1] || 'n/a'}}, {{iceCondition.upstreamEndLocation.coordinates[0]}}</div>
+                    <div class="mat-cell">{{iceCondition.downstreamEndLocation.coordinates[1] || 'n/a'}}, {{iceCondition.downstreamEndLocation.coordinates[0]}}</div>
                     <div class="mat-cell">
                       <span [ngSwitch]="iceCondition.roughnessTypeID">
                         <span *ngSwitchCase="1">Smooth</span>
@@ -146,47 +168,81 @@
                 </span>
               </div>
             </span>
-            
 
             <!-- WEATHER -->
             <span *ngIf="event.weatherConditions">
-              <hr>
-              <b>Weather Conditions </b><br>
-              <b>Date: </b>{{ (event.weatherConditions[0].dateTime | date:'mediumDate') || 'n/a' }}<br>
-              <span [ngSwitch]="event.weatherConditions[0].weatherConditionType">
-                <span *ngSwitchCase="1"><b>Weather conditions:</b> Water Temperature (F)<br></span>
-                <span *ngSwitchCase="2"><b>Weather conditions:</b> Air Temperature (F)<br></span>
-                <span *ngSwitchCase="3"><b>Weather conditions:</b> Rain<br></span>
-                <span *ngSwitchCase="4"><b>Weather conditions:</b> Snow depth (in)<br></span>
-                <span *ngSwitchCase="5"><b>Weather conditions:</b> Average Wind speed (mph)<br></span>
-                <span *ngSwitchCase="6"><b>Weather conditions:</b> Wind Direction<br></span>
-                <span *ngSwitchDefault><b>Weather conditions:</b> n/a</span>
-              </span>
-              <span [ngSwitch]="event.weatherConditions[0].isEstimated">
-                <span *ngSwitchCase="true"><b>Is it estimated?</b> Yes<br></span>
-                <span *ngSwitchCase="false"><b>Is it estimated?</b> No<br></span>
-                <span *ngSwitchDefault><b>Is it estimated?</b> n/a</span>
-              </span>
-              <span [ngSwitch]="event.weatherConditions[0].isChanging">
-                <span *ngSwitchCase="true"><b>Is it changing?</b> Yes<br></span>
-                <span *ngSwitchCase="false"><b>Is it changing?</b> No<br></span>
-                <span *ngSwitchDefault><b>Is it changing?</b> n/a</span>
-              </span>
+              <h3>Weather Conditions</h3>
+              <div class="mat-table">
+                <div class="mat-header-row">
+                  <div class="mat-header-cell">Date</div>
+                  <div class="mat-header-cell">Condition</div>
+                  <div class="mat-header-cell">Is Estimated?</div>
+                  <div class="mat-header-cell">Is Changing?</div>
+                  <div class="mat-header-cell">Measurement</div>
+                  <div class="mat-header-cell">Comments</div>
+
+                </div>
+                <span *ngFor="let weatherCondition of event.weatherConditions; let i = index">
+                  <div class="mat-row">
+                    <div class="mat-cell">{{(weatherCondition.dateTime | date) || 'n/a' }}</div>
+                    <div class="mat-cell">
+                      <span [ngSwitch]="weatherCondition.weatherConditionTypeID">
+                        <span *ngSwitchCase="1">Water Temperature (F)</span>
+                        <span *ngSwitchCase="2">Air Temperature (F)</span>
+                        <span *ngSwitchCase="3">Rain</span>
+                        <span *ngSwitchCase="4">Snow depth (in)</span>
+                        <span *ngSwitchCase="5">Air Temperature (F)</span>
+                        <span *ngSwitchCase="6">Wind Direction</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
+                    </div>
+                    <div class="mat-cell">
+                      <span [ngSwitch]="weatherCondition.isEstimated">
+                        <span *ngSwitchCase="true">Yes</span>
+                        <span *ngSwitchCase="false">No</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
+                    </div>
+                    <div class="mat-cell">
+                      <span [ngSwitch]="weatherCondition.isChanging">
+                        <span *ngSwitchCase="true">Yes</span>
+                        <span *ngSwitchCase="false">No</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
+                    </div>
+                    <div class="mat-cell">{{ weatherCondition.measurement || 'n/a'}}</div>
+                    <div class="mat-cell">{{ weatherCondition.comments || 'n/a'}}</div>
+                  </div>
+                </span>
+              </div>
             </span>
+
             <!-- DAMAGES -->
             <span *ngIf="event.damages">
-              <hr>
-              <b>Damages </b><br>
-              <b>Date: </b>{{ (event.weatherConditions[0].dateTime | date:'mediumDate') || 'n/a' }}<br>
-              <span [ngSwitch]="event.damages[0].isChanging">
-                <span *ngSwitchCase="1"><b>Damage type:</b> Flooding<br></span>
-                <span *ngSwitchCase="2"><b>Damage type:</b> Infrastructure<br></span>
-                <span *ngSwitchCase="3"><b>Damage type:</b> Mortality<br></span>
-                <span *ngSwitchCase="4"><b>Damage type:</b> Property<br></span>
-                <span *ngSwitchCase="5"><b>Damage type:</b> Other<br></span>
-                <span *ngSwitchDefault><b>Damage type:</b> n/a</span>
-              </span>
-              <b>Damage Type: </b>{{event.damages.isFlooding}}<br>
+              <h3>Damages</h3>
+              <div class="mat-table">
+                <div class="mat-header-row">
+                  <div class="mat-header-cell">Date</div>
+                  <div class="mat-header-cell">Damage Type</div>
+                  <div class="mat-header-cell">Description</div>
+                </div>
+                <span *ngFor="let damage of event.damages; let i = index">
+                  <div class="mat-row">
+                    <div class="mat-cell">{{(damage.dateTimeReported | date: 'EEEE, MMMM d, h:mm') || 'n/a' }}</div>
+                    <div class="mat-cell">
+                      <span [ngSwitch]="damage.damageTypeID">
+                        <span *ngSwitchCase="1">Flooding</span>
+                        <span *ngSwitchCase="2">Infrastructure</span>
+                        <span *ngSwitchCase="3">Mortality</span>
+                        <span *ngSwitchCase="4">Property</span>
+                        <span *ngSwitchCase="5">Other</span>
+                        <span *ngSwitchDefault>n/a</span>
+                      </span>
+                    </div>
+                    <div class="mat-cell">{{ damage.description || 'n/a'}}</div>
+                  </div>
+                </span>
+              </div>
             </span>
           </mat-expansion-panel>
 

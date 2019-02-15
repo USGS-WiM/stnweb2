@@ -21,9 +21,9 @@ $borderRadius: 4px;
 #outer{
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 90vh;
     width: 100vw;
-    overflow: hidden;
+    overflow: auto;
 
     // Body wrapper
     //  Includes sidebar and main content
@@ -42,7 +42,7 @@ $borderRadius: 4px;
             overflow: auto; */
             
 
-            #newEventButton {
+            #newSiteButton {
                 position: absolute;
                 top: 10%;
                 /* right: 20px; */
@@ -50,6 +50,11 @@ $borderRadius: 4px;
                 z-index: 400;
                 left: 4%;
             }
+        }
+
+        #newIceJamButton {
+            margin-left: 10px;
+            margin-bottom: 10px;
         }
 
         main{
@@ -64,7 +69,7 @@ $borderRadius: 4px;
 .mat-row,
 .mat-header-row {
   display: flex;
-  max-width: 60%;
+  // max-width: 60%;
   border-bottom-width: 1px;
   border-bottom-style: solid;
   align-items: center;
@@ -110,26 +115,6 @@ $borderRadius: 4px;
     cursor: pointer;
     opacity: 0.87;
 }
-table {
-    border-collapse: collapse;
-    max-width: 90%;
-    empty-cells: show;
-    border: 1px solid #dddddd;
-  }
-  
-  td, th {
-    
-    text-align: left;
-    padding: 8px;
-    empty-cells: show;
-  }
-  
-  tr:nth-child(even) {
-    background-color: #dddddd;
-    empty-cells: show;
-  }
-
-
 
 .latLngScale {
     position: absolute;

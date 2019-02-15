@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators, PatternValidator, AbstractControl } from '@angular/forms/';
@@ -57,6 +57,7 @@ import { WeatherConditionType } from '../interfaces/weather-condition-type';
 import { WeatherConditionTypeService } from '../services/weather-condition-type.service';
 import { JamType } from '../interfaces/jam-type';
 import { JamTypeService } from '../services/jam-type.service';
+import {SelectedSiteService} from '../services/selected-site.service';
 
 export interface Food {
   value: string;
@@ -77,6 +78,8 @@ export interface StateAbbreviations {
   styleUrls: ['./event-submission.component.scss']
 })
 export class EventSubmissionComponent implements OnInit {
+  siteid: string;
+  eventSubmissionForm: FormGroup;
   eventResults: IceJam[];
   siteResults: Site[];
   weatherConditionsResults: WeatherCondition[];
@@ -102,6 +105,8 @@ export class EventSubmissionComponent implements OnInit {
   siteFormArray: FormArray;
 
   roughness: string[] = ['< 0 ft', '< 0.5 ft', '< 1 ft', '> 1.5 ft'];
+
+  jamTypeResults: JamType[];
 
   /* latitude: [null, Validators.pattern(this.latitudePattern)]
   longitude: [null, Validators.pattern(this.longitudePattern)] */
@@ -364,34 +369,16 @@ export class EventSubmissionComponent implements OnInit {
     }
 ];
 
-
-  eventSubmissionForm: FormGroup;
-  addSiteForm: FormGroup;
-
-  buildAddSiteForm() {
-    this.addSiteForm = this.formBuilder.group({
-      name: '',
-      location: [],
-      state: '',
-      county: '',
-      riverName: '',
-      huc: '',
-      usgsid: '',
-      ahpsid: '',
-      comments: '',
-      landmarks: ''
-    });
-  }
-
   constructor(
     public route: ActivatedRoute,
     public location: Location,
     public dialog: MatDialog,
     public formBuilder: FormBuilder,
-    private iceJamTypeService: JamTypeService
+    private iceJamTypeService: JamTypeService,
+    public selectedSiteService: SelectedSiteService
   ) {
     // this.buildEventSubmissionForm();
-    this.buildAddSiteForm();
+
   }
 
   // registration dialog
@@ -405,13 +392,34 @@ export class EventSubmissionComponent implements OnInit {
     });
   }
   ngOnInit() {
+    /* this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
+    console.log(this.selectedSiteService.currentID); */
 
     this.iceJamTypeService.getJamTypes()
       .subscribe(
-        jamTypes => {
-          this.jamTypes = jamTypes;
-        },
+        jamTypeResults => {
+          this.jamTypeResults = jamTypeResults;
+          console.log(this.jamTypeResults);
+        }
       );
+
+    const coordsArrayUp = this.formBuilder.group({
+        0: null,
+        1: null
+    });
+    const coordsArrayDown = this.formBuilder.group({
+        0: null,
+        1: null
+    });
+
+    const upstreamLatLong = this.formBuilder.group({
+        type: 'Point',
+        coordinates: coordsArrayUp
+    });
+    const downstreamLatLong = this.formBuilder.group({
+        type: 'Point',
+        coordinates: coordsArrayDown
+    });
 
     const iceConditionsForm = this.formBuilder.group({
       id: null,
@@ -422,8 +430,8 @@ export class EventSubmissionComponent implements OnInit {
       isEstimated: '',
       isChanging: '',
       comments: '',
-      upstreamEndLocation: '',
-      downstreamEndLocation: '',
+      upstreamEndLocation: upstreamLatLong,
+      downstreamEndLocation: downstreamLatLong,
       roughnessTypeID: ''
     });
 
@@ -468,10 +476,10 @@ export class EventSubmissionComponent implements OnInit {
     });
 
     const jamTypeform = this.formBuilder.group({
-      id: null,
+      id: '',
       name: '',
-      description: null,
-      exampleImageURL: '',
+      description: '',
+      exampleImageURL: ''
     });
 
       this.eventSubmissionForm = this.formBuilder.group({
@@ -485,7 +493,7 @@ export class EventSubmissionComponent implements OnInit {
         type: jamTypeform,
         damages: damagesform,
         files: filesForm,
-        IceConditions: iceConditionsForm,
+        iceConditions: iceConditionsForm,
         riverCondtions: riverConditionsForm,
         weatherCondtions: weatherConditionsForm
       });
