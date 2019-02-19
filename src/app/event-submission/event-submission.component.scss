@@ -1,5 +1,9 @@
 $lightgrey: #f0f3f4;
 
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 16px;
+  }
+
 #eventSubmissionPage{
     display: block;
     width: 94%;

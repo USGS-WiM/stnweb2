@@ -15,6 +15,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+
 
 import {
   MatAutocompleteModule,
@@ -61,6 +63,10 @@ import { CreateSiteComponent } from './create-site/create-site.component';
 import { JamTypeService } from './services/jam-type.service';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { SelectedSiteService } from './services/selected-site.service';
+import { RoughnessTypeService } from './services/roughness-type.service';
+import { StageTypeService } from './services/stage-type.service';
+import { WeatherConditionTypeService } from './services/weather-condition-type.service';
+import { DamageTypeService } from './services/damage-type.service';
 
 @NgModule({
   declarations: [
@@ -120,13 +126,19 @@ import { SelectedSiteService } from './services/selected-site.service';
     CdkTableModule,
     CdkTreeModule,
     MatTreeModule,
-    CommonModule
+    CommonModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule
   ],
   providers: [
     SiteService,
     IceJamService,
     JamTypeService,
-    SelectedSiteService
+    SelectedSiteService,
+    RoughnessTypeService,
+    StageTypeService,
+    WeatherConditionTypeService,
+    DamageTypeService
 ],
   bootstrap: [AppComponent],
   entryComponents: [

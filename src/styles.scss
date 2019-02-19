@@ -2,6 +2,7 @@
 @include mat-core();
 
 @import "./assets/styles/makers.css";
+@import "~ng-pick-datetime/assets/style/picker.min.css";
 
 body { 
     margin: 0px !important;

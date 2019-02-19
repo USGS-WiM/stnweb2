@@ -8,11 +8,18 @@
       <!-- <mat-card-content> -->
       <form [formGroup]="eventSubmissionForm">
         <h4>Basic Information</h4>
+        <label class="form-control">
+            Date Time:
+            <input formControlName="observationDateTime" placeholder="Date Time:"
+                   [(ngModel)]="dateTime"
+                   [owlDateTimeTrigger]="dt" [owlDateTime]="dt">
+            <owl-date-time #dt></owl-date-time>
+        </label>
 
         <div class="horizontal-form-container" formGroupName="type">
           <mat-form-field class="form-control">
-            <mat-select placeholder="Jam Type" formControlName="name" required>
-              <mat-option *ngFor="let jamType of jamTypeResults" [value]="jamType.name">
+            <mat-select placeholder="Jam Type" formControlName="id" required (ngModelChange)="selectedtype($event)">
+              <mat-option *ngFor="let jamType of jamTypeResults" [value]="jamType.id">
                 {{jamType.name}}
               </mat-option>
             </mat-select>
@@ -20,11 +27,6 @@
         </div>
         <!-- observationDateTime -->
         <span>
-          <mat-form-field class="form-control">
-            <input matInput [matDatepicker]="picker" placeholder="Jam Date" formControlName="observationDateTime">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
 
           <mat-form-field class="comments-section">
             <textarea matInput placeholder="Description" formControlName="description"></textarea>
@@ -39,33 +41,40 @@
 
         <!-- UpstreamEndLocation & DownstreamEndLocation -->
         <div class="horizontal-form-container" formGroupName="iceConditions">
-          <mat-form-field class="form-control">
-            <input matInput [matDatepicker]="picker1" placeholder="Date" formControlName="dateTime">
-            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-            <mat-datepicker #picker1></mat-datepicker>
-          </mat-form-field>
-          <!-- <mat-form-field class="form-control">
-              <mat-select placeholder="Ice Conditions" [formControl] name="ice" required>
-                <mat-option *ngFor="let ice of iceconditions" [value]="ice.value">
-                  {{ice.viewValue}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field> -->
+          <label class="form-control">
+              Date Time:
+              <input formControlName="dateTime" placeholder="Date Time:"
+                     [(ngModel)]="dateTime"
+                     [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1">
+              <owl-date-time #dt1></owl-date-time>
+          </label>
+        </div>
+
+          <div class="horizontal-form-container" formGroupName="iceConditions">
           <mat-form-field class="form-control-shortest">
-            <input matInput placeholder="Measurement" formControlName="measurement"> <!--  formControlName="latitude" -->
+            <input matInput placeholder="Measurement" formControlName="measurement">
           </mat-form-field>
-          <mat-form-field class="form-control-shortest">
-            <input matInput placeholder="Estimated?" formControlName="isEstimated"> <!--  formControlName="latitude" -->
-          </mat-form-field>
-          <mat-form-field class="form-control-shortest">
-            <input matInput placeholder="Changing?" formControlName="isChanging"> <!--  formControlName="latitude" -->
-          </mat-form-field>
+
+          <mat-radio-group placeholder="Estimated?" formControlName="isEstimated">
+            <h5>Estimated?</h5>
+            <mat-radio-button value="true">Yes</mat-radio-button>
+            <mat-radio-button value="false">No</mat-radio-button>
+          </mat-radio-group>
+
+          <mat-radio-group placeholder="Changing?" formControlName="isChanging">
+            <h5>Changing?</h5>
+            <mat-radio-button value="true">Yes</mat-radio-button>
+            <mat-radio-button value="false">No</mat-radio-button>
+          </mat-radio-group>
         </div>
         <br>
 
-        <div class="horizontal-form-container">
-
+        <div class="horizontal-form-container" formGroupName="iceConditions">
+          <mat-form-field class="comments-section">
+            <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
+          </mat-form-field>
         </div>
+
         <div formGroupName="iceConditions">
           <h5>Location of downstream end of ice cover:</h5>
           <div class="horizontal-form-container" formGroupName="upstreamEndLocation">
@@ -102,32 +111,154 @@
         </div>
 
         <div class="horizontal-form-container" formGroupName="iceConditions">
-            <mat-form-field class="comments-section">
-                <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
+          <mat-form-field class="form-control">
+            <mat-select placeholder="Roughness Type" formControlName="roughnessTypeID" required>
+              <mat-option *ngFor="let roughType of roughnessTypes" [value]="roughType.id">
+                {{roughType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- <mat-radio-group class="example-radio-group">
+              <h5>Surface Roughness:</h5>
+              <mat-radio-button class="example-radio-button" *ngFor="let roughType of roughnessTypes" [value]="roughType.name">
+                {{roughType.name}}
+              </mat-radio-button>
+            </mat-radio-group> -->
+        </div>
+
+        <hr>
+        <h4>River Conditions</h4>
+
+        <!-- UpstreamEndLocation & DownstreamEndLocation -->
+        <div class="horizontal-form-container" formGroupName="riverConditions">
+            <label class="form-control">
+                Date Time:
+                <input formControlName="dateTime" placeholder="Date Time:"
+                       [(ngModel)]="dateTime"
+                       [owlDateTimeTrigger]="dt2" [owlDateTime]="dt2">
+                <owl-date-time #dt2></owl-date-time>
+            </label>
+          </div>
+            <div class="horizontal-form-container" formGroupName="riverConditions">
+          <mat-form-field class="form-control">
+            <mat-select placeholder="River Condition" formControlName="riverConditionTypeID" required>
+              <mat-option *ngFor="let riverConditionType of riverConditionTypes" [value]="riverConditionType.id">
+                {{riverConditionType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="horizontal-form-container" formGroupName="riverConditions">
+          <mat-form-field class="form-control-shortest">
+            <input matInput placeholder="Measurement" formControlName="measurement">
+          </mat-form-field>
+          <mat-radio-group placeholder="Estimated?" formControlName="isFlooding">
+            <h5>Flooding?</h5>
+            <mat-radio-button value="true">Yes</mat-radio-button>
+            <mat-radio-button value="false">No</mat-radio-button>
+          </mat-radio-group>
+
+          <mat-radio-group placeholder="Changing?" formControlName="isChanging">
+            <h5>Changing?</h5>
+            <mat-radio-button value="true">Yes</mat-radio-button>
+            <mat-radio-button value="false">No</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <div class="horizontal-form-container" formGroupName="riverConditions">
+            <mat-form-field class="form-control">
+                <mat-select placeholder="Stage" formControlName="stageTypeID" required>
+                  <mat-option *ngFor="let stageType of stageTypes" [value]="stageType.id">
+                    {{stageType.name}}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
         </div>
+        <div class="horizontal-form-container" formGroupName="riverConditions">
+            <mat-form-field class="comments-section">
+                <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
+            </mat-form-field>
+        </div>
+        <br>
 
         <hr>
-        <h4>Observer</h4>
-        <div class="horizontal-form-container">
-          <mat-form-field class="form-control-shortest">
-            <input matInput placeholder="Name"> <!--  formControlName="latitude" -->
-          </mat-form-field>
-        </div>
-        <div class="horizontal-form-container" style="display: block;">
-          <mat-form-field class="comments-section">
-            <textarea matInput placeholder="Comments"></textarea>
+        <h4>Weather Conditions</h4>
+
+        <!-- UpstreamEndLocation & DownstreamEndLocation -->
+        <div class="horizontal-form-container" formGroupName="weatherConditions">
+            <label class="form-control">
+                Date Time:
+                <input formControlName="dateTime" placeholder="Date Time:"
+                       [(ngModel)]="dateTime"
+                       [owlDateTimeTrigger]="dt3" [owlDateTime]="dt3">
+                <owl-date-time #dt3></owl-date-time>
+            </label>
+          </div>
+
+            <div class="horizontal-form-container" formGroupName="weatherConditions">
+          <mat-form-field class="form-control">
+            <mat-select placeholder="Weather Condition" formControlName="weatherConditionTypeID" required>
+              <mat-option *ngFor="let WeatherConditionType of WeatherConditionTypes" [value]="WeatherConditionType.id">
+                {{WeatherConditionType.name}}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
 
-        <hr>
-        <br>
-        <hr>
-        <br>
+        <div class="horizontal-form-container" formGroupName="weatherConditions">
+        <mat-form-field class="form-control-shortest">
+            <input matInput placeholder="Measurement" formControlName="measurement">
+          </mat-form-field>
+
+          <mat-radio-group placeholder="Estimated?" formControlName="isEstimated">
+            <h5>Estimated?</h5>
+            <mat-radio-button value="true">Yes</mat-radio-button>
+            <mat-radio-button value="false">No</mat-radio-button>
+          </mat-radio-group>
+
+          <mat-radio-group placeholder="Changing?" formControlName="isChanging">
+            <h5>Changing?</h5>
+            <mat-radio-button value="true">Yes</mat-radio-button>
+            <mat-radio-button value="false">No</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <div class="horizontal-form-container" formGroupName="weatherConditions">
+            <mat-form-field class="comments-section">
+                <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
+            </mat-form-field>
+        </div>
+
+        <h4>Damages</h4>
+
+        <div class="horizontal-form-container" formGroupName="damages">
+            <label class="form-control">
+                Date Time:
+                <input formControlName="dateTimeReported" placeholder="Date Time:"
+                       [(ngModel)]="dateTime"
+                       [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4">
+                <owl-date-time #dt4></owl-date-time>
+            </label>
+          </div>
+          
+          <div class="horizontal-form-container" formGroupName="damages">
+          <mat-form-field class="form-control">
+              <mat-select placeholder="Damage types" formControlName="damageTypeID" required>
+                <mat-option *ngFor="let damageType of damageTypes" [value]="damageType.id">
+                  {{damageType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="horizontal-form-container" formGroupName="damages">
+            <mat-form-field class="comments-section">
+                <textarea matInput placeholder="Description" formControlName="description"></textarea>
+              </mat-form-field>
+        </div>
+      </form>
+      <hr>
         <div style="text-align: center;">
           <button mat-raised-button color="accent" style="font-weight: bold;">Submit Ice Jam Event</button>
         </div>
-      </form>
 
       <div class="temporary-form-value-display ">
         <h3>Temporary Form Value display (not for production)</h3>

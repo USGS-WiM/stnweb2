@@ -26,8 +26,10 @@ export class APPSETTINGS {
     public static get ICE_CONDITION_TYPES_URL(): string { return this.API_ROOT + 'iceconditiontypes/'; }
     public static get JAM_TYPES_URL(): string { return this.API_ROOT + 'jamtypes/'; }
     public static get OBSERVERS_URL(): string { return this.API_ROOT + 'observers/'; }
+    public static get STAGES_URL(): string { return this.API_ROOT + 'stagetypes/'; }
     public static get ROLES_URL(): string { return this.API_ROOT + 'roles/'; }
     public static get ROUGHNESS_TYPES_URL(): string { return this.API_ROOT + 'roughnesstypes/'; }
+    public static get RIVER_CONDITION_TYPES(): string { return this.API_ROOT + 'riverconditiontypes/'; }
     public static get SITES_URL(): string { return this.API_ROOT + 'sites/'; }
     public static get WEATHER_CONDITION_TYPES_URL(): string { return this.API_ROOT + 'weatherconditiontypes/'; }
 }

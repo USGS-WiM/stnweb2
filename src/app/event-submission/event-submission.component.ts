@@ -97,6 +97,7 @@ export class EventSubmissionComponent implements OnInit {
   observerResults: Observer[];
   fileResutls: File[];
   jamTypes: JamType[];
+  public dateTime: Date;
 
   addSiteDialogRef: MatDialogRef<CreateSiteComponent>;
 
@@ -375,7 +376,12 @@ export class EventSubmissionComponent implements OnInit {
     public dialog: MatDialog,
     public formBuilder: FormBuilder,
     private iceJamTypeService: JamTypeService,
-    public selectedSiteService: SelectedSiteService
+    public roughnessTypeService: RoughnessTypeService,
+    public selectedSiteService: SelectedSiteService,
+    public riverConditionTypeService: RiverConditionTypeService,
+    public stageTypeService: StageTypeService,
+    public weatherConditionTypeService: WeatherConditionTypeService,
+    public damageTypeService: DamageTypeService
   ) {
     // this.buildEventSubmissionForm();
 
@@ -399,7 +405,47 @@ export class EventSubmissionComponent implements OnInit {
       .subscribe(
         jamTypeResults => {
           this.jamTypeResults = jamTypeResults;
-          console.log(this.jamTypeResults);
+        }
+      );
+
+
+    this.roughnessTypeService.getRoughnessTypes()
+      .subscribe(
+        roughnessTypes => {
+          this.roughnessTypes = roughnessTypes;
+          console.log(this.roughnessTypes);
+        }
+      );
+
+    this.riverConditionTypeService.getRiverConditionTypes()
+      .subscribe(
+        riverConditionTypes => {
+          this.riverConditionTypes = riverConditionTypes;
+          console.log(this.riverConditionTypes);
+        }
+      );
+
+    this.stageTypeService.getStageTypes()
+      .subscribe(
+        stageTypes => {
+          this.stageTypes = stageTypes;
+          console.log(this.stageTypes);
+        }
+      );
+
+    this.weatherConditionTypeService.getWeatherTypes()
+      .subscribe(
+        WeatherConditionTypes => {
+          this.WeatherConditionTypes = WeatherConditionTypes;
+          console.log(this.WeatherConditionTypes);
+        }
+      );
+
+    this.damageTypeService.getDamageTypes()
+      .subscribe(
+        damageTypes => {
+          this.damageTypes = damageTypes;
+          console.log(this.damageTypes);
         }
       );
 
@@ -422,8 +468,8 @@ export class EventSubmissionComponent implements OnInit {
     });
 
     const iceConditionsForm = this.formBuilder.group({
-      id: null,
-      iceJamID: null, // might be wrong
+      id: '',
+      iceJamID: '', // might be wrong
       dateTime: '',
       iceConditionTypeID: '',
       measurement: '',
@@ -436,8 +482,8 @@ export class EventSubmissionComponent implements OnInit {
     });
 
     const riverConditionsForm = this.formBuilder.group({
-      id: null,
-      iceJamID: null,
+      id: '',
+      iceJamID: '',
       dateTime: '',
       riverConditionTypeID: '',
       isFlooding: '',
@@ -448,8 +494,8 @@ export class EventSubmissionComponent implements OnInit {
     });
 
     const weatherConditionsForm = this.formBuilder.group({
-      id: null,
-      iceJamID: null,
+      id: '',
+      iceJamID: '',
       dateTime: '',
       weatherConditionTypeID: '',
       measurement: '',
@@ -458,21 +504,21 @@ export class EventSubmissionComponent implements OnInit {
       comments: '',
     });
 
-    const filesForm = this.formBuilder.group({
-      id: null,
+    /* const filesForm = this.formBuilder.group({
+      id: '',
       fileTypeID: '',
       url: '',
       description: '',
-      iceJamID: null,
+      iceJamID: '',
       damageID: ''
-    });
+    }); */
 
     const damagesform = this.formBuilder.group({
-      id: null,
-      iceJamID: null,
+      id: '',
+      iceJamID: '',
       damageTypeID: '',
       dateTimeReported: '',
-      description: null
+      description: ''
     });
 
     const jamTypeform = this.formBuilder.group({
@@ -492,14 +538,56 @@ export class EventSubmissionComponent implements OnInit {
         comments: '',
         type: jamTypeform,
         damages: damagesform,
-        files: filesForm,
+        // files: filesForm,
         iceConditions: iceConditionsForm,
-        riverCondtions: riverConditionsForm,
-        weatherCondtions: weatherConditionsForm
+        riverConditions: riverConditionsForm,
+        weatherConditions: weatherConditionsForm
       });
       // this.siteFormArray = this.eventSubmissionForm.get('new_sites') as FormArray;
   }
 
+  selectedtype(selected) {
+      this.eventSubmissionForm.get('jamTypeID').setValue(selected);
+
+      switch (selected) {
+        case selected = 1: {
+            this.eventSubmissionForm.patchValue({type: {name: 'Freezeup'}});
+           break;
+        }
+        case selected = 2: {
+            this.eventSubmissionForm.patchValue({type: {name: 'Aufeis'}});
+           break;
+        }
+        case selected = 3: {
+            this.eventSubmissionForm.patchValue({type: {name: 'Anchor Ice'}});
+           break;
+        }
+        case selected = 4: {
+            this.eventSubmissionForm.patchValue({type: {name: 'Breakup'}});
+           break;
+        }
+        case selected = 5: {
+            this.eventSubmissionForm.patchValue({type: {name: 'Combination'}});
+           break;
+        }
+        case selected = 6: {
+            this.eventSubmissionForm.patchValue({type: {name: 'Released'}});
+           break;
+        }
+        case selected = 7: {
+            this.eventSubmissionForm.patchValue({type: {name: 'Closure'}});
+           break;
+        }
+        case selected = 8: {
+            this.eventSubmissionForm.patchValue({type: {name: 'Uknown'}});
+           break;
+        }
+        default: {
+            this.eventSubmissionForm.patchValue({type: {name: ''}});
+           break;
+        }
+     }
+  }
 }
 
 
