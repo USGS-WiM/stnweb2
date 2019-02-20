@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
   errorMessage: string;
   map;
   icon;
+  isloggedIn = APPSETTINGS.IS_LOGGEDIN;
 
   // events = [];
   sites = [];
@@ -98,7 +99,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-
+    console.log(this.isloggedIn);
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors.'
     });

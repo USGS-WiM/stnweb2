@@ -1,20 +1,24 @@
-<div class="example-container">
-  <h3>Login to Ice Jams</h3>
-  <mat-form-field class="example-full-width">
-    <input matInput placeholder="Username" value="">
-  </mat-form-field>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" *ngIf="!username">
+  <div class="example-container">
+    <h3>Login to Ice Jams</h3>
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Username" value="" formControlName="username">
+    </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Password" [type]="hide ? 'password' : 'text'">
-    <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-  </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Password" type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+      <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </mat-form-field>
+    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+        <div *ngIf="f.password.errors.required">Password is required</div>
+    </div>
 
-  <div id="signinButton">
-      <a class="loginorcancel" mat-raised-button color="accent">
+    <div id="signinButton">
+      <!-- <a class="loginorcancel" mat-raised-button color="accent">
         Sign In
-      </a>
-      <button class="loginorcancel" mat-stroked-button (click)="this.loginDialogRef.close('cancel');">
-        Cancel
+      </a> -->
+      <button class="loginorcancel" mat-raised-button color="accent" (click)="this.loginDialogRef.close('cancel');">
+        Submit
       </button>
     </div>
     <!-- <h5 style="text-align: center;">Don't have an account yet?</h5>
@@ -24,4 +28,5 @@
         Register
       </a>
     </div> -->
-</div>
+  </div>
+</form>

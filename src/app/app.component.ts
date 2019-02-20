@@ -3,6 +3,7 @@ import { AboutComponent } from './about/about.component';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { CurrentUserService } from './services/current-user.service';
+import { AuthenticationService } from './services/authentication.service';
 
 import { MatDialog, MatDialogRef } from '@angular/material';
 
@@ -21,10 +22,13 @@ export class AppComponent implements OnInit {
 
   public currentUser;
 
-  constructor(public dialog: MatDialog ) {
-    /* CurrentUserService.currentUser.subscribe(user => {
+  constructor(public dialog: MatDialog,
+    private authenticationService: AuthenticationService,
+    public currentUserService: CurrentUserService, ) {
+
+    currentUserService.currentUser.subscribe(user => {
       this.currentUser = user;
-    }); */
+    });
   }
 
   // about dialog
@@ -47,5 +51,22 @@ export class AppComponent implements OnInit {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    if (sessionStorage.getItem('currentUser')) {
+      const currentUserObj = JSON.parse(sessionStorage.getItem('currentUser'));
+      this.currentUserService.updateCurrentUser(currentUserObj);
+    } else {
+      this.currentUserService.updateCurrentUser({
+        'first_name': '',
+        'last_name': '',
+        'username': ''
+      });
+    }
+  }
+
+  logout() {
+    // remove user from local storage to log user out
+    this.authenticationService.logout();
+    console.log('logged out');
+  }
 }

@@ -37,12 +37,33 @@
             <span class="header-button-text"> About</span>
           </button>
         </span>
-        <span class="login-button-span">
+        <span class="login-button-span" *ngIf="currentUser.username == ''">
           <button mat-button (click)="openLoginDialog()" aria-label="Login">
             <mat-icon class="icon">person</mat-icon>
             <span class="header-button-text"> Login</span>
           </button>
         </span>
+        <span class="login-button-span" *ngIf="currentUser.username !== ''">
+          <button mat-button  aria-label="Login">
+            <mat-icon class="icon">person</mat-icon>
+            <span class="header-button-text"> {{ currentUser.username }}</span>
+          </button>
+        </span>
+        <span class="login-button-span" *ngIf="currentUser.username !== ''">
+            <button mat-button aria-label="Log out" (click)="logout()">
+              <span class="header-button-text"> Logout</span>
+            </button>
+          </span>
+        <!-- Login Status -->
+        <!-- <span *ngIf="currentUser.username == ''" class="login-button-span">
+            <button mat-button (click)="openLoginDialog()" aria-label="Login">
+                <mat-icon class="icon">person</mat-icon>
+                <span class="header-button-text"> Login</span>
+              </button>
+        </span>
+        <span *ngIf="currentUser.username !== ''" class="login-button-span">{{currentUser.first_name}}
+          {{currentUser.last_name}}
+        </span> -->
       </div>
     </mat-toolbar-row>
   </mat-toolbar>

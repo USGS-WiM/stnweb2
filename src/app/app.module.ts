@@ -67,6 +67,7 @@ import { RoughnessTypeService } from './services/roughness-type.service';
 import { StageTypeService } from './services/stage-type.service';
 import { WeatherConditionTypeService } from './services/weather-condition-type.service';
 import { DamageTypeService } from './services/damage-type.service';
+import { CurrentUserService } from './services/current-user.service';
 
 @NgModule({
   declarations: [
@@ -138,7 +139,8 @@ import { DamageTypeService } from './services/damage-type.service';
     RoughnessTypeService,
     StageTypeService,
     WeatherConditionTypeService,
-    DamageTypeService
+    DamageTypeService,
+    CurrentUserService
 ],
   bootstrap: [AppComponent],
   entryComponents: [

@@ -12,12 +12,13 @@ export class APPSETTINGS {
     }
 
     public static set environment(env: string) { this._environment = env; }
+    public static get IS_LOGGEDIN(): boolean { return (!!sessionStorage.getItem('username') && !!sessionStorage.getItem('password')); }
     public static get API_USERNAME(): string { return 'admin'; }
     public static get API_PASSWORD(): string { return 'icejamsadmin'; }
 
     public static get DEFAULT_COUNTRY(): string { return 'USA'; }
 
-    public static get AUTH_URL(): string { return this.API_ROOT + 'auth/'; }
+    public static get AUTH_URL(): string { return this.API_ROOT + 'login'; }
 
     public static get AGENCIES_URL(): string { return this.API_ROOT + 'agencies/'; }
     public static get DAMAGE_TYPES_URL(): string { return this.API_ROOT + 'damagetypes/'; }
