@@ -41,6 +41,11 @@ export class IceJamService {
 
   // POST NEW EVENT
   public create(formValue): Observable<IceJam> {
+
+    const options = new RequestOptions({
+      headers: APPSETTINGS.AUTH_JSON_HEADERS
+    });
+
     return this._http.post(APPSETTINGS.EVENTS_URL, formValue)
       .map((response: Response) => <IceJam>response.json())
       .catch(this.handleError);

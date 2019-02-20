@@ -40,7 +40,12 @@ export class SiteService {
 
   // POST NEW SITE
   public create(formValue): Observable<Site> {
-    return this._http.post(APPSETTINGS.EVENTS_URL, formValue)
+
+    const options = new RequestOptions({
+      headers: APPSETTINGS.AUTH_JSON_HEADERS
+    });
+
+    return this._http.post(APPSETTINGS.SITES_URL, formValue, options)
       .map((response: Response) => <Site>response.json())
       .catch(this.handleError);
   }

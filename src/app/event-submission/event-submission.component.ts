@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, FormGroup, FormArray, Validators, PatternVali
 import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
 import { MatBottomSheetModule, MatBottomSheet, MatBottomSheetRef } from '@angular/material';
 import { CreateSiteComponent } from '../create-site/create-site.component';
+import { ConfirmComponent } from '../confirm/confirm.component';
 
 import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 
@@ -57,537 +58,586 @@ import { WeatherConditionType } from '../interfaces/weather-condition-type';
 import { WeatherConditionTypeService } from '../services/weather-condition-type.service';
 import { JamType } from '../interfaces/jam-type';
 import { JamTypeService } from '../services/jam-type.service';
-import {SelectedSiteService} from '../services/selected-site.service';
+import { SelectedSiteService } from '../services/selected-site.service';
 
 export interface Food {
-  value: string;
-  viewValue: string;
+    value: string;
+    viewValue: string;
 }
 export interface Ice {
-  value: string;
-  viewValue: string;
+    value: string;
+    viewValue: string;
 }
 export interface StateAbbreviations {
-  name: string;
-  abbreviation: string;
+    name: string;
+    abbreviation: string;
 }
 
 @Component({
-  selector: 'app-event-submission',
-  templateUrl: './event-submission.component.html',
-  styleUrls: ['./event-submission.component.scss']
+    selector: 'app-event-submission',
+    templateUrl: './event-submission.component.html',
+    styleUrls: ['./event-submission.component.scss']
 })
 export class EventSubmissionComponent implements OnInit {
-  siteid: string;
-  eventSubmissionForm: FormGroup;
-  eventResults: IceJam[];
-  siteResults: Site[];
-  weatherConditionsResults: WeatherCondition[];
-  WeatherConditionTypes: WeatherConditionType[];
-  roughnessTypes: RoughnessType[];
-  riverConditionResults: RiverCondition[];
-  riverConditionTypes: RiverConditionType[];
-  stageTypes: StageType[];
-  iceConditionResults: IceCondition[];
-  iceConditionTypes: IceConditionType[];
-  agencyResults: Agency[];
-  damageTypes: DamageType[];
-  // damageResults: Damage[];
-  fileTypes: FileType[];
-  observerResults: Observer[];
-  fileResutls: File[];
-  jamTypes: JamType[];
-  public dateTime: Date;
+    siteid: string;
+    observerID: string;
+    eventSubmissionForm: FormGroup;
+    eventResults: IceJam[];
+    siteResults: Site[];
+    weatherConditionsResults: WeatherCondition[];
+    WeatherConditionTypes: WeatherConditionType[];
+    roughnessTypes: RoughnessType[];
+    riverConditionResults: RiverCondition[];
+    riverConditionTypes: RiverConditionType[];
+    stageTypes: StageType[];
+    iceConditionResults: IceCondition[];
+    iceConditionTypes: IceConditionType[];
+    agencyResults: Agency[];
+    damageTypes: DamageType[];
+    // damageResults: Damage[];
+    fileTypes: FileType[];
+    observerResults: Observer[];
+    fileResults: File[];
+    jamTypes: JamType[];
+    public dateTime: Date;
+    public dateTimeIce: Date;
+    public dateTimeRiver: Date;
+    public dateTimeWeather: Date;
+    public dateTimeDamages: Date;
+    addSiteDialogRef: MatDialogRef<CreateSiteComponent>;
+    confirmDialogRef: MatDialogRef<ConfirmComponent>;
+    submitLoading = false;
 
-  addSiteDialogRef: MatDialogRef<CreateSiteComponent>;
+    // selectFormControl = new FormControl('', Validators.required);
 
-  // selectFormControl = new FormControl('', Validators.required);
+    siteFormArray: FormArray;
 
-  siteFormArray: FormArray;
+    roughness: string[] = ['< 0 ft', '< 0.5 ft', '< 1 ft', '> 1.5 ft'];
 
-  roughness: string[] = ['< 0 ft', '< 0.5 ft', '< 1 ft', '> 1.5 ft'];
+    jamTypeResults: JamType[];
 
-  jamTypeResults: JamType[];
+    /* latitude: [null, Validators.pattern(this.latitudePattern)]
+    longitude: [null, Validators.pattern(this.longitudePattern)] */
 
-  /* latitude: [null, Validators.pattern(this.latitudePattern)]
-  longitude: [null, Validators.pattern(this.longitudePattern)] */
+    latitudePattern: RegExp = (/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+    longitudePattern: RegExp = (/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
 
-  latitudePattern: RegExp = (/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
-  longitudePattern: RegExp = (/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+    stateAbbreviations: StateAbbreviations[] = [
+        {
+            name: 'Alabama',
+            abbreviation: 'AL'
+        },
+        {
+            name: 'Alaska',
+            abbreviation: 'AK'
+        },
+        {
+            name: 'American Samoa',
+            abbreviation: 'AS'
+        },
+        {
+            name: 'Arizona',
+            abbreviation: 'AZ'
+        },
+        {
+            name: 'Arkansas',
+            abbreviation: 'AR'
+        },
+        {
+            name: 'California',
+            abbreviation: 'CA'
+        },
+        {
+            name: 'Colorado',
+            abbreviation: 'CO'
+        },
+        {
+            name: 'Connecticut',
+            abbreviation: 'CT'
+        },
+        {
+            name: 'Delaware',
+            abbreviation: 'DE'
+        },
+        {
+            name: 'District Of Columbia',
+            abbreviation: 'DC'
+        },
+        {
+            name: 'Federated States Of Micronesia',
+            abbreviation: 'FM'
+        },
+        {
+            name: 'Florida',
+            abbreviation: 'FL'
+        },
+        {
+            name: 'Georgia',
+            abbreviation: 'GA'
+        },
+        {
+            name: 'Guam',
+            abbreviation: 'GU'
+        },
+        {
+            name: 'Hawaii',
+            abbreviation: 'HI'
+        },
+        {
+            name: 'Idaho',
+            abbreviation: 'ID'
+        },
+        {
+            name: 'Illinois',
+            abbreviation: 'IL'
+        },
+        {
+            name: 'Indiana',
+            abbreviation: 'IN'
+        },
+        {
+            name: 'Iowa',
+            abbreviation: 'IA'
+        },
+        {
+            name: 'Kansas',
+            abbreviation: 'KS'
+        },
+        {
+            name: 'Kentucky',
+            abbreviation: 'KY'
+        },
+        {
+            name: 'Louisiana',
+            abbreviation: 'LA'
+        },
+        {
+            name: 'Maine',
+            abbreviation: 'ME'
+        },
+        {
+            name: 'Marshall Islands',
+            abbreviation: 'MH'
+        },
+        {
+            name: 'Maryland',
+            abbreviation: 'MD'
+        },
+        {
+            name: 'Massachusetts',
+            abbreviation: 'MA'
+        },
+        {
+            name: 'Michigan',
+            abbreviation: 'MI'
+        },
+        {
+            name: 'Minnesota',
+            abbreviation: 'MN'
+        },
+        {
+            name: 'Mississippi',
+            abbreviation: 'MS'
+        },
+        {
+            name: 'Missouri',
+            abbreviation: 'MO'
+        },
+        {
+            name: 'Montana',
+            abbreviation: 'MT'
+        },
+        {
+            name: 'Nebraska',
+            abbreviation: 'NE'
+        },
+        {
+            name: 'Nevada',
+            abbreviation: 'NV'
+        },
+        {
+            name: 'New Hampshire',
+            abbreviation: 'NH'
+        },
+        {
+            name: 'New Jersey',
+            abbreviation: 'NJ'
+        },
+        {
+            name: 'New Mexico',
+            abbreviation: 'NM'
+        },
+        {
+            name: 'New York',
+            abbreviation: 'NY'
+        },
+        {
+            name: 'North Carolina',
+            abbreviation: 'NC'
+        },
+        {
+            name: 'North Dakota',
+            abbreviation: 'ND'
+        },
+        {
+            name: 'Northern Mariana Islands',
+            abbreviation: 'MP'
+        },
+        {
+            name: 'Ohio',
+            abbreviation: 'OH'
+        },
+        {
+            name: 'Oklahoma',
+            abbreviation: 'OK'
+        },
+        {
+            name: 'Oregon',
+            abbreviation: 'OR'
+        },
+        {
+            name: 'Palau',
+            abbreviation: 'PW'
+        },
+        {
+            name: 'Pennsylvania',
+            abbreviation: 'PA'
+        },
+        {
+            name: 'Puerto Rico',
+            abbreviation: 'PR'
+        },
+        {
+            name: 'Rhode Island',
+            abbreviation: 'RI'
+        },
+        {
+            name: 'South Carolina',
+            abbreviation: 'SC'
+        },
+        {
+            name: 'South Dakota',
+            abbreviation: 'SD'
+        },
+        {
+            name: 'Tennessee',
+            abbreviation: 'TN'
+        },
+        {
+            name: 'Texas',
+            abbreviation: 'TX'
+        },
+        {
+            name: 'Utah',
+            abbreviation: 'UT'
+        },
+        {
+            name: 'Vermont',
+            abbreviation: 'VT'
+        },
+        {
+            name: 'Virgin Islands',
+            abbreviation: 'VI'
+        },
+        {
+            name: 'Virginia',
+            abbreviation: 'VA'
+        },
+        {
+            name: 'Washington',
+            abbreviation: 'WA'
+        },
+        {
+            name: 'West Virginia',
+            abbreviation: 'WV'
+        },
+        {
+            name: 'Wisconsin',
+            abbreviation: 'WI'
+        },
+        {
+            name: 'Wyoming',
+            abbreviation: 'WY'
+        }
+    ];
 
-  foods: Food[] = [
-    {value: 'steak-0', viewValue: 'Steak'},
-    {value: 'pizza-1', viewValue: 'Pizza'},
-    {value: 'tacos-2', viewValue: 'Tacos'}
-  ];
+    constructor(
+        public route: ActivatedRoute,
+        public location: Location,
+        public dialog: MatDialog,
+        public formBuilder: FormBuilder,
+        private iceJamTypeService: JamTypeService,
+        public roughnessTypeService: RoughnessTypeService,
+        public selectedSiteService: SelectedSiteService,
+        public riverConditionTypeService: RiverConditionTypeService,
+        public stageTypeService: StageTypeService,
+        public weatherConditionTypeService: WeatherConditionTypeService,
+        public damageTypeService: DamageTypeService,
+        public iceJamService: IceJamService,
+        public snackBar: MatSnackBar
+    ) {
+        // this.buildEventSubmissionForm();
 
-  iceconditions: Ice[] = [
-    {value: 'steak-0', viewValue: 'Decay'},
-    {value: 'pizza-1', viewValue: 'Melting Snow'},
-    {value: 'tacos-2', viewValue: 'Melting Ice'},
-    {value: 'tacos-2', viewValue: 'Candled Ice'},
-    {value: 'tacos-2', viewValue: 'Cracks'},
-    {value: 'tacos-2', viewValue: 'Fracturing'},
-    {value: 'tacos-2', viewValue: 'Breakup'}
-  ];
-
-  stateAbbreviations: StateAbbreviations[] = [
-    {
-        name: 'Alabama',
-        abbreviation: 'AL'
-    },
-    {
-        name: 'Alaska',
-        abbreviation: 'AK'
-    },
-    {
-        name: 'American Samoa',
-        abbreviation: 'AS'
-    },
-    {
-        name: 'Arizona',
-        abbreviation: 'AZ'
-    },
-    {
-        name: 'Arkansas',
-        abbreviation: 'AR'
-    },
-    {
-        name: 'California',
-        abbreviation: 'CA'
-    },
-    {
-        name: 'Colorado',
-        abbreviation: 'CO'
-    },
-    {
-        name: 'Connecticut',
-        abbreviation: 'CT'
-    },
-    {
-        name: 'Delaware',
-        abbreviation: 'DE'
-    },
-    {
-        name: 'District Of Columbia',
-        abbreviation: 'DC'
-    },
-    {
-        name: 'Federated States Of Micronesia',
-        abbreviation: 'FM'
-    },
-    {
-        name: 'Florida',
-        abbreviation: 'FL'
-    },
-    {
-        name: 'Georgia',
-        abbreviation: 'GA'
-    },
-    {
-        name: 'Guam',
-        abbreviation: 'GU'
-    },
-    {
-        name: 'Hawaii',
-        abbreviation: 'HI'
-    },
-    {
-        name: 'Idaho',
-        abbreviation: 'ID'
-    },
-    {
-        name: 'Illinois',
-        abbreviation: 'IL'
-    },
-    {
-        name: 'Indiana',
-        abbreviation: 'IN'
-    },
-    {
-        name: 'Iowa',
-        abbreviation: 'IA'
-    },
-    {
-        name: 'Kansas',
-        abbreviation: 'KS'
-    },
-    {
-        name: 'Kentucky',
-        abbreviation: 'KY'
-    },
-    {
-        name: 'Louisiana',
-        abbreviation: 'LA'
-    },
-    {
-        name: 'Maine',
-        abbreviation: 'ME'
-    },
-    {
-        name: 'Marshall Islands',
-        abbreviation: 'MH'
-    },
-    {
-        name: 'Maryland',
-        abbreviation: 'MD'
-    },
-    {
-        name: 'Massachusetts',
-        abbreviation: 'MA'
-    },
-    {
-        name: 'Michigan',
-        abbreviation: 'MI'
-    },
-    {
-        name: 'Minnesota',
-        abbreviation: 'MN'
-    },
-    {
-        name: 'Mississippi',
-        abbreviation: 'MS'
-    },
-    {
-        name: 'Missouri',
-        abbreviation: 'MO'
-    },
-    {
-        name: 'Montana',
-        abbreviation: 'MT'
-    },
-    {
-        name: 'Nebraska',
-        abbreviation: 'NE'
-    },
-    {
-        name: 'Nevada',
-        abbreviation: 'NV'
-    },
-    {
-        name: 'New Hampshire',
-        abbreviation: 'NH'
-    },
-    {
-        name: 'New Jersey',
-        abbreviation: 'NJ'
-    },
-    {
-        name: 'New Mexico',
-        abbreviation: 'NM'
-    },
-    {
-        name: 'New York',
-        abbreviation: 'NY'
-    },
-    {
-        name: 'North Carolina',
-        abbreviation: 'NC'
-    },
-    {
-        name: 'North Dakota',
-        abbreviation: 'ND'
-    },
-    {
-        name: 'Northern Mariana Islands',
-        abbreviation: 'MP'
-    },
-    {
-        name: 'Ohio',
-        abbreviation: 'OH'
-    },
-    {
-        name: 'Oklahoma',
-        abbreviation: 'OK'
-    },
-    {
-        name: 'Oregon',
-        abbreviation: 'OR'
-    },
-    {
-        name: 'Palau',
-        abbreviation: 'PW'
-    },
-    {
-        name: 'Pennsylvania',
-        abbreviation: 'PA'
-    },
-    {
-        name: 'Puerto Rico',
-        abbreviation: 'PR'
-    },
-    {
-        name: 'Rhode Island',
-        abbreviation: 'RI'
-    },
-    {
-        name: 'South Carolina',
-        abbreviation: 'SC'
-    },
-    {
-        name: 'South Dakota',
-        abbreviation: 'SD'
-    },
-    {
-        name: 'Tennessee',
-        abbreviation: 'TN'
-    },
-    {
-        name: 'Texas',
-        abbreviation: 'TX'
-    },
-    {
-        name: 'Utah',
-        abbreviation: 'UT'
-    },
-    {
-        name: 'Vermont',
-        abbreviation: 'VT'
-    },
-    {
-        name: 'Virgin Islands',
-        abbreviation: 'VI'
-    },
-    {
-        name: 'Virginia',
-        abbreviation: 'VA'
-    },
-    {
-        name: 'Washington',
-        abbreviation: 'WA'
-    },
-    {
-        name: 'West Virginia',
-        abbreviation: 'WV'
-    },
-    {
-        name: 'Wisconsin',
-        abbreviation: 'WI'
-    },
-    {
-        name: 'Wyoming',
-        abbreviation: 'WY'
     }
-];
 
-  constructor(
-    public route: ActivatedRoute,
-    public location: Location,
-    public dialog: MatDialog,
-    public formBuilder: FormBuilder,
-    private iceJamTypeService: JamTypeService,
-    public roughnessTypeService: RoughnessTypeService,
-    public selectedSiteService: SelectedSiteService,
-    public riverConditionTypeService: RiverConditionTypeService,
-    public stageTypeService: StageTypeService,
-    public weatherConditionTypeService: WeatherConditionTypeService,
-    public damageTypeService: DamageTypeService
-  ) {
-    // this.buildEventSubmissionForm();
+    // registration dialog
+    openSiteDialog(): void {
+        // this.addSiteDialogRef.close();
+        const dialogRef = this.dialog.open(CreateSiteComponent, {
 
-  }
+        });
 
-  // registration dialog
-  openSiteDialog(): void {
-    // this.addSiteDialogRef.close();
-    const dialogRef = this.dialog.open(CreateSiteComponent, {
+        dialogRef.afterClosed().subscribe(result => {
+        });
+    }
+    ngOnInit() {
+        this.iceJamTypeService.getJamTypes()
+            .subscribe(
+                jamTypeResults => {
+                    this.jamTypeResults = jamTypeResults;
+                }
+            );
 
-    });
 
-    dialogRef.afterClosed().subscribe(result => {
-    });
-  }
-  ngOnInit() {
-    /* this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-    console.log(this.selectedSiteService.currentID); */
+        this.roughnessTypeService.getRoughnessTypes()
+            .subscribe(
+                roughnessTypes => {
+                    this.roughnessTypes = roughnessTypes;
+                }
+            );
 
-    this.iceJamTypeService.getJamTypes()
-      .subscribe(
-        jamTypeResults => {
-          this.jamTypeResults = jamTypeResults;
+        this.riverConditionTypeService.getRiverConditionTypes()
+            .subscribe(
+                riverConditionTypes => {
+                    this.riverConditionTypes = riverConditionTypes;
+                }
+            );
+
+        this.stageTypeService.getStageTypes()
+            .subscribe(
+                stageTypes => {
+                    this.stageTypes = stageTypes;
+                }
+            );
+
+        this.weatherConditionTypeService.getWeatherTypes()
+            .subscribe(
+                WeatherConditionTypes => {
+                    this.WeatherConditionTypes = WeatherConditionTypes;
+                }
+            );
+
+        this.damageTypeService.getDamageTypes()
+            .subscribe(
+                damageTypes => {
+                    this.damageTypes = damageTypes;
+                }
+            );
+
+        const coordsArrayUp = this.formBuilder.group({
+            latitude: null,
+            longitude: null
+        });
+        const coordsArrayDown = this.formBuilder.group({
+            lat: null,
+            long: null
+        });
+
+        const upstreamLatLong = this.formBuilder.group({
+            type: 'Point',
+            coordinates: coordsArrayUp
+        });
+        const downstreamLatLong = this.formBuilder.group({
+            type: 'Point',
+            coordinates: coordsArrayDown
+        });
+
+        const iceConditionsForm = this.formBuilder.group({
+            // id: '',
+            // iceJamID: '', // might be wrong
+            dateTime: '',
+            iceConditionTypeID: '',
+            measurement: '',
+            isEstimated: '',
+            isChanging: '',
+            comments: '',
+            upstreamEndLocation: upstreamLatLong,
+            downstreamEndLocation: downstreamLatLong,
+            roughnessTypeID: ''
+        });
+
+        const riverConditionsForm = this.formBuilder.group({
+            // id: '',
+            // iceJamID: '',
+            dateTime: '',
+            riverConditionTypeID: '',
+            isFlooding: '',
+            stageTypeID: '',
+            measurement: '',
+            isChanging: '',
+            comments: '',
+        });
+
+        const weatherConditionsForm = this.formBuilder.group({
+            // id: '',
+            // iceJamID: '',
+            dateTime: '',
+            weatherConditionTypeID: '',
+            measurement: '',
+            isEstimated: '',
+            isChanging: '',
+            comments: '',
+        });
+
+        /* const filesForm = this.formBuilder.group({
+          id: '',
+          fileTypeID: '',
+          url: '',
+          description: '',
+          iceJamID: '',
+          damageID: ''
+        }); */
+
+        const damagesform = this.formBuilder.group({
+            // id: '',
+            // iceJamID: '',
+            damageTypeID: '',
+            dateTimeReported: '',
+            description: ''
+        });
+
+        const jamTypeform = this.formBuilder.group({
+            id: '',
+            name: '',
+            description: '',
+            exampleImageURL: ''
+        });
+
+        this.eventSubmissionForm = this.formBuilder.group({
+            // id: '',
+            observationDateTime: '',
+            jamTypeID: '',
+            siteID: '',
+            observerID: '', // should auto populate
+            description: '',
+            comments: '',
+            type: jamTypeform,
+            damages: damagesform,
+            // files: filesForm,
+            iceConditions: iceConditionsForm,
+            riverConditions: riverConditionsForm,
+            weatherConditions: weatherConditionsForm
+        });
+
+        // selected site is stored in session storage on the home page.
+        this.siteid = sessionStorage.getItem('selectedSite');
+        this.observerID = sessionStorage.getItem('observerID');
+
+        this.eventSubmissionForm.get('siteID').setValue(this.siteid);
+        this.eventSubmissionForm.get('observerID').setValue(this.observerID);
+    }
+
+    selectedtype(selected) {
+        this.eventSubmissionForm.get('jamTypeID').setValue(selected);
+
+        switch (selected) {
+            case selected = 1: {
+                this.eventSubmissionForm.patchValue({ type: { name: 'Freezeup' } });
+                break;
+            }
+            case selected = 2: {
+                this.eventSubmissionForm.patchValue({ type: { name: 'Aufeis' } });
+                break;
+            }
+            case selected = 3: {
+                this.eventSubmissionForm.patchValue({ type: { name: 'Anchor Ice' } });
+                break;
+            }
+            case selected = 4: {
+                this.eventSubmissionForm.patchValue({ type: { name: 'Breakup' } });
+                break;
+            }
+            case selected = 5: {
+                this.eventSubmissionForm.patchValue({ type: { name: 'Combination' } });
+                break;
+            }
+            case selected = 6: {
+                this.eventSubmissionForm.patchValue({ type: { name: 'Released' } });
+                break;
+            }
+            case selected = 7: {
+                this.eventSubmissionForm.patchValue({ type: { name: 'Closure' } });
+                break;
+            }
+            case selected = 8: {
+                this.eventSubmissionForm.patchValue({ type: { name: 'Uknown' } });
+                break;
+            }
+            default: {
+                this.eventSubmissionForm.patchValue({ type: { name: '' } });
+                break;
+            }
         }
-      );
+    }
+
+    openSnackBar(message: string, action: string, duration: number) {
+        this.snackBar.open(message, action, {
+          duration: duration,
+        });
+      }
+
+    submitEvent(formValue) {
+        this.submitLoading = true;
+        formValue.iceConditions.upstreamEndLocation.coordinates = [
+            formValue.iceConditions.upstreamEndLocation.coordinates.latitude / 1,
+            formValue.iceConditions.upstreamEndLocation.coordinates.longitude / 1
+        ];
 
 
-    this.roughnessTypeService.getRoughnessTypes()
-      .subscribe(
-        roughnessTypes => {
-          this.roughnessTypes = roughnessTypes;
-          console.log(this.roughnessTypes);
-        }
-      );
 
-    this.riverConditionTypeService.getRiverConditionTypes()
-      .subscribe(
-        riverConditionTypes => {
-          this.riverConditionTypes = riverConditionTypes;
-          console.log(this.riverConditionTypes);
-        }
-      );
+        formValue.iceConditions.downstreamEndLocation.coordinates = [
+            formValue.iceConditions.downstreamEndLocation.coordinates.lat / 1,
+            formValue.iceConditions.downstreamEndLocation.coordinates.long / 1
+        ];
+        // this.submitLoading = true;
 
-    this.stageTypeService.getStageTypes()
-      .subscribe(
-        stageTypes => {
-          this.stageTypes = stageTypes;
-          console.log(this.stageTypes);
-        }
-      );
+        console.log(formValue);
+        this.iceJamService.create(formValue)
+            .subscribe(
+                (sitevisit) => {
+                    this.submitLoading = false;
 
-    this.weatherConditionTypeService.getWeatherTypes()
-      .subscribe(
-        WeatherConditionTypes => {
-          this.WeatherConditionTypes = WeatherConditionTypes;
-          console.log(this.WeatherConditionTypes);
-        }
-      );
+                    this.confirmDialogRef = this.dialog.open(ConfirmComponent,
+                        {
+                            disableClose: true,
+                            data: {
+                                title: 'Site visit saved',
+                                titleIcon: 'check',
+                                message: 'Your site visit was successfully saved. The ID is ' + sitevisit.id,
+                                confirmButtonText: 'OK',
+                                showCancelButton: false
+                            }
+                        }
+                    );
 
-    this.damageTypeService.getDamageTypes()
-      .subscribe(
-        damageTypes => {
-          this.damageTypes = damageTypes;
-          console.log(this.damageTypes);
-        }
-      );
+                    // when user clicks OK, reset the form and stepper using resetStepper()
+                    this.confirmDialogRef.afterClosed().subscribe(result => {
+                        if (result === true) {
+                            // temporarily disabling the resetStepper function in favor of full page reload.
+                            // tons of issues with resetting this form because of its complexity. full page reload works for now.
+                            // this.resetStepper();
+                            location.reload();
+                        }
+                    });
 
-    const coordsArrayUp = this.formBuilder.group({
-        0: null,
-        1: null
-    });
-    const coordsArrayDown = this.formBuilder.group({
-        0: null,
-        1: null
-    });
+                },
+                error => {
+                    this.submitLoading = false;
+                    this.openSnackBar('Error. Site Visit not Submitted. Error message: ' + error, 'OK', 8000);
+                }
+            );
 
-    const upstreamLatLong = this.formBuilder.group({
-        type: 'Point',
-        coordinates: coordsArrayUp
-    });
-    const downstreamLatLong = this.formBuilder.group({
-        type: 'Point',
-        coordinates: coordsArrayDown
-    });
-
-    const iceConditionsForm = this.formBuilder.group({
-      id: '',
-      iceJamID: '', // might be wrong
-      dateTime: '',
-      iceConditionTypeID: '',
-      measurement: '',
-      isEstimated: '',
-      isChanging: '',
-      comments: '',
-      upstreamEndLocation: upstreamLatLong,
-      downstreamEndLocation: downstreamLatLong,
-      roughnessTypeID: ''
-    });
-
-    const riverConditionsForm = this.formBuilder.group({
-      id: '',
-      iceJamID: '',
-      dateTime: '',
-      riverConditionTypeID: '',
-      isFlooding: '',
-      stageTypeID: '',
-      measurement: '',
-      isChanging: '',
-      comments: '',
-    });
-
-    const weatherConditionsForm = this.formBuilder.group({
-      id: '',
-      iceJamID: '',
-      dateTime: '',
-      weatherConditionTypeID: '',
-      measurement: '',
-      isEstimated: '',
-      isChanging: '',
-      comments: '',
-    });
-
-    /* const filesForm = this.formBuilder.group({
-      id: '',
-      fileTypeID: '',
-      url: '',
-      description: '',
-      iceJamID: '',
-      damageID: ''
-    }); */
-
-    const damagesform = this.formBuilder.group({
-      id: '',
-      iceJamID: '',
-      damageTypeID: '',
-      dateTimeReported: '',
-      description: ''
-    });
-
-    const jamTypeform = this.formBuilder.group({
-      id: '',
-      name: '',
-      description: '',
-      exampleImageURL: ''
-    });
-
-      this.eventSubmissionForm = this.formBuilder.group({
-        id: '',
-        observationDateTime: '',
-        jamTypeID: '',
-        siteID: '',
-        observerID: '', // should auto populate
-        description: '',
-        comments: '',
-        type: jamTypeform,
-        damages: damagesform,
-        // files: filesForm,
-        iceConditions: iceConditionsForm,
-        riverConditions: riverConditionsForm,
-        weatherConditions: weatherConditionsForm
-      });
-      // this.siteFormArray = this.eventSubmissionForm.get('new_sites') as FormArray;
-  }
-
-  selectedtype(selected) {
-      this.eventSubmissionForm.get('jamTypeID').setValue(selected);
-
-      switch (selected) {
-        case selected = 1: {
-            this.eventSubmissionForm.patchValue({type: {name: 'Freezeup'}});
-           break;
-        }
-        case selected = 2: {
-            this.eventSubmissionForm.patchValue({type: {name: 'Aufeis'}});
-           break;
-        }
-        case selected = 3: {
-            this.eventSubmissionForm.patchValue({type: {name: 'Anchor Ice'}});
-           break;
-        }
-        case selected = 4: {
-            this.eventSubmissionForm.patchValue({type: {name: 'Breakup'}});
-           break;
-        }
-        case selected = 5: {
-            this.eventSubmissionForm.patchValue({type: {name: 'Combination'}});
-           break;
-        }
-        case selected = 6: {
-            this.eventSubmissionForm.patchValue({type: {name: 'Released'}});
-           break;
-        }
-        case selected = 7: {
-            this.eventSubmissionForm.patchValue({type: {name: 'Closure'}});
-           break;
-        }
-        case selected = 8: {
-            this.eventSubmissionForm.patchValue({type: {name: 'Uknown'}});
-           break;
-        }
-        default: {
-            this.eventSubmissionForm.patchValue({type: {name: ''}});
-           break;
-        }
-     }
-  }
+    }
 }
 
 

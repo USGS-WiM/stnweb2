@@ -13,13 +13,13 @@
 
     <div class="horizontal-form-container" formGroupName="location">
       <mat-form-field class="form-control" formGroupName="coordinates">
-        <input matInput placeholder="latitude" formControlName="0">
+        <input matInput placeholder="latitude" formControlName="lat">
         <!--  formControlName="latitude" -->
         <mat-error>Invalid
           latitude</mat-error>
       </mat-form-field>
       <mat-form-field class="form-control" formGroupName="coordinates">
-        <input matInput placeholder="longitude" formControlName="1">
+        <input matInput placeholder="longitude" formControlName="long">
         <!--  formControlName="latitude" -->
         <mat-error>Invalid
           longitude</mat-error>
@@ -46,6 +46,10 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+
+        <mat-form-field class="form-control-shortest">
+          <input matInput placeholder="City" formControlName="city">
+        </mat-form-field>
 
         <mat-form-field class="form-control-shortest">
           <input matInput placeholder="County" formControlName="county">

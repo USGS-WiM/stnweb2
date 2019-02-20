@@ -31,6 +31,13 @@ export class APPSETTINGS {
     public static get ROLES_URL(): string { return this.API_ROOT + 'roles/'; }
     public static get ROUGHNESS_TYPES_URL(): string { return this.API_ROOT + 'roughnesstypes/'; }
     public static get RIVER_CONDITION_TYPES(): string { return this.API_ROOT + 'riverconditiontypes/'; }
-    public static get SITES_URL(): string { return this.API_ROOT + 'sites/'; }
+    public static get SITES_URL(): string { return this.API_ROOT + 'sites'; }
     public static get WEATHER_CONDITION_TYPES_URL(): string { return this.API_ROOT + 'weatherconditiontypes/'; }
+
+    public static get AUTH_JSON_HEADERS() {
+        return new Headers({
+            'Authorization': 'Basic ' + btoa(sessionStorage.username + ':' + sessionStorage.password),
+            'Accept': 'application/json', 'Content-Type': 'application/json'
+        });
+    }
 }

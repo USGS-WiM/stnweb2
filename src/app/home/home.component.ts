@@ -3,6 +3,7 @@ import { EventSubmissionComponent } from '../event-submission/event-submission.c
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {ArrayDataSource} from '@angular/cdk/collections';
 import {SelectedSiteService} from '../services/selected-site.service';
+import {CurrentUserService} from '../services/current-user.service';
 
 
 import * as L from 'leaflet';
@@ -43,7 +44,7 @@ export class HomeComponent implements OnInit {
   riverCondType;
 
   eventsLoading = false;
-
+  public currentUser;
   markers;
 
   eventresults: IceJam[]; // sitevisits
@@ -55,7 +56,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private siteService: SiteService,
     private eventService: IceJamService,
-    private selectedSiteService: SelectedSiteService
+    private selectedSiteService: SelectedSiteService,
+    public currentUserService: CurrentUserService
   ) {
 
     this.siteService.getAllSites()
@@ -67,6 +69,10 @@ export class HomeComponent implements OnInit {
       selectedSiteService.currentID.subscribe(siteid => {
         this.siteid = siteid;
         });
+
+      currentUserService.currentUser.subscribe(user => {
+        this.currentUser = user;
+      });
 
     /* this.eventService.getAllEvents()
       .subscribe(eventresults => {
@@ -231,9 +237,7 @@ export class HomeComponent implements OnInit {
           '<span class="popupLabel"><b>State</b>:</span> ' + String(siteresults[sites]['state']) + '<br/>' +
           '<span class="popupLabel"><b>County</b>:</span> ' + String(siteresults[sites]['county']) + '<br/>' +
           '<span class="popupLabel"><b>River</b>:</span> ' + String(siteresults[sites]['riverName']) + '<br/>' +
-          '<span class="popupLabel"><b>USGSID</b>:</span> ' + String(siteresults[sites]['usgsid']) + '<br/>' +
-          '<span class="popupLabel"><b>Events at this site:</b></span><br/>' +
-          '<a href="./event/' + 'TODO' + '">TODO Link to Site Details </a>';
+          '<span class="popupLabel"><b>USGSID</b>:</span> ' + String(siteresults[sites]['usgsid']);
 
         const popup = L.popup()
           .setContent(popupContent);
@@ -245,10 +249,11 @@ export class HomeComponent implements OnInit {
             (data) => {
               this.siteClicked = true;
               this.siteSelected = siteresults[sites]['id'];
+              sessionStorage.setItem('selectedSite', JSON.stringify(this.siteSelected));
               console.log(this.siteSelected);
               this.siteName = siteresults[sites]['name'];
-              this.selectedSiteService.currentID = siteresults[sites]['id'];
-              console.log(this.selectedSiteService.currentID);
+              /* this.selectedSiteService.currentID = siteresults[sites]['id'];
+              console.log(this.selectedSiteService.currentID); */
               this.eventService.getAllEvents()
               .subscribe(eventresults => {
                 this.eventresults = eventresults;

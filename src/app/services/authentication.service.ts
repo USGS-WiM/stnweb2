@@ -32,6 +32,7 @@ export class AuthenticationService {
         self.user = res.json();
         sessionStorage.setItem('username', username);
         sessionStorage.setItem('password', password);
+        sessionStorage.setItem('observerID', self.user.id.toString());
         sessionStorage.setItem('currentUser', JSON.stringify(self.user));
         this.currentUserService.updateCurrentUser(self.user);
         // login successful if there's a user in the response
@@ -53,6 +54,7 @@ export class AuthenticationService {
     this.currentUserService.updateCurrentUser({ 'username': '' });
     sessionStorage.removeItem('username');
     sessionStorage.removeItem('password');
+    sessionStorage.removeItem('observerID');
     sessionStorage.removeItem('currentUser');
   }
 }

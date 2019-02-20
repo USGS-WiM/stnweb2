@@ -42,15 +42,32 @@
         </div>
       </div>
 
-      <a mat-raised-button color="accent" id="newSiteButton" style="font-weight: bold;" routerLink="/addSite">
-        <mat-icon>add</mat-icon>New Site
-      </a>
+      <span *ngIf="currentUser.username != ''">
+        <a mat-raised-button color="accent" id="newSiteButton" style="font-weight: bold;" routerLink="/addSite">
+          <mat-icon>add</mat-icon>New Site
+        </a>
+      </span>
 
       <div class="block">
-        Select a site to see a list of Ice Jam Events at that site. <span>{{ this.siteName }}</span>
-        <a mat-raised-button color="accent" id="newIceJamButton" style="font-weight: bold;" routerLink="/addEvent" *ngIf="siteClicked">
-          <mat-icon>add</mat-icon>New Site Visit
-        </a>
+
+        <span *ngIf="!siteSelected">
+          <div class="help-text">
+            <mat-icon class="icon">info_outline</mat-icon>
+            Select a site on the map to see a list of Ice Jam events at that site.
+          </div>
+        </span>
+
+        <span *ngIf="siteSelected">
+          <div class="help-text">
+            {{ this.siteName }}
+            <span *ngIf="currentUser.username != ''">
+              <a mat-raised-button color="accent" id="newIceJamButton" style="font-weight: bold;" routerLink="/addEvent"
+                *ngIf="siteClicked">
+                <mat-icon>add</mat-icon>New Site Visit
+              </a>
+            </span>
+          </div>
+        </span>
         <mat-accordion style="overflow-y: auto">
           <mat-spinner *ngIf="eventsLoading" [diameter]="20"></mat-spinner>
           <mat-expansion-panel *ngFor="let event of eventtest">
@@ -152,8 +169,10 @@
                       </span>
                     </div>
                     <div class="mat-cell">{{iceCondition.comments || 'n/a'}}</div>
-                    <div class="mat-cell">{{iceCondition.upstreamEndLocation.coordinates[1] || 'n/a'}}, {{iceCondition.upstreamEndLocation.coordinates[0]}}</div>
-                    <div class="mat-cell">{{iceCondition.downstreamEndLocation.coordinates[1] || 'n/a'}}, {{iceCondition.downstreamEndLocation.coordinates[0]}}</div>
+                    <div class="mat-cell">{{iceCondition.upstreamEndLocation.coordinates[1] || 'n/a'}},
+                      {{iceCondition.upstreamEndLocation.coordinates[0]}}</div>
+                    <div class="mat-cell">{{iceCondition.downstreamEndLocation.coordinates[1] || 'n/a'}},
+                      {{iceCondition.downstreamEndLocation.coordinates[0]}}</div>
                     <div class="mat-cell">
                       <span [ngSwitch]="iceCondition.roughnessTypeID">
                         <span *ngSwitchCase="1">Smooth</span>

@@ -27,7 +27,6 @@
         </div>
         <!-- observationDateTime -->
         <span>
-
           <mat-form-field class="comments-section">
             <textarea matInput placeholder="Description" formControlName="description"></textarea>
           </mat-form-field>
@@ -44,7 +43,7 @@
           <label class="form-control">
               Date Time:
               <input formControlName="dateTime" placeholder="Date Time:"
-                     [(ngModel)]="dateTime"
+                     [(ngModel)]="dateTimeIce"
                      [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1">
               <owl-date-time #dt1></owl-date-time>
           </label>
@@ -79,13 +78,13 @@
           <h5>Location of downstream end of ice cover:</h5>
           <div class="horizontal-form-container" formGroupName="upstreamEndLocation">
             <mat-form-field class="form-control" formGroupName="coordinates">
-              <input matInput placeholder="latitude" formControlName="0">
+              <input matInput placeholder="latitude" formControlName="latitude">
               <!--  formControlName="latitude" -->
               <mat-error>Invalid
                 latitude</mat-error>
             </mat-form-field>
             <mat-form-field class="form-control" formGroupName="coordinates">
-              <input matInput placeholder="longitude" formControlName="1">
+              <input matInput placeholder="longitude" formControlName="longitude">
               <!--  formControlName="latitude" -->
               <mat-error>Invalid
                 longitude</mat-error>
@@ -95,13 +94,13 @@
           <h5>Location of downstream end of ice cover:</h5>
           <div class="horizontal-form-container" formGroupName="downstreamEndLocation">
             <mat-form-field class="form-control" formGroupName="coordinates">
-              <input matInput placeholder="latitude" formControlName="0">
+              <input matInput placeholder="latitude" formControlName="lat">
               <!--  formControlName="latitude" -->
               <mat-error>Invalid
                 latitude</mat-error>
             </mat-form-field>
             <mat-form-field class="form-control" formGroupName="coordinates">
-              <input matInput placeholder="longitude" formControlName="1">
+              <input matInput placeholder="longitude" formControlName="long">
               <!--  formControlName="latitude" -->
               <mat-error>Invalid
                 longitude</mat-error>
@@ -112,7 +111,7 @@
 
         <div class="horizontal-form-container" formGroupName="iceConditions">
           <mat-form-field class="form-control">
-            <mat-select placeholder="Roughness Type" formControlName="roughnessTypeID" required>
+            <mat-select placeholder="Roughness Type" formControlName="roughnessTypeID">
               <mat-option *ngFor="let roughType of roughnessTypes" [value]="roughType.id">
                 {{roughType.name}}
               </mat-option>
@@ -134,7 +133,7 @@
             <label class="form-control">
                 Date Time:
                 <input formControlName="dateTime" placeholder="Date Time:"
-                       [(ngModel)]="dateTime"
+                       [(ngModel)]="dateTimeRiver"
                        [owlDateTimeTrigger]="dt2" [owlDateTime]="dt2">
                 <owl-date-time #dt2></owl-date-time>
             </label>
@@ -188,7 +187,7 @@
             <label class="form-control">
                 Date Time:
                 <input formControlName="dateTime" placeholder="Date Time:"
-                       [(ngModel)]="dateTime"
+                       [(ngModel)]="dateTimeWeather"
                        [owlDateTimeTrigger]="dt3" [owlDateTime]="dt3">
                 <owl-date-time #dt3></owl-date-time>
             </label>
@@ -196,7 +195,7 @@
 
             <div class="horizontal-form-container" formGroupName="weatherConditions">
           <mat-form-field class="form-control">
-            <mat-select placeholder="Weather Condition" formControlName="weatherConditionTypeID" required>
+            <mat-select placeholder="Weather Condition" formControlName="weatherConditionTypeID">
               <mat-option *ngFor="let WeatherConditionType of WeatherConditionTypes" [value]="WeatherConditionType.id">
                 {{WeatherConditionType.name}}
               </mat-option>
@@ -234,7 +233,7 @@
             <label class="form-control">
                 Date Time:
                 <input formControlName="dateTimeReported" placeholder="Date Time:"
-                       [(ngModel)]="dateTime"
+                       [(ngModel)]="dateTimeDamages"
                        [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4">
                 <owl-date-time #dt4></owl-date-time>
             </label>
@@ -242,7 +241,7 @@
           
           <div class="horizontal-form-container" formGroupName="damages">
           <mat-form-field class="form-control">
-              <mat-select placeholder="Damage types" formControlName="damageTypeID" required>
+              <mat-select placeholder="Damage types" formControlName="damageTypeID">
                 <mat-option *ngFor="let damageType of damageTypes" [value]="damageType.id">
                   {{damageType.name}}
                 </mat-option>
@@ -257,7 +256,7 @@
       </form>
       <hr>
         <div style="text-align: center;">
-          <button mat-raised-button color="accent" style="font-weight: bold;">Submit Ice Jam Event</button>
+          <button mat-raised-button color="accent" style="font-weight: bold;" (click)="submitEvent(eventSubmissionForm.value)">Submit Ice Jam Event</button>
         </div>
 
       <div class="temporary-form-value-display ">
