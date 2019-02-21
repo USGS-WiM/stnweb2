@@ -29,6 +29,9 @@ export class CreateSiteComponent implements OnInit {
     test1: number;
     submitLoading = false;
 
+    latitudePattern: RegExp = (/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+    longitudePattern: RegExp = (/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+
     // jamTypeResults: JamType[];
 
     stateAbbreviations: StateAbbreviations[] = [
@@ -283,8 +286,8 @@ export class CreateSiteComponent implements OnInit {
     ngOnInit() {
 
         const coordsArray = this.formBuilder.group({
-            lat: null,
-            long: null
+            lat: [null, Validators.pattern(this.latitudePattern)],
+            long: [null, Validators.pattern(this.longitudePattern)]
         });
 
         const locationForm = this.formBuilder.group({

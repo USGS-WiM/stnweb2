@@ -17,7 +17,8 @@ export class AuthenticationService {
   user: User;
 
   constructor(private _http: Http,
-    private currentUserService: CurrentUserService
+    private currentUserService: CurrentUserService,
+    private router: Router
     ) { }
 
   login(username: string, password: string) {
@@ -56,5 +57,7 @@ export class AuthenticationService {
     sessionStorage.removeItem('password');
     sessionStorage.removeItem('observerID');
     sessionStorage.removeItem('currentUser');
+
+    this.router.navigate(['/home']);
   }
 }

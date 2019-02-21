@@ -56,7 +56,6 @@
             Select a site on the map to see a list of Ice Jam events at that site.
           </div>
         </span>
-
         <span *ngIf="siteSelected">
           <div class="help-text">
             {{ this.siteName }}
@@ -68,9 +67,14 @@
             </span>
           </div>
         </span>
+        <span *ngIf="siteSelected && sitevisits.length === 0">
+          <div class="help-text">
+            There are no Ice Jam site visits associated with this site.
+          </div>
+        </span>
         <mat-accordion style="overflow-y: auto">
           <mat-spinner *ngIf="eventsLoading" [diameter]="20"></mat-spinner>
-          <mat-expansion-panel *ngFor="let event of eventtest">
+          <mat-expansion-panel *ngFor="let event of sitevisits">
             <mat-expansion-panel-header>
               <b>Ice Jam Date: </b> &nbsp;{{event.observationDateTime | date }}
             </mat-expansion-panel-header>

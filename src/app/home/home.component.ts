@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
 
   eventresults: IceJam[]; // sitevisits
   siteresults: Site[];
-  eventtest: any;
+  sitevisits: any;
   eventSites: any;
   // @Input() eventmod: EventSubmissionComponent;
 
@@ -224,8 +224,8 @@ export class HomeComponent implements OnInit {
     // loop through results repsonse from a search query
     for (const sites in this.siteresults) {
       if (sites.length > 0) {
-        const long = Number(this.siteresults[sites]['location']['coordinates']['0']);
-        const lat = Number(this.siteresults[sites]['location']['coordinates']['1']);
+        const lat = Number(this.siteresults[sites]['location']['coordinates']['0']);
+        const long = Number(this.siteresults[sites]['location']['coordinates']['1']);
 
         const myicon = L.divIcon({
           className: ' wmm-pin wmm-B2EBF2 wmm-icon-circle wmm-icon-white wmm-size-25'
@@ -258,9 +258,8 @@ export class HomeComponent implements OnInit {
               .subscribe(eventresults => {
                 this.eventresults = eventresults;
                 console.log(eventresults);
-                this.eventtest = eventresults.filter(event => event['siteID'] === this.siteSelected);
-                console.log(this.eventtest);
-                  // TODO write code for if there are no events
+                this.sitevisits = eventresults.filter(event => event['siteID'] === this.siteSelected);
+                console.log(this.sitevisits);
               });
               // this.eventsLoading = false;
             });

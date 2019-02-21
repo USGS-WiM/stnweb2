@@ -435,12 +435,12 @@ export class EventSubmissionComponent implements OnInit {
             );
 
         const coordsArrayUp = this.formBuilder.group({
-            latitude: null,
-            longitude: null
+            latitude: [null, Validators.pattern(this.latitudePattern)],
+            longitude: [null, Validators.pattern(this.longitudePattern)]
         });
         const coordsArrayDown = this.formBuilder.group({
-            lat: null,
-            long: null
+            lat: [null, Validators.pattern(this.latitudePattern)],
+            long: [null, Validators.pattern(this.longitudePattern)]
         });
 
         const upstreamLatLong = this.formBuilder.group({
@@ -456,37 +456,37 @@ export class EventSubmissionComponent implements OnInit {
             // id: '',
             // iceJamID: '', // might be wrong
             dateTime: '',
-            iceConditionTypeID: '',
-            measurement: '',
-            isEstimated: '',
-            isChanging: '',
-            comments: '',
+            iceConditionTypeID: null,
+            measurement: null,
+            isEstimated: null,
+            isChanging: null,
+            comments: null,
             upstreamEndLocation: upstreamLatLong,
             downstreamEndLocation: downstreamLatLong,
-            roughnessTypeID: ''
+            roughnessTypeID: null
         });
 
         const riverConditionsForm = this.formBuilder.group({
             // id: '',
             // iceJamID: '',
             dateTime: '',
-            riverConditionTypeID: '',
-            isFlooding: '',
-            stageTypeID: '',
-            measurement: '',
-            isChanging: '',
-            comments: '',
+            riverConditionTypeID: null,
+            isFlooding: null,
+            stageTypeID: null,
+            measurement: null,
+            isChanging: null,
+            comments: null,
         });
 
         const weatherConditionsForm = this.formBuilder.group({
             // id: '',
             // iceJamID: '',
             dateTime: '',
-            weatherConditionTypeID: '',
-            measurement: '',
-            isEstimated: '',
-            isChanging: '',
-            comments: '',
+            weatherConditionTypeID: null,
+            measurement: null,
+            isEstimated: null,
+            isChanging: null,
+            comments: null,
         });
 
         /* const filesForm = this.formBuilder.group({
@@ -499,28 +499,26 @@ export class EventSubmissionComponent implements OnInit {
         }); */
 
         const damagesform = this.formBuilder.group({
-            // id: '',
-            // iceJamID: '',
-            damageTypeID: '',
+            damageTypeID: null,
             dateTimeReported: '',
-            description: ''
+            description: null
         });
 
         const jamTypeform = this.formBuilder.group({
-            id: '',
+            id: null,
             name: '',
-            description: '',
-            exampleImageURL: ''
+            description: null,
+            exampleImageURL: null
         });
 
         this.eventSubmissionForm = this.formBuilder.group({
             // id: '',
             observationDateTime: '',
-            jamTypeID: '',
-            siteID: '',
-            observerID: '', // should auto populate
-            description: '',
-            comments: '',
+            jamTypeID: null,
+            siteID: null,
+            observerID: null, // should auto populate
+            description: null,
+            comments: null,
             type: jamTypeform,
             damages: damagesform,
             // files: filesForm,
@@ -599,7 +597,10 @@ export class EventSubmissionComponent implements OnInit {
             formValue.iceConditions.downstreamEndLocation.coordinates.lat / 1,
             formValue.iceConditions.downstreamEndLocation.coordinates.long / 1
         ];
-        // this.submitLoading = true;
+
+        // converting ids from string to number value
+        /* formValue.siteID = formValue.siteID / 1;
+        formValue.observerID = formValue.siteID / 1; */
 
         console.log(formValue);
         this.iceJamService.create(formValue)
