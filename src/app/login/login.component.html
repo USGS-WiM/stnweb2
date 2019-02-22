@@ -1,4 +1,4 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" *ngIf="!username">
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" *ngIf="!currentUser.username">
   <div class="example-container">
     <h3>Login to Ice Jams</h3>
     <mat-form-field class="example-full-width">

@@ -8,18 +8,18 @@
 <form [formGroup]="addSiteForm">
   <div id="addSiteDialog">
     <mat-form-field class="form-control-shortest">
-      <input matInput placeholder="Name" formControlName="name">
+      <input matInput placeholder="Name" formControlName="name" required>
     </mat-form-field>
 
     <div class="horizontal-form-container" formGroupName="location">
       <mat-form-field class="form-control" formGroupName="coordinates">
-        <input matInput placeholder="latitude" formControlName="lat">
+        <input matInput placeholder="latitude" formControlName="lat" required>
         <!--  formControlName="latitude" -->
         <mat-error>Invalid
           latitude</mat-error>
       </mat-form-field>
       <mat-form-field class="form-control" formGroupName="coordinates">
-        <input matInput placeholder="longitude" formControlName="long">
+        <input matInput placeholder="longitude" formControlName="long" required>
         <!--  formControlName="latitude" -->
         <mat-error>Invalid
           longitude</mat-error>
@@ -48,15 +48,15 @@
       </mat-form-field>
 
         <mat-form-field class="form-control-shortest">
-          <input matInput placeholder="City" formControlName="city">
+          <input matInput placeholder="City" formControlName="city" required>
         </mat-form-field>
 
         <mat-form-field class="form-control-shortest">
-          <input matInput placeholder="County" formControlName="county">
+          <input matInput placeholder="County" formControlName="county" required>
         </mat-form-field>
 
         <mat-form-field class="form-control-shortest">
-          <input matInput placeholder="River Name" formControlName="riverName">
+          <input matInput placeholder="River Name" formControlName="riverName" required>
         </mat-form-field>
         
     </div>
@@ -73,7 +73,7 @@
 
 
       <div class="form-buttons-flex center">
-        <button mat-button color="primary" type="submit" (click)="submitEvent(addSiteForm.value)">
+        <button mat-button color="primary" type="submit" [disabled]="addSiteForm.invalid" (click)="submitEvent(addSiteForm.value)">
           &nbsp;Submit
         </button>
       </div>
@@ -81,11 +81,11 @@
 
   </div>
 </form>
-<div class="temporary-form-value-display ">
+<!-- <div class="temporary-form-value-display">
   <h3>Temporary Form Value display (not for production)</h3>
   <p>Form Site:
     <pre> {{addSiteForm.value | json}} </pre>
-</div>
+</div> -->
 
 </mat-card>
 </div>

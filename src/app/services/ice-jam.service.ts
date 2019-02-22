@@ -46,7 +46,7 @@ export class IceJamService {
       headers: APPSETTINGS.AUTH_JSON_HEADERS
     });
 
-    return this._http.post(APPSETTINGS.EVENTS_URL, formValue)
+    return this._http.post(APPSETTINGS.EVENTS_URL, formValue, options)
       .map((response: Response) => <IceJam>response.json())
       .catch(this.handleError);
   }

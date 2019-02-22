@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { ModuleWithProviders } from '@angular/core/src/metadata/ng_module';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { EventSubmissionComponent } from './event-submission/event-submission.component';
@@ -14,8 +15,10 @@ const routes: Routes = [
   { path: 'userdashboard', component: UserDashboardComponent, canActivate: [AuthenticationGuard] }, */
 ];
 
-@NgModule({
+/* @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
-})
-export class AppRoutingModule { }
+}) */
+/* export class AppRoutingModule { } */
+
+export const AppRoutingModule = RouterModule.forRoot(routes, {useHash: true}); // implements /#/

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators, PatternValidator, AbstractControl } from '@angular/forms/';
 import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
@@ -59,6 +59,7 @@ import { WeatherConditionTypeService } from '../services/weather-condition-type.
 import { JamType } from '../interfaces/jam-type';
 import { JamTypeService } from '../services/jam-type.service';
 import { SelectedSiteService } from '../services/selected-site.service';
+import { ResourceLoader } from '@angular/compiler';
 
 export interface Food {
     value: string;
@@ -84,13 +85,14 @@ export class EventSubmissionComponent implements OnInit {
     eventSubmissionForm: FormGroup;
     eventResults: IceJam[];
     siteResults: Site[];
+    fields: any;
     weatherConditionsResults: WeatherCondition[];
     WeatherConditionTypes: WeatherConditionType[];
     roughnessTypes: RoughnessType[];
     riverConditionResults: RiverCondition[];
     riverConditionTypes: RiverConditionType[];
     stageTypes: StageType[];
-    iceConditionResults: IceCondition[];
+    iceTypes: IceConditionType[];
     iceConditionTypes: IceConditionType[];
     agencyResults: Agency[];
     damageTypes: DamageType[];
@@ -363,6 +365,7 @@ export class EventSubmissionComponent implements OnInit {
 
     constructor(
         public route: ActivatedRoute,
+        private router: Router,
         public location: Location,
         public dialog: MatDialog,
         public formBuilder: FormBuilder,
@@ -374,7 +377,8 @@ export class EventSubmissionComponent implements OnInit {
         public weatherConditionTypeService: WeatherConditionTypeService,
         public damageTypeService: DamageTypeService,
         public iceJamService: IceJamService,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        public iceConditionTypeService: IceConditionTypeService
     ) {
         // this.buildEventSubmissionForm();
 
@@ -434,6 +438,13 @@ export class EventSubmissionComponent implements OnInit {
                 }
             );
 
+        this.iceConditionTypeService.getIceTypes()
+            .subscribe(
+                iceConditionTypes => {
+                    this.iceConditionTypes = iceConditionTypes;
+                }
+            );
+
         const coordsArrayUp = this.formBuilder.group({
             latitude: [null, Validators.pattern(this.latitudePattern)],
             longitude: [null, Validators.pattern(this.longitudePattern)]
@@ -456,7 +467,7 @@ export class EventSubmissionComponent implements OnInit {
             // id: '',
             // iceJamID: '', // might be wrong
             dateTime: '',
-            iceConditionTypeID: null,
+            iceConditionTypeID: '',
             measurement: null,
             isEstimated: null,
             isChanging: null,
@@ -470,7 +481,7 @@ export class EventSubmissionComponent implements OnInit {
             // id: '',
             // iceJamID: '',
             dateTime: '',
-            riverConditionTypeID: null,
+            riverConditionTypeID: '',
             isFlooding: null,
             stageTypeID: null,
             measurement: null,
@@ -482,7 +493,7 @@ export class EventSubmissionComponent implements OnInit {
             // id: '',
             // iceJamID: '',
             dateTime: '',
-            weatherConditionTypeID: null,
+            weatherConditionTypeID: '',
             measurement: null,
             isEstimated: null,
             isChanging: null,
@@ -499,7 +510,7 @@ export class EventSubmissionComponent implements OnInit {
         }); */
 
         const damagesform = this.formBuilder.group({
-            damageTypeID: null,
+            damageTypeID: '',
             dateTimeReported: '',
             description: null
         });
@@ -514,14 +525,12 @@ export class EventSubmissionComponent implements OnInit {
         this.eventSubmissionForm = this.formBuilder.group({
             // id: '',
             observationDateTime: '',
-            jamTypeID: null,
+            jamTypeID: '',
             siteID: null,
             observerID: null, // should auto populate
             description: null,
             comments: null,
-            type: jamTypeform,
             damages: damagesform,
-            // files: filesForm,
             iceConditions: iceConditionsForm,
             riverConditions: riverConditionsForm,
             weatherConditions: weatherConditionsForm
@@ -535,7 +544,24 @@ export class EventSubmissionComponent implements OnInit {
         this.eventSubmissionForm.get('observerID').setValue(this.observerID);
     }
 
-    selectedtype(selected) {
+    /* addRiverConditions() {
+        const control = <FormArray>this.eventSubmissionForm.get('riverConditions');
+        control.push(this.initRiverCondition());
+    }
+
+      initRiverCondition() {
+        return this.formBuilder.group({
+            dateTime: '',
+            riverConditionTypeID: null,
+            isFlooding: null,
+            stageTypeID: null,
+            measurement: null,
+            isChanging: null,
+            comments: null,
+        });
+      } */
+
+    /* selectedtype(selected) {
         this.eventSubmissionForm.get('jamTypeID').setValue(selected);
 
         switch (selected) {
@@ -576,27 +602,67 @@ export class EventSubmissionComponent implements OnInit {
                 break;
             }
         }
-    }
+    } */
 
     openSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
-          duration: duration,
+            duration: duration,
         });
-      }
+    }
+    refreshPage() {
+        location.reload();
+    }
 
     submitEvent(formValue) {
-        this.submitLoading = true;
+        console.log(formValue);
+        console.log(formValue.damages.damageTypeID);
+        // making condititions into arrays like this for speed; FormArrays may be a better options, especially if they will need to add multiple conditions
         formValue.iceConditions.upstreamEndLocation.coordinates = [
             formValue.iceConditions.upstreamEndLocation.coordinates.latitude / 1,
             formValue.iceConditions.upstreamEndLocation.coordinates.longitude / 1
         ];
 
-
-
         formValue.iceConditions.downstreamEndLocation.coordinates = [
             formValue.iceConditions.downstreamEndLocation.coordinates.lat / 1,
             formValue.iceConditions.downstreamEndLocation.coordinates.long / 1
         ];
+        const river = [];
+        const ice = [];
+        const damage = [];
+        const weather = [];
+
+        if (formValue.riverConditions.riverConditionTypeID === '') {
+            formValue.riverConditions = null;
+        } else {
+
+            river.push(formValue.riverConditions);
+            formValue.riverConditions = river;
+        }
+
+        if (formValue.iceConditions.iceConditionTypeID === '') {
+            formValue.damages = null;
+        } else {
+
+            ice.push(formValue.iceConditions);
+            formValue.iceConditions = ice;
+        }
+
+        if (formValue.damages.damageTypeID === '') {
+            formValue.damages = null;
+        } else {
+            damage.push(formValue.damages);
+            formValue.damages = damage;
+
+        }
+
+        if (formValue.weatherConditions.weatherConditionTypeID === '') {
+            formValue.weatherConditions = null;
+        } else {
+            weather.push(formValue.weatherConditions);
+            formValue.weatherConditions = weather;
+        }
+
+        this.submitLoading = true;
 
         // converting ids from string to number value
         /* formValue.siteID = formValue.siteID / 1;
@@ -627,7 +693,7 @@ export class EventSubmissionComponent implements OnInit {
                             // temporarily disabling the resetStepper function in favor of full page reload.
                             // tons of issues with resetting this form because of its complexity. full page reload works for now.
                             // this.resetStepper();
-                            location.reload();
+                            this.router.navigate(['/home']);
                         }
                     });
 
@@ -635,7 +701,11 @@ export class EventSubmissionComponent implements OnInit {
                 error => {
                     this.submitLoading = false;
                     this.openSnackBar('Error. Site Visit not Submitted. Error message: ' + error, 'OK', 8000);
+
+                    // need to reload as formValue has changed
+                    setTimeout(this.refreshPage, 9000);
                 }
+
             );
 
     }

@@ -7,6 +7,7 @@ import { RegistrationComponent } from '../registration/registration.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from '../services/authentication.service';
+import {CurrentUserService} from '../services/current-user.service';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginComponent implements OnInit {
   submitted = false;
   returnUrl: string;
   error = '';
+  public currentUser;
 
   constructor(
     public dialog: MatDialog,
@@ -28,9 +30,13 @@ export class LoginComponent implements OnInit {
     public formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService
-    // public currentUserService: CurrentUserService
-  ) { }
+    private authenticationService: AuthenticationService,
+    public currentUserService: CurrentUserService
+  ) {
+    currentUserService.currentUser.subscribe(user => {
+    this.currentUser = user;
+  });
+}
 
   onNoClick(): void {
     this.loginDialogRef.close();

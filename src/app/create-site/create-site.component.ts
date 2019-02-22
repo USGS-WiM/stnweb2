@@ -7,6 +7,7 @@ import { ConfirmComponent } from '../confirm/confirm.component';
 import { SiteService } from '../services/site.service';
 import { Site } from '../interfaces/site';
 import { MatSnackBar } from '@angular/material';
+import {Router} from '@angular/router';
 
 export interface StateAbbreviations {
     name: string;
@@ -279,7 +280,8 @@ export class CreateSiteComponent implements OnInit {
         public formBuilder: FormBuilder,
         private dialog: MatDialog,
         private siteService: SiteService,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        private router: Router
     ) {
     }
 
@@ -308,6 +310,9 @@ export class CreateSiteComponent implements OnInit {
             comments: null,
             landmarks: null
         });
+    }
+    refreshPage() {
+        location.reload();
     }
 
     openSnackBar(message: string, action: string, duration: number) {
@@ -356,7 +361,7 @@ export class CreateSiteComponent implements OnInit {
                             // temporarily disabling the resetStepper function in favor of full page reload.
                             // tons of issues with resetting this form because of its complexity. full page reload works for now.
                             // this.resetStepper();
-                            location.reload();
+                            this.router.navigate(['/home']);
                         }
                     });
 
@@ -364,6 +369,9 @@ export class CreateSiteComponent implements OnInit {
                 error => {
                     this.submitLoading = false;
                     this.openSnackBar('Error. Site not Submitted. Error message: ' + error, 'OK', 8000);
+
+                    // need to reload as formValue has changed
+                    setTimeout(this.refreshPage, 9000);
                 }
             );
 

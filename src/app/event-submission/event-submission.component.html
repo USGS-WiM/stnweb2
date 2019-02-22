@@ -2,23 +2,22 @@
   <div id="eventSubmissionPage">
     <mat-card>
       <div id="eventSubmissionHeader">
-        <b>Create an Ice Jam on {{siteID}}</b>
+        <b>Create an Ice Jam on {{this.siteid}}</b>
         <small>Submit an Ice Jam event</small>
       </div>
       <!-- <mat-card-content> -->
       <form [formGroup]="eventSubmissionForm">
         <h4>Basic Information</h4>
         <label class="form-control">
-            Date Time:
-            <input formControlName="observationDateTime" placeholder="Date Time:"
-                   [(ngModel)]="dateTime"
-                   [owlDateTimeTrigger]="dt" [owlDateTime]="dt">
-            <owl-date-time #dt></owl-date-time>
+          Date Time:
+          <input formControlName="observationDateTime" placeholder="Date Time:" [(ngModel)]="dateTime"
+            [owlDateTimeTrigger]="dt" [owlDateTime]="dt" required>
+          <owl-date-time #dt></owl-date-time>
         </label>
 
-        <div class="horizontal-form-container" formGroupName="type">
+        <div class="horizontal-form-container">
           <mat-form-field class="form-control">
-            <mat-select placeholder="Jam Type" formControlName="id" required (ngModelChange)="selectedtype($event)">
+            <mat-select placeholder="Jam Type" formControlName="jamTypeID" required>
               <mat-option *ngFor="let jamType of jamTypeResults" [value]="jamType.id">
                 {{jamType.name}}
               </mat-option>
@@ -28,10 +27,10 @@
         <!-- observationDateTime -->
         <span>
           <mat-form-field class="comments-section">
-            <textarea matInput placeholder="Description" formControlName="description"></textarea>
+            <textarea matInput placeholder="Description" formControlName="description" required></textarea>
           </mat-form-field>
           <mat-form-field class="comments-section">
-            <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
+            <textarea matInput placeholder="Comments" formControlName="comments" required></textarea>
           </mat-form-field>
         </span>
 
@@ -41,15 +40,22 @@
         <!-- UpstreamEndLocation & DownstreamEndLocation -->
         <div class="horizontal-form-container" formGroupName="iceConditions">
           <label class="form-control">
-              Date Time:
-              <input formControlName="dateTime" placeholder="Date Time:"
-                     [(ngModel)]="dateTimeIce"
-                     [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1">
-              <owl-date-time #dt1></owl-date-time>
+            Date Time:
+            <input formControlName="dateTime" placeholder="Date Time:" [(ngModel)]="dateTimeIce" [owlDateTimeTrigger]="dt1"
+              [owlDateTime]="dt1" required>
+            <owl-date-time #dt1></owl-date-time>
           </label>
         </div>
 
-          <div class="horizontal-form-container" formGroupName="iceConditions">
+        <div class="horizontal-form-container" formGroupName="iceConditions">
+
+          <mat-form-field class="form-control">
+            <mat-select placeholder="Ice Conditions" formControlName="iceConditionTypeID" required>
+              <mat-option *ngFor="let iceConditionType of iceConditionTypes" [value]="iceConditionType.id">
+                {{iceConditionType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
           <mat-form-field class="form-control-shortest">
             <input matInput placeholder="Measurement" formControlName="measurement">
           </mat-form-field>
@@ -130,17 +136,16 @@
 
         <!-- UpstreamEndLocation & DownstreamEndLocation -->
         <div class="horizontal-form-container" formGroupName="riverConditions">
-            <label class="form-control">
-                Date Time:
-                <input formControlName="dateTime" placeholder="Date Time:"
-                       [(ngModel)]="dateTimeRiver"
-                       [owlDateTimeTrigger]="dt2" [owlDateTime]="dt2">
-                <owl-date-time #dt2></owl-date-time>
-            </label>
-          </div>
-            <div class="horizontal-form-container" formGroupName="riverConditions">
+          <label class="form-control">
+            Date Time:
+            <input formControlName="dateTime" placeholder="Date Time:" [(ngModel)]="dateTimeRiver" [owlDateTimeTrigger]="dt2"
+              [owlDateTime]="dt2">
+            <owl-date-time #dt2></owl-date-time>
+          </label>
+        </div>
+        <div class="horizontal-form-container" formGroupName="riverConditions">
           <mat-form-field class="form-control">
-            <mat-select placeholder="River Condition" formControlName="riverConditionTypeID" required>
+            <mat-select placeholder="River Condition" formControlName="riverConditionTypeID">
               <mat-option *ngFor="let riverConditionType of riverConditionTypes" [value]="riverConditionType.id">
                 {{riverConditionType.name}}
               </mat-option>
@@ -164,18 +169,18 @@
           </mat-radio-group>
         </div>
         <div class="horizontal-form-container" formGroupName="riverConditions">
-            <mat-form-field class="form-control">
-                <mat-select placeholder="Stage" formControlName="stageTypeID" required>
-                  <mat-option *ngFor="let stageType of stageTypes" [value]="stageType.id">
-                    {{stageType.name}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+          <mat-form-field class="form-control">
+            <mat-select placeholder="Stage" formControlName="stageTypeID">
+              <mat-option *ngFor="let stageType of stageTypes" [value]="stageType.id">
+                {{stageType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="horizontal-form-container" formGroupName="riverConditions">
-            <mat-form-field class="comments-section">
-                <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
-            </mat-form-field>
+          <mat-form-field class="comments-section">
+            <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
+          </mat-form-field>
         </div>
         <br>
 
@@ -184,16 +189,15 @@
 
         <!-- UpstreamEndLocation & DownstreamEndLocation -->
         <div class="horizontal-form-container" formGroupName="weatherConditions">
-            <label class="form-control">
-                Date Time:
-                <input formControlName="dateTime" placeholder="Date Time:"
-                       [(ngModel)]="dateTimeWeather"
-                       [owlDateTimeTrigger]="dt3" [owlDateTime]="dt3">
-                <owl-date-time #dt3></owl-date-time>
-            </label>
-          </div>
+          <label class="form-control">
+            Date Time:
+            <input formControlName="dateTime" placeholder="Date Time:" [(ngModel)]="dateTimeWeather"
+              [owlDateTimeTrigger]="dt3" [owlDateTime]="dt3">
+            <owl-date-time #dt3></owl-date-time>
+          </label>
+        </div>
 
-            <div class="horizontal-form-container" formGroupName="weatherConditions">
+        <div class="horizontal-form-container" formGroupName="weatherConditions">
           <mat-form-field class="form-control">
             <mat-select placeholder="Weather Condition" formControlName="weatherConditionTypeID">
               <mat-option *ngFor="let WeatherConditionType of WeatherConditionTypes" [value]="WeatherConditionType.id">
@@ -204,7 +208,7 @@
         </div>
 
         <div class="horizontal-form-container" formGroupName="weatherConditions">
-        <mat-form-field class="form-control-shortest">
+          <mat-form-field class="form-control-shortest">
             <input matInput placeholder="Measurement" formControlName="measurement">
           </mat-form-field>
 
@@ -222,48 +226,48 @@
         </div>
 
         <div class="horizontal-form-container" formGroupName="weatherConditions">
-            <mat-form-field class="comments-section">
-                <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
-            </mat-form-field>
+          <mat-form-field class="comments-section">
+            <textarea matInput placeholder="Comments" formControlName="comments"></textarea>
+          </mat-form-field>
         </div>
 
         <h4>Damages</h4>
 
         <div class="horizontal-form-container" formGroupName="damages">
-            <label class="form-control">
-                Date Time:
-                <input formControlName="dateTimeReported" placeholder="Date Time:"
-                       [(ngModel)]="dateTimeDamages"
-                       [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4">
-                <owl-date-time #dt4></owl-date-time>
-            </label>
-          </div>
-          
-          <div class="horizontal-form-container" formGroupName="damages">
+          <label class="form-control">
+            Date Time:
+            <input formControlName="dateTimeReported" placeholder="Date Time:" [(ngModel)]="dateTimeDamages"
+              [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4">
+            <owl-date-time #dt4></owl-date-time>
+          </label>
+        </div>
+
+        <div class="horizontal-form-container" formGroupName="damages">
           <mat-form-field class="form-control">
-              <mat-select placeholder="Damage types" formControlName="damageTypeID">
-                <mat-option *ngFor="let damageType of damageTypes" [value]="damageType.id">
-                  {{damageType.name}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <mat-select placeholder="Damage types" formControlName="damageTypeID">
+              <mat-option *ngFor="let damageType of damageTypes" [value]="damageType.id">
+                {{damageType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="horizontal-form-container" formGroupName="damages">
-            <mat-form-field class="comments-section">
-                <textarea matInput placeholder="Description" formControlName="description"></textarea>
-              </mat-form-field>
+          <mat-form-field class="comments-section">
+            <textarea matInput placeholder="Description" formControlName="description"></textarea>
+          </mat-form-field>
         </div>
       </form>
       <hr>
-        <div style="text-align: center;">
-          <button mat-raised-button color="accent" style="font-weight: bold;" (click)="submitEvent(eventSubmissionForm.value)">Submit Ice Jam Event</button>
-        </div>
+      <div style="text-align: center;">
+        <button mat-raised-button color="accent" style="font-weight: bold;" [disabled]="eventSubmissionForm.invalid" (click)="submitEvent(eventSubmissionForm.value)">Submit
+          Site Visit</button>
+      </div>
 
-      <div class="temporary-form-value-display ">
+      <!-- <div class="temporary-form-value-display ">
         <h3>Temporary Form Value display (not for production)</h3>
         <p>Form Event (ice jam):
           <pre> {{eventSubmissionForm.value | json}} </pre>
-      </div>
+      </div> -->
       <!-- </mat-card-content> -->
     </mat-card>
   </div>
