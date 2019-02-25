@@ -81,6 +81,7 @@ export interface StateAbbreviations {
 })
 export class EventSubmissionComponent implements OnInit {
     siteid: string;
+    siteName: string;
     observerID: string;
     eventSubmissionForm: FormGroup;
     eventResults: IceJam[];
@@ -538,9 +539,11 @@ export class EventSubmissionComponent implements OnInit {
 
         // selected site is stored in session storage on the home page.
         this.siteid = sessionStorage.getItem('selectedSite');
+        this.siteName = sessionStorage.getItem('selectedSiteName');
         this.observerID = sessionStorage.getItem('observerID');
 
         this.eventSubmissionForm.get('siteID').setValue(this.siteid);
+        this.eventSubmissionForm.get('name').setValue(this.siteName);
         this.eventSubmissionForm.get('observerID').setValue(this.observerID);
     }
 

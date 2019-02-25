@@ -214,7 +214,6 @@ export class HomeComponent implements OnInit {
   } */
 
   mapResults(siteresults: any) {
-    console.log('we in it');
     // set/reset resultsMarker var to an empty array
     const markers = [];
     const iconClass = ' wmm-icon-diamond wmm-icon-white ';
@@ -250,8 +249,8 @@ export class HomeComponent implements OnInit {
               this.siteClicked = true;
               this.siteSelected = siteresults[sites]['id'];
               sessionStorage.setItem('selectedSite', JSON.stringify(this.siteSelected));
-              console.log(this.siteSelected);
               this.siteName = siteresults[sites]['name'];
+              sessionStorage.setItem('selectedSiteName', JSON.stringify(this.siteName));
               /* this.selectedSiteService.currentID = siteresults[sites]['id'];
               console.log(this.selectedSiteService.currentID); */
               this.eventService.getAllEvents()
