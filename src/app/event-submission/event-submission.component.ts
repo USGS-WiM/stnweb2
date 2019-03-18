@@ -706,7 +706,7 @@ export class EventSubmissionComponent implements OnInit {
                     this.openSnackBar('Error. Site Visit not Submitted. Error message: ' + error, 'OK', 8000);
 
                     // need to reload as formValue has changed
-                    setTimeout(this.refreshPage, 9000);
+                     setTimeout(this.refreshPage, 9000);
                 }
 
             );

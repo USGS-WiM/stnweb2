@@ -7,7 +7,7 @@ import { ConfirmComponent } from '../confirm/confirm.component';
 import { SiteService } from '../services/site.service';
 import { Site } from '../interfaces/site';
 import { MatSnackBar } from '@angular/material';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 export interface StateAbbreviations {
     name: string;
@@ -29,10 +29,12 @@ export class CreateSiteComponent implements OnInit {
     test: number;
     test1: number;
     submitLoading = false;
+    currentLocation: any = {};
 
     latitudePattern: RegExp = (/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
     longitudePattern: RegExp = (/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
-
+    lat;
+    long;
     // jamTypeResults: JamType[];
 
     stateAbbreviations: StateAbbreviations[] = [
@@ -286,7 +288,6 @@ export class CreateSiteComponent implements OnInit {
     }
 
     ngOnInit() {
-
         const coordsArray = this.formBuilder.group({
             lat: [null, Validators.pattern(this.latitudePattern)],
             long: [null, Validators.pattern(this.longitudePattern)]
@@ -300,7 +301,7 @@ export class CreateSiteComponent implements OnInit {
         this.addSiteForm = this.formBuilder.group({
             name: '',
             location: locationForm,
-            state: '',
+            state: new FormControl('', [Validators.required]),
             city: '',
             county: '',
             riverName: '',
@@ -317,10 +318,9 @@ export class CreateSiteComponent implements OnInit {
 
     openSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
-          duration: duration,
+            duration: duration,
         });
-      }
-
+    }
     changeState(e) {
 
         console.log(e);
@@ -328,6 +328,31 @@ export class CreateSiteComponent implements OnInit {
         console.log(this.addSiteForm);
     }
 
+    getLocation(): void {
+        if (window.navigator.geolocation) {
+          window.navigator.geolocation.getCurrentPosition(
+            (position) => {
+              // "this" here in the weather service is seen however currentLocation is always ""
+              this.currentLocation = position.coords;
+              // shaving off one character so the current validator works
+              this.lat = this.currentLocation.latitude;
+              this.lat = this.lat.toString();
+              this.lat = this.lat.substring(0, 9);
+              // shaving off one character so the current validator works
+              this.long = this.currentLocation.longitude;
+              this.long = this.long.toString();
+              this.long = this.long.substring(0, 10);
+
+              // callback(position.coords);
+              this.addSiteForm.get(['location', 'coordinates']).get('lat').setValue(this.lat);
+              this.addSiteForm.get(['location', 'coordinates']).get('long').setValue(this.long);
+            },
+            (failure) => {
+                alert('Your browser does not support geolocation.');
+            }
+          );
+        }
+      }
 
     submitEvent(formValue) {
         this.submitLoading = true;

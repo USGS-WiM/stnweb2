@@ -13,17 +13,22 @@
 
     <div class="horizontal-form-container" formGroupName="location">
       <mat-form-field class="form-control" formGroupName="coordinates">
-        <input matInput placeholder="latitude" formControlName="lat" required>
+        <input id="lat" matInput placeholder="latitude" formControlName="lat" required>
         <!--  formControlName="latitude" -->
         <mat-error>Invalid
           latitude</mat-error>
       </mat-form-field>
       <mat-form-field class="form-control" formGroupName="coordinates">
-        <input matInput placeholder="longitude" formControlName="long" required>
+        <input id="long" matInput placeholder="longitude" formControlName="long" required>
         <!--  formControlName="latitude" -->
         <mat-error>Invalid
           longitude</mat-error>
       </mat-form-field>
+    </div>
+    <div class="horizontal-form-container" formGroupName="location">
+    <button mat-raised-button color="accent" type="submit" (click)="getLocation()">
+        &nbsp;Get Location
+      </button>
     </div>
 
     <div class="horizontal-form-container">
@@ -73,7 +78,7 @@
 
 
       <div class="form-buttons-flex center">
-        <button mat-button color="primary" type="submit" [disabled]="addSiteForm.invalid" (click)="submitEvent(addSiteForm.value)">
+        <button  mat-raised-button color="accent" type="submit" [disabled]="addSiteForm.invalid" (click)="submitEvent(addSiteForm.value)">
           &nbsp;Submit
         </button>
       </div>
