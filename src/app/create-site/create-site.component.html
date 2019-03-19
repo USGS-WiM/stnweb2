@@ -11,7 +11,7 @@
       <input matInput placeholder="Name" formControlName="name" required>
     </mat-form-field>
 
-    <div class="horizontal-form-container" formGroupName="location">
+    <div class="horizontal-form-container" formGroupName="location" style="display: block">
       <mat-form-field class="form-control" formGroupName="coordinates">
         <input id="lat" matInput placeholder="latitude" formControlName="lat" required>
         <!--  formControlName="latitude" -->
@@ -38,12 +38,9 @@
       <mat-form-field class="form-control-shortest">
         <input matInput placeholder="USGSID" formControlName="usgsid">
       </mat-form-field>
-      <mat-form-field class="form-control-shortest">
-        <input matInput placeholder="AHPSID" formControlName="ahpsid">
-      </mat-form-field>
     </div>
 
-    <div class="horizontal-form-container">
+    <div class="horizontal-form-container" style="display: block">
       <mat-form-field class="form-control-shortest">
         <mat-select placeholder="State" [formControl] name="stateAbbreviation" (selectionChange)="changeState($event.value)" required>
           <mat-option *ngFor="let stateAbbreviation of stateAbbreviations" [value]="stateAbbreviation.abbreviation">

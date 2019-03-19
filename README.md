@@ -42,9 +42,10 @@ Basic server with:
 npm run start
 ```
 ## Deployment
-
-ng build --prod --base-href to build a dist folder
-
+```
+ng build --prod --base-href
+```` 
+to build a dist folder
 ## Built With
 
 * [Angular](https://angular.io/) - The main web framework used
