@@ -50,6 +50,12 @@ $borderRadius: 4px;
                 z-index: 400;
                 left: 4%;
             }
+            @media only screen and (max-width: 600px) {
+                #newSiteButton {
+                    left: 15%;
+                    top: 8.5%;
+              }
+            }
         }
 
         #newIceJamButton {
@@ -202,4 +208,3 @@ $borderRadius: 4px;
   .example-tree-node .example-tree-node {
     padding-left: 40px;
   }
-  
