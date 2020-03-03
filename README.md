@@ -1,7 +1,7 @@
 ![WiM](wimlogo.png)
 
 
-# Ice Jams
+# Short Term Network
 
 One Paragraph of project description goes here
 

@@ -34,6 +34,9 @@ export class APPSETTINGS {
     public static get SITES_URL(): string { return this.API_ROOT + 'sites'; }
     public static get WEATHER_CONDITION_TYPES_URL(): string { return this.API_ROOT + 'weatherconditiontypes/'; }
 
+    // STN
+    public static get EVENTS(): string { return this.API_ROOT + 'Events'; }
+
     public static get AUTH_JSON_HEADERS() {
         return new Headers({
             'Authorization': 'Basic ' + btoa(sessionStorage.username + ':' + sessionStorage.password),

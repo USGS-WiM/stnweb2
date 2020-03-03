@@ -1,6 +1,6 @@
 [
   {
-    "name": "Ice Jams",
+    "name": "Short Term Network",
     "organization": "U.S. Geological Survey",
     "description": "Documents best practices for software development within WIM",
     "version": "v1.0.1",
@@ -39,7 +39,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2018-12-03"
+      "metadataLastUpdated": "2020-03-03"
     }
   }
 ]

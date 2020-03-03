@@ -3,6 +3,7 @@
 
 @import "./assets/styles/makers.css";
 @import "~ng-pick-datetime/assets/style/picker.min.css";
+@import "./app/app.variables.scss";
 
 body { 
     margin: 0px !important;
@@ -16,17 +17,118 @@ body {
 mat-icon {
     font-family: 'Material Icons' !important;
   }
-// $ice-jam-app-primary: mat-palette($mat-green, 900, 800, 700);
-// $ice-jam-app-accent:  mat-palette($mat-green, 700, 200, 500);
-// $ice-jam-app-warn:    mat-palette($mat-red);
 
-$ice-jam-app-primary: mat-palette($mat-blue-grey, 900, 500, 900); // #263238
-$ice-jam-app-accent:  mat-palette($mat-cyan, 100);
-$ice-jam-app-warn:    mat-palette($mat-red);
+// Remove padding around map
+#mapPanel .mat-expansion-panel-body{
+    padding: 0 !important;
+}
 
-$ice-jam-app-theme: mat-light-theme($ice-jam-app-primary, $ice-jam-app-accent, $ice-jam-app-warn);
+// Expansion Panels
+// Expansion Panels
+// Expansion Panels
+.mat-expansion-panel{
+    box-shadow: none !important;
 
-@include angular-material-theme($ice-jam-app-theme);
+    &:hover{
+        background-color: white !important;
+    }
+
+    .mat-expansion-panel-header{
+        font-size: 15px;
+        transition: $transition;
+        font-weight: 500;
+        padding: 0 15px;
+        font-weight: 700;
+        color: fade-out($black, 0.2);
+
+        .mat-expansion-panel-header-title{
+            color: fade-out($black, 0.2);
+            transition: $transition;
+
+            .mat-icon{
+                height: 18px;
+                width: 18px;
+                font-size: 17px;
+                text-decoration: none !important;
+            }
+        }
+    
+        &:not([aria-disabled=true]){
+            border-bottom: 1px solid $border-color;
+        }
+    
+        .mat-expansion-indicator{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 0 4px 0;
+            box-sizing: border-box;
+        }
+
+        &:hover{
+            text-decoration: underline;
+            color: $black;
+            transition: $transition;
+            background-color: white !important;
+            padding-right: 18px;
+
+            .mat-expansion-panel-header-title{
+                color: $black;
+                transition: $transition;
+            }
+        }
+    
+        // Expanded
+        &.mat-expanded{
+            color: $black;
+            &:hover{
+                color: fade-out($black, 0.2);
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // Panel Body
+    .mat-expansion-panel-body{
+        padding: 15px;
+        // background-color: $bg;
+        border-bottom: 1px solid $border-color;
+
+        // Paragraphs
+
+        p{
+            font-size: 13px;
+            line-height: 16px;
+            letter-spacing: 0.2px;
+            margin: 5px auto;
+            color: $text;
+
+            // Welcome text 
+            &#welcome-text{
+                line-height: 24px;
+            }
+        }
+    }
+
+    // Action / button row
+    .mat-action-row{
+        border-top: none;
+        border-bottom: 1px solid $border-color;
+        background-color: $bg;
+        margin-top: -1px;
+    }
+}
+// $stn-app-primary: mat-palette($mat-green, 900, 800, 700);
+// $stn-app-accent:  mat-palette($mat-green, 700, 200, 500);
+// $stn-app-warn:    mat-palette($mat-red);
+
+$stn-app-primary: mat-palette($mat-indigo, 900); // #263238
+$stn-app-accent:  mat-palette($mat-blue, 200);
+$stn-app-warn:    mat-palette($mat-red);
+
+$stn-app-theme: mat-light-theme($stn-app-primary, $stn-app-accent, $stn-app-warn);
+
+@include angular-material-theme($stn-app-theme);
 
 
 // styles.scss

@@ -3,36 +3,102 @@
     Main body wrapper 
     Main body wrapper 
   -->
-<div id="outer">
-  <div id="body">
+<div id="homeContainer">
+  <div class="controlsDiv">
+    <div id="welcome-panel-div">
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            STN
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
-    <!-- 
-      Sidebar
-      Sidebar
-     -->
-    <!-- <div id="sidebar">
+        <p id="welcome-text">
+          This is STN
+        </p>
 
-      <div style="text-align: center;">
-        <hr>
-        <h4>Show currently forming Ice Jams:</h4>
-        <mat-slide-toggle></mat-slide-toggle>
+
+        <p>
+          <!-- <b>
+            You are logged in as
+            <span style="font-style: italic;">{{currentUser.first_name}}{{currentUser.last_name}}</span>
+            ({{currentUser.username}})
+          </b> -->
+        </p>
+
+        <!-- User Role -->
+        <div>
+          <p>Interesting text.</p>
+        </div>
+
+
+      </mat-expansion-panel>
+    </div>
+
+    <mat-expansion-panel expanded id="sidebarSearchTab">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h3>Search</h3>
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div *ngIf="!currentDisplayQuery">
+        <span>Event: </span>
+        <span></span>
       </div>
+
+      <!-- Save search & Search button -->
+      <mat-action-row class="search-button-row">
+
+        <button mat-button color="accent" (click)="openSearchDialog()">
+          <mat-icon class="material-icons">search</mat-icon> Change Filter
+        </button>
+
+      </mat-action-row>
+
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded id="sidebarSearchTab">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h3>Important usage notes and instructions</h3>
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div>
+        <p>Many of the supplemental GIS data layers found in the map are from a range of sources and are not maintained by WiM. We offer these map layers as a decision support supplement to the STN sites layer, but we cannot guarantee their performance and availability. Many of these externally maintained layers are large datasets and may load slowly depending on network latency. In some cases they may fail to load entirely when network latency is high.</p>
+        <p>Many of these outside layers are maintained by NOAA. <a href="https://www.lstsrv.ncep.noaa.gov/mailman/listinfo/ncep.list.idp-gis-status">Click here</a> to subscribe to a NOAA email list for GIS service status updates.</p>
+      </div>
+
+    </mat-expansion-panel>
+
+  </div><!-- End Main Body Wrapper-->
+  <div class="resultsDiv">
+    <!-- Results Loading Shade -->
+    <!-- Covers map and results, not sidebar -->
+    <!-- <div class="data-loading-shade">
+      <mat-spinner></mat-spinner>
     </div> -->
-    <!-- End Sidebar -->
 
+    <mat-expansion-panel expanded id="mapPanel">
+      <mat-expansion-panel-header>
+        <mat-panel-title id="resultsMapHeader">
+          Map
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <!-- 
-      Content 
-      Content 
-      Content 
-    -->
-    <main>
 
       <!-- Map -->
       <div id="map">
         <div id="latLngScale" class="latLngScale">
           <span class="hover-content"> <b>Map scale </b></span>
-          1:<span id="scale">{{mapScale}}</span> | <span class="hover-content"> <b>Zoom level </b></span> <span id="zoomLevel">
+          1:<span id="scale">{{mapScale}}</span> | <span class="hover-content"> <b>Zoom level </b></span> <span
+            id="zoomLevel">
             {{zoomLevel}}</span><br>
           <span class="hover-content"><b>Latitude</b></span>
           <span id="latitude"> {{latitude}}</span> |
@@ -41,240 +107,55 @@
           <span id="mapCenterLabel" class="hover-content"></span>
         </div>
       </div>
+    </mat-expansion-panel>
 
-      <span *ngIf="currentUser.username != ''">
-        <a mat-raised-button color="accent" id="newSiteButton" style="font-weight: bold;" routerLink="/addSite">
-          <mat-icon>add</mat-icon>New Site
-        </a>
-      </span>
+    <mat-card>
+      <mat-card-title>
 
-      <div class="block">
+        <div class="results-card-title-row">
+          <span class="results-card-title">Filter Results</span>
 
-        <span *ngIf="!siteSelected">
-          <div class="help-text">
-            <mat-icon class="icon">info_outline</mat-icon>
-            Select a site on the map to see a list of Ice Jam events at that site.
-          </div>
-        </span>
-        <span *ngIf="siteSelected">
-          <div class="help-text">
-            {{ this.siteName }}
-            <span *ngIf="currentUser.username != ''">
-              <a mat-raised-button color="accent" id="newIceJamButton" style="font-weight: bold;" routerLink="/addEvent"
-                *ngIf="siteClicked">
-                <mat-icon>add</mat-icon>New Site Visit
-              </a>
-            </span>
-          </div>
-        </span>
-        <span *ngIf="siteSelected && sitevisits?.length === 0">
-          <div class="help-text">
-            There are no Ice Jam site visits associated with this site.
-          </div>
-        </span>
-        <mat-accordion style="overflow-y: auto">
-          <mat-spinner *ngIf="eventsLoading" [diameter]="20"></mat-spinner>
-          <mat-expansion-panel *ngFor="let event of sitevisits">
-            <mat-expansion-panel-header>
-              <b>Ice Jam Date: </b> &nbsp;{{event.observationDateTime | date }}
-            </mat-expansion-panel-header>
-            <b>Description: </b>{{event.description || 'n/a' }}<br>
-            <b>Comments: </b>{{event.comments || 'n/a' }}<br>
-            <span><b>Jam Type: </b>{{event.type.name || 'n/a' }}<br></span>
+          <span class="spacer"></span>
 
-            <!-- RIVER -->
-            <span *ngIf="event.riverConditions">
-              <h3>River Conditions</h3>
-              <div class="mat-table">
-                <div class="mat-header-row">
-                  <div class="mat-header-cell">Date</div>
-                  <div class="mat-header-cell">River Condition</div>
-                  <div class="mat-header-cell">Stage</div>
-                  <div class="mat-header-cell">Is Changing?</div>
-                  <div class="mat-header-cell">Measurement</div>
-                  <div class="mat-header-cell">Comments</div>
+        </div>
+      </mat-card-title>
+      <mat-card-content>
 
-                </div>
-                <span *ngFor="let riverCondition of event.riverConditions; let i = index">
-                  <div class="mat-row">
-                    <div class="mat-cell">{{(riverCondition.dateTime | date: 'EEEE, MMMM d, h:mm') || 'n/a' }}</div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="riverCondition.riverConditionTypeID">
-                        <span *ngSwitchCase="1">Bankfull</span>
-                        <span *ngSwitchCase="2">Flooding</span>
-                        <span *ngSwitchCase="false">n/a</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="riverCondition.stageTypeID">
-                        <span *ngSwitchCase="1">Drop down</span>
-                        <span *ngSwitchCase="2">Gage reading</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="riverCondition.isChanging">
-                        <span *ngSwitchCase="true">Yes</span>
-                        <span *ngSwitchCase="false">No</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">{{ riverCondition.measurement || 'n/a'}}</div>
-                    <div class="mat-cell">{{ riverCondition.comments || 'n/a'}}</div>
-                  </div>
-                </span>
-              </div>
-            </span>
+        <div *ngIf="dataSource" class="results-table-div">
 
-            <!-- ICE -->
-            <span *ngIf="event.iceConditions">
-              <h3>Ice Conditions</h3>
-              <div class="mat-table">
-                <div class="mat-header-row">
-                  <div class="mat-header-cell">Date</div>
-                  <div class="mat-header-cell">Ice Condition</div>
-                  <div class="mat-header-cell">Measurement</div>
-                  <div class="mat-header-cell">Is Estimated?</div>
-                  <div class="mat-header-cell">Is Changing?</div>
-                  <div class="mat-header-cell">Comments</div>
-                  <div class="mat-header-cell">Upstream End Location</div>
-                  <div class="mat-header-cell">Downstream End Location</div>
-                  <div class="mat-header-cell">Roughness</div>
-                </div>
-                <span *ngFor="let iceCondition of event.iceConditions; let i = index">
-                  <div class="mat-row">
-                    <div class="mat-cell">{{(iceCondition.dateTime | date: 'EEEE, MMMM d, h:mm') || 'n/a' }}</div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="iceCondition.iceConditionTypeID">
-                        <span *ngSwitchCase="1">Ice decaying</span>
-                        <span *ngSwitchCase="2">showing signs of melting</span>
-                        <span *ngSwitchCase="3">Ice showing signs of melting</span>
-                        <span *ngSwitchCase="4">Ice showing signs of candling</span>
-                        <span *ngSwitchCase="5">Ice showing signs of cracking</span>
-                        <span *ngSwitchCase="7">Ice showing signs of candling</span>
-                        <span *ngSwitchCase="false">Ice showing signs of breakup</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">{{iceCondition.measurement || 'n/a'}}</div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="iceCondition.isEstimated">
-                        <span *ngSwitchCase="true">Yes</span>
-                        <span *ngSwitchCase="false">No</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="iceCondition.isChanging">
-                        <span *ngSwitchCase="true">Yes</span>
-                        <span *ngSwitchCase="false">No</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">{{iceCondition.comments || 'n/a'}}</div>
-                    <div class="mat-cell">{{iceCondition.upstreamEndLocation.coordinates[1] || 'n/a'}},
-                      {{iceCondition.upstreamEndLocation.coordinates[0]}}</div>
-                    <div class="mat-cell">{{iceCondition.downstreamEndLocation.coordinates[1] || 'n/a'}},
-                      {{iceCondition.downstreamEndLocation.coordinates[0]}}</div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="iceCondition.roughnessTypeID">
-                        <span *ngSwitchCase="1">Smooth</span>
-                        <span *ngSwitchCase="2"> &#60; 0.5 </span>
-                        <span *ngSwitchCase="3"> &#60; 1.0 </span>
-                        <span *ngSwitchCase="4"> &#60; 1.5 </span>
-                        <span *ngSwitchCase="5"> &#62; 1.5 </span>
-                        <span *ngSwitchDefault>n/a </span>
-                      </span>
-                    </div>
-                  </div>
-                </span>
-              </div>
-            </span>
+          <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <!-- Position Column -->
+            <ng-container matColumnDef="position">
+              <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
+            </ng-container>
+          
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            </ng-container>
+          
+            <!-- Weight Column -->
+            <ng-container matColumnDef="weight">
+              <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.weight}} </mat-cell>
+            </ng-container>
+          
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="symbol">
+              <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
+            </ng-container>
+          
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
 
-            <!-- WEATHER -->
-            <span *ngIf="event.weatherConditions">
-              <h3>Weather Conditions</h3>
-              <div class="mat-table">
-                <div class="mat-header-row">
-                  <div class="mat-header-cell">Date</div>
-                  <div class="mat-header-cell">Condition</div>
-                  <div class="mat-header-cell">Is Estimated?</div>
-                  <div class="mat-header-cell">Is Changing?</div>
-                  <div class="mat-header-cell">Measurement</div>
-                  <div class="mat-header-cell">Comments</div>
+          <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
-                </div>
-                <span *ngFor="let weatherCondition of event.weatherConditions; let i = index">
-                  <div class="mat-row">
-                    <div class="mat-cell">{{(weatherCondition.dateTime | date) || 'n/a' }}</div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="weatherCondition.weatherConditionTypeID">
-                        <span *ngSwitchCase="1">Water Temperature (F)</span>
-                        <span *ngSwitchCase="2">Air Temperature (F)</span>
-                        <span *ngSwitchCase="3">Rain</span>
-                        <span *ngSwitchCase="4">Snow depth (in)</span>
-                        <span *ngSwitchCase="5">Air Temperature (F)</span>
-                        <span *ngSwitchCase="6">Wind Direction</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="weatherCondition.isEstimated">
-                        <span *ngSwitchCase="true">Yes</span>
-                        <span *ngSwitchCase="false">No</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="weatherCondition.isChanging">
-                        <span *ngSwitchCase="true">Yes</span>
-                        <span *ngSwitchCase="false">No</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">{{ weatherCondition.measurement || 'n/a'}}</div>
-                    <div class="mat-cell">{{ weatherCondition.comments || 'n/a'}}</div>
-                  </div>
-                </span>
-              </div>
-            </span>
-
-            <!-- DAMAGES -->
-            <span *ngIf="event.damages">
-              <h3>Damages</h3>
-              <div class="mat-table">
-                <div class="mat-header-row">
-                  <div class="mat-header-cell">Date</div>
-                  <div class="mat-header-cell">Damage Type</div>
-                  <div class="mat-header-cell">Description</div>
-                </div>
-                <span *ngFor="let damage of event.damages; let i = index">
-                  <div class="mat-row">
-                    <div class="mat-cell">{{(damage.dateTimeReported | date: 'EEEE, MMMM d, h:mm') || 'n/a' }}</div>
-                    <div class="mat-cell">
-                      <span [ngSwitch]="damage.damageTypeID">
-                        <span *ngSwitchCase="1">Flooding</span>
-                        <span *ngSwitchCase="2">Infrastructure</span>
-                        <span *ngSwitchCase="3">Mortality</span>
-                        <span *ngSwitchCase="4">Property</span>
-                        <span *ngSwitchCase="5">Other</span>
-                        <span *ngSwitchDefault>n/a</span>
-                      </span>
-                    </div>
-                    <div class="mat-cell">{{ damage.description || 'n/a'}}</div>
-                  </div>
-                </span>
-              </div>
-            </span>
-          </mat-expansion-panel>
-
-        </mat-accordion>
-      </div>
-
-
-    </main> <!-- End Main Content -->
-
-
-  </div><!-- End Main Body Wrapper-->
+  </div>
 </div>

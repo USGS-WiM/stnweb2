@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   hmr: false,
-  api_root: 'https://icejams.wim.usgs.gov/' // add service endpoint once they're ready
+  api_root: 'https://stn.wim.usgs.gov/STNServices/' // add service endpoint once they're ready
 };
 
 /*

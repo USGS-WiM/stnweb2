@@ -1,7 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { EventSubmissionComponent } from '../event-submission/event-submission.component';
-import {NestedTreeControl} from '@angular/cdk/tree';
-import {ArrayDataSource} from '@angular/cdk/collections';
 import {SelectedSiteService} from '../services/selected-site.service';
 import {CurrentUserService} from '../services/current-user.service';
 
@@ -10,12 +7,33 @@ import * as L from 'leaflet';
 // import { IceJam } from '@app/interfaces/ice-jam';
 // import { IceJamService } from '../services/ice-jam.service';
 import { Site } from '../interfaces/site';
+import { Events } from '../interfaces/events';
 import { IceJam } from '../interfaces/ice-jam';
-import { SiteService } from '../services/site.service';
+import { EventsService } from '../services/events.service';
 import { IceJamService } from '../services/ice-jam.service';
 import { APPSETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
+
+export interface PeriodicElement {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
+}
+
+const ELEMENT_DATA: PeriodicElement[] = [
+  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
+  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
+  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
+  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
+  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
+  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
+  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
+  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
+  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
+  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
+];
 
 @Component({
   selector: 'app-home',
@@ -30,11 +48,18 @@ export class HomeComponent implements OnInit {
   icon;
   isloggedIn = APPSETTINGS.IS_LOGGEDIN;
 
+  // dummy data
+  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  dataSource = ELEMENT_DATA;
+
   // events = [];
   sites = [];
   siteSelected;
   siteClicked = false;
   siteName;
+
+  currentEvent = 7;
+  eventSites: any;
 
   mapScale;
   latitude;
@@ -48,59 +73,29 @@ export class HomeComponent implements OnInit {
   markers;
 
   eventresults: IceJam[]; // sitevisits
-  siteresults: Site[];
-  sitevisits: any;
-  eventSites: any;
+  events: Events[];
   // @Input() eventmod: EventSubmissionComponent;
 
   constructor(
-    private siteService: SiteService,
-    private eventService: IceJamService,
+    private eventsService: EventsService,
+    // private eventService: IceJamService,
     private selectedSiteService: SelectedSiteService,
     public currentUserService: CurrentUserService
   ) {
 
-    this.siteService.getAllSites()
-      .subscribe(siteresults => {
-        this.siteresults = siteresults;
-        this.mapResults(this.siteresults);
+    this.eventsService.getAllEvents()
+      .subscribe(results => {
+        this.events = results;
+        // this.mapResults(this.events);
       });
 
-      selectedSiteService.currentID.subscribe(siteid => {
-        this.siteid = siteid;
-        });
-
-      currentUserService.currentUser.subscribe(user => {
-        this.currentUser = user;
+    // TODO: by default populate map with most recent event
+    this.eventsService.getEventSites(this.currentEvent)
+      .subscribe(results => {
+        this.eventSites = results;
+        this.mapResults(this.eventSites);
       });
 
-    /* this.eventService.getAllEvents()
-      .subscribe(eventresults => {
-          this.eventresults = eventresults;
-          // Need to further refine at some point so that it's only pulling all sites for events during a winter season
-
-          if (eventresults.length >= 0) {
-            this.siteService.getAllSites()
-            .subscribe(siteresults => {
-                this.siteresults = siteresults;
-                  // grabbing all the sites for each event
-                  // after grabbing the sites we combine all fields into 1 array. This is used to populate the popup
-                  const ret = [];
-                  this.eventresults.forEach((itm, i) => {
-                    ret.push(Object.assign({}, itm, this.siteresults[i]));
-                    this.eventSites = ret;
-                  });
-                  console.log(this.eventSites);
-                  // console.log(this.mergeEventSites(this.eventresults, this.siteresults));
-                  this.mapResults(this.eventSites);
-              });
-          }
-        },
-        error => {
-          this.errorMessage = <any>error;
-          // this.openSnackBar('Query failed due to web service error. Please try again later.', 'OK', 8000);
-        }
-      ); */
   }
 
   ngOnInit() {
@@ -121,7 +116,7 @@ export class HomeComponent implements OnInit {
     this.map = new L.Map('map', {
       center: new L.LatLng(39.8283, -98.5795),
       zoom: 4,
-      layers: [osm]
+      layers: [grayscale]
     });
     /* this.markers = L.featureGroup().addTo(this.map); */
 
@@ -213,7 +208,7 @@ export class HomeComponent implements OnInit {
     return ret;
   } */
 
-  mapResults(siteresults: any) {
+  mapResults(eventSites: any) {
     // set/reset resultsMarker var to an empty array
     const markers = [];
     const iconClass = ' wmm-icon-diamond wmm-icon-white ';
@@ -221,48 +216,46 @@ export class HomeComponent implements OnInit {
 
     // tslint:disable-next-line:forin
     // loop through results repsonse from a search query
-    for (const sites in this.siteresults) {
-      if (sites.length > 0) {
-        const lat = Number(this.siteresults[sites]['location']['coordinates']['0']);
-        const long = Number(this.siteresults[sites]['location']['coordinates']['1']);
+    if (this.eventSites.length !== undefined ) {
+    for (const site of this.eventSites) {
+        const lat = Number(site.latitude_dd);
+        const long = Number(site.longitude_dd);
 
         const myicon = L.divIcon({
           className: ' wmm-pin wmm-B2EBF2 wmm-icon-circle wmm-icon-white wmm-size-25'
         });
 
-        let popupContent = '';
+        /* let popupContent = '';
 
-        popupContent = popupContent + '<h3>' + String(siteresults[sites]['name']) + '</h3>' +
-          '<span class="popupLabel"><b>State</b>:</span> ' + String(siteresults[sites]['state']) + '<br/>' +
-          '<span class="popupLabel"><b>County</b>:</span> ' + String(siteresults[sites]['county']) + '<br/>' +
-          '<span class="popupLabel"><b>River</b>:</span> ' + String(siteresults[sites]['riverName']) + '<br/>' +
-          '<span class="popupLabel"><b>USGSID</b>:</span> ' + String(siteresults[sites]['usgsid']);
+        popupContent = popupContent + '<h3>' + String(eventSites[site]['name']) + '</h3>' +
+          '<span class="popupLabel"><b>State</b>:</span> ' + String(eventSites[site]['state']) + '<br/>' +
+          '<span class="popupLabel"><b>County</b>:</span> ' + String(eventSites[site]['county']) + '<br/>' +
+          '<span class="popupLabel"><b>River</b>:</span> ' + String(eventSites[site]['riverName']) + '<br/>' +
+          '<span class="popupLabel"><b>USGSID</b>:</span> ' + String(eventSites[site]['usgsid']);
 
         const popup = L.popup()
-          .setContent(popupContent);
+          .setContent(popupContent); */
 
         L.marker([lat, long], { icon: myicon })
           .addTo(this.map)
-          .bindPopup(popup)
+          /* .bindPopup(popup)
           .on('click',
             (data) => {
               this.siteClicked = true;
-              this.siteSelected = siteresults[sites]['id'];
+              this.siteSelected = eventSites[sites]['id'];
               sessionStorage.setItem('selectedSite', JSON.stringify(this.siteSelected));
-              this.siteName = siteresults[sites]['name'];
+              this.siteName = eventSites[sites]['name'];
               sessionStorage.setItem('selectedSiteName', JSON.stringify(this.siteName));
-              /* this.selectedSiteService.currentID = siteresults[sites]['id'];
-              console.log(this.selectedSiteService.currentID); */
-              this.eventService.getAllEvents()
+              this.eventSites.getAllEvents()
               .subscribe(eventresults => {
                 this.eventresults = eventresults;
                 console.log(eventresults);
-                this.sitevisits = eventresults.filter(event => event['siteID'] === this.siteSelected);
-                console.log(this.sitevisits);
+                this.eventSites = eventresults.filter(event => event['siteID'] === this.siteSelected);
+                console.log(this.eventSites);
               });
               // this.eventsLoading = false;
-            });
-      }
+            }); */
+          }
     }
   }
 
