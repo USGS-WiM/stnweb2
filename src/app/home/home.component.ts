@@ -1,6 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import {SelectedSiteService} from '../services/selected-site.service';
 import {CurrentUserService} from '../services/current-user.service';
+import { FiltersComponent } from '../filters/filters.component';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
+import { FilterQuery } from '../interfaces/filter-query';
 
 
 import * as L from 'leaflet';
@@ -48,6 +52,10 @@ export class HomeComponent implements OnInit {
   icon;
   isloggedIn = APPSETTINGS.IS_LOGGEDIN;
 
+  filtersDialogRef: MatDialogRef<FiltersComponent>;
+
+  currentFilter = sessionStorage.getItem('currentFilter') ? JSON.parse(sessionStorage.getItem('currentFiler')) : APPSETTINGS.DEFAULT_FILTER_QUERY;
+
   // dummy data
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = ELEMENT_DATA;
@@ -59,6 +67,7 @@ export class HomeComponent implements OnInit {
   siteName;
 
   currentEvent = 7;
+  currentEventName = 'FEMA 2013 exercise';
   eventSites: any;
 
   mapScale;
@@ -80,7 +89,8 @@ export class HomeComponent implements OnInit {
     private eventsService: EventsService,
     // private eventService: IceJamService,
     private selectedSiteService: SelectedSiteService,
-    public currentUserService: CurrentUserService
+    public currentUserService: CurrentUserService,
+    private dialog: MatDialog,
   ) {
 
     this.eventsService.getAllEvents()
@@ -208,6 +218,17 @@ export class HomeComponent implements OnInit {
     return ret;
   } */
 
+  openSearchDialog() {
+    this.filtersDialogRef = this.dialog.open(FiltersComponent, {
+      minWidth: '60%',
+      data: {
+        filters: this.currentFilter
+        /* eventID: this.currentEvent,
+        event_name: this.currentEventName */
+      }
+    });
+  }
+
   mapResults(eventSites: any) {
     // set/reset resultsMarker var to an empty array
     const markers = [];
@@ -222,7 +243,7 @@ export class HomeComponent implements OnInit {
         const long = Number(site.longitude_dd);
 
         const myicon = L.divIcon({
-          className: ' wmm-pin wmm-B2EBF2 wmm-icon-circle wmm-icon-white wmm-size-25'
+          className: ' wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20'
         });
 
         /* let popupContent = '';
@@ -237,7 +258,7 @@ export class HomeComponent implements OnInit {
           .setContent(popupContent); */
 
         L.marker([lat, long], { icon: myicon })
-          .addTo(this.map)
+          .addTo(this.map);
           /* .bindPopup(popup)
           .on('click',
             (data) => {

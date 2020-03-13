@@ -38,14 +38,14 @@
     <mat-expansion-panel expanded id="sidebarSearchTab">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h3>Search</h3>
+          <h3>Map Filters</h3>
         </mat-panel-title>
         <mat-panel-description>
         </mat-panel-description>
       </mat-expansion-panel-header>
 
       <div *ngIf="!currentDisplayQuery">
-        <span>Event: </span>
+        <span>Event: {{currentEventName}}</span>
         <span></span>
       </div>
 

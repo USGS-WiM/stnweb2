@@ -69,6 +69,7 @@ import { WeatherConditionTypeService } from './services/weather-condition-type.s
 import { DamageTypeService } from './services/damage-type.service';
 import { CurrentUserService } from './services/current-user.service';
 import { IceConditionTypeService } from './services/ice-condition-type.service';
+import { FiltersComponent } from './filters/filters.component';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { IceConditionTypeService } from './services/ice-condition-type.service';
     RegistrationComponent,
     CreateSiteComponent,
     ConfirmComponent,
+    FiltersComponent,
   ],
   imports: [
     BrowserModule,
@@ -150,7 +152,8 @@ import { IceConditionTypeService } from './services/ice-condition-type.service';
     LoginComponent,
     RegistrationComponent,
     CreateSiteComponent,
-    ConfirmComponent
+    ConfirmComponent,
+    FiltersComponent
   ]
 })
 export class AppModule { }

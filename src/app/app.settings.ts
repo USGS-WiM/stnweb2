@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { Headers } from '@angular/http';
+import { FilterQuery } from './interfaces/filter-query';
 
 @Injectable()
 export class APPSETTINGS {
@@ -42,5 +43,19 @@ export class APPSETTINGS {
             'Authorization': 'Basic ' + btoa(sessionStorage.username + ':' + sessionStorage.password),
             'Accept': 'application/json', 'Content-Type': 'application/json'
         });
+    }
+
+    // default display query (display verison of search query above) for initial load of home page
+    public static get DEFAULT_DISPLAY_QUERY(): FilterQuery {
+        return {
+            'events': []
+        };
+    }
+
+    // default filter query (display verison of search query above) for initial load of home page
+    public static get DEFAULT_FILTER_QUERY() {
+        return {
+            'events': []
+        };
     }
 }
