@@ -1,9 +1,9 @@
 ![WiM](wimlogo.png)
 
 
-# Short Term Network
+# Short Term Network Web (STNWeb) v2
 
-One Paragraph of project description goes here
+2nd generation of STNWeb, the data entry and data management web application for the USGS Short Term Network high-water mark and storm tide sensor database.
 
 ### Prerequisites
 
