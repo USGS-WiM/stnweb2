@@ -14,9 +14,9 @@ name: Lint Code Base
 # Start the job on all push #
 #############################
 on:
-  push:
-    branches-ignore: [master]
-    # Remove the line above to run when pushing to master
+  # push:
+  #   branches-ignore: [master]
+  # Remove the line above to run when pushing to master
   pull_request:
     branches: [master]
 
@@ -51,6 +51,6 @@ jobs:
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
-          JAVASCRIPT_ES_CONFIG_FILE: .github/linters/.eslintrc.json
+          JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
           LINTER_RULES_PATH: .github/linters
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
