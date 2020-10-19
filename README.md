@@ -7,7 +7,7 @@
 
 ### Prerequisites
 
-Both the CLI and generated project have dependencies that require Node 6.9.0 or higher, together with NPM 3 or higher.
+[Node](https://nodejs.org/en/),[NPM](https://www.npmjs.com/), [Angular CLI](https://cli.angular.io/)
 
 ```
 npm install -g @angular/cli
@@ -19,33 +19,32 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+Clone the repo and `cd` to that directory
 
-```
-Clone the repo and cd to the folder
-```
-
+install dependencies:
 ```
 npm install
 ```
 
-## Building and testing
+### Development
 
-Serve files with hot module replacement (live reload):
-
-```
-npm run live
-```
-Basic server with:
+Serve application with live reload change detection:
 
 ```
-npm run start
+ng serve
 ```
-## Deployment
+
+### Building and testing
+
+to build a distribution folder for production:
 ```
-ng build --prod --base-href
+ng build --prod --base-href "[relative path to web server root]"
 ```` 
-to build a dist folder
+
+### Deployment
+
+TBD
+
 ## Built With
 
 * [Angular](https://angular.io/) - The main web framework used
@@ -59,9 +58,14 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the process for su
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](../../tags). 
 
+## Changelog
+
+All developers must maintain the Changelog located at root as CHANGELOG.md. This document serves as a portable history of changes to the codebase and is meant to complement Github release tags.  'Added', 'Changed', and 'Fixed' sections should be updated within the Unreleased header when creating a Pull Request. As releases are created, those sections will move down into respective release headers. 
+
 ## Authors
 
 Lauren Privette  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+Blake Draper - *Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
 See also the list of [contributors](../../graphs/contributors) who participated in this project.
 
