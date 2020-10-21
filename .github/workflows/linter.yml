@@ -52,6 +52,7 @@ jobs:
                   VALIDATE_ALL_CODEBASE: false
                   DEFAULT_BRANCH: dev
                   JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
-                  CSS_FILE_NAME: .styelintrc.json
+                  CSS_FILE_NAME: .stylelintrc.json
                   LINTER_RULES_PATH: .github/linters
+                  VALIDATE_CSS: false
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

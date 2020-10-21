@@ -1,5 +1,7 @@
 # Short Term Network Web (STNWeb) v2
 
+[![GitHub Super-Linter](https://github.com/USGS-WiM/stnweb2/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 ![WiM](wimlogo.png)
 
 2nd generation of STNWeb, the data entry and data management web application for the USGS Short Term Network high-water mark and storm tide sensor database.
