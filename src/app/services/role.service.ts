@@ -3,9 +3,8 @@ import { APPSETTINGS } from '../app.settings';
 import { Role } from '../interfaces/role';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class RoleService {
-
-  constructor() { }
+    constructor() {}
 }

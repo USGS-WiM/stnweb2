@@ -9,19 +9,19 @@ import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class IceConditionTypeService {
+    constructor(private _http: Http) {}
 
-  constructor(private _http: Http) { }
-
-  public getIceTypes(): Observable<IceConditionType[]> {
-    return this._http.get(APPSETTINGS.ICE_CONDITION_TYPES_URL)
-      .map((response: Response) => <IceConditionType[]>response.json())
-      .catch(this.handleError);
-  }
-  private handleError(error: Response) {
-    console.error(error);
-    return throwError(JSON.stringify(error.json()) || 'Server error');
-  }
+    public getIceTypes(): Observable<IceConditionType[]> {
+        return this._http
+            .get(APPSETTINGS.ICE_CONDITION_TYPES_URL)
+            .map((response: Response) => <IceConditionType[]>response.json())
+            .catch(this.handleError);
+    }
+    private handleError(error: Response) {
+        console.error(error);
+        return throwError(JSON.stringify(error.json()) || 'Server error');
+    }
 }

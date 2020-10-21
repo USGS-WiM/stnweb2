@@ -9,20 +9,20 @@ import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class JamTypeService {
+    constructor(private _http: Http) {}
 
-  constructor(private _http: Http) { }
+    public getJamTypes(): Observable<JamType[]> {
+        return this._http
+            .get(APPSETTINGS.JAM_TYPES_URL)
+            .map((response: Response) => <JamType[]>response.json())
+            .catch(this.handleError);
+    }
 
-  public getJamTypes(): Observable<JamType[]> {
-    return this._http.get(APPSETTINGS.JAM_TYPES_URL)
-      .map((response: Response) => <JamType[]>response.json())
-      .catch(this.handleError);
-  }
-
-  private handleError(error: Response) {
-    console.error(error);
-    return throwError(JSON.stringify(error.json()) || 'Server error');
-  }
+    private handleError(error: Response) {
+        console.error(error);
+        return throwError(JSON.stringify(error.json()) || 'Server error');
+    }
 }

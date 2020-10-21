@@ -3,9 +3,8 @@ import { APPSETTINGS } from '../app.settings';
 import { Observer } from '../interfaces/observer';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class ObserverService {
-
-  constructor() { }
+    constructor() {}
 }

@@ -3,9 +3,8 @@ import { APPSETTINGS } from '../app.settings';
 import { FileType } from '../interfaces/filetype';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class FiletypeService {
-
-  constructor() { }
+    constructor() {}
 }

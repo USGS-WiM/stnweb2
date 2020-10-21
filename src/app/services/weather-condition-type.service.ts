@@ -9,19 +9,21 @@ import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class WeatherConditionTypeService {
+    constructor(private _http: Http) {}
 
-  constructor(private _http: Http) { }
-
-  public getWeatherTypes(): Observable<WeatherConditionType[]> {
-    return this._http.get(APPSETTINGS.WEATHER_CONDITION_TYPES_URL)
-      .map((response: Response) => <WeatherConditionType[]>response.json())
-      .catch(this.handleError);
-  }
-  private handleError(error: Response) {
-    console.error(error);
-    return throwError(JSON.stringify(error.json()) || 'Server error');
-  }
+    public getWeatherTypes(): Observable<WeatherConditionType[]> {
+        return this._http
+            .get(APPSETTINGS.WEATHER_CONDITION_TYPES_URL)
+            .map(
+                (response: Response) => <WeatherConditionType[]>response.json()
+            )
+            .catch(this.handleError);
+    }
+    private handleError(error: Response) {
+        console.error(error);
+        return throwError(JSON.stringify(error.json()) || 'Server error');
+    }
 }

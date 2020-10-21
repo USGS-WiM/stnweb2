@@ -3,9 +3,8 @@ import { APPSETTINGS } from '../app.settings';
 import { WeatherCondition } from '../interfaces/weather-condition';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class WeatherConditionService {
-
-  constructor() { }
+    constructor() {}
 }

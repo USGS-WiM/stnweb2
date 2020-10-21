@@ -1,46 +1,45 @@
 .example-container {
     display: flex;
     flex-direction: column;
-  }
-  
-  .example-container > * {
-    width: 100%;
-  }
-  
-  .example-right-align {
-    text-align: right;
-  }
-  
-  input.example-right-align::-webkit-outer-spin-button,
-  input.example-right-align::-webkit-inner-spin-button {
-    display: none;
-  }
-  
-  input.example-right-align {
-    -moz-appearance: textfield;
-  }
+}
 
-  #registerButton {
+.example-container > * {
+    width: 100%;
+}
+
+.example-right-align {
+    text-align: right;
+}
+
+input.example-right-align::-webkit-outer-spin-button,
+input.example-right-align::-webkit-inner-spin-button {
+    display: none;
+}
+
+input.example-right-align {
+    -moz-appearance: textfield;
+}
+
+#registerButton {
     text-align: center;
     font-weight: bold;
-  }
+}
 
-  #cancelButton {
+#cancelButton {
     text-align: center;
     margin: 5%;
-    font-weight: bold
-  }
+    font-weight: bold;
+}
 
-  #signinButton {
+#signinButton {
     text-align: center;
     margin-bottom: 10%;
     font-weight: bold;
     /* width: 80px; */
-  }
+}
 
-  .loginorcancel {
+.loginorcancel {
     margin: 2%;
     font-weight: bold;
     /* width: 80px; */
-  }
-  
+}

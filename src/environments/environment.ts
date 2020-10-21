@@ -3,9 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  hmr: false,
-  api_root: 'https://stn.wim.usgs.gov/STNServices/' // add service endpoint once they're ready
+    production: false,
+    hmr: false,
+    api_root: 'https://stn.wim.usgs.gov/STNServices/', // add service endpoint once they're ready
 };
 
 /*

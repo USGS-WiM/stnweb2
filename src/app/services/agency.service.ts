@@ -3,9 +3,8 @@ import { APPSETTINGS } from '../app.settings';
 import { Agency } from '../interfaces/agency';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class AgencyService {
-
-  constructor() { }
+    constructor() {}
 }

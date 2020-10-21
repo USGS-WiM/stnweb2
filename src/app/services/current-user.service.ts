@@ -3,14 +3,12 @@ import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class CurrentUserService {
+    private userSource = new BehaviorSubject('None');
+    currentUser = this.userSource.asObservable();
 
-  private userSource = new BehaviorSubject('None');
-  currentUser = this.userSource.asObservable();
+    constructor() {}
 
-  constructor() { }
-
-  updateCurrentUser(user) {
-    this.userSource.next(user);
-  }
-
+    updateCurrentUser(user) {
+        this.userSource.next(user);
+    }
 }

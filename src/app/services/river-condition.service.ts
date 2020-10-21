@@ -3,9 +3,8 @@ import { APPSETTINGS } from '../app.settings';
 import { RiverCondition } from '../interfaces/river-condition';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class RiverConditionService {
-
-  constructor() { }
+    constructor() {}
 }

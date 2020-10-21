@@ -9,19 +9,19 @@ import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class DamageTypeService {
+    constructor(private _http: Http) {}
 
-  constructor(private _http: Http) { }
-
-  public getDamageTypes(): Observable<DamageType[]> {
-    return this._http.get(APPSETTINGS.DAMAGE_TYPES_URL)
-      .map((response: Response) => <DamageType[]>response.json())
-      .catch(this.handleError);
-  }
-  private handleError(error: Response) {
-    console.error(error);
-    return throwError(JSON.stringify(error.json()) || 'Server error');
-  }
+    public getDamageTypes(): Observable<DamageType[]> {
+        return this._http
+            .get(APPSETTINGS.DAMAGE_TYPES_URL)
+            .map((response: Response) => <DamageType[]>response.json())
+            .catch(this.handleError);
+    }
+    private handleError(error: Response) {
+        console.error(error);
+        return throwError(JSON.stringify(error.json()) || 'Server error');
+    }
 }

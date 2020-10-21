@@ -3,9 +3,8 @@ import { APPSETTINGS } from '../app.settings';
 import { User } from '../interfaces/user';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class UserService {
-
-  constructor() { }
+    constructor() {}
 }

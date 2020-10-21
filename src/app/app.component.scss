@@ -2,20 +2,17 @@
 // Do not add anything directly to this file.
 // Find the appropriate file within the /styles folder
 
-
 // Variables
 $black: #050920;
 $white: #fff;
-$bg: #F9FAFE;
-$red: #F23D47;
-$blue: #3E3BFB;
+$bg: #f9fafe;
+$red: #f23d47;
+$blue: #3e3bfb;
 
 $borderColor: fade-out($black, 0.85);
 
-
 $transition: 0.15s;
 $borderRadius: 4px;
-
 
 // Universal Imports
 @import '/styles/structure.scss';
@@ -39,9 +36,9 @@ $borderRadius: 4px;
 
 .navbar-spacer {
     flex: 1 1 auto;
-  }
+}
 
-footer#main{
+footer#main {
     position: absolute;
     left: 0;
     bottom: 0;
@@ -54,7 +51,7 @@ footer#main{
 @media only screen and (max-width: 600px) {
     .stn-header {
         visibility: hidden;
-  }
+    }
 }
 
 .stn-header {
@@ -64,7 +61,7 @@ footer#main{
     max-width: 100vw;
     overflow: hidden;
 
-    .stn-title{
+    .stn-title {
         color: white;
         padding-bottom: 5px;
         text-decoration: none;
@@ -73,52 +70,49 @@ footer#main{
         padding-left: 15px;
         display: flex;
 
-        .stn-logo{
+        .stn-logo {
             display: block;
             display: flex;
             flex-direction: column;
             justify-content: center;
 
-            img{
+            img {
                 display: block;
                 height: 28px;
                 width: auto;
                 margin-right: 2px;
             }
         }
-        span{
+        span {
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
     }
-            .stn-subtitle{
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                font-size: 16px;
-                font-weight: 100;
-                line-height: 18px;
-                padding-left: 15px;
-                padding-bottom: 5px;
-                box-sizing: border-box;
-                padding-top: 2px;
-                color: white;
+    .stn-subtitle {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 100;
+        line-height: 18px;
+        padding-left: 15px;
+        padding-bottom: 5px;
+        box-sizing: border-box;
+        padding-top: 2px;
+        color: white;
 
-                small{
-                    font-weight: 400;
-                    font-size: 13px;
-                    text-transform: capitalize;
-                }
-            }
-        
-
-        .nav-links{
-            box-sizing: border-box;
-            padding-bottom: 4px;
+        small {
+            font-weight: 400;
+            font-size: 13px;
+            text-transform: capitalize;
         }
-    
+    }
 
+    .nav-links {
+        box-sizing: border-box;
+        padding-bottom: 4px;
+    }
 
     // Header Bottom Row
     .toolbar-bottom-row {
@@ -129,67 +123,67 @@ footer#main{
 
         // App Alert
         .app-header-alert {
-            color: #F24D4D;
+            color: #f24d4d;
             font-size: 11px;
             font-weight: 600;
             white-space: normal;
             line-height: 11px;
 
-            b{
+            b {
                 font-weight: 900;
             }
-            a{
+            a {
                 color: $blue;
                 transition: $transition;
-                color: lighten(#F24D4D, 14%);
+                color: lighten(#f24d4d, 14%);
                 text-decoration: underline;
 
-                &:hover{
-                    color: lighten(#F24D4D, 22%);
+                &:hover {
+                    color: lighten(#f24d4d, 22%);
                     transition: $transition;
                 }
             }
         }
 
-        button{
+        button {
             box-sizing: border-box;
             height: 36px;
             position: relative;
             top: -2px;
 
-            span{
+            span {
                 font-size: 12px !important;
             }
 
             .icon,
-            i{
+            i {
                 margin-right: 3px;
             }
 
-            *{
+            * {
                 transition: $transition;
             }
 
-            &:hover{
+            &:hover {
                 cursor: pointer;
 
-                *{
+                * {
                     color: fade-out($white, 0.35);
                     transition: $transition;
                 }
             }
         }
 
-        .left{
+        .left {
             display: block;
             height: 100%;
         }
 
-        .right{
+        .right {
             display: block;
             height: 100%;
 
-            .login-status{
+            .login-status {
                 font-size: 14px;
                 padding: 0 5px 0 25px;
                 display: inline-block;
@@ -197,11 +191,8 @@ footer#main{
                 vertical-align: top;
                 line-height: 38px;
             }
-
         }
-
     }
-
 }
 
 .icicles {
@@ -209,13 +200,13 @@ footer#main{
     width: 20%;
 }
 
-.stn-logo{
+.stn-logo {
     display: block;
     display: flex;
     flex-direction: column;
     justify-content: center;
 
-    img{
+    img {
         display: block;
         height: 28px;
         width: auto;
