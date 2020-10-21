@@ -1,15 +1,14 @@
-![WiM](wimlogo.png)
-
-
 # Short Term Network Web (STNWeb) v2
+
+![WiM](wimlogo.png)
 
 2nd generation of STNWeb, the data entry and data management web application for the USGS Short Term Network high-water mark and storm tide sensor database.
 
-### Prerequisites
+## Prerequisites
 
-Both the CLI and generated project have dependencies that require Node 6.9.0 or higher, together with NPM 3 or higher.
+[Node](https://nodejs.org/en/),[NPM](https://www.npmjs.com/), [Angular CLI](https://cli.angular.io/)
 
-```
+```bash
 npm install -g @angular/cli
 ```
 
@@ -19,33 +18,34 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+Clone the repo and `cd` to that directory
 
-```
-Clone the repo and cd to the folder
-```
+install dependencies:
 
-```
+```bash
 npm install
 ```
 
-## Building and testing
+### Development
 
-Serve files with hot module replacement (live reload):
+Serve application with live reload change detection:
 
+```bash
+ng serve
 ```
-npm run live
-```
-Basic server with:
 
-```
-npm run start
-```
-## Deployment
-```
-ng build --prod --base-href
-```` 
-to build a dist folder
+### Building and testing
+
+to build a distribution folder for production:
+
+```bash
+ng build --prod --base-href "[relative path to web server root]"
+````
+
+### Deployment
+
+TBD
+
 ## Built With
 
 * [Angular](https://angular.io/) - The main web framework used
@@ -57,11 +57,16 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the process for su
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](../../tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](../../tags).
+
+## Changelog
+
+All developers must maintain the Changelog located at root as CHANGELOG.md. This document serves as a portable history of changes to the codebase and is meant to complement Github release tags.  'Added', 'Changed', and 'Fixed' sections should be updated within the Unreleased header when creating a Pull Request. As releases are created, those sections will move down into respective release headers.
 
 ## Authors
 
 Lauren Privette  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+Blake Draper - *Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
 See also the list of [contributors](../../graphs/contributors) who participated in this project.
 
@@ -70,6 +75,7 @@ See also the list of [contributors](../../graphs/contributors) who participated 
 This project is licensed under the Creative Commons CC0 1.0 Universal License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Suggested Citation
+
 In the spirit of open source, please cite any re-use of the source code stored in this repository. Below is the suggested citation:
 
 `This project contains code produced by the Web Informatics and Mapping (WIM) team at the United States Geological Survey (USGS). As a work of the United States Government, this project is in the public domain within the United States. https://wim.usgs.gov`
@@ -77,6 +83,7 @@ In the spirit of open source, please cite any re-use of the source code stored i
 ## Acknowledgments
 
 ## About WIM
+
 * This project authored by the [USGS WIM team](https://wim.usgs.gov)
 * WIM is a team of developers and technologists who build and manage tools, software, web services, and databases to support USGS science and other federal government cooperators.
 * WIM is a part of the [Upper Midwest Water Science Center](https://www.usgs.gov/centers/wisconsin-water-science-center).
