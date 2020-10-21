@@ -83,7 +83,6 @@ export class HomeComponent implements OnInit {
 
   eventresults: IceJam[]; // sitevisits
   events: Events[];
-  // @Input() eventmod: EventSubmissionComponent;
 
   constructor(
     private eventsService: EventsService,

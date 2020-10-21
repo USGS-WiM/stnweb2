@@ -8,7 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { EventSubmissionComponent } from './event-submission/event-submission.component';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 import { AboutComponent } from './about/about.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -59,7 +58,6 @@ import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { IceJamService } from './services/ice-jam.service';
 import { SiteService } from './services/site.service';
-import { CreateSiteComponent } from './create-site/create-site.component';
 import { JamTypeService } from './services/jam-type.service';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { SelectedSiteService } from './services/selected-site.service';
@@ -76,11 +74,9 @@ import { FiltersComponent } from './filters/filters.component';
     AppComponent,
     AboutComponent,
     HomeComponent,
-    EventSubmissionComponent,
     SearchDialogComponent,
     LoginComponent,
     RegistrationComponent,
-    CreateSiteComponent,
     ConfirmComponent,
     FiltersComponent,
   ],
@@ -151,7 +147,6 @@ import { FiltersComponent } from './filters/filters.component';
     AboutComponent,
     LoginComponent,
     RegistrationComponent,
-    CreateSiteComponent,
     ConfirmComponent,
     FiltersComponent
   ]

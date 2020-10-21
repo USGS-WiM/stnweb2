@@ -2,7 +2,7 @@
   <i class="material-icons">
     search
   </i> 
-  <span>Search WHISPers</span>
+  <span>Search the Short Term Network</span>
 </h1>
 
 
@@ -18,32 +18,21 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <b>Event(s)</b>
+            <b>Event</b>
           </mat-panel-title>
-          <mat-panel-description>
-            <span>
-              <div class="chiplist">
-                <mat-chip-list #eventChipList>
-                  <span *ngFor="let events of selectedEvents">
-                    <mat-chip [selectable]="selectable" [removable]="removable" (click)="stopPropagation($event)"
-                      (removed)="removeChip(events, selectedEvents, 'events')">{{event}}
-                      <mat-icon matChipRemove *ngIf="removable" (click)="stopPropagation($event)">cancel</mat-icon>
-                    </mat-chip>
-                    <span *ngIf="(selectedEvents.indexOf(event)) < (selectedEvents.length - 1)">and&nbsp;</span>
-                  </span>
-                </mat-chip-list>
-              </div>
-            </span>
-          </mat-panel-description>
         </mat-expansion-panel-header>
         <div>
           <div class="autocomplete-input">
-            <mat-form-field class="full-width">
-              <input type="text" matInput placeholder="Add Event" aria-label="Add Event" [matAutocomplete]="eventAutoComplete"
-                [formControl]="eventsControl" (valueChanges)="addChip($event, selectedEvents, 'events')">
-              <mat-autocomplete #eventAutoComplete="matAutocomplete" [displayWith]="displayFn" (optionSelected)="addChip($event, selectedEvents, 'events')">
-                <mat-option *ngFor="let events of filteredEvents | async" [value]="event_name">
-                  <span>{{ events.event_name }}</span>
+            <mat-form-field class="example-full-width">
+              <input type="text"
+                     placeholder="Event"
+                     aria-label="Event"
+                     matInput
+                     [formControl]="eventsControl"
+                     [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                  {{option}}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
