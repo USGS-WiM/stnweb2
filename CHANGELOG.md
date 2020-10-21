@@ -8,8 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/USGS-WiM/stnweb2/tree/dev)
 
 ### Added
+<<<<<<< HEAD
 
 -   Changelog added (CHANGELOG.md)
+=======
+- Added dialog for map filtering
+- Changelog added (CHANGELOG.md)
+>>>>>>> f53fea90fdf03c4714fe5e397cb2224d271e7de8
 
 ### Changed
 
