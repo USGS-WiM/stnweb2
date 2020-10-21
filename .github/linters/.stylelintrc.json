@@ -1,5 +1,6 @@
 {
     "rules": {
-        "indentation": false
+        "indentation": false,
+        "no-eol-whitespace": false
     }
 }

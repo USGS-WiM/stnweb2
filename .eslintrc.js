@@ -45,7 +45,7 @@ module.exports = {
                 accessibility: 'explicit',
             },
         ],
-        '@typescript-eslint/indent': 'error',
+        '@typescript-eslint/indent': 'warn',
         '@typescript-eslint/member-delimiter-style': [
             'error',
             {
@@ -102,6 +102,7 @@ module.exports = {
         'id-match': 'off',
         'import/no-deprecated': 'warn',
         'jsdoc/no-types': 'error',
+        'comma-dangle': 'only-multiline',
         'max-len': [
             'error',
             {
