@@ -14,11 +14,11 @@ name: Lint Code Base
 # Start the job on all push #
 #############################
 on:
-  # push:
-  #   branches-ignore: [master]
-  # Remove the line above to run when pushing to master
-  pull_request:
-    branches: [master,dev]
+    # push:
+    #   branches-ignore: [master]
+    # Remove the line above to run when pushing to master
+    pull_request:
+        branches: [dev]
 
 ###############
 # Set the Job #
@@ -43,7 +43,6 @@ jobs:
                   # Full git history is needed to get a proper list of changed files within `super-linter`
                   fetch-depth: 0
 
-<<<<<<< HEAD
             ################################
             # Run Linter against code base #
             ################################
@@ -51,20 +50,7 @@ jobs:
               uses: github/super-linter@v3
               env:
                   VALIDATE_ALL_CODEBASE: false
-                  DEFAULT_BRANCH: master
+                  DEFAULT_BRANCH: dev
                   JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
                   LINTER_RULES_PATH: .github/linters
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-=======
-      ################################
-      # Run Linter against code base #
-      ################################
-      - name: Lint Code Base
-        uses: github/super-linter@v3
-        env:
-          VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: dev
-          JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
-          LINTER_RULES_PATH: .github/linters
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
->>>>>>> f53fea90fdf03c4714fe5e397cb2224d271e7de8
