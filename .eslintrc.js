@@ -103,6 +103,7 @@ module.exports = {
         'import/no-deprecated': 'warn',
         'jsdoc/no-types': 'error',
         'comma-dangle': 'only-multiline',
+        indent: 'warn',
         'max-len': [
             'error',
             {
