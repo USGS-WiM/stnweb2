@@ -2,79 +2,104 @@
   <mat-icon></mat-icon>
 </h1>
 <mat-dialog-content>
-  <form [formGroup]="userRegistrationForm" class="registration-form" autocomplete="off">
+    <form
+        [formGroup]="userRegistrationForm"
+        class="registration-form"
+        autocomplete="off"
+    >
+        <div class="vertical-form-container">
+            <!-- Username -->
+            <mat-form-field class="form-control">
+                <input
+                    matInput
+                    placeholder="Username"
+                    formControlName="username"
+                />
+            </mat-form-field>
 
-    <div class="vertical-form-container">
+            <div class="horizontal-form-container">
+                <!-- First Name -->
+                <mat-form-field class="form-control">
+                    <input
+                        matInput
+                        placeholder="First Name"
+                        formControlName="first_name"
+                    />
+                </mat-form-field>
 
-      <!-- Username -->
-      <mat-form-field class="form-control">
-        <input matInput placeholder="Username" formControlName="username">
-      </mat-form-field>
+                <!-- Last Name -->
+                <mat-form-field class="form-control">
+                    <input
+                        matInput
+                        placeholder="Last Name"
+                        formControlName="last_name"
+                    />
+                </mat-form-field>
+            </div>
 
-      <div class="horizontal-form-container">
+            <div class="horizontal-form-container">
+                <!-- Email address -->
+                <mat-form-field class="form-control">
+                    <input
+                        matInput
+                        placeholder="Email Address"
+                        formControlName="email"
+                        required
+                    />
+                    <mat-error>{{ getErrorMessage('email') }}</mat-error>
+                </mat-form-field>
 
-        <!-- First Name -->
-        <mat-form-field class="form-control">
-          <input matInput placeholder="First Name" formControlName="first_name">
-        </mat-form-field>
+                <!-- Confirm Email address -->
+                <mat-form-field class="form-control">
+                    <input
+                        matInput
+                        placeholder="Confirm Email Address"
+                        formControlName="confirmEmail"
+                        required
+                    />
+                    <mat-error>{{ getErrorMessage('confirmEmail') }}</mat-error>
+                </mat-form-field>
+            </div>
 
-        <!-- Last Name -->
-        <mat-form-field class="form-control">
-          <input matInput placeholder="Last Name" formControlName="last_name">
-        </mat-form-field>
+            <div class="horizontal-form-container">
+                <!-- Password -->
+                <mat-form-field class="form-control">
+                    <input
+                        matInput
+                        type="password"
+                        placeholder="Password"
+                        formControlName="password"
+                    />
+                </mat-form-field>
+                <!-- Confirm Password -->
+                <mat-form-field class="form-control">
+                    <input
+                        matInput
+                        type="password"
+                        placeholder="Confirm Password"
+                        formControlName="confirmPassword"
+                    />
+                    <mat-error>Passwords do not match</mat-error>
+                </mat-form-field>
+            </div>
 
-      </div>
+            <mat-checkbox appearance="outline"
+                >I agree to the terms of use</mat-checkbox
+            >
 
-      <div class="horizontal-form-container">
-
-        <!-- Email address -->
-        <mat-form-field class="form-control">
-          <input matInput placeholder="Email Address" formControlName="email" required>
-          <mat-error>{{getErrorMessage('email')}}</mat-error>
-        </mat-form-field>
-
-        <!-- Confirm Email address -->
-        <mat-form-field class="form-control">
-          <input matInput placeholder="Confirm Email Address" formControlName="confirmEmail" required>
-          <mat-error>{{getErrorMessage('confirmEmail')}}</mat-error>
-        </mat-form-field>
-
-      </div>
-
-      <div class="horizontal-form-container">
-
-        <!-- Password -->
-        <mat-form-field class="form-control">
-          <input matInput type="password" placeholder="Password" formControlName="password">
-        </mat-form-field>
-        <!-- Confirm Password -->
-        <mat-form-field class="form-control">
-          <input matInput type="password" placeholder="Confirm Password" formControlName="confirmPassword">
-          <mat-error>Passwords do not match</mat-error>
-        </mat-form-field>
-
-      </div>
-
-      <mat-checkbox appearance="outline">I agree to the terms of use</mat-checkbox>
-
-      <div>
-        <h3>Disclaimer</h3>
-        <p>This is a prototype.</p>
-      </div>
-
-    </div>
-
-
-
-
-  </form>
+            <div>
+                <h3>Disclaimer</h3>
+                <p>This is a prototype.</p>
+            </div>
+        </div>
+    </form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <div class="detail-section-buttons">
-    <button mat-raised-button color="accent" type="submit">Submit
-    </button>
-    <button mat-stroked-button (click)="this.regDialogRef.close('cancel');">Cancel
-    </button>
-  </div>
+    <div class="detail-section-buttons">
+        <button mat-raised-button color="accent" type="submit">Submit</button>
+        <button mat-stroked-button (click)="this.regDialogRef.close('cancel')">
+            Cancel
+        </button>
+    </div>
 </mat-dialog-actions>

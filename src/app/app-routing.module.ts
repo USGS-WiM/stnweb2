@@ -17,4 +17,4 @@ const routes: Routes = [
 }) */
 /* export class AppRoutingModule { } */
 
-export const AppRoutingModule = RouterModule.forRoot(routes, {useHash: true}); // implements /#/
+export const AppRoutingModule = RouterModule.forRoot(routes, { useHash: true }); // implements /#/

@@ -1,5 +1,4 @@
-Contributing
-============
+# Contributing
 
 Contributions are welcome from the community. Questions can be asked on the
 [issues page][1]. Before creating a new issue, please take a moment to search
@@ -10,8 +9,6 @@ issue.
 If you have direct contributions you would like considered for incorporation
 into the project you can [fork this repository][2] and
 [submit a pull request][3] for review.
-
-
 
 [1]: ../../issues
 [2]: https://help.github.com/articles/fork-a-repo/

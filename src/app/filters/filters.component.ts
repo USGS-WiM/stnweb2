@@ -5,7 +5,6 @@ import { FormBuilder, FormControl, FormGroup, FormArray, Validators, PatternVali
 import { MatAutocompleteSelectedEvent, MatChipInputEvent, MatAutocompleteTrigger } from '@angular/material';
 import { Events } from '../interfaces/events';
 import { map, startWith } from 'rxjs/operators';
-import { SelectedSiteService } from '../services/selected-site.service';
 import { EventsService } from '../services/events.service';
 
 @Component({
@@ -32,7 +31,6 @@ export class FiltersComponent implements OnInit {
 
   constructor(
     private eventsService: EventsService,
-    private selectedSiteService: SelectedSiteService,
     public snackBar: MatSnackBar,
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any

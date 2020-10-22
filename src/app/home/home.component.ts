@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {SelectedSiteService} from '../services/selected-site.service';
 import {CurrentUserService} from '../services/current-user.service';
 import { FiltersComponent } from '../filters/filters.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -8,13 +7,10 @@ import { FilterQuery } from '../interfaces/filter-query';
 
 
 import * as L from 'leaflet';
-// import { IceJam } from '@app/interfaces/ice-jam';
-// import { IceJamService } from '../services/ice-jam.service';
 import { Site } from '../interfaces/site';
 import { Events } from '../interfaces/events';
 import { IceJam } from '../interfaces/ice-jam';
 import { EventsService } from '../services/events.service';
-import { IceJamService } from '../services/ice-jam.service';
 import { APPSETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
@@ -86,8 +82,6 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private eventsService: EventsService,
-    // private eventService: IceJamService,
-    private selectedSiteService: SelectedSiteService,
     public currentUserService: CurrentUserService,
     private dialog: MatDialog,
   ) {
