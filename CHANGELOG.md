@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Added dialog for map filtering
 -   Changelog added (CHANGELOG.md)
+-   Added github super-linter
 
 ### Changed
 
