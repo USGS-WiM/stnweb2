@@ -94,16 +94,16 @@ module.exports = {
         'arrow-body-style': 'error',
         'brace-style': ['error', '1tbs'],
         'constructor-super': 'error',
-        curly: 'error',
+        'curly': 'error',
         'eol-last': 'error',
-        eqeqeq: ['error', 'smart'],
+        'eqeqeq': ['error', 'smart'],
         'guard-for-in': 'error',
         'id-blacklist': 'off',
         'id-match': 'off',
         'import/no-deprecated': 'warn',
         'jsdoc/no-types': 'error',
         'comma-dangle': 'only-multiline',
-        indent: 'warn',
+        'indent': 'warn',
         'max-len': [
             'error',
             {
@@ -160,7 +160,7 @@ module.exports = {
         'no-unused-labels': 'error',
         'no-var': 'error',
         'prefer-const': 'error',
-        radix: 'error',
+        'radix': 'error',
         'spaced-comment': [
             'error',
             'always',
