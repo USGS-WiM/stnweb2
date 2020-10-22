@@ -1,22 +1,21 @@
 // Structure.scss
 // Scaffolding and flex styles for basic structure of page
 
-
-#outer{
+#outer {
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100vw;
     overflow: hidden;
 
-    header#main{
+    header#main {
         display: flex;
         height: 54px;
         min-height: 54px;
         width: 100%;
         background-color: $black;
     }
-    footer#main{
+    footer#main {
         position: absolute;
         left: 0;
         bottom: 0;
@@ -28,12 +27,11 @@
 
     // Body wrapper
     //  Includes sidebar and main content
-    #body{
+    #body {
         display: flex;
         flex-grow: 3;
 
-
-        #sidebar{
+        #sidebar {
             display: block;
             width: 280px;
             background-color: $white;
@@ -43,7 +41,7 @@
             overflow: auto;
         }
 
-        main{
+        main {
             display: block;
             flex-grow: 3;
             overflow: auto;

@@ -1,9 +1,21 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, FormArray, Validators, PatternValidator, AbstractControl } from '@angular/forms/';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    FormArray,
+    Validators,
+    PatternValidator,
+    AbstractControl,
+} from '@angular/forms/';
 import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
-import { MatBottomSheetModule, MatBottomSheet, MatBottomSheetRef } from '@angular/material';
+import {
+    MatBottomSheetModule,
+    MatBottomSheet,
+    MatBottomSheetRef,
+} from '@angular/material';
 import { CreateSiteComponent } from '../create-site/create-site.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
 
@@ -77,7 +89,7 @@ export interface StateAbbreviations {
 @Component({
     selector: 'app-event-submission',
     templateUrl: './event-submission.component.html',
-    styleUrls: ['./event-submission.component.scss']
+    styleUrls: ['./event-submission.component.scss'],
 })
 export class EventSubmissionComponent implements OnInit {
     siteid: string;
@@ -122,246 +134,246 @@ export class EventSubmissionComponent implements OnInit {
     /* latitude: [null, Validators.pattern(this.latitudePattern)]
     longitude: [null, Validators.pattern(this.longitudePattern)] */
 
-    latitudePattern: RegExp = (/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
-    longitudePattern: RegExp = (/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+    latitudePattern: RegExp = /^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/;
+    longitudePattern: RegExp = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/;
 
     stateAbbreviations: StateAbbreviations[] = [
         {
             name: 'Alabama',
-            abbreviation: 'AL'
+            abbreviation: 'AL',
         },
         {
             name: 'Alaska',
-            abbreviation: 'AK'
+            abbreviation: 'AK',
         },
         {
             name: 'American Samoa',
-            abbreviation: 'AS'
+            abbreviation: 'AS',
         },
         {
             name: 'Arizona',
-            abbreviation: 'AZ'
+            abbreviation: 'AZ',
         },
         {
             name: 'Arkansas',
-            abbreviation: 'AR'
+            abbreviation: 'AR',
         },
         {
             name: 'California',
-            abbreviation: 'CA'
+            abbreviation: 'CA',
         },
         {
             name: 'Colorado',
-            abbreviation: 'CO'
+            abbreviation: 'CO',
         },
         {
             name: 'Connecticut',
-            abbreviation: 'CT'
+            abbreviation: 'CT',
         },
         {
             name: 'Delaware',
-            abbreviation: 'DE'
+            abbreviation: 'DE',
         },
         {
             name: 'District Of Columbia',
-            abbreviation: 'DC'
+            abbreviation: 'DC',
         },
         {
             name: 'Federated States Of Micronesia',
-            abbreviation: 'FM'
+            abbreviation: 'FM',
         },
         {
             name: 'Florida',
-            abbreviation: 'FL'
+            abbreviation: 'FL',
         },
         {
             name: 'Georgia',
-            abbreviation: 'GA'
+            abbreviation: 'GA',
         },
         {
             name: 'Guam',
-            abbreviation: 'GU'
+            abbreviation: 'GU',
         },
         {
             name: 'Hawaii',
-            abbreviation: 'HI'
+            abbreviation: 'HI',
         },
         {
             name: 'Idaho',
-            abbreviation: 'ID'
+            abbreviation: 'ID',
         },
         {
             name: 'Illinois',
-            abbreviation: 'IL'
+            abbreviation: 'IL',
         },
         {
             name: 'Indiana',
-            abbreviation: 'IN'
+            abbreviation: 'IN',
         },
         {
             name: 'Iowa',
-            abbreviation: 'IA'
+            abbreviation: 'IA',
         },
         {
             name: 'Kansas',
-            abbreviation: 'KS'
+            abbreviation: 'KS',
         },
         {
             name: 'Kentucky',
-            abbreviation: 'KY'
+            abbreviation: 'KY',
         },
         {
             name: 'Louisiana',
-            abbreviation: 'LA'
+            abbreviation: 'LA',
         },
         {
             name: 'Maine',
-            abbreviation: 'ME'
+            abbreviation: 'ME',
         },
         {
             name: 'Marshall Islands',
-            abbreviation: 'MH'
+            abbreviation: 'MH',
         },
         {
             name: 'Maryland',
-            abbreviation: 'MD'
+            abbreviation: 'MD',
         },
         {
             name: 'Massachusetts',
-            abbreviation: 'MA'
+            abbreviation: 'MA',
         },
         {
             name: 'Michigan',
-            abbreviation: 'MI'
+            abbreviation: 'MI',
         },
         {
             name: 'Minnesota',
-            abbreviation: 'MN'
+            abbreviation: 'MN',
         },
         {
             name: 'Mississippi',
-            abbreviation: 'MS'
+            abbreviation: 'MS',
         },
         {
             name: 'Missouri',
-            abbreviation: 'MO'
+            abbreviation: 'MO',
         },
         {
             name: 'Montana',
-            abbreviation: 'MT'
+            abbreviation: 'MT',
         },
         {
             name: 'Nebraska',
-            abbreviation: 'NE'
+            abbreviation: 'NE',
         },
         {
             name: 'Nevada',
-            abbreviation: 'NV'
+            abbreviation: 'NV',
         },
         {
             name: 'New Hampshire',
-            abbreviation: 'NH'
+            abbreviation: 'NH',
         },
         {
             name: 'New Jersey',
-            abbreviation: 'NJ'
+            abbreviation: 'NJ',
         },
         {
             name: 'New Mexico',
-            abbreviation: 'NM'
+            abbreviation: 'NM',
         },
         {
             name: 'New York',
-            abbreviation: 'NY'
+            abbreviation: 'NY',
         },
         {
             name: 'North Carolina',
-            abbreviation: 'NC'
+            abbreviation: 'NC',
         },
         {
             name: 'North Dakota',
-            abbreviation: 'ND'
+            abbreviation: 'ND',
         },
         {
             name: 'Northern Mariana Islands',
-            abbreviation: 'MP'
+            abbreviation: 'MP',
         },
         {
             name: 'Ohio',
-            abbreviation: 'OH'
+            abbreviation: 'OH',
         },
         {
             name: 'Oklahoma',
-            abbreviation: 'OK'
+            abbreviation: 'OK',
         },
         {
             name: 'Oregon',
-            abbreviation: 'OR'
+            abbreviation: 'OR',
         },
         {
             name: 'Palau',
-            abbreviation: 'PW'
+            abbreviation: 'PW',
         },
         {
             name: 'Pennsylvania',
-            abbreviation: 'PA'
+            abbreviation: 'PA',
         },
         {
             name: 'Puerto Rico',
-            abbreviation: 'PR'
+            abbreviation: 'PR',
         },
         {
             name: 'Rhode Island',
-            abbreviation: 'RI'
+            abbreviation: 'RI',
         },
         {
             name: 'South Carolina',
-            abbreviation: 'SC'
+            abbreviation: 'SC',
         },
         {
             name: 'South Dakota',
-            abbreviation: 'SD'
+            abbreviation: 'SD',
         },
         {
             name: 'Tennessee',
-            abbreviation: 'TN'
+            abbreviation: 'TN',
         },
         {
             name: 'Texas',
-            abbreviation: 'TX'
+            abbreviation: 'TX',
         },
         {
             name: 'Utah',
-            abbreviation: 'UT'
+            abbreviation: 'UT',
         },
         {
             name: 'Vermont',
-            abbreviation: 'VT'
+            abbreviation: 'VT',
         },
         {
             name: 'Virgin Islands',
-            abbreviation: 'VI'
+            abbreviation: 'VI',
         },
         {
             name: 'Virginia',
-            abbreviation: 'VA'
+            abbreviation: 'VA',
         },
         {
             name: 'Washington',
-            abbreviation: 'WA'
+            abbreviation: 'WA',
         },
         {
             name: 'West Virginia',
-            abbreviation: 'WV'
+            abbreviation: 'WV',
         },
         {
             name: 'Wisconsin',
-            abbreviation: 'WI'
+            abbreviation: 'WI',
         },
         {
             name: 'Wyoming',
-            abbreviation: 'WY'
-        }
+            abbreviation: 'WY',
+        },
     ];
 
     constructor(
@@ -382,86 +394,68 @@ export class EventSubmissionComponent implements OnInit {
         public iceConditionTypeService: IceConditionTypeService
     ) {
         // this.buildEventSubmissionForm();
-
     }
 
     // registration dialog
     openSiteDialog(): void {
         // this.addSiteDialogRef.close();
-        const dialogRef = this.dialog.open(CreateSiteComponent, {
+        const dialogRef = this.dialog.open(CreateSiteComponent, {});
 
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-        });
+        dialogRef.afterClosed().subscribe((result) => {});
     }
     ngOnInit() {
-        this.iceJamTypeService.getJamTypes()
-            .subscribe(
-                jamTypeResults => {
-                    this.jamTypeResults = jamTypeResults;
-                }
-            );
+        this.iceJamTypeService.getJamTypes().subscribe((jamTypeResults) => {
+            this.jamTypeResults = jamTypeResults;
+        });
 
+        this.roughnessTypeService
+            .getRoughnessTypes()
+            .subscribe((roughnessTypes) => {
+                this.roughnessTypes = roughnessTypes;
+            });
 
-        this.roughnessTypeService.getRoughnessTypes()
-            .subscribe(
-                roughnessTypes => {
-                    this.roughnessTypes = roughnessTypes;
-                }
-            );
+        this.riverConditionTypeService
+            .getRiverConditionTypes()
+            .subscribe((riverConditionTypes) => {
+                this.riverConditionTypes = riverConditionTypes;
+            });
 
-        this.riverConditionTypeService.getRiverConditionTypes()
-            .subscribe(
-                riverConditionTypes => {
-                    this.riverConditionTypes = riverConditionTypes;
-                }
-            );
+        this.stageTypeService.getStageTypes().subscribe((stageTypes) => {
+            this.stageTypes = stageTypes;
+        });
 
-        this.stageTypeService.getStageTypes()
-            .subscribe(
-                stageTypes => {
-                    this.stageTypes = stageTypes;
-                }
-            );
+        this.weatherConditionTypeService
+            .getWeatherTypes()
+            .subscribe((WeatherConditionTypes) => {
+                this.WeatherConditionTypes = WeatherConditionTypes;
+            });
 
-        this.weatherConditionTypeService.getWeatherTypes()
-            .subscribe(
-                WeatherConditionTypes => {
-                    this.WeatherConditionTypes = WeatherConditionTypes;
-                }
-            );
+        this.damageTypeService.getDamageTypes().subscribe((damageTypes) => {
+            this.damageTypes = damageTypes;
+        });
 
-        this.damageTypeService.getDamageTypes()
-            .subscribe(
-                damageTypes => {
-                    this.damageTypes = damageTypes;
-                }
-            );
-
-        this.iceConditionTypeService.getIceTypes()
-            .subscribe(
-                iceConditionTypes => {
-                    this.iceConditionTypes = iceConditionTypes;
-                }
-            );
+        this.iceConditionTypeService
+            .getIceTypes()
+            .subscribe((iceConditionTypes) => {
+                this.iceConditionTypes = iceConditionTypes;
+            });
 
         const coordsArrayUp = this.formBuilder.group({
             latitude: [null, Validators.pattern(this.latitudePattern)],
-            longitude: [null, Validators.pattern(this.longitudePattern)]
+            longitude: [null, Validators.pattern(this.longitudePattern)],
         });
         const coordsArrayDown = this.formBuilder.group({
             lat: [null, Validators.pattern(this.latitudePattern)],
-            long: [null, Validators.pattern(this.longitudePattern)]
+            long: [null, Validators.pattern(this.longitudePattern)],
         });
 
         const upstreamLatLong = this.formBuilder.group({
             type: 'Point',
-            coordinates: coordsArrayUp
+            coordinates: coordsArrayUp,
         });
         const downstreamLatLong = this.formBuilder.group({
             type: 'Point',
-            coordinates: coordsArrayDown
+            coordinates: coordsArrayDown,
         });
 
         const iceConditionsForm = this.formBuilder.group({
@@ -475,7 +469,7 @@ export class EventSubmissionComponent implements OnInit {
             comments: null,
             upstreamEndLocation: upstreamLatLong,
             downstreamEndLocation: downstreamLatLong,
-            roughnessTypeID: null
+            roughnessTypeID: null,
         });
 
         const riverConditionsForm = this.formBuilder.group({
@@ -513,14 +507,14 @@ export class EventSubmissionComponent implements OnInit {
         const damagesform = this.formBuilder.group({
             damageTypeID: '',
             dateTimeReported: '',
-            description: null
+            description: null,
         });
 
         const jamTypeform = this.formBuilder.group({
             id: null,
             name: '',
             description: null,
-            exampleImageURL: null
+            exampleImageURL: null,
         });
 
         this.eventSubmissionForm = this.formBuilder.group({
@@ -534,7 +528,7 @@ export class EventSubmissionComponent implements OnInit {
             damages: damagesform,
             iceConditions: iceConditionsForm,
             riverConditions: riverConditionsForm,
-            weatherConditions: weatherConditionsForm
+            weatherConditions: weatherConditionsForm,
         });
 
         // selected site is stored in session storage on the home page.
@@ -621,13 +615,15 @@ export class EventSubmissionComponent implements OnInit {
         console.log(formValue.damages.damageTypeID);
         // making condititions into arrays like this for speed; FormArrays may be a better options, especially if they will need to add multiple conditions
         formValue.iceConditions.upstreamEndLocation.coordinates = [
-            formValue.iceConditions.upstreamEndLocation.coordinates.latitude / 1,
-            formValue.iceConditions.upstreamEndLocation.coordinates.longitude / 1
+            formValue.iceConditions.upstreamEndLocation.coordinates.latitude /
+                1,
+            formValue.iceConditions.upstreamEndLocation.coordinates.longitude /
+                1,
         ];
 
         formValue.iceConditions.downstreamEndLocation.coordinates = [
             formValue.iceConditions.downstreamEndLocation.coordinates.lat / 1,
-            formValue.iceConditions.downstreamEndLocation.coordinates.long / 1
+            formValue.iceConditions.downstreamEndLocation.coordinates.long / 1,
         ];
         const river = [];
         const ice = [];
@@ -637,7 +633,6 @@ export class EventSubmissionComponent implements OnInit {
         if (formValue.riverConditions.riverConditionTypeID === '') {
             formValue.riverConditions = null;
         } else {
-
             river.push(formValue.riverConditions);
             formValue.riverConditions = river;
         }
@@ -645,7 +640,6 @@ export class EventSubmissionComponent implements OnInit {
         if (formValue.iceConditions.iceConditionTypeID === '') {
             formValue.damages = null;
         } else {
-
             ice.push(formValue.iceConditions);
             formValue.iceConditions = ice;
         }
@@ -655,7 +649,6 @@ export class EventSubmissionComponent implements OnInit {
         } else {
             damage.push(formValue.damages);
             formValue.damages = damage;
-
         }
 
         if (formValue.weatherConditions.weatherConditionTypeID === '') {
@@ -672,46 +665,44 @@ export class EventSubmissionComponent implements OnInit {
         formValue.observerID = formValue.siteID / 1; */
 
         console.log(formValue);
-        this.iceJamService.create(formValue)
-            .subscribe(
-                (sitevisit) => {
-                    this.submitLoading = false;
+        this.iceJamService.create(formValue).subscribe(
+            (sitevisit) => {
+                this.submitLoading = false;
 
-                    this.confirmDialogRef = this.dialog.open(ConfirmComponent,
-                        {
-                            disableClose: true,
-                            data: {
-                                title: 'Site visit saved',
-                                titleIcon: 'check',
-                                message: 'Your site visit was successfully saved. The ID is ' + sitevisit.id,
-                                confirmButtonText: 'OK',
-                                showCancelButton: false
-                            }
-                        }
-                    );
+                this.confirmDialogRef = this.dialog.open(ConfirmComponent, {
+                    disableClose: true,
+                    data: {
+                        title: 'Site visit saved',
+                        titleIcon: 'check',
+                        message:
+                            'Your site visit was successfully saved. The ID is ' +
+                            sitevisit.id,
+                        confirmButtonText: 'OK',
+                        showCancelButton: false,
+                    },
+                });
 
-                    // when user clicks OK, reset the form and stepper using resetStepper()
-                    this.confirmDialogRef.afterClosed().subscribe(result => {
-                        if (result === true) {
-                            // temporarily disabling the resetStepper function in favor of full page reload.
-                            // tons of issues with resetting this form because of its complexity. full page reload works for now.
-                            // this.resetStepper();
-                            this.router.navigate(['/home']);
-                        }
-                    });
+                // when user clicks OK, reset the form and stepper using resetStepper()
+                this.confirmDialogRef.afterClosed().subscribe((result) => {
+                    if (result === true) {
+                        // temporarily disabling the resetStepper function in favor of full page reload.
+                        // tons of issues with resetting this form because of its complexity. full page reload works for now.
+                        // this.resetStepper();
+                        this.router.navigate(['/home']);
+                    }
+                });
+            },
+            (error) => {
+                this.submitLoading = false;
+                this.openSnackBar(
+                    'Error. Site Visit not Submitted. Error message: ' + error,
+                    'OK',
+                    8000
+                );
 
-                },
-                error => {
-                    this.submitLoading = false;
-                    this.openSnackBar('Error. Site Visit not Submitted. Error message: ' + error, 'OK', 8000);
-
-                    // need to reload as formValue has changed
-                     setTimeout(this.refreshPage, 9000);
-                }
-
-            );
-
+                // need to reload as formValue has changed
+                setTimeout(this.refreshPage, 9000);
+            }
+        );
     }
 }
-
-

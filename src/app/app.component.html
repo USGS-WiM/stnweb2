@@ -1,58 +1,82 @@
-<!-- 
+<!--
   Main wrapper
   Flex column
 -->
 
 <!-- <div id="outer"> -->
 
-
-<!-- 
-    Page header 
+<!--
+    Page header
       - Nav, links, branding, etc
   -->
 <header class="header">
-  <mat-toolbar color="primary">
-    <mat-toolbar-row color="primary" class="mat-typography stns-header">
-      <div class="stn-header" id="mobile">
-        <a href="https://test.wim.usgs.gov/icejams/#/home" class="stn-title">
-          <!-- <div class="stn-logo">
+    <mat-toolbar color="primary">
+        <mat-toolbar-row color="primary" class="mat-typography stns-header">
+            <div class="stn-header" id="mobile">
+                <a
+                    href="https://test.wim.usgs.gov/icejams/#/home"
+                    class="stn-title"
+                >
+                    <!-- <div class="stn-logo">
             <img src="./assets/ice_white.png" />
           </div> -->
-          <span>Short Term Network</span>
-        </a>
-        <span class="stn-subtitle">
-          <span>Data management system for sensor deployments and data collection efforts</span>
-        </span>
-      </div>
-      <span class="navbar-spacer"></span>
-      <span flex></span>
-      <span flex></span>
-      <div class="nav-buttons">
-        <span class="about-button-span">
-          <button mat-button (click)="openAboutDialog()" aria-label="About this application">
-            <mat-icon class="icon">info_outline</mat-icon>
-            <span class="header-button-text"> About</span>
-          </button>
-        </span>
-        <span class="login-button-span" *ngIf="currentUser.username == ''">
-          <button mat-button (click)="openLoginDialog()" aria-label="Login">
-            <mat-icon class="icon">person</mat-icon>
-            <span class="header-button-text"> Login</span>
-          </button>
-        </span>
-        <span class="login-button-span" *ngIf="currentUser.username !== ''">
-          <button mat-button  aria-label="Login">
-            <mat-icon class="icon">person</mat-icon>
-            <span class="header-button-text"> {{ currentUser.username }}</span>
-          </button>
-        </span>
-        <span class="login-button-span" *ngIf="currentUser.username !== ''">
-            <button mat-button aria-label="Log out" (click)="logout()">
-              <span class="header-button-text"> Logout</span>
-            </button>
-          </span>
-        <!-- Login Status -->
-        <!-- <span *ngIf="currentUser.username == ''" class="login-button-span">
+                    <span>Short Term Network</span>
+                </a>
+                <span class="stn-subtitle">
+                    <span
+                        >Data management system for sensor deployments and data
+                        collection efforts</span
+                    >
+                </span>
+            </div>
+            <span class="navbar-spacer"></span>
+            <span flex></span>
+            <span flex></span>
+            <div class="nav-buttons">
+                <span class="about-button-span">
+                    <button
+                        mat-button
+                        (click)="openAboutDialog()"
+                        aria-label="About this application"
+                    >
+                        <mat-icon class="icon">info_outline</mat-icon>
+                        <span class="header-button-text"> About</span>
+                    </button>
+                </span>
+                <span
+                    class="login-button-span"
+                    *ngIf="currentUser.username == ''"
+                >
+                    <button
+                        mat-button
+                        (click)="openLoginDialog()"
+                        aria-label="Login"
+                    >
+                        <mat-icon class="icon">person</mat-icon>
+                        <span class="header-button-text"> Login</span>
+                    </button>
+                </span>
+                <span
+                    class="login-button-span"
+                    *ngIf="currentUser.username !== ''"
+                >
+                    <button mat-button aria-label="Login">
+                        <mat-icon class="icon">person</mat-icon>
+                        <span class="header-button-text">
+                            {{ currentUser.username }}</span
+                        >
+                    </button>
+                </span>
+                <span
+                    class="login-button-span"
+                    *ngIf="currentUser.username !== ''"
+                >
+                    <button mat-button aria-label="Log out" (click)="logout()">
+                        <span class="header-button-text"> Logout</span>
+                    </button>
+                </span>
+                <!-- Login Status -->
+                <!-- <span *ngIf="currentUser.username == ''" class="login-button-span">
             <button mat-button (click)="openLoginDialog()" aria-label="Login">
                 <mat-icon class="icon">person</mat-icon>
                 <span class="header-button-text"> Login</span>
@@ -61,14 +85,13 @@
         <span *ngIf="currentUser.username !== ''" class="login-button-span">{{currentUser.first_name}}
           {{currentUser.last_name}}
         </span> -->
-      </div>
-    </mat-toolbar-row>
-  </mat-toolbar>
+            </div>
+        </mat-toolbar-row>
+    </mat-toolbar>
 </header>
 <!-- </div> -->
 
 <router-outlet></router-outlet>
-
 
 <!-- <footer id="main">
     <div>USGS</div>
