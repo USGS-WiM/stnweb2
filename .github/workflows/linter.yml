@@ -56,4 +56,5 @@ jobs:
                   LINTER_RULES_PATH: .github/linters
                   VALIDATE_CSS: false
                   VALIDATE_HTML: false
+                  VALIDATE_EDITORCONFIG: false
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
