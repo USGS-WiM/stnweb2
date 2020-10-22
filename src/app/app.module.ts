@@ -8,7 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { EventSubmissionComponent } from './event-submission/event-submission.component';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 import { AboutComponent } from './about/about.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -56,31 +55,20 @@ import {
 
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
-import { IceJamService } from './services/ice-jam.service';
-import { SiteService } from './services/site.service';
-import { CreateSiteComponent } from './create-site/create-site.component';
-import { JamTypeService } from './services/jam-type.service';
 import { ConfirmComponent } from './confirm/confirm.component';
-import { SelectedSiteService } from './services/selected-site.service';
-import { RoughnessTypeService } from './services/roughness-type.service';
-import { StageTypeService } from './services/stage-type.service';
-import { WeatherConditionTypeService } from './services/weather-condition-type.service';
-import { DamageTypeService } from './services/damage-type.service';
 import { CurrentUserService } from './services/current-user.service';
-import { IceConditionTypeService } from './services/ice-condition-type.service';
-// import { FiltersComponent } from './filters/filters.component';
+import { FiltersComponent } from './filters/filters.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         AboutComponent,
         HomeComponent,
-        EventSubmissionComponent,
         SearchDialogComponent,
         LoginComponent,
         RegistrationComponent,
-        CreateSiteComponent,
         ConfirmComponent,
+        FiltersComponent
     ],
     imports: [
         BrowserModule,
@@ -133,24 +121,15 @@ import { IceConditionTypeService } from './services/ice-condition-type.service';
         OwlNativeDateTimeModule,
     ],
     providers: [
-        SiteService,
-        IceJamService,
-        JamTypeService,
-        SelectedSiteService,
-        RoughnessTypeService,
-        StageTypeService,
-        WeatherConditionTypeService,
-        DamageTypeService,
-        CurrentUserService,
-        IceConditionTypeService,
+      CurrentUserService
     ],
     bootstrap: [AppComponent],
     entryComponents: [
         AboutComponent,
         LoginComponent,
         RegistrationComponent,
-        CreateSiteComponent,
         ConfirmComponent,
+        FiltersComponent
     ],
 })
 export class AppModule {}

@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "ICEJAMS": {
+        "STN": {
             "root": "",
             "sourceRoot": "src",
             "projectType": "application",
@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/ICEJAMS",
+                        "outputPath": "dist/STN",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
@@ -70,22 +70,22 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "ICEJAMS:build"
+                        "browserTarget": "STN:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "ICEJAMS:build:production"
+                            "browserTarget": "STN:build:production"
                         },
                         "hmr": {
                             "hmr": true,
-                            "browserTarget": "ICEJAMS:build:hmr"
+                            "browserTarget": "STN:build:hmr"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "ICEJAMS:build"
+                        "browserTarget": "STN:build"
                     }
                 },
                 "test": {
@@ -115,7 +115,7 @@
                 }
             }
         },
-        "ICEJAMS-e2e": {
+        "STN-e2e": {
             "root": "e2e/",
             "projectType": "application",
             "prefix": "",
@@ -124,11 +124,11 @@
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
                         "protractorConfig": "e2e/protractor.conf.js",
-                        "devServerTarget": "ICEJAMS:serve"
+                        "devServerTarget": "STN:serve"
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "ICEJAMS:serve:production"
+                            "devServerTarget": "STN:serve:production"
                         }
                     }
                 },
@@ -142,5 +142,5 @@
             }
         }
     },
-    "defaultProject": "ICEJAMS"
+    "defaultProject": "STN"
 }
