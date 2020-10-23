@@ -1,5 +1,6 @@
 export interface Role {
-    id: number;
-    name: number;
-    description: string;
+    role_id: number;
+    role_name: string;
+    role_description: string;
+    members: Array<any>;
 }

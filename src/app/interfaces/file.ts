@@ -1,9 +1,13 @@
 export interface File {
-    id: number;
-    filetypeid: number;
-    url: string;
+    file_id: number;
+    name: string;
     description: string;
-    icejamid: number;
-    damageid: number;
-    type: number;
+    photo_direction: string;
+    latitude_dd: number;
+    longitude_dd: number;
+    file_date: string;
+    site_id: number;
+    filetype_id: number;
+    source_id: number;
+    path: string;
 }
