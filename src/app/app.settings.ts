@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
-import { Headers } from '@angular/http';
 // import { FilterQuery } from './interfaces/filter-query';
 
 @Injectable()
@@ -80,15 +79,16 @@ export class APPSETTINGS {
         return this.API_ROOT + 'Events';
     }
 
-    public static get AUTH_JSON_HEADERS() {
-        return new Headers({
-            Authorization:
-                'Basic ' +
-                btoa(sessionStorage.username + ':' + sessionStorage.password),
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        });
-    }
+    // TODO: replace with HttpHeaders and HttpClient
+    // public static get AUTH_JSON_HEADERS() {
+    //     return new Headers({
+    //         Authorization:
+    //             'Basic ' +
+    //             btoa(sessionStorage.username + ':' + sessionStorage.password),
+    //         Accept: 'application/json',
+    //         'Content-Type': 'application/json',
+    //     });
+    // }
 
     // default display query (display verison of search query above) for initial load of home page
     // public static get DEFAULT_DISPLAY_QUERY(): FilterQuery {
