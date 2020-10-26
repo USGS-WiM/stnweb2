@@ -5,7 +5,7 @@ import { RegistrationComponent } from './registration/registration.component';
 import { CurrentUserService } from './services/current-user.service';
 import { AuthenticationService } from './services/authentication.service';
 
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-root',
@@ -13,17 +13,17 @@ import { MatDialog, MatDialogRef } from '@angular/material';
     styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  title = 'STN';
-  siteid = '';
+    title = 'STN';
+    siteid = '';
 
-    aboutDialogRef: MatDialogRef<AboutComponent>;
-    loginDialogRef: MatDialogRef<AboutComponent>;
-    regDialogRef: MatDialogRef<AboutComponent>;
+    // aboutDialogRef: MatDialogRef<AboutComponent>;
+    // loginDialogRef: MatDialogRef<AboutComponent>;
+    // regDialogRef: MatDialogRef<AboutComponent>;
 
     public currentUser;
 
     constructor(
-        public dialog: MatDialog,
+        // public dialog: MatDialog,
         private authenticationService: AuthenticationService,
         public currentUserService: CurrentUserService
     ) {
@@ -33,20 +33,20 @@ export class AppComponent implements OnInit {
     }
 
     // about dialog
-    openAboutDialog(): void {
-        const dialogRef = this.dialog.open(AboutComponent, {});
+    // openAboutDialog(): void {
+    //     const dialogRef = this.dialog.open(AboutComponent, {});
 
-        dialogRef.afterClosed().subscribe((result) => {});
-    }
+    //     dialogRef.afterClosed().subscribe((result) => {});
+    // }
 
     // login dialog
-    openLoginDialog(): void {
-        const dialogRef = this.dialog.open(LoginComponent, {});
+    // openLoginDialog(): void {
+    //     const dialogRef = this.dialog.open(LoginComponent, {});
 
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log('The dialog was closed');
-        });
-    }
+    //     dialogRef.afterClosed().subscribe((result) => {
+    //         console.log('The dialog was closed');
+    //     });
+    // }
 
     ngOnInit() {
         if (sessionStorage.getItem('currentUser')) {

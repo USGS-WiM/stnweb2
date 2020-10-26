@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { RegistrationComponent } from '../registration/registration.component';
@@ -24,9 +24,9 @@ export class LoginComponent implements OnInit {
     public currentUser;
 
     constructor(
-        public dialog: MatDialog,
-        public loginDialogRef: MatDialogRef<LoginComponent>,
-        public regDialogRef: MatDialogRef<RegistrationComponent>,
+        //public dialog: MatDialog,
+        //public loginDialogRef: MatDialogRef<LoginComponent>,
+        //public regDialogRef: MatDialogRef<RegistrationComponent>,
         public formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
@@ -38,17 +38,17 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    onNoClick(): void {
-        this.loginDialogRef.close();
-    }
+    // onNoClick(): void {
+    //     this.loginDialogRef.close();
+    // }
 
     // registration dialog
-    openRegDialog(): void {
-        this.loginDialogRef.close();
-        const dialogRef = this.dialog.open(RegistrationComponent, {});
+    // openRegDialog(): void {
+    //     this.loginDialogRef.close();
+    //     const dialogRef = this.dialog.open(RegistrationComponent, {});
 
-        dialogRef.afterClosed().subscribe((result) => {});
-    }
+    //     dialogRef.afterClosed().subscribe((result) => {});
+    // }
 
     ngOnInit() {
         this.loginForm = this.formBuilder.group({
@@ -77,17 +77,17 @@ export class LoginComponent implements OnInit {
         }
 
         this.loading = true;
-        this.authenticationService
-            .login(this.f.username.value, this.f.password.value)
-            .pipe(first())
-            .subscribe(
-                (data) => {
-                    this.router.navigate([this.returnUrl]);
-                },
-                (error) => {
-                    this.error = error;
-                    this.loading = false;
-                }
-            );
+        // this.authenticationService
+        //     .login(this.f.username.value, this.f.password.value)
+        //     .pipe(first())
+        //     .subscribe(
+        //         (data) => {
+        //             this.router.navigate([this.returnUrl]);
+        //         },
+        //         (error) => {
+        //             this.error = error;
+        //             this.loading = false;
+        //         }
+        //     );
     }
 }

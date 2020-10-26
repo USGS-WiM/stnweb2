@@ -15,11 +15,11 @@ $transition: 0.15s;
 $borderRadius: 4px;
 
 // Universal Imports
-@import '/styles/structure.scss';
-@import '/styles/text.scss';
-@import '/styles/modals.scss';
-@import '/styles/header.scss';
-@import '/styles/sidebar.scss';
+@import 'styles/structure.scss';
+@import 'styles/text.scss';
+@import 'styles/modals.scss';
+@import 'styles/header.scss';
+@import 'styles/sidebar.scss';
 
 // Specific imports
 /* header#main{

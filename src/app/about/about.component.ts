@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
 
 @Component({
     selector: 'app-about',
@@ -7,11 +6,13 @@ import { MatDialogRef } from '@angular/material';
     styleUrls: ['./about.component.scss'],
 })
 export class AboutComponent implements OnInit {
-    constructor(public aboutDialogRef: MatDialogRef<AboutComponent>) {}
+    constructor() {}
+    // TODO: upgrade to latest mat dialog
+    // constructor(public aboutDialogRef: MatDialogRef<AboutComponent>) {}
 
-    onNoClick(): void {
-        this.aboutDialogRef.close();
-    }
+    // onNoClick(): void {
+    //     this.aboutDialogRef.close();
+    // }
 
     ngOnInit() {}
 }
