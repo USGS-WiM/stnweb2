@@ -1,3 +1,5 @@
+import { File } from '@interfaces/file';
+
 export interface Hwm {
     hwm_id: number;
     waterbody: string;
@@ -27,5 +29,5 @@ export interface Hwm {
     hwm_label: string;
     last_updated: string;
     last_updated_by: number;
-    files: Array<any>;
+    files: File[];
 }

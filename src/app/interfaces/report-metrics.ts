@@ -45,5 +45,5 @@ export interface ReportMetrics {
     yest_officepers: number;
     tod_officepers: number;
     tmw_officepers: number;
-    reportmetric_contact: Array<any>;
+    reportmetric_contact: [];
 }

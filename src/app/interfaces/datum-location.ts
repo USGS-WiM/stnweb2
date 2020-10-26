@@ -1,3 +1,7 @@
+import {OpMeasurement} from '@interfaces/op-measurement';
+import {OpControlIdentifier} from '@interfaces/op-control-identifier';
+import {File} from '@interfaces/file';
+
 export interface DatumLocation {
     objective_point_id: number;
     name: string;
@@ -20,7 +24,7 @@ export interface DatumLocation {
     op_quality_id: number;
     last_updated: string;
     last_updated_by: number;
-    op_measurements: Array<any>;
-    op_control_identifier: Array<any>;
-    files: Array<any>;
+    op_measurements: OpMeasurement[];
+    op_control_identifier: OpControlIdentifier[];
+    files: File[];
 }

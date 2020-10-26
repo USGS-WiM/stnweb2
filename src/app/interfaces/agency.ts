@@ -1,3 +1,5 @@
+import { Link } from '@app/interfaces/link';
+
 export interface Agency {
     agency_id: number;
     agency_name: string;
@@ -6,5 +8,5 @@ export interface Agency {
     state: string;
     zip: string;
     phone: string;
-    Links: Array<Object>; 
+    Links: Link[]; 
 }

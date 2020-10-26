@@ -1,3 +1,6 @@
+import { Hwm } from '@interfaces/hwm';
+import { DataFile } from '@interfaces/data-file';
+
 export interface PeakSummary {
     peak_summary_id: number;
     member_id: number;
@@ -10,6 +13,6 @@ export interface PeakSummary {
     vdatum_id: number;
     time_zone: string;
     calc_notes: string;
-    data_file: Array<any>;
-    hwms: Array<any>;
+    data_file: DataFile[];
+    hwms: Hwm[];
 }

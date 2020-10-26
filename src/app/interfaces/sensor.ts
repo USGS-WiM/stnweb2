@@ -1,3 +1,6 @@
+import { DataFile } from '@interfaces/data-file';
+import { File } from '@interfaces/file';
+
 export interface Sensor {
     instrument_id: number;
     sensor_type_id: number;
@@ -11,7 +14,7 @@ export interface Sensor {
     housing_type_id: number;
     sensor_brand_id: number;
     vented: string;
-    instrument_status: Array<any>;
-    data_files: Array<any>;
-    files: Array<any>;
+    instrument_status: [];
+    data_files: DataFile[];
+    files: File[];
 }
