@@ -1,6 +1,12 @@
+import { Link } from '@app/interfaces/link';
+
 export interface Agency {
-    id: number;
-    name: string;
-    description: string;
-    abbreviation: string;
+    agency_id: number;
+    agency_name: string;
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+    phone: string;
+    Links: Link[]; 
 }
