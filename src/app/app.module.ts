@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -68,13 +67,12 @@ import { FiltersComponent } from './filters/filters.component';
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
-        FiltersComponent
+        FiltersComponent,
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         NgbModule,
-        HttpModule,
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
@@ -120,16 +118,14 @@ import { FiltersComponent } from './filters/filters.component';
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
     ],
-    providers: [
-      CurrentUserService
-    ],
+    providers: [CurrentUserService],
     bootstrap: [AppComponent],
     entryComponents: [
         AboutComponent,
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
-        FiltersComponent
+        FiltersComponent,
     ],
 })
 export class AppModule {}
