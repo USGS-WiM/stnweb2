@@ -1,4 +1,6 @@
-export interface Events {
+import {Hwm} from '@interfaces/hwm';
+
+export interface Event {
     event_id: number;
     event_name: string;
     event_start_date: string;
@@ -7,6 +9,6 @@ export interface Events {
     event_type_id: number;
     event_status_id: number;
     event_coordinator: number;
-    instruments: any;
-    hwms: any;
+    instruments: [];
+    hwms: Hwm[];
 }
