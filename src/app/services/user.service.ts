@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { APPSETTINGS } from '../app.settings';
+import { APP_SETTINGS } from '../app.settings';
 
 @Injectable({
     providedIn: 'root',

@@ -1,12 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CurrentUserService } from '../services/current-user.service';
-import { FiltersComponent } from '../filters/filters.component';
+// import { FiltersComponent } from '../filters/filters.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import * as L from 'leaflet';
 import { EventsService } from '../services/events.service';
-import { APPSETTINGS } from '../app.settings';
+import { APP_SETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 
@@ -41,13 +41,13 @@ export class HomeComponent implements OnInit {
     errorMessage: string;
     map;
     icon;
-    isloggedIn = APPSETTINGS.IS_LOGGEDIN;
+    isloggedIn = APP_SETTINGS.IS_LOGGEDIN;
 
     // filtersDialogRef: MatDialogRef<FiltersComponent>;
 
     currentFilter = sessionStorage.getItem('currentFilter')
         ? JSON.parse(sessionStorage.getItem('currentFiler'))
-        : APPSETTINGS.DEFAULT_FILTER_QUERY;
+        : APP_SETTINGS.DEFAULT_FILTER_QUERY;
 
     // dummy data
     displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];

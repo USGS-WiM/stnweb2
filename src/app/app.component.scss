@@ -2,7 +2,17 @@
 // Do not add anything directly to this file.
 // Find the appropriate file within the /styles folder
 
-// Variables
+// Custom Style Global Variables
+@import './app.variables.scss';
+
+// Universal Imports
+@import 'styles/structure.scss';
+@import 'styles/text.scss';
+@import 'styles/modals.scss';
+@import 'styles/header.scss';
+@import 'styles/sidebar.scss';
+
+// local style variables
 $black: #050920;
 $white: #fff;
 $bg: #f9fafe;
@@ -13,13 +23,6 @@ $borderColor: fade-out($black, 0.85);
 
 $transition: 0.15s;
 $borderRadius: 4px;
-
-// Universal Imports
-@import 'styles/structure.scss';
-@import 'styles/text.scss';
-@import 'styles/modals.scss';
-@import 'styles/header.scss';
-@import 'styles/sidebar.scss';
 
 // Specific imports
 /* header#main{

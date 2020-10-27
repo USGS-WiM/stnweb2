@@ -1,4 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-confirm',
@@ -6,9 +7,7 @@ import { Component, OnInit, Inject } from '@angular/core';
     styleUrls: ['./confirm.component.scss'],
 })
 export class ConfirmComponent implements OnInit {
-    // TODO: upgrade to latest mat dialog
-    // constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
-    constructor() {}
+    constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
     ngOnInit() {}
 }
