@@ -11,7 +11,6 @@ import {
     AbstractControl,
 } from '@angular/forms/';
 
-import { Events } from '../interfaces/events';
 import { map, startWith } from 'rxjs/operators';
 import { EventsService } from '../services/events.service';
 

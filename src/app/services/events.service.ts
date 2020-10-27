@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { APPSETTINGS } from '../app.settings';
-import { Events } from '../interfaces/events';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';

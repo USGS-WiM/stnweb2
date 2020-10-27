@@ -4,7 +4,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/observable/of';
 import { Router } from '@angular/router';
 import { APPSETTINGS } from '../app.settings';
-import { User } from '../interfaces/user';
+
 import { EventEmitter } from 'events';
 
 import { BehaviorSubject } from 'rxjs';
@@ -12,7 +12,7 @@ import { CurrentUserService } from '../services/current-user.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-    user: User;
+    // user: User;
 
     constructor(
         private currentUserService: CurrentUserService,
@@ -49,7 +49,7 @@ export class AuthenticationService {
 
     logout() {
         // remove user from local storage to log user out
-        this.user = undefined;
+        // this.user = undefined;
         this.currentUserService.updateCurrentUser({ username: '' });
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('password');

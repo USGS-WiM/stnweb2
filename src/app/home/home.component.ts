@@ -3,12 +3,8 @@ import { CurrentUserService } from '../services/current-user.service';
 import { FiltersComponent } from '../filters/filters.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { FilterQuery } from '../interfaces/filter-query';
 
 import * as L from 'leaflet';
-import { Site } from '../interfaces/site';
-import { Events } from '../interfaces/events';
-import { IceJam } from '../interfaces/ice-jam';
 import { EventsService } from '../services/events.service';
 import { APPSETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
@@ -78,8 +74,8 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
-    eventresults: IceJam[]; // sitevisits
-    events: Events[];
+    //eventresults: IceJam[]; // sitevisits
+    //events: Events[];
 
     constructor(
         private eventsService: EventsService,
