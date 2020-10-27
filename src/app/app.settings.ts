@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
-// import { FilterQuery } from './interfaces/filter-query';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable()
-export class APPSETTINGS {
+export class APP_SETTINGS {
     private static _environment = 'development';
     // default env is development
     public static get API_ROOT() {
@@ -79,16 +79,14 @@ export class APPSETTINGS {
         return this.API_ROOT + 'Events';
     }
 
-    // TODO: replace with HttpHeaders and HttpClient
-    // public static get AUTH_JSON_HEADERS() {
-    //     return new Headers({
-    //         Authorization:
-    //             'Basic ' +
-    //             btoa(sessionStorage.username + ':' + sessionStorage.password),
-    //         Accept: 'application/json',
-    //         'Content-Type': 'application/json',
-    //     });
-    // }
+    public static get AUTH_JSON_HEADERS() {
+        return new HttpHeaders({
+            Authorization:
+                'Basic ' +
+                btoa(sessionStorage.username + ':' + sessionStorage.password),
+            Accept: 'application/json',
+        });
+    }
 
     // default display query (display verison of search query above) for initial load of home page
     // public static get DEFAULT_DISPLAY_QUERY(): FilterQuery {

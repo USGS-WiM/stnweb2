@@ -27,10 +27,7 @@
                             "src/styles.scss",
                             "node_modules/leaflet/dist/leaflet.css"
                         ],
-                        "scripts": [
-                            "node_modules/leaflet/dist/leaflet.js",
-                            "node_modules/jquery/dist/jquery.min.js"
-                        ]
+                        "scripts": ["node_modules/leaflet/dist/leaflet.js"]
                     },
                     "configurations": {
                         "production": {

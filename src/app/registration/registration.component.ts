@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+
 import {
     FormBuilder,
     Validators,
@@ -69,14 +69,14 @@ export class RegistrationComponent implements OnInit {
     }
 
     constructor(
-        public regDialogRef: MatDialogRef<RegistrationComponent>,
+        // public regDialogRef: MatDialogRef<RegistrationComponent>,
         public formBuilder: FormBuilder
     ) {
         this.buildUserRegistrationForm();
     }
 
-    onNoClick(): void {
-        this.regDialogRef.close();
-    }
+    // onNoClick(): void {
+    //     this.regDialogRef.close();
+    // }
     ngOnInit() {}
 }
