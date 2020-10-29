@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CurrentUserService } from '../services/current-user.service';
-// import { FiltersComponent } from '../filters/filters.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 

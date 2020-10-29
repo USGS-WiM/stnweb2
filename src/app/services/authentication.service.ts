@@ -1,15 +1,12 @@
-import { Injectable, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
 // import { Observable } from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
-import 'rxjs/observable/of';
+// import 'rxjs/add/operator/map';
+// import 'rxjs/observable/of';
 import { Router } from '@angular/router';
 import { APP_SETTINGS } from '../app.settings';
 import { HttpClient } from '@angular/common/http';
 
-import { EventEmitter } from 'events';
-
-import { BehaviorSubject } from 'rxjs';
-import { CurrentUserService } from '../services/current-user.service';
+import { CurrentUserService } from '@services/current-user.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
