@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,11 +21,22 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+// import { MatAccordion } from '@angular/material/expansion';
 
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { ConfirmComponent } from './confirm/confirm.component';
-import { CurrentUserService } from './services/current-user.service';
+import { CurrentUserService } from '@services/current-user.service';
+import { TestComponent } from './test/test/test.component';
+import { AuthenticationService } from '@services/authentication.service';
+import { EventsService } from '@services/events.service';
+import { UserService } from '@services/user.service';
 
 @NgModule({
     declarations: [
@@ -35,9 +47,12 @@ import { CurrentUserService } from './services/current-user.service';
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
+        TestComponent,
     ],
     imports: [
         BrowserModule,
+        RouterModule,
+        Router,
         AppRoutingModule,
         HttpClientModule,
         FormsModule,
@@ -54,15 +69,26 @@ import { CurrentUserService } from './services/current-user.service';
         MatTableModule,
         MatPaginatorModule,
         MatButtonModule,
+        MatAutocompleteModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatTabsModule,
+        MatFormFieldModule,
+        MatCheckboxModule,
+        //MatAccordion,
     ],
-    providers: [CurrentUserService],
+    providers: [
+        CurrentUserService,
+        AuthenticationService,
+        EventsService,
+        UserService,
+    ],
     bootstrap: [AppComponent],
     entryComponents: [
         AboutComponent,
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
-        // FiltersComponent,
     ],
 })
 export class AppModule {}

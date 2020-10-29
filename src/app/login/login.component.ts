@@ -29,7 +29,6 @@ export class LoginComponent implements OnInit {
         //public regDialogRef: MatDialogRef<RegistrationComponent>,
         public formBuilder: FormBuilder,
         private route: ActivatedRoute,
-        private router: Router,
         private authenticationService: AuthenticationService,
         public currentUserService: CurrentUserService
     ) {

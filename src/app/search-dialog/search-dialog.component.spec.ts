@@ -6,11 +6,11 @@ describe('SearchDialogComponent', () => {
     let component: SearchDialogComponent;
     let fixture: ComponentFixture<SearchDialogComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
             declarations: [SearchDialogComponent],
         }).compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SearchDialogComponent);
