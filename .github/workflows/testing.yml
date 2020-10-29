@@ -26,4 +26,6 @@ jobs:
             # Run tests against code base #
             ################################
             - name: Run Unit Tests
-            - uses: ??
+              uses: colbyhill21/angular-full-ci/@v1.0
+              with:
+                  testcommand: run test:ci
