@@ -1,0 +1,29 @@
+name: Run Unit Tests
+on:
+    pull_request:
+        branches: [dev]
+jobs:
+    build:
+        # Name the Job
+        name: Run Unit Tests
+        # Set the agent to run on
+        runs-on: ubuntu-latest
+
+        ##################
+        # Load all steps #
+        ##################
+        steps:
+            ##########################
+            # Checkout the code base #
+            ##########################
+            - name: Checkout Code
+              uses: actions/checkout@v2
+              with:
+                  # Full git history is needed to get a proper list of changed files within `super-linter`
+                  fetch-depth: 0
+
+            ################################
+            # Run tests against code base #
+            ################################
+            - name: Run Unit Tests
+            - uses: ??
