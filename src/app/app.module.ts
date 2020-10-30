@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,7 +33,6 @@ import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { CurrentUserService } from '@services/current-user.service';
-import { TestComponent } from './test/test/test.component';
 import { AuthenticationService } from '@services/authentication.service';
 import { EventsService } from '@services/events.service';
 import { UserService } from '@services/user.service';
@@ -47,12 +46,10 @@ import { UserService } from '@services/user.service';
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
-        TestComponent,
     ],
     imports: [
         BrowserModule,
         RouterModule,
-        Router,
         AppRoutingModule,
         HttpClientModule,
         FormsModule,
