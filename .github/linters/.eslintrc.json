@@ -107,11 +107,7 @@
         "sourceType": "module",
         "project": "tsconfig.json"
     },
-    "plugins": [
-        "@angular-eslint/eslint-plugin",
-        "@typescript-eslint",
-        "@typescript-eslint/tslint"
-    ],
+    "plugins": ["@typescript-eslint", "@typescript-eslint/tslint"],
     "rules": {
         "@angular-eslint/component-class-suffix": "error",
         "@angular-eslint/directive-class-suffix": "error",
