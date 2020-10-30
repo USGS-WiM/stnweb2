@@ -26,7 +26,7 @@ jobs:
             # Run tests against code base #
             ################################
             - name: Run Unit Tests
-              run: ng test
+              run: npm test
               # uses: colbyhill21/angular-full-ci/@v1.0
               #uses: ng test
               #with:
