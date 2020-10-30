@@ -1,5 +1,22 @@
 {
     "root": true,
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": ["prettier"],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 12,
+        "sourceType": "module",
+        "project": "tsconfig.json"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "@typescript-eslint/tslint",
+        "@angular-eslint/eslint-plugin"
+    ],
     "overrides": [
         {
             "files": ["*.ts"],
@@ -42,19 +59,6 @@
             ]
         }
     ],
-    "env": {
-        "browser": true,
-        "es6": true,
-        "node": true
-    },
-    "extends": ["prettier"],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 12,
-        "sourceType": "module",
-        "project": "tsconfig.json"
-    },
-    "plugins": ["@typescript-eslint", "@typescript-eslint/tslint"],
     "rules": {
         "@angular-eslint/component-class-suffix": "error",
         "@angular-eslint/directive-class-suffix": "error",
