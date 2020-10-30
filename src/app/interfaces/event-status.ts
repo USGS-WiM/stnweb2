@@ -1,4 +1,4 @@
-import { Event } from '@interfaces/Event';
+import { Event } from '@interfaces/event';
 
 export interface EventStatus {
     event_status_id: number;

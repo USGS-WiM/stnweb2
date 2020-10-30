@@ -1,4 +1,4 @@
-import {Hwm} from '@interfaces/hwm';
+import { Hwm } from '@interfaces/hwm';
 
 export interface Event {
     event_id: number;

@@ -1,4 +1,4 @@
-import { Event } from '@interfaces/Event';
+import { Event } from '@interfaces/event';
 
 export interface EventType {
     event_type_id: number;
