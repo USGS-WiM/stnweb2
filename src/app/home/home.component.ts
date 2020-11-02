@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { CurrentUserService } from '../services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import * as L from 'leaflet';
 import { EventsService } from '../services/events.service';
@@ -42,8 +43,6 @@ export class HomeComponent implements OnInit {
     icon;
     isloggedIn = APP_SETTINGS.IS_LOGGEDIN;
 
-    // filtersDialogRef: MatDialogRef<FiltersComponent>;
-
     currentFilter = sessionStorage.getItem('currentFilter')
         ? JSON.parse(sessionStorage.getItem('currentFiler'))
         : APP_SETTINGS.DEFAULT_FILTER_QUERY;
@@ -67,23 +66,22 @@ export class HomeComponent implements OnInit {
     longitude;
     zoomLevel;
 
-    riverCondType;
-
     eventsLoading = false;
     public currentUser;
     markers;
 
-    //eventresults: IceJam[]; // sitevisits
-    //events: Events[];
-
+    events: Event[];
+    // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
+    //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
+    //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
         private eventsService: EventsService,
-        public currentUserService: CurrentUserService // private dialog: MatDialog
+        public currentUserService: CurrentUserService
     ) {
-        // this.eventsService.getAllEvents().subscribe((results) => {
-        //     this.events = results;
-        //     // this.mapResults(this.events);
-        // });
+        this.eventsService.getAllEvents().subscribe((results) => {
+            this.events = results;
+            // this.mapResults(this.events);
+        });
         // TODO: by default populate map with most recent event
         // this.eventsService
         //     .getEventSites(this.currentEvent)
@@ -232,17 +230,6 @@ export class HomeComponent implements OnInit {
     console.log(this.eventSites);
     return ret;
   } */
-
-    // openSearchDialog() {
-    //     this.filtersDialogRef = this.dialog.open(FiltersComponent, {
-    //         minWidth: '60%',
-    //         data: {
-    //             filters: this.currentFilter,
-    //             /* eventID: this.currentEvent,
-    //     event_name: this.currentEventName */
-    //         },
-    //     });
-    // }
 
     mapResults(eventSites: any) {
         // set/reset resultsMarker var to an empty array

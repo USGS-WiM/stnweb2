@@ -5,7 +5,7 @@ import { RegistrationComponent } from './registration/registration.component';
 import { CurrentUserService } from './services/current-user.service';
 import { AuthenticationService } from './services/authentication.service';
 
-import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-root',
@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
     public currentUser;
 
     constructor(
-        // public dialog: MatDialog,
+        public dialog: MatDialog,
         private authenticationService: AuthenticationService,
         public currentUserService: CurrentUserService
     ) {
@@ -32,21 +32,18 @@ export class AppComponent implements OnInit {
         });
     }
 
-    // about dialog
-    // openAboutDialog(): void {
-    //     const dialogRef = this.dialog.open(AboutComponent, {});
+    openAboutDialog(): void {
+        const dialogRef = this.dialog.open(AboutComponent, {});
+        dialogRef.afterClosed().subscribe((result) => {});
+    }
 
-    //     dialogRef.afterClosed().subscribe((result) => {});
-    // }
+    openLoginDialog(): void {
+        const dialogRef = this.dialog.open(LoginComponent, {});
 
-    // login dialog
-    // openLoginDialog(): void {
-    //     const dialogRef = this.dialog.open(LoginComponent, {});
-
-    //     dialogRef.afterClosed().subscribe((result) => {
-    //         console.log('The dialog was closed');
-    //     });
-    // }
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
+        });
+    }
 
     ngOnInit() {
         if (sessionStorage.getItem('currentUser')) {
