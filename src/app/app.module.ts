@@ -27,6 +27,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+
 // import { MatAccordion } from '@angular/material/expansion';
 
 import { LoginComponent } from './login/login.component';
@@ -72,6 +74,7 @@ import { UserService } from '@services/user.service';
         MatTabsModule,
         MatFormFieldModule,
         MatCheckboxModule,
+        MatInputModule,
         //MatAccordion,
     ],
     providers: [

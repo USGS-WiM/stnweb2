@@ -1,12 +1,19 @@
+import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 
 import { EventsService } from './events.service';
 
 describe('EventsService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+    let service: EventsService;
 
-  it('should be created', () => {
-    const service: EventsService = TestBed.get(EventsService);
-    expect(service).toBeTruthy();
-  });
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            providers: [HttpClient, HttpHandler],
+        });
+        service = TestBed.inject(EventsService);
+    });
+
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
 });
