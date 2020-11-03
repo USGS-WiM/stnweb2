@@ -1,3 +1,4 @@
+import { HttpClient, HttpHandler } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
 
@@ -10,7 +11,7 @@ describe('HomeComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [HomeComponent],
-            providers: [CurrentUserService],
+            providers: [CurrentUserService, HttpClient, HttpHandler],
         }).compileComponents();
     });
 

@@ -1,6 +1,7 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 import { AppComponent } from './app.component';
 import { CurrentUserService } from '@services/current-user.service';
@@ -8,9 +9,14 @@ import { CurrentUserService } from '@services/current-user.service';
 describe('AppComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
+            imports: [RouterTestingModule, MatDialogModule],
             declarations: [AppComponent],
-            providers: [HttpClient, HttpHandler, CurrentUserService],
+            providers: [
+                HttpClient,
+                HttpHandler,
+                CurrentUserService,
+                { provide: MatDialogRef, useValue: {} },
+            ],
         }).compileComponents();
     });
 
