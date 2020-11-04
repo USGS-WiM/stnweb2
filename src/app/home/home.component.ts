@@ -120,7 +120,7 @@ export class HomeComponent implements OnInit {
         this.map = new L.Map('map', {
             center: new L.LatLng(39.8283, -98.5795),
             zoom: 4,
-            layers: [grayscale],
+            layers: [osm],
         });
         /* this.markers = L.featureGroup().addTo(this.map); */
 
