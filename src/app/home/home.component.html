@@ -42,6 +42,17 @@
             </div>
         </mat-expansion-panel>
 
+        <!--
+        <div class="sidebar-item">
+            <label>Choose Study Area:</label>
+            <select  [(ngModel)]="selectedEvent" (ngModelChange)="onRegSelect($event)" name="region">
+                <option selected hidden value=""></option>
+                <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
+            </select>
+        </div>
+    -->
+
+
         <mat-expansion-panel expanded id="sidebarSearchTab">
             <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -63,10 +74,7 @@
                 </p>
                 <p>
                     Many of these outside layers are maintained by NOAA.
-                    <a
-                        href="https://www.lstsrv.ncep.noaa.gov/mailman/listinfo/ncep.list.idp-gis-status"
-                        >Click here</a
-                    >
+                    <a href="https://www.lstsrv.ncep.noaa.gov/mailman/listinfo/ncep.list.idp-gis-status">Click here</a>
                     to subscribe to a NOAA email list for GIS service status
                     updates.
                 </p>
@@ -92,8 +100,7 @@
                     <span class="hover-content"> <b>Map scale </b></span>
                     1:<span id="scale">{{ mapScale }}</span> |
                     <span class="hover-content"> <b>Zoom level </b></span>
-                    <span id="zoomLevel"> {{ zoomLevel }}</span
-                    ><br />
+                    <span id="zoomLevel"> {{ zoomLevel }}</span><br />
                     <span class="hover-content"><b>Latitude</b></span>
                     <span id="latitude"> {{ latitude }}</span> |
                     <span class="hover-content"> <b>Longitude</b></span>
@@ -104,6 +111,25 @@
         </mat-expansion-panel>
 
         <mat-card>
+
+
+            <label>Event</label>
+           <form>
+            
+               <mat-form-field>
+                
+                <input type="text" placeholder="Select an Event" aria-label="Dropdown menu for storm event selection"
+                    matInput [formControl]="eventsControl" [matAutocomplete]="auto">
+
+                <mat-autocomplete #auto="matAutocomplete" [displayWidth]="displayEvent">
+                    <mat-option *ngFor="let eventOption of filteredEvents | async" [value]="eventOption">
+                        {{eventOption.event_name}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            </form>
+
+
             <mat-card-title>
                 <div class="results-card-title-row">
                     <span class="results-card-title">Filter Results</span>
@@ -113,10 +139,7 @@
             </mat-card-title>
             <mat-card-content>
                 <div *ngIf="dataSource" class="results-table-div">
-                    <mat-table
-                        [dataSource]="dataSource"
-                        class="mat-elevation-z8"
-                    >
+                    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
                         <!-- Position Column -->
                         <ng-container matColumnDef="position">
                             <mat-header-cell *matHeaderCellDef>
@@ -157,17 +180,11 @@
                             </mat-cell>
                         </ng-container>
 
-                        <mat-header-row
-                            *matHeaderRowDef="displayedColumns"
-                        ></mat-header-row>
-                        <mat-row
-                            *matRowDef="let row; columns: displayedColumns"
-                        ></mat-row>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
                     </mat-table>
 
-                    <mat-paginator
-                        [pageSizeOptions]="[5, 10, 25]"
-                    ></mat-paginator>
+                    <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
                 </div>
             </mat-card-content>
         </mat-card>

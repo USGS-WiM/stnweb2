@@ -3,6 +3,9 @@ import { CurrentUserService } from '../services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogRef } from '@angular/material/dialog';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 import * as L from 'leaflet';
 import { EventsService } from '../services/events.service';
@@ -70,7 +73,9 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
-    events: Event[];
+    eventsControl = new FormControl();
+    eventOptions: Event[];
+    filteredEvents: Observable<Event[]>;
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
@@ -171,7 +176,28 @@ export class HomeComponent implements OnInit {
             this.longitude = geographicMapCenter.lng.toFixed(4);
         });
         // end latLngScale utility logic/////////
+
+        
+        this.filteredEvents = this.eventsControl.valueChanges
+            .pipe(
+                startWith(''),
+                map(value => typeof value === 'string' ? value : value.event_name),
+                map(name => event_name ? this._filter(event_name) : this.eventOptions.slice())
+        );
+        
     }
+
+    displayEvent(event: Event): string {
+        return event && event.event_name ? event.event_name : '';
+    }
+
+    
+    private _filter(event_name: string): Event[] {
+        const filterValue = event_name.toLowerCase();
+        return this.eventOptions.filter(option => option.event_name.toLowerCase().indexOf(filterValue) === 0);
+    }
+    
+
     scaleLookup(mapZoom) {
         switch (mapZoom) {
             case 19:
@@ -216,6 +242,12 @@ export class HomeComponent implements OnInit {
                 return '591,657,550';
         }
     }
+
+    /*
+    public onEventSelect(e: Event) {
+        this.events = e;
+    }
+    */
 
     // another method to get event sites
     /* getEventSites(arr, arr2) {

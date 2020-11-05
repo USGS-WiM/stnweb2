@@ -91,6 +91,12 @@ $borderRadius: 4px;
     }
 }
 
+.selectBox {
+    box-sizing: border-box;
+    width: 100%;
+    color: blue;
+}
+
 .help-text {
     font-size: 1.2em;
     text-align: center;
@@ -305,4 +311,11 @@ $borderRadius: 4px;
 
 .example-tree-node .example-tree-node {
     padding-left: 40px;
+}
+
+.eventSelect {
+    margin-bottom: 15px; 
+    border:1px solid gray;
+    border-radius: 5px; 
+    width: 30%;  
 }
