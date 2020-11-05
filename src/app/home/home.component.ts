@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
     markers;
 
     eventsControl = new FormControl();
-    eventOptions: Event[];
+    events: Event[];
     filteredEvents: Observable<Event[]>;
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -176,27 +176,8 @@ export class HomeComponent implements OnInit {
             this.longitude = geographicMapCenter.lng.toFixed(4);
         });
         // end latLngScale utility logic/////////
-
-        
-        this.filteredEvents = this.eventsControl.valueChanges
-            .pipe(
-                startWith(''),
-                map(value => typeof value === 'string' ? value : value.event_name),
-                map(name => event_name ? this._filter(event_name) : this.eventOptions.slice())
-        );
-        
     }
 
-    displayEvent(event: Event): string {
-        return event && event.event_name ? event.event_name : '';
-    }
-
-    
-    private _filter(event_name: string): Event[] {
-        const filterValue = event_name.toLowerCase();
-        return this.eventOptions.filter(option => option.event_name.toLowerCase().indexOf(filterValue) === 0);
-    }
-    
 
     scaleLookup(mapZoom) {
         switch (mapZoom) {
