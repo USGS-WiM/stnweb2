@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -38,7 +38,6 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { EventsService } from '@services/events.service';
 import { UserService } from '@services/user.service';
-import { FormControl } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -51,7 +50,6 @@ import { FormControl } from '@angular/forms';
         ConfirmComponent,
     ],
     imports: [
-        FormControl,
         BrowserModule,
         RouterModule,
         AppRoutingModule,
@@ -79,35 +77,6 @@ import { FormControl } from '@angular/forms';
         MatInputModule,
         //MatAccordion,
     ],
-    exports: [
-        FormControl,
-        BrowserModule,
-        RouterModule,
-        HttpClientModule,
-        FormsModule,
-        ReactiveFormsModule,
-        BrowserAnimationsModule,
-        ScrollingModule,
-        CdkTableModule,
-        CdkTreeModule,
-        CommonModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatExpansionModule,
-        MatCardModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatButtonModule,
-        MatAutocompleteModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        MatTabsModule,
-        MatFormFieldModule,
-        MatCheckboxModule,
-        MatInputModule,
-        //MatAccordion,
-    ],
-    schemas:  [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
         CurrentUserService,
         AuthenticationService,
@@ -120,6 +89,6 @@ import { FormControl } from '@angular/forms';
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
-    ]
+    ],
 })
 export class AppModule {}
