@@ -7,7 +7,6 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Event } from '../interfaces/event';
-
 import * as L from 'leaflet';
 import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
@@ -177,13 +176,16 @@ export class HomeComponent implements OnInit {
             this.longitude = geographicMapCenter.lng.toFixed(4);
         });
         // end latLngScale utility logic/////////
-    
-    //Allow user to type into the event selector to view matching events
-     this.filteredEvents = this.eventsControl.valueChanges
-        .pipe(
+
+        //Allow user to type into the event selector to view matching events
+        this.filteredEvents = this.eventsControl.valueChanges.pipe(
             startWith(''),
-            map(value => typeof value === 'string' ? value : value.event_name),
-            map(event_name => event_name ? this._filter(event_name) : this.events)
+            map((value) =>
+                typeof value === 'string' ? value : value.event_name
+            ),
+            map((event_name) =>
+                event_name ? this._filter(event_name) : this.events
+            )
         );
     }
 
@@ -191,14 +193,15 @@ export class HomeComponent implements OnInit {
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
     }
-    
+
     //Match what user is typing to the index of the corresponding event
     //Not case sensative
     private _filter(event_name: string): Event[] {
         const filterValue = event_name.toLowerCase();
-        return this.events.filter(event => event.event_name.toLowerCase().indexOf(filterValue) === 0);
+        return this.events.filter(
+            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
+        );
     }
-
 
     scaleLookup(mapZoom) {
         switch (mapZoom) {

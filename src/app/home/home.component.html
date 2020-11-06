@@ -22,7 +22,8 @@
                     <span class="hover-content"> <b>Map scale </b></span>
                     1:<span id="scale">{{ mapScale }}</span> |
                     <span class="hover-content"> <b>Zoom level </b></span>
-                    <span id="zoomLevel"> {{ zoomLevel }}</span><br />
+                    <span id="zoomLevel"> {{ zoomLevel }}</span
+                    ><br />
                     <span class="hover-content"><b>Latitude</b></span>
                     <span id="latitude"> {{ latitude }}</span> |
                     <span class="hover-content"> <b>Longitude</b></span>
@@ -31,7 +32,6 @@
                 </div>
             </div>
         </mat-expansion-panel>
-
         <mat-card id="filtersSection">
             <mat-card-title>
                 <div class="results-card-title-row">
@@ -45,16 +45,26 @@
                     <mat-expansion-panel-header>
                         <mat-panel-title> Filters </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <form >
+                    <form>
                         <mat-form-field class="eventSelect">
                             <mat-label>Event</mat-label>
-                            <input type="text"
-                                aria-label="Dropdown menu for storm event selection" matInput [formControl]="eventsControl"
-                                [matAutocomplete]="auto">
-                                <mat-hint>Start typing for suggestions</mat-hint>
-                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayEvent">
-                                <mat-option *ngFor="let event of filteredEvents | async" [value]="event">
-                                    {{event.event_name}}
+                            <input
+                                type="text"
+                                aria-label="Dropdown menu for storm event selection"
+                                matInput
+                                [formControl]="eventsControl"
+                                [matAutocomplete]="auto"
+                            />
+                            <mat-hint>Start typing for suggestions</mat-hint>
+                            <mat-autocomplete
+                                #auto="matAutocomplete"
+                                [displayWith]="displayEvent"
+                            >
+                                <mat-option
+                                    *ngFor="let event of filteredEvents | async"
+                                    [value]="event"
+                                >
+                                    {{ event.event_name }}
                                 </mat-option>
                             </mat-autocomplete>
                         </mat-form-field>
