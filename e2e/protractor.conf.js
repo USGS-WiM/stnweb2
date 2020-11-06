@@ -8,8 +8,6 @@ exports.config = {
     specs: ['./src/**/*.e2e-spec.ts'],
     capabilities: {
         browserName: 'chrome',
-        'goog:chromeOptions': {
-            args: ['headless', 'disable-gpu'],
     },
     directConnect: true,
     baseUrl: 'http://localhost:4200/',
