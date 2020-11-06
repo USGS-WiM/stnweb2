@@ -38,6 +38,7 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { EventsService } from '@services/events.service';
 import { UserService } from '@services/user.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @NgModule({
     declarations: [
@@ -77,6 +78,7 @@ import { UserService } from '@services/user.service';
         MatInputModule,
         //MatAccordion,
     ],
+    schemas:  [ CUSTOM_ELEMENTS_SCHEMA ],
     providers: [
         CurrentUserService,
         AuthenticationService,
