@@ -245,12 +245,6 @@ export class HomeComponent implements OnInit {
         }
     }
 
-    /*
-    public onEventSelect(e: Event) {
-        this.events = e;
-    }
-    */
-
     // another method to get event sites
     /* getEventSites(arr, arr2) {
     const ret = [];
