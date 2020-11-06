@@ -6,6 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { Event } from '../interfaces/event';
 
 import * as L from 'leaflet';
 import { EventsService } from '../services/events.service';
@@ -176,6 +177,24 @@ export class HomeComponent implements OnInit {
             this.longitude = geographicMapCenter.lng.toFixed(4);
         });
         // end latLngScale utility logic/////////
+    
+     this.filteredEvents = this.eventsControl.valueChanges
+        .pipe(
+            startWith(''),
+            map(value => typeof value === 'string' ? value : value.event_name),
+            map(event_name => event_name ? this._filter(event_name) : event_name.slice())
+        );
+    }
+
+    
+    displayEvent(event: Event): string {
+        return event && event.event_name ? event.event_name : '';
+    }
+    
+
+    private _filter(event_name: string): Event[] {
+        const filterValue = event_name.toLowerCase();
+        return this.events.filter(event => event.event_name.toLowerCase().indexOf(filterValue) === 0);
     }
 
 

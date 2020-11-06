@@ -119,8 +119,8 @@
                     <input type="text" placeholder="Select an Event"
                         aria-label="Dropdown menu for storm event selection" matInput [formControl]="eventsControl"
                         [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWidth]="displayEvent">
-                        <mat-option *ngFor="let event of events" [value]="event.event_name">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayEvent">
+                        <mat-option *ngFor="let event of filteredEvents | async" [value]="event">
                             {{event.event_name}}
                         </mat-option>
                     </mat-autocomplete>
