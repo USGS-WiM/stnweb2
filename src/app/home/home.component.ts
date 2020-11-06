@@ -85,6 +85,10 @@ export class HomeComponent implements OnInit {
     ) {
         this.eventsService.getAllEvents().subscribe((results) => {
             this.events = results;
+            //sort the events by date, most recent at the top of the list
+            this.events = this.events.sort((a, b) =>
+                a.event_start_date < b.event_start_date ? 1 : -1
+            );
             // this.mapResults(this.events);
         });
         // TODO: by default populate map with most recent event
