@@ -7,6 +7,7 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Event } from '../interfaces/event';
+import { AppModule } from '../app.module';
 
 import * as L from 'leaflet';
 import { EventsService } from '../services/events.service';

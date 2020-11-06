@@ -38,6 +38,7 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { EventsService } from '@services/events.service';
 import { UserService } from '@services/user.service';
+import { FormControl } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -50,9 +51,38 @@ import { UserService } from '@services/user.service';
         ConfirmComponent,
     ],
     imports: [
+        FormControl,
         BrowserModule,
         RouterModule,
         AppRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        ScrollingModule,
+        CdkTableModule,
+        CdkTreeModule,
+        CommonModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatExpansionModule,
+        MatCardModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatAutocompleteModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatTabsModule,
+        MatFormFieldModule,
+        MatCheckboxModule,
+        MatInputModule,
+        //MatAccordion,
+    ],
+    exports: [
+        FormControl,
+        BrowserModule,
+        RouterModule,
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
