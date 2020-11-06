@@ -4,83 +4,6 @@
     Main body wrapper
   -->
 <div id="homeContainer">
-    <div class="controlsDiv">
-        <div id="welcome-panel-div">
-            <mat-expansion-panel expanded>
-                <mat-expansion-panel-header>
-                    <mat-panel-title> STN </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <p id="welcome-text">This is STN</p>
-
-                <p>
-                    <!-- <b>
-            You are logged in as
-            <span style="font-style: italic;">{{currentUser.first_name}}{{currentUser.last_name}}</span>
-            ({{currentUser.username}})
-          </b> -->
-                </p>
-
-                <!-- User Role -->
-                <div>
-                    <p>Interesting text.</p>
-                </div>
-            </mat-expansion-panel>
-        </div>
-
-        <mat-expansion-panel expanded id="sidebarSearchTab">
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h3>Map Filters</h3>
-                </mat-panel-title>
-                <mat-panel-description> </mat-panel-description>
-            </mat-expansion-panel-header>
-
-            <div>
-                <span>Event: {{ currentEventName }}</span>
-                <span></span>
-            </div>
-        </mat-expansion-panel>
-
-        <!--
-        <div class="sidebar-item">
-            <label>Choose Study Area:</label>
-            <select  [(ngModel)]="selectedEvent" (ngModelChange)="onRegSelect($event)" name="region">
-                <option selected hidden value=""></option>
-                <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
-            </select>
-        </div>
-    -->
-
-
-        <mat-expansion-panel expanded id="sidebarSearchTab">
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h3>Important usage notes and instructions</h3>
-                </mat-panel-title>
-                <mat-panel-description> </mat-panel-description>
-            </mat-expansion-panel-header>
-
-            <div>
-                <p>
-                    Many of the supplemental GIS data layers found in the map
-                    are from a range of sources and are not maintained by WiM.
-                    We offer these map layers as a decision support supplement
-                    to the STN sites layer, but we cannot guarantee their
-                    performance and availability. Many of these externally
-                    maintained layers are large datasets and may load slowly
-                    depending on network latency. In some cases they may fail to
-                    load entirely when network latency is high.
-                </p>
-                <p>
-                    Many of these outside layers are maintained by NOAA.
-                    <a href="https://www.lstsrv.ncep.noaa.gov/mailman/listinfo/ncep.list.idp-gis-status">Click here</a>
-                    to subscribe to a NOAA email list for GIS service status
-                    updates.
-                </p>
-            </div>
-        </mat-expansion-panel>
-    </div>
     <!-- End Main Body Wrapper-->
     <div class="resultsDiv">
         <!-- Results Loading Shade -->
@@ -88,7 +11,6 @@
         <!-- <div class="data-loading-shade">
       <mat-spinner></mat-spinner>
     </div> -->
-
         <mat-expansion-panel expanded id="mapPanel">
             <mat-expansion-panel-header>
                 <mat-panel-title id="resultsMapHeader"> Map </mat-panel-title>
@@ -110,76 +32,104 @@
             </div>
         </mat-expansion-panel>
 
-        <mat-card>
-            <form >
-                <mat-form-field class="eventSelect">
-                    <mat-label>Event</mat-label>
-                    <input type="text"
-                        aria-label="Dropdown menu for storm event selection" matInput [formControl]="eventsControl"
-                        [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayEvent">
-                        <mat-option *ngFor="let event of filteredEvents | async" [value]="event">
-                            {{event.event_name}}
-                        </mat-option>
-                    </mat-autocomplete>
-                </mat-form-field>
-            </form>
+        <mat-card id="filtersSection">
             <mat-card-title>
                 <div class="results-card-title-row">
-                    <span class="results-card-title">Filter Results</span>
+                    <span class="results-card-title">Map Filters</span>
 
                     <span class="spacer"></span>
                 </div>
             </mat-card-title>
             <mat-card-content>
-                <div *ngIf="dataSource" class="results-table-div">
-                    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                        <!-- Position Column -->
-                        <ng-container matColumnDef="position">
-                            <mat-header-cell *matHeaderCellDef>
-                                No.
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                {{ element.position }}
-                            </mat-cell>
-                        </ng-container>
+                <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title> Filters </mat-panel-title>
+                    </mat-expansion-panel-header>
 
-                        <!-- Name Column -->
-                        <ng-container matColumnDef="name">
-                            <mat-header-cell *matHeaderCellDef>
-                                Name
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                {{ element.name }}
-                            </mat-cell>
-                        </ng-container>
 
-                        <!-- Weight Column -->
-                        <ng-container matColumnDef="weight">
-                            <mat-header-cell *matHeaderCellDef>
-                                Weight
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                {{ element.weight }}
-                            </mat-cell>
-                        </ng-container>
 
-                        <!-- Symbol Column -->
-                        <ng-container matColumnDef="symbol">
-                            <mat-header-cell *matHeaderCellDef>
-                                Symbol
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                {{ element.symbol }}
-                            </mat-cell>
-                        </ng-container>
+                    <form >
+                        <mat-form-field class="eventSelect">
+                            <mat-label>Event</mat-label>
+                            <input type="text"
+                                aria-label="Dropdown menu for storm event selection" matInput [formControl]="eventsControl"
+                                [matAutocomplete]="auto">
+                                <mat-hint>Start typing for suggestions</mat-hint>
+                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayEvent">
+                                <mat-option *ngFor="let event of filteredEvents | async" [value]="event">
+                                    {{event.event_name}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </form>
+                    
+               
 
-                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-                    </mat-table>
 
-                    <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
-                </div>
+
+                </mat-expansion-panel>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title> Results </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div *ngIf="dataSource" class="results-table-div">
+                        <mat-table
+                            [dataSource]="dataSource"
+                            class="mat-elevation-z8"
+                        >
+                            <!-- Position Column -->
+                            <ng-container matColumnDef="position">
+                                <mat-header-cell *matHeaderCellDef>
+                                    No.
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    {{ element.position }}
+                                </mat-cell>
+                            </ng-container>
+
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="name">
+                                <mat-header-cell *matHeaderCellDef>
+                                    Name
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    {{ element.name }}
+                                </mat-cell>
+                            </ng-container>
+
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="weight">
+                                <mat-header-cell *matHeaderCellDef>
+                                    Weight
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    {{ element.weight }}
+                                </mat-cell>
+                            </ng-container>
+
+                            <!-- Symbol Column -->
+                            <ng-container matColumnDef="symbol">
+                                <mat-header-cell *matHeaderCellDef>
+                                    Symbol
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    {{ element.symbol }}
+                                </mat-cell>
+                            </ng-container>
+
+                            <mat-header-row
+                                *matHeaderRowDef="displayedColumns"
+                            ></mat-header-row>
+                            <mat-row
+                                *matRowDef="let row; columns: displayedColumns"
+                            ></mat-row>
+                        </mat-table>
+
+                        <mat-paginator
+                            [pageSizeOptions]="[5, 10, 25]"
+                        ></mat-paginator>
+                    </div>
+                </mat-expansion-panel>
             </mat-card-content>
         </mat-card>
     </div>
