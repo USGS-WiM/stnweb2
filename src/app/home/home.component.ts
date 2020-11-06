@@ -182,7 +182,7 @@ export class HomeComponent implements OnInit {
         .pipe(
             startWith(''),
             map(value => typeof value === 'string' ? value : value.event_name),
-            map(event_name => event_name ? this._filter(event_name) : event_name.slice())
+            map(event_name => event_name ? this._filter(event_name) : this.events)
         );
     }
 
