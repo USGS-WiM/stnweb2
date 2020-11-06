@@ -32,7 +32,6 @@
                 </div>
             </div>
         </mat-expansion-panel>
-
         <mat-card id="filtersSection">
             <mat-card-title>
                 <div class="results-card-title-row">
@@ -46,11 +45,28 @@
                     <mat-expansion-panel-header>
                         <mat-panel-title> Filters </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <form class="example-form">
-                        <mat-form-field class="example-full-width">
-                            <mat-label aria-label="Select an event">Event</mat-label>
-                            <input type="text" name="event" matInput />
+                    <form>
+                        <mat-form-field class="eventSelect">
+                            <mat-label>Event</mat-label>
+                            <input
+                                type="text"
+                                aria-label="Dropdown menu for storm event selection"
+                                matInput
+                                [formControl]="eventsControl"
+                                [matAutocomplete]="auto"
+                            />
                             <mat-hint>Start typing for suggestions</mat-hint>
+                            <mat-autocomplete
+                                #auto="matAutocomplete"
+                                [displayWith]="displayEvent"
+                            >
+                                <mat-option
+                                    *ngFor="let event of filteredEvents | async"
+                                    [value]="event"
+                                >
+                                    {{ event.event_name }}
+                                </mat-option>
+                            </mat-autocomplete>
                         </mat-form-field>
                     </form>
                 </mat-expansion-panel>
