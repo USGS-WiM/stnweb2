@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
 
     openAboutDialog(): void {
         const dialogRef = this.dialog.open(AboutComponent, {});
-        dialogRef.afterClosed().subscribe((result) => {});
+        dialogRef.afterClosed().subscribe((result) => { });
     }
 
     openLoginDialog(): void {
