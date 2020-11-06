@@ -178,6 +178,7 @@ export class HomeComponent implements OnInit {
         });
         // end latLngScale utility logic/////////
     
+    //Allow user to type into the event selector to view matching events
      this.filteredEvents = this.eventsControl.valueChanges
         .pipe(
             startWith(''),
@@ -186,12 +187,13 @@ export class HomeComponent implements OnInit {
         );
     }
 
-    
+    //Options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
     }
     
-
+    //Match what user is typing to the index of the corresponding event
+    //Not case sensative
     private _filter(event_name: string): Event[] {
         const filterValue = event_name.toLowerCase();
         return this.events.filter(event => event.event_name.toLowerCase().indexOf(filterValue) === 0);

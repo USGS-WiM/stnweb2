@@ -111,13 +111,10 @@
         </mat-expansion-panel>
 
         <mat-card>
-
-
-            
-            <form>
-                <mat-label>Event</mat-label>
-                <mat-form-field>
-                    <input type="text" placeholder="Select an Event"
+            <form >
+                <mat-form-field class="eventSelect">
+                    <mat-label>Event</mat-label>
+                    <input type="text"
                         aria-label="Dropdown menu for storm event selection" matInput [formControl]="eventsControl"
                         [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayEvent">
@@ -127,8 +124,6 @@
                     </mat-autocomplete>
                 </mat-form-field>
             </form>
-
-
             <mat-card-title>
                 <div class="results-card-title-row">
                     <span class="results-card-title">Filter Results</span>
