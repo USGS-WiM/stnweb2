@@ -78,7 +78,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
         MatInputModule,
         //MatAccordion,
     ],
-    schemas:  [ CUSTOM_ELEMENTS_SCHEMA ],
+    schemas:  [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
         CurrentUserService,
         AuthenticationService,
@@ -91,6 +91,6 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
-    ],
+    ]
 })
 export class AppModule {}
