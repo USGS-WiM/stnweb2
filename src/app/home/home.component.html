@@ -18,6 +18,9 @@
 
             <!-- Map -->
             <div id="map">
+                <div id="extentBtn" class="extentBtn" (click)="eventExtent()">
+                    <span>Zoom to Event</span>
+                </div>
                 <div id="latLngScale" class="latLngScale">
                     <span class="hover-content"> <b>Map scale </b></span>
                     1:<span id="scale">{{ mapScale }}</span> |
