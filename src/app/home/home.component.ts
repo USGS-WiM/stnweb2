@@ -3,7 +3,10 @@ import { CurrentUserService } from '../services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogRef } from '@angular/material/dialog';
-
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { Event } from '../interfaces/event';
 import * as L from 'leaflet';
 import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
@@ -70,7 +73,9 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
+    eventsControl = new FormControl();
     events: Event[];
+    filteredEvents: Observable<Event[]>;
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
@@ -80,6 +85,10 @@ export class HomeComponent implements OnInit {
     ) {
         this.eventsService.getAllEvents().subscribe((results) => {
             this.events = results;
+            //sort the events by date, most recent at the top of the list
+            this.events = this.events.sort((a, b) =>
+                a.event_start_date < b.event_start_date ? 1 : -1
+            );
             // this.mapResults(this.events);
         });
         // TODO: by default populate map with most recent event
@@ -171,7 +180,33 @@ export class HomeComponent implements OnInit {
             this.longitude = geographicMapCenter.lng.toFixed(4);
         });
         // end latLngScale utility logic/////////
+
+        //Allow user to type into the event selector to view matching events
+        this.filteredEvents = this.eventsControl.valueChanges.pipe(
+            startWith(''),
+            map((value) =>
+                typeof value === 'string' ? value : value.event_name
+            ),
+            map((event_name) =>
+                event_name ? this._filter(event_name) : this.events
+            )
+        );
     }
+
+    //Options to be displayed when selecting event filter
+    displayEvent(event: Event): string {
+        return event && event.event_name ? event.event_name : '';
+    }
+
+    //Match what user is typing to the index of the corresponding event
+    //Not case sensative
+    private _filter(event_name: string): Event[] {
+        const filterValue = event_name.toLowerCase();
+        return this.events.filter(
+            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
+        );
+    }
+
     scaleLookup(mapZoom) {
         switch (mapZoom) {
             case 19:
