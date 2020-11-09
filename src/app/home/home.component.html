@@ -18,6 +18,16 @@
 
             <!-- Map -->
             <div id="map">
+                <div
+                    id="extentBtn"
+                    class="extentBtn leaflet-bar leaflet-control leaflet-control-zoom"
+                    (click)="eventExtent()"
+                    aria-label="Clicking this button zooms to the extent of selected event"
+                >
+                    <mat-icon aria-hidden="false" aria-label="Example home icon"
+                        >home</mat-icon
+                    >
+                </div>
                 <div id="latLngScale" class="latLngScale">
                     <span class="hover-content"> <b>Map scale </b></span>
                     1:<span id="scale">{{ mapScale }}</span> |
@@ -43,7 +53,9 @@
             <mat-card-content>
                 <mat-expansion-panel expanded>
                     <mat-expansion-panel-header>
-                        <mat-panel-title> Filters </mat-panel-title>
+                        <mat-panel-title>
+                            Filters <span class="fal fa-home-alt"></span
+                        ></mat-panel-title>
                     </mat-expansion-panel-header>
                     <form>
                         <mat-form-field class="eventSelect">
