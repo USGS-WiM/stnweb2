@@ -18,7 +18,12 @@
 
             <!-- Map -->
             <div id="map">
-                <div id="extentBtn" class="extentBtn" (click)="eventExtent()">
+                <div
+                    id="extentBtn"
+                    class="extentBtn"
+                    (click)="eventExtent()"
+                    aria-label="Clicking this button zooms to the extent of selected event"
+                >
                     <span>Zoom to Event</span>
                 </div>
                 <div id="latLngScale" class="latLngScale">
