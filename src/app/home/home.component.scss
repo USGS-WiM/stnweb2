@@ -232,17 +232,29 @@ $borderRadius: 4px;
 .extentBtn {
     position: absolute;
     padding: 4px;
-    bottom: 65px !important;
-    left: 15px;
-    /*width:250px*/
-    /*height:320px;*/
+    top: 85px !important;
+    left: 10px;
     z-index: 1000;
-    color: white;
-    background-color: rgb(1, 87, 155);
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+    background-color: white;
     border-radius: 4px;
+    width: 23px;
+    height: 23px;
     cursor: pointer;
 }
+
+/*
+.extentBtn {
+    width: 30 px;
+    height: 30 px;
+    background-color: white;
+    display: block;
+    text-align: center;
+    top: 90px;
+    left: 50 px;
+    position: absolute;
+    cursor: pointer;
+}
+*/
 
 .latLngScale {
     position: absolute;

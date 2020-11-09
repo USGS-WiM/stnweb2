@@ -1,146 +1,176 @@
-<!--
+<html>
+    <head>
+        <!-- Font Awesome -->
+        <script
+            src="https://kit.fontawesome.com/04af2f0fe1.js"
+            crossorigin="anonymous"
+        ></script>
+    </head>
+    <body>
+        <!--
     Main body wrapper
     Main body wrapper
     Main body wrapper
   -->
-<div id="homeContainer">
-    <!-- End Main Body Wrapper-->
-    <div class="resultsDiv">
-        <!-- Results Loading Shade -->
-        <!-- Covers map and results, not sidebar -->
-        <!-- <div class="data-loading-shade">
+        <div id="homeContainer">
+            <!-- End Main Body Wrapper-->
+            <div class="resultsDiv">
+                <!-- Results Loading Shade -->
+                <!-- Covers map and results, not sidebar -->
+                <!-- <div class="data-loading-shade">
       <mat-spinner></mat-spinner>
     </div> -->
-        <mat-expansion-panel expanded id="mapPanel">
-            <mat-expansion-panel-header>
-                <mat-panel-title id="resultsMapHeader"> Map </mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <!-- Map -->
-            <div id="map">
-                <div
-                    id="extentBtn"
-                    class="extentBtn"
-                    (click)="eventExtent()"
-                    aria-label="Clicking this button zooms to the extent of selected event"
-                >
-                    <span>Zoom to Event</span>
-                </div>
-                <div id="latLngScale" class="latLngScale">
-                    <span class="hover-content"> <b>Map scale </b></span>
-                    1:<span id="scale">{{ mapScale }}</span> |
-                    <span class="hover-content"> <b>Zoom level </b></span>
-                    <span id="zoomLevel"> {{ zoomLevel }}</span
-                    ><br />
-                    <span class="hover-content"><b>Latitude</b></span>
-                    <span id="latitude"> {{ latitude }}</span> |
-                    <span class="hover-content"> <b>Longitude</b></span>
-                    <span id="longitude"> {{ longitude }}</span>
-                    <span id="mapCenterLabel" class="hover-content"></span>
-                </div>
-            </div>
-        </mat-expansion-panel>
-        <mat-card id="filtersSection">
-            <mat-card-title>
-                <div class="results-card-title-row">
-                    <span class="results-card-title">Map Filters</span>
-
-                    <span class="spacer"></span>
-                </div>
-            </mat-card-title>
-            <mat-card-content>
-                <mat-expansion-panel expanded>
+                <mat-expansion-panel expanded id="mapPanel">
                     <mat-expansion-panel-header>
-                        <mat-panel-title> Filters </mat-panel-title>
+                        <mat-panel-title id="resultsMapHeader">
+                            Map
+                        </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <form>
-                        <mat-form-field class="eventSelect">
-                            <mat-label>Event</mat-label>
-                            <input
-                                type="text"
-                                aria-label="Dropdown menu for storm event selection"
-                                matInput
-                                [formControl]="eventsControl"
-                                [matAutocomplete]="auto"
-                            />
-                            <mat-hint>Start typing for suggestions</mat-hint>
-                            <mat-autocomplete
-                                #auto="matAutocomplete"
-                                [displayWith]="displayEvent"
-                            >
-                                <mat-option
-                                    *ngFor="let event of filteredEvents | async"
-                                    [value]="event"
-                                >
-                                    {{ event.event_name }}
-                                </mat-option>
-                            </mat-autocomplete>
-                        </mat-form-field>
-                    </form>
-                </mat-expansion-panel>
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header>
-                        <mat-panel-title> Results </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <div *ngIf="dataSource" class="results-table-div">
-                        <mat-table
-                            [dataSource]="dataSource"
-                            class="mat-elevation-z8"
+
+                    <!-- Map -->
+                    <div id="map">
+                        <div
+                            id="extentBtn"
+                            class="extentBtn leaflet-bar leaflet-control leaflet-control-zoom"
+                            (click)="eventExtent()"
+                            aria-label="Clicking this button zooms to the extent of selected event"
                         >
-                            <!-- Position Column -->
-                            <ng-container matColumnDef="position">
-                                <mat-header-cell *matHeaderCellDef>
-                                    No.
-                                </mat-header-cell>
-                                <mat-cell *matCellDef="let element">
-                                    {{ element.position }}
-                                </mat-cell>
-                            </ng-container>
-
-                            <!-- Name Column -->
-                            <ng-container matColumnDef="name">
-                                <mat-header-cell *matHeaderCellDef>
-                                    Name
-                                </mat-header-cell>
-                                <mat-cell *matCellDef="let element">
-                                    {{ element.name }}
-                                </mat-cell>
-                            </ng-container>
-
-                            <!-- Weight Column -->
-                            <ng-container matColumnDef="weight">
-                                <mat-header-cell *matHeaderCellDef>
-                                    Weight
-                                </mat-header-cell>
-                                <mat-cell *matCellDef="let element">
-                                    {{ element.weight }}
-                                </mat-cell>
-                            </ng-container>
-
-                            <!-- Symbol Column -->
-                            <ng-container matColumnDef="symbol">
-                                <mat-header-cell *matHeaderCellDef>
-                                    Symbol
-                                </mat-header-cell>
-                                <mat-cell *matCellDef="let element">
-                                    {{ element.symbol }}
-                                </mat-cell>
-                            </ng-container>
-
-                            <mat-header-row
-                                *matHeaderRowDef="displayedColumns"
-                            ></mat-header-row>
-                            <mat-row
-                                *matRowDef="let row; columns: displayedColumns"
-                            ></mat-row>
-                        </mat-table>
-
-                        <mat-paginator
-                            [pageSizeOptions]="[5, 10, 25]"
-                        ></mat-paginator>
+                            <span class="fal fa-home-alt"></span>
+                        </div>
+                        <div id="latLngScale" class="latLngScale">
+                            <span class="hover-content">
+                                <b>Map scale </b></span
+                            >
+                            1:<span id="scale">{{ mapScale }}</span> |
+                            <span class="hover-content">
+                                <b>Zoom level </b></span
+                            >
+                            <span id="zoomLevel"> {{ zoomLevel }}</span
+                            ><br />
+                            <span class="hover-content"><b>Latitude</b></span>
+                            <span id="latitude"> {{ latitude }}</span> |
+                            <span class="hover-content"> <b>Longitude</b></span>
+                            <span id="longitude"> {{ longitude }}</span>
+                            <span
+                                id="mapCenterLabel"
+                                class="hover-content"
+                            ></span>
+                        </div>
                     </div>
                 </mat-expansion-panel>
-            </mat-card-content>
-        </mat-card>
-    </div>
-</div>
+                <mat-card id="filtersSection">
+                    <mat-card-title>
+                        <div class="results-card-title-row">
+                            <span class="results-card-title">Map Filters</span>
+
+                            <span class="spacer"></span>
+                        </div>
+                    </mat-card-title>
+                    <mat-card-content>
+                        <mat-expansion-panel expanded>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Filters <span class="fal fa-home-alt"></span
+                                ></mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <form>
+                                <mat-form-field class="eventSelect">
+                                    <mat-label>Event</mat-label>
+                                    <input
+                                        type="text"
+                                        aria-label="Dropdown menu for storm event selection"
+                                        matInput
+                                        [formControl]="eventsControl"
+                                        [matAutocomplete]="auto"
+                                    />
+                                    <mat-hint
+                                        >Start typing for suggestions</mat-hint
+                                    >
+                                    <mat-autocomplete
+                                        #auto="matAutocomplete"
+                                        [displayWith]="displayEvent"
+                                    >
+                                        <mat-option
+                                            *ngFor="
+                                                let event of filteredEvents
+                                                    | async
+                                            "
+                                            [value]="event"
+                                        >
+                                            {{ event.event_name }}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </form>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title> Results </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div *ngIf="dataSource" class="results-table-div">
+                                <mat-table
+                                    [dataSource]="dataSource"
+                                    class="mat-elevation-z8"
+                                >
+                                    <!-- Position Column -->
+                                    <ng-container matColumnDef="position">
+                                        <mat-header-cell *matHeaderCellDef>
+                                            No.
+                                        </mat-header-cell>
+                                        <mat-cell *matCellDef="let element">
+                                            {{ element.position }}
+                                        </mat-cell>
+                                    </ng-container>
+
+                                    <!-- Name Column -->
+                                    <ng-container matColumnDef="name">
+                                        <mat-header-cell *matHeaderCellDef>
+                                            Name
+                                        </mat-header-cell>
+                                        <mat-cell *matCellDef="let element">
+                                            {{ element.name }}
+                                        </mat-cell>
+                                    </ng-container>
+
+                                    <!-- Weight Column -->
+                                    <ng-container matColumnDef="weight">
+                                        <mat-header-cell *matHeaderCellDef>
+                                            Weight
+                                        </mat-header-cell>
+                                        <mat-cell *matCellDef="let element">
+                                            {{ element.weight }}
+                                        </mat-cell>
+                                    </ng-container>
+
+                                    <!-- Symbol Column -->
+                                    <ng-container matColumnDef="symbol">
+                                        <mat-header-cell *matHeaderCellDef>
+                                            Symbol
+                                        </mat-header-cell>
+                                        <mat-cell *matCellDef="let element">
+                                            {{ element.symbol }}
+                                        </mat-cell>
+                                    </ng-container>
+
+                                    <mat-header-row
+                                        *matHeaderRowDef="displayedColumns"
+                                    ></mat-header-row>
+                                    <mat-row
+                                        *matRowDef="
+                                            let row;
+                                            columns: displayedColumns
+                                        "
+                                    ></mat-row>
+                                </mat-table>
+
+                                <mat-paginator
+                                    [pageSizeOptions]="[5, 10, 25]"
+                                ></mat-paginator>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </body>
+</html>
