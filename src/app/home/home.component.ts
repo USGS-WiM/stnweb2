@@ -193,6 +193,15 @@ export class HomeComponent implements OnInit {
         );
     }
 
+    //When button is clicked, zoom to the full extent of the selected event
+    //As a placeholder, currently zooms back the the U.S. extent
+    eventExtent() {
+        this.map.fitBounds([
+            [48, -125],
+            [25, -65],
+        ]);
+    }
+
     //Options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
