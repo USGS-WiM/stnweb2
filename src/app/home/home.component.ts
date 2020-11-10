@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Event } from '../interfaces/event';
 import * as L from 'leaflet';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
@@ -76,6 +77,15 @@ export class HomeComponent implements OnInit {
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
+
+    provider = new OpenStreetMapProvider();
+    searchControl = new GeoSearchControl({
+        provider: this.provider,
+        style: 'button',
+        autoComplete: true,
+        autoCompleteDelay: 250,
+    });
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
@@ -191,6 +201,9 @@ export class HomeComponent implements OnInit {
                 event_name ? this._filter(event_name) : this.events
             )
         );
+
+        //Add geosearch
+        this.map.addControl(this.searchControl);
     }
 
     //When button is clicked, zoom to the full extent of the selected event
