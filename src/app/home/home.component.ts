@@ -74,10 +74,12 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
+    //Event Selector
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
 
+    //Geosearch
     provider = new OpenStreetMapProvider();
     searchControl = new GeoSearchControl({
         provider: this.provider,
