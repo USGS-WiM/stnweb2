@@ -15,16 +15,17 @@ import { Event } from '@interfaces/event';
     providedIn: 'root',
 })
 export class EventsService {
-    constructor(private httpClient: HttpClient) {}
+    constructor(private httpClient: HttpClient) { }
 
     public getAllEvents(): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.EVENTS + '.json', {
-                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
-            })
+            // .get(APP_SETTINGS.EVENTS + '.json', {
+            //     headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            // })
+            .get(APP_SETTINGS.EVENTS + '.json')
             .pipe(
                 tap((response) => {
-                    // console.log('response recieved: ' + response);
+                    console.log('Events list response recieved: ' + response);
                     return response;
                 }),
                 catchError(this.handleError<any>('getAllEvents', []))
