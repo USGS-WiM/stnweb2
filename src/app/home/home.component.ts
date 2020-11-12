@@ -12,6 +12,13 @@ import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
+import * as esri from 'esri-leaflet';
+
+import 'leaflet/dist/leaflet.css';
+
+import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css';
+import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder';
+import * as esri_geo from 'esri-leaflet-geocoder';
 
 export interface PeriodicElement {
     name: string;
@@ -76,6 +83,7 @@ export class HomeComponent implements OnInit {
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
@@ -180,6 +188,21 @@ export class HomeComponent implements OnInit {
             this.longitude = geographicMapCenter.lng.toFixed(4);
         });
         // end latLngScale utility logic/////////
+
+        //const searchControl = L.esri.esri_geo.geosearch();
+        //const searchControl = L.esri_geo.geosearch();
+        //const searchControl = esri_geo.Geosearch();
+        const searchControl = esri_geo.geosearch();
+        const results = new L.LayerGroup().addTo(this.map);
+
+        searchControl
+            .on('results', function (data) {
+                this.results.clearLayers();
+                for (let i = this.data.results.length - 1; i >= 0; i--) {
+                    results.addLayer(L.marker(this.data.results[i].latlng));
+                }
+            })
+            .addTo(this.map);
 
         //Allow user to type into the event selector to view matching events
         this.filteredEvents = this.eventsControl.valueChanges.pipe(
