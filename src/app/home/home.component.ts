@@ -14,8 +14,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 
 //leaflet imports for geosearch
-import 'leaflet/dist/leaflet.css';
-import * as esri_geo from 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder.js';
+import * as esri_geo from 'esri-leaflet-geocoder';
 
 export interface PeriodicElement {
     name: string;

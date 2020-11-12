@@ -34,7 +34,6 @@
         "@angular/platform-browser-dynamic": "~10.2.0",
         "@angular/router": "~10.2.0",
         "@types/angular": "^1.7.3",
-        "@types/esri-leaflet-geocoder": "^2.2.2",
         "core-js": "^3.6.5",
         "esri-leaflet": "^2.5.1",
         "esri-leaflet-geocoder": "^2.3.3",
