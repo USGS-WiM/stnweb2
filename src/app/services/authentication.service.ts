@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 // import { Observable } from 'rxjs/Rx';
 // import 'rxjs/add/operator/map';
 // import 'rxjs/observable/of';
-import { Router } from '@angular/router';
 import { APP_SETTINGS } from '../app.settings';
 import { HttpClient } from '@angular/common/http';
 
 import { CurrentUserService } from '@services/current-user.service';
+import { of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -15,8 +15,7 @@ export class AuthenticationService {
     constructor(
         private http: HttpClient,
         private currentUserService: CurrentUserService,
-        private router: Router
-    ) {}
+    ) { }
     // TODO: test this
     login(username: string, password: string) {
         // const options = new RequestOptions({
@@ -60,6 +59,7 @@ export class AuthenticationService {
         sessionStorage.removeItem('observerID');
         sessionStorage.removeItem('currentUser');
 
-        this.router.navigate(['/home']);
+        return of(true);
+
     }
 }

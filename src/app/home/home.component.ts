@@ -13,6 +13,9 @@ import { APP_SETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 
+//leaflet imports for geosearch
+import * as esri_geo from 'esri-leaflet-geocoder';
+
 export interface PeriodicElement {
     name: string;
     position: number;
@@ -193,6 +196,19 @@ export class HomeComponent implements OnInit {
             this.longitude = geographicMapCenter.lng.toFixed(4);
         });
         // end latLngScale utility logic/////////
+
+        const searchControl = new esri_geo.geosearch().addTo(this.map);
+
+        //This layer will contain the location markers
+        const results = new L.LayerGroup().addTo(this.map);
+
+        //Clear the previous search marker and add a marker at the new location
+        searchControl.on('results', function (data) {
+            results.clearLayers();
+            for (let i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+            }
+        });
 
         //Allow user to type into the event selector to view matching events
         this.filteredEvents = this.eventsControl.valueChanges.pipe(
