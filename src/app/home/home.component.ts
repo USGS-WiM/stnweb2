@@ -12,10 +12,10 @@ import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
+
+//leaflet imports for geosearch
 import * as esri from 'esri-leaflet';
-
 import 'leaflet/dist/leaflet.css';
-
 import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css';
 import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder';
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -83,6 +83,8 @@ export class HomeComponent implements OnInit {
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
+
+    //searchControl = new esri_geo.Geosearch();
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -189,20 +191,33 @@ export class HomeComponent implements OnInit {
         });
         // end latLngScale utility logic/////////
 
+        ////Attempts at getting the esri geosearch to not error
         //const searchControl = L.esri.esri_geo.geosearch();
         //const searchControl = L.esri_geo.geosearch();
         //const searchControl = esri_geo.Geosearch();
-        const searchControl = esri_geo.geosearch();
+        //const searchControl = esri_geo.geosearch();
+        //const searchControl = L.esri_geo.Geocoding.geosearch();
+        //const searchControl = esri_geo.Geocoding.geosearch();
+        //const searchControl = esri.Geocoding.geosearch();
+
+        //This one didn't get errors while compiling, or show any terms underlined in red, but got console error:
+        //ERROR TypeError: Cannot read property 'Geocoding' of undefined
+        //const searchControl = L.esri.Geocoding.geosearch();
+
+        //This one worked even though vsc had Geosearch underlined in red with the following note:
+        //Property 'Geosearch' does not exist on type 'typeof
+        const searchControl = new esri_geo.Geosearch().addTo(this.map);
+
+        //This layer will contain the location markers
         const results = new L.LayerGroup().addTo(this.map);
 
-        searchControl
-            .on('results', function (data) {
-                this.results.clearLayers();
-                for (let i = this.data.results.length - 1; i >= 0; i--) {
-                    results.addLayer(L.marker(this.data.results[i].latlng));
-                }
-            })
-            .addTo(this.map);
+        //Clear the previous search marker and add a marker at the new location
+        searchControl.on('results', function (data) {
+            results.clearLayers();
+            for (let i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+            }
+        });
 
         //Allow user to type into the event selector to view matching events
         this.filteredEvents = this.eventsControl.valueChanges.pipe(
