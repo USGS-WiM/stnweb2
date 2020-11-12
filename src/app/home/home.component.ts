@@ -80,9 +80,6 @@ export class HomeComponent implements OnInit {
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
-
-    //searchControl = new esri_geo.Geosearch();
-
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
