@@ -57,30 +57,139 @@
                             Filters <span class="fal fa-home-alt"></span
                         ></mat-panel-title>
                     </mat-expansion-panel-header>
-                    <form>
-                        <mat-form-field class="eventSelect">
-                            <mat-label>Event</mat-label>
-                            <input
-                                type="text"
-                                aria-label="Dropdown menu for storm event selection"
-                                matInput
-                                [formControl]="eventsControl"
-                                [matAutocomplete]="auto"
-                            />
-                            <mat-hint>Start typing for suggestions</mat-hint>
-                            <mat-autocomplete
-                                #auto="matAutocomplete"
-                                [displayWith]="displayEvent"
-                            >
-                                <mat-option
-                                    *ngFor="let event of filteredEvents | async"
-                                    [value]="event"
+                    <div class="form-container">
+                        <form class="form">
+                            <mat-form-field class="eventSelect">
+                                <mat-label for="eventSelection"
+                                    >Event</mat-label
                                 >
-                                    {{ event.event_name }}
-                                </mat-option>
-                            </mat-autocomplete>
-                        </mat-form-field>
-                    </form>
+                                <input
+                                    id="eventSelection"
+                                    type="text"
+                                    aria-label="Dropdown menu for storm event selection"
+                                    matInput
+                                    [formControl]="eventsControl"
+                                    [matAutocomplete]="auto"
+                                />
+                                <mat-hint
+                                    >Start typing for suggestions</mat-hint
+                                >
+                                <mat-autocomplete
+                                    #auto="matAutocomplete"
+                                    [displayWith]="displayEvent"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let event of filteredEvents | async
+                                        "
+                                        [value]="event"
+                                    >
+                                        {{ event.event_name }}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                            <br />
+                            <mat-form-field appearance="fill">
+                                <mat-label for="networkOptions"
+                                    >Networks</mat-label
+                                >
+                                <mat-select
+                                    id="networkOptions"
+                                    [formControl]="networks"
+                                    multiple
+                                >
+                                    <mat-option
+                                        *ngFor="let network of networkList"
+                                        [value]="network"
+                                        >{{ network }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label for="sensorTypes"
+                                    >Sensor Types</mat-label
+                                >
+                                <mat-select
+                                    id="sensorTypes"
+                                    [formControl]="sensors"
+                                >
+                                    <mat-option
+                                        *ngFor="let sensor of sensorList"
+                                        [value]="sensor"
+                                        >{{ sensor }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field
+                                class="form-full-width"
+                                appearance="fill"
+                            >
+                                <mat-label for="state">State(s)</mat-label>
+                                <input
+                                    id="state"
+                                    matInput
+                                    placeholder="Ex. California"
+                                />
+                            </mat-form-field>
+                            <br />
+                            <label
+                                class="filter-label"
+                                aria-label="Optionally select surveyed or unsurveyed HWMS"
+                                >HWMS Surveyed:</label
+                            >
+                            <section class="checkbox-section">
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Surveyed</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Unsurveyed</mat-checkbox
+                                >
+                            </section>
+                            <br />
+                            <label
+                                class="filter-label"
+                                aria-label="Optionally select additional site filters"
+                                >Additional Site Filters:</label
+                            >
+                            <section class="checkbox-section">
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >HWM Only Sites</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Sensor Only Sites</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Surveyed RP Only Sites</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Pre-Deployed Bracket Sites
+                                    Only</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >RDG Only Sites</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Has OP Defined</mat-checkbox
+                                >
+                            </section>
+                        </form>
+                    </div>
                 </mat-expansion-panel>
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
