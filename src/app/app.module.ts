@@ -1,159 +1,94 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { EventSubmissionComponent } from './event-submission/event-submission.component';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 import { AboutComponent } from './about/about.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
 
-import {
-  MatAutocompleteModule,
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatChipsModule,
-  MatDatepickerModule,
-  MatDialogModule,
-  MatDividerModule,
-  MatExpansionModule,
-  MatGridListModule,
-  MatIconModule,
-  MatInputModule,
-  MatListModule,
-  MatMenuModule,
-  MatNativeDateModule,
-  MatPaginatorModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule,
-  MatRadioModule,
-  MatRippleModule,
-  MatSelectModule,
-  MatSidenavModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatSnackBarModule,
-  MatSortModule,
-  MatTableModule,
-  MatTabsModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  MatBottomSheetModule,
-  MatStepperModule,
-  MatTreeModule,
-} from '@angular/material';
+// import { MatAccordion } from '@angular/material/expansion';
 
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
-import { IceJamService } from './services/ice-jam.service';
-import { SiteService } from './services/site.service';
-import { CreateSiteComponent } from './create-site/create-site.component';
-import { JamTypeService } from './services/jam-type.service';
 import { ConfirmComponent } from './confirm/confirm.component';
-import { SelectedSiteService } from './services/selected-site.service';
-import { RoughnessTypeService } from './services/roughness-type.service';
-import { StageTypeService } from './services/stage-type.service';
-import { WeatherConditionTypeService } from './services/weather-condition-type.service';
-import { DamageTypeService } from './services/damage-type.service';
-import { CurrentUserService } from './services/current-user.service';
-import { IceConditionTypeService } from './services/ice-condition-type.service';
-import { FiltersComponent } from './filters/filters.component';
+import { CurrentUserService } from '@services/current-user.service';
+import { AuthenticationService } from '@services/authentication.service';
+import { EventsService } from '@services/events.service';
+import { UserService } from '@services/user.service';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AboutComponent,
-    HomeComponent,
-    EventSubmissionComponent,
-    SearchDialogComponent,
-    LoginComponent,
-    RegistrationComponent,
-    CreateSiteComponent,
-    ConfirmComponent,
-    FiltersComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgbModule,
-    HttpModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    MatAutocompleteModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatDatepickerModule,
-    MatDialogModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatGridListModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatMenuModule,
-    MatNativeDateModule,
-    MatPaginatorModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatRadioModule,
-    MatRippleModule,
-    MatSelectModule,
-    MatSidenavModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatSnackBarModule,
-    MatSortModule,
-    MatTableModule,
-    MatTabsModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    MatBottomSheetModule,
-    MatStepperModule,
-    ScrollingModule,
-    CdkTableModule,
-    CdkTreeModule,
-    MatTreeModule,
-    CommonModule,
-    OwlDateTimeModule,
-    OwlNativeDateTimeModule
-  ],
-  providers: [
-    SiteService,
-    IceJamService,
-    JamTypeService,
-    SelectedSiteService,
-    RoughnessTypeService,
-    StageTypeService,
-    WeatherConditionTypeService,
-    DamageTypeService,
-    CurrentUserService,
-    IceConditionTypeService
-],
-  bootstrap: [AppComponent],
-  entryComponents: [
-    AboutComponent,
-    LoginComponent,
-    RegistrationComponent,
-    CreateSiteComponent,
-    ConfirmComponent,
-    FiltersComponent
-  ]
+    declarations: [
+        AppComponent,
+        AboutComponent,
+        HomeComponent,
+        SearchDialogComponent,
+        LoginComponent,
+        RegistrationComponent,
+        ConfirmComponent,
+    ],
+    imports: [
+        BrowserModule,
+        RouterModule,
+        AppRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        ScrollingModule,
+        CdkTableModule,
+        CdkTreeModule,
+        CommonModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatExpansionModule,
+        MatCardModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatAutocompleteModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatTabsModule,
+        MatFormFieldModule,
+        MatCheckboxModule,
+        MatInputModule,
+        //MatAccordion,
+    ],
+    providers: [
+        CurrentUserService,
+        AuthenticationService,
+        EventsService,
+        UserService,
+    ],
+    bootstrap: [AppComponent],
+    entryComponents: [
+        AboutComponent,
+        LoginComponent,
+        RegistrationComponent,
+        ConfirmComponent,
+    ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,11 +1,22 @@
-@import "~@angular/material/theming";
+@import '~@angular/material/theming';
 @include mat-core();
 
-@import "./assets/styles/makers.css";
-@import "~ng-pick-datetime/assets/style/picker.min.css";
-@import "./app/app.variables.scss";
+@import './assets/styles/makers.css';
+@import './app/app.variables.scss';
 
-body { 
+$stn-app-primary: mat-palette($mat-light-blue, 900);
+$stn-app-accent: mat-palette($mat-indigo, 900);
+$stn-app-warn: mat-palette($mat-red);
+
+$stn-app-theme: mat-light-theme(
+    $stn-app-primary,
+    $stn-app-accent,
+    $stn-app-warn
+);
+
+@include angular-material-theme($stn-app-theme);
+
+body {
     margin: 0px !important;
     color: black;
 }
@@ -16,24 +27,24 @@ body {
 
 mat-icon {
     font-family: 'Material Icons' !important;
-  }
+}
 
 // Remove padding around map
-#mapPanel .mat-expansion-panel-body{
+#mapPanel .mat-expansion-panel-body {
     padding: 0 !important;
 }
 
 // Expansion Panels
 // Expansion Panels
 // Expansion Panels
-.mat-expansion-panel{
+.mat-expansion-panel {
     box-shadow: none !important;
 
-    &:hover{
+    &:hover {
         background-color: white !important;
     }
 
-    .mat-expansion-panel-header{
+    .mat-expansion-panel-header {
         font-size: 15px;
         transition: $transition;
         font-weight: 500;
@@ -41,23 +52,23 @@ mat-icon {
         font-weight: 700;
         color: fade-out($black, 0.2);
 
-        .mat-expansion-panel-header-title{
+        .mat-expansion-panel-header-title {
             color: fade-out($black, 0.2);
             transition: $transition;
 
-            .mat-icon{
+            .mat-icon {
                 height: 18px;
                 width: 18px;
                 font-size: 17px;
                 text-decoration: none !important;
             }
         }
-    
-        &:not([aria-disabled=true]){
+
+        &:not([aria-disabled='true']) {
             border-bottom: 1px solid $border-color;
         }
-    
-        .mat-expansion-indicator{
+
+        .mat-expansion-indicator {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -65,23 +76,23 @@ mat-icon {
             box-sizing: border-box;
         }
 
-        &:hover{
+        &:hover {
             text-decoration: underline;
             color: $black;
             transition: $transition;
             background-color: white !important;
             padding-right: 18px;
 
-            .mat-expansion-panel-header-title{
+            .mat-expansion-panel-header-title {
                 color: $black;
                 transition: $transition;
             }
         }
-    
+
         // Expanded
-        &.mat-expanded{
+        &.mat-expanded {
             color: $black;
-            &:hover{
+            &:hover {
                 color: fade-out($black, 0.2);
                 text-decoration: underline;
             }
@@ -89,47 +100,35 @@ mat-icon {
     }
 
     // Panel Body
-    .mat-expansion-panel-body{
+    .mat-expansion-panel-body {
         padding: 15px;
         // background-color: $bg;
         border-bottom: 1px solid $border-color;
 
         // Paragraphs
 
-        p{
+        p {
             font-size: 13px;
             line-height: 16px;
             letter-spacing: 0.2px;
             margin: 5px auto;
             color: $text;
 
-            // Welcome text 
-            &#welcome-text{
+            // Welcome text
+            &#welcome-text {
                 line-height: 24px;
             }
         }
     }
 
     // Action / button row
-    .mat-action-row{
+    .mat-action-row {
         border-top: none;
         border-bottom: 1px solid $border-color;
         background-color: $bg;
         margin-top: -1px;
     }
 }
-// $stn-app-primary: mat-palette($mat-green, 900, 800, 700);
-// $stn-app-accent:  mat-palette($mat-green, 700, 200, 500);
-// $stn-app-warn:    mat-palette($mat-red);
-
-$stn-app-primary: mat-palette($mat-light-blue, 900); // #263238
-$stn-app-accent:  mat-palette($mat-indigo, 900);
-$stn-app-warn:    mat-palette($mat-red);
-
-$stn-app-theme: mat-light-theme($stn-app-primary, $stn-app-accent, $stn-app-warn);
-
-@include angular-material-theme($stn-app-theme);
-
 
 // styles.scss
 // Default styling for body, html, links, etc
@@ -149,8 +148,7 @@ body,html{
 }
 
 *{
-    outline: none;
-    
+    outline: none;  
     &:hover{
         text-decoration: none;
     }

@@ -1,42 +1,79 @@
 import { Injectable } from '@angular/core';
-import { APPSETTINGS } from '../app.settings';
-import { Events } from '../interfaces/events';
-import { Http, Response, RequestOptions } from '@angular/http';
+import { APP_SETTINGS } from '../app.settings';
 import { Observable } from 'rxjs/Observable';
+import { catchError, map, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+import { Event } from '@interfaces/event';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class EventsService {
+    constructor(private httpClient: HttpClient) {}
 
-  constructor(private _http: Http) { }
+    public getAllEvents(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.EVENTS + '.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    // console.log('response recieved: ' + response);
+                    return response;
+                }),
+                catchError(this.handleError<any>('getAllEvents', []))
+            );
+    }
 
-  public getAllEvents(): Observable<Events[]> {
-    return this._http.get(APPSETTINGS.EVENTS + '.json')
-      .map((response: Response) => <Events[]>response.json())
-      .catch(this.handleError);
-  }
+    // GET ONE Event
+    public getAnEvent(eventID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.EVENTS + eventID + '.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                map((response: Response) => {
+                    return response.json();
+                })
+            );
+    }
 
-  // GET ONE Event
-  public getAnEvent(eventID): Observable<Events> {
-    return this._http.get(APPSETTINGS.EVENTS + eventID + '.json')
-      .map((response: Response) => <Events>response.json())
-      .catch(this.handleError);
-  }
+    // GET Event Sites. Used to populate map.
+    public getEventSites(eventID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.EVENTS + '/' + eventID + '/Sites.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                map((response: Response) => {
+                    return response.json();
+                })
+            );
+    }
 
-  // GET Event Sites. Used to populate map.
-  public getEventSites(eventID): Observable<Events> {
-    return this._http.get(APPSETTINGS.EVENTS + '/' + eventID + '/Sites.json')
-      .map((response: Response) => <Events>response.json())
-      .catch(this.handleError);
-  }
+    /**
+     * Handle Http operation that failed.
+     * Let the app continue.
+     * @param operation - name of the operation that failed
+     * @param result - optional value to return as the observable result
+     */
+    private handleError<T>(operation = 'operation', result?: T) {
+        return (error: any): Observable<T> => {
+            // TODO: send the error to remote logging infrastructure
+            console.error(error); // log to console instead
 
-  private handleError(error: Response) {
-    console.error(error);
-    return throwError(JSON.stringify(error.json()) || 'Server error');
-  }
+            // TODO: better job of transforming error for user consumption
+            // Consider creating a message service for this (https://angular.io/tutorial/toh-pt4)
+            console.log(`${operation} failed: ${error.message}`);
+
+            // Let the app keep running by returning an empty result.
+            return of(result as T);
+        };
+    }
 }

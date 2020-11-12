@@ -1,5 +1,7 @@
 # Short Term Network Web (STNWeb) v2
 
+[![build status](https://github.com/USGS-WiM/stnweb2/workflows/Build/badge.svg)](https://github.com/coryrylan/angular-github-actions/actions) [![GitHub Super-Linter](https://github.com/USGS-WiM/stnweb2/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 ![WiM](wimlogo.png)
 
 2nd generation of STNWeb, the data entry and data management web application for the USGS Short Term Network high-water mark and storm tide sensor database.
@@ -40,7 +42,7 @@ to build a distribution folder for production:
 
 ```bash
 ng build --prod --base-href "[relative path to web server root]"
-````
+```
 
 ### Deployment
 
@@ -48,8 +50,8 @@ TBD
 
 ## Built With
 
-* [Angular](https://angular.io/) - The main web framework used
-* [NPM](https://www.npmjs.com/) - Dependency Management
+-   [Angular](https://angular.io/) - The main web framework used
+-   [NPM](https://www.npmjs.com/) - Dependency Management
 
 ## Contributing
 
@@ -61,12 +63,13 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Changelog
 
-All developers must maintain the Changelog located at root as CHANGELOG.md. This document serves as a portable history of changes to the codebase and is meant to complement Github release tags.  'Added', 'Changed', and 'Fixed' sections should be updated within the Unreleased header when creating a Pull Request. As releases are created, those sections will move down into respective release headers.
+All developers must maintain the Changelog located at root as CHANGELOG.md. This document serves as a portable history of changes to the codebase and is meant to complement Github release tags. 'Added', 'Changed', and 'Fixed' sections should be updated within the Unreleased header when creating a Pull Request. As releases are created, those sections will move down into respective release headers.
 
 ## Authors
 
-Lauren Privette  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
-Blake Draper - *Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+Lauren Privette - _Lead Developer_ - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+
+Blake Draper - _Developer_ - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
 See also the list of [contributors](../../graphs/contributors) who participated in this project.
 
@@ -84,6 +87,6 @@ In the spirit of open source, please cite any re-use of the source code stored i
 
 ## About WIM
 
-* This project authored by the [USGS WIM team](https://wim.usgs.gov)
-* WIM is a team of developers and technologists who build and manage tools, software, web services, and databases to support USGS science and other federal government cooperators.
-* WIM is a part of the [Upper Midwest Water Science Center](https://www.usgs.gov/centers/wisconsin-water-science-center).
+-   This project authored by the [USGS WIM team](https://wim.usgs.gov)
+-   WIM is a team of developers and technologists who build and manage tools, software, web services, and databases to support USGS science and other federal government cooperators.
+-   WIM is a part of the [Upper Midwest Water Science Center](https://www.usgs.gov/centers/wisconsin-water-science-center).

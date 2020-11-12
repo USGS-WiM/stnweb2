@@ -3,10 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { CurrentUserService } from './current-user.service';
 
 describe('CurrentUserService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+    let service: CurrentUserService;
 
-  it('should be created', () => {
-    const service: CurrentUserService = TestBed.get(CurrentUserService);
-    expect(service).toBeTruthy();
-  });
+    beforeEach(() => {
+        TestBed.configureTestingModule({ providers: [CurrentUserService] });
+        service = TestBed.inject(CurrentUserService);
+    });
+
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
 });

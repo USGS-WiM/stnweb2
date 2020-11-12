@@ -6,14 +6,12 @@
     font-size: larger;
 }
 
-
-#aboutModal{
-
-    .mat-tab-label{
+#aboutModal {
+    .mat-tab-label {
         font-size: 12px;
     }
 
-    h2{
+    h2 {
         font-size: 20px;
         font-weight: 900;
         margin-bottom: 20px;
@@ -21,36 +19,35 @@
         line-height: 24px;
     }
 
-    label.about-header{
+    label.about-header {
         font-weight: 600;
-        color: #313B57;
+        color: #313b57;
         margin-top: 20px;
         margin-bottom: 10px;
         max-width: 550px;
         line-height: 24px;
         display: block;
-
     }
 
-    p{
+    p {
         font-size: 13px;
         line-height: 28px;
         color: rgba(0, 0, 0, 0.54);
         display: block;
         max-width: 600px;
 
-        b{
+        b {
             font-weight: bolder;
-            color: #10152C;
+            color: #10152c;
         }
     }
 
-    ul{
+    ul {
         max-width: 550px;
         margin-top: 0;
         margin-bottom: 30px;
 
-        li{
+        li {
             font-size: 13px;
             line-height: 18px;
             color: rgba(0, 0, 0, 0.54);
@@ -58,14 +55,14 @@
     }
 }
 
-.form-buttons-flex{
+.form-buttons-flex {
     display: flex;
     justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
     padding: 6px 0;
 
-    &.center{
+    &.center {
         justify-content: center;
     }
 }
