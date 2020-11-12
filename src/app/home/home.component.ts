@@ -198,7 +198,7 @@ export class HomeComponent implements OnInit {
         //const searchControl = esri_geo.geosearch();
         //const searchControl = L.esri_geo.Geocoding.geosearch();
         //const searchControl = esri_geo.Geocoding.geosearch();
-        //const searchControl = esri.Geocoding.geosearch();
+        //const searchControl = esri.Geocoding.Geosearch();
 
         //This one didn't get errors while compiling, or show any terms underlined in red, but got console error:
         //ERROR TypeError: Cannot read property 'Geocoding' of undefined
@@ -206,7 +206,7 @@ export class HomeComponent implements OnInit {
 
         //This one worked even though vsc had Geosearch underlined in red with the following note:
         //Property 'Geosearch' does not exist on type 'typeof
-        const searchControl = new esri_geo.Geosearch().addTo(this.map);
+        const searchControl = new esri_geo.geosearch().addTo(this.map);
 
         //This layer will contain the location markers
         const results = new L.LayerGroup().addTo(this.map);
