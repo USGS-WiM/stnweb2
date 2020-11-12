@@ -14,11 +14,8 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 
 //leaflet imports for geosearch
-import * as esri from 'esri-leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css';
-import 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder';
-import * as esri_geo from 'esri-leaflet-geocoder';
+import * as esri_geo from 'esri-leaflet-geocoder/dist/esri-leaflet-geocoder.js';
 
 export interface PeriodicElement {
     name: string;
@@ -206,6 +203,7 @@ export class HomeComponent implements OnInit {
 
         //This one worked even though vsc had Geosearch underlined in red with the following note:
         //Property 'Geosearch' does not exist on type 'typeof
+
         const searchControl = new esri_geo.geosearch().addTo(this.map);
 
         //This layer will contain the location markers
