@@ -11,9 +11,9 @@ import { Subject } from 'rxjs';
 export class SitesService {
     constructor(private http: HttpClient) {}
 
-    private eventSitesSubject: Subject<Array<any>>;
+    private eventSitesSubject: Subject<any>;
 
-    public get eventSites(): Observable<Array<any>> {
+    public get eventSites(): Observable<any> {
         return this.eventSitesSubject.asObservable();
     }
 
@@ -24,7 +24,7 @@ export class SitesService {
         return this.http
             .get<any>(url, { headers })
             .subscribe(
-                (res) => {
+                (res: any) => {
                     console.log('getting sites for: ' + eventID);
                     this.eventSitesSubject.next(res);
                 },

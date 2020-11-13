@@ -44,18 +44,21 @@ export class EventsService {
             );
     }
 
+    //TODO: deprecate block.
     // GET Event Sites. Used to populate map.
-    public getEventSites(eventID): Observable<any> {
+    /*     public getEventSites(eventID): Observable<any> {
         return this.httpClient
             .get(APP_SETTINGS.EVENTS + '/' + eventID + '/Sites.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
+            tap (response)
                 map((response: Response) => {
                     return response.json();
-                })
+                }),
+                tap(response => console.log('EventSites' + response) )
             );
-    }
+    } */
 
     /**
      * Handle Http operation that failed.
