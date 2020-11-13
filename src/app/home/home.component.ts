@@ -76,6 +76,19 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
+    // Dummy data for Networks
+    networks = new FormControl();
+    networkList: string[] = [
+        'Network 1',
+        'Network 2',
+        'Network 3',
+        'Network 4',
+    ];
+
+    // Dummy data for Sensor Types
+    sensors = new FormControl();
+    sensorList: string[] = ['Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4'];
+
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;

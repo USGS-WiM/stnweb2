@@ -320,11 +320,46 @@ $borderRadius: 4px;
     padding-left: 40px;
 }
 
-.eventSelect {
-    margin-bottom: 15px;
-    width: 15%;
-}
-
 #filtersSection {
     background-color: #f7f7f7;
+}
+
+.form-container .mat-form-field + .mat-form-field {
+    margin-left: 8px;
+}
+
+.form-container .mat-form-field {
+    width: 220px;
+}
+
+.form-container form {
+    margin-bottom: 20px;
+}
+
+.form-container form > * {
+    margin: 10px 0;
+}
+
+.form-container .mat-radio-button {
+    margin: 0 12px;
+}
+
+.checkbox-section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+}
+
+.checkbox-margin {
+    margin: 0 10px;
+}
+
+.boxes {
+    display: block;
+}
+
+.filter-label {
+    font-weight: bold;
+    padding: 10px;
 }
