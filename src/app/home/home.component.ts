@@ -381,8 +381,6 @@ export class HomeComponent implements OnInit {
         }
     }
 
-    buildMap() {}
-
     // another method to get event sites
     /* getEventSites(arr, arr2) {
     const ret = [];
