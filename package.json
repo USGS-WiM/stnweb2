@@ -38,6 +38,7 @@
         "esri-leaflet": "^2.5.1",
         "esri-leaflet-geocoder": "^2.3.3",
         "leaflet": "^1.7.1",
+        "leaflet-draw": "^1.0.4",
         "rx": "^4.1.0",
         "rxjs": "^6.6.3",
         "rxjs-compat": "^6.3.3",

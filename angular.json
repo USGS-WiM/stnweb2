@@ -25,9 +25,13 @@
                         "assets": ["src/favicon.ico", "src/assets"],
                         "styles": [
                             "src/styles.scss",
-                            "node_modules/leaflet/dist/leaflet.css"
+                            "node_modules/leaflet/dist/leaflet.css",
+                            "node_modules/leaflet-draw/dist/leaflet.draw-src.css"
                         ],
-                        "scripts": ["node_modules/leaflet/dist/leaflet.js"]
+                        "scripts": [
+                            "node_modules/leaflet/dist/leaflet.js",
+                            "node_modules/leaflet-draw/dist/leaflet.draw.js"
+                        ]
                     },
                     "configurations": {
                         "production": {
@@ -94,9 +98,13 @@
                         "karmaConfig": "src/karma.conf.js",
                         "styles": [
                             "src/styles.scss",
-                            "node_modules/leaflet/dist/leaflet.css"
+                            "node_modules/leaflet/dist/leaflet.css",
+                            "node_modules/leaflet-draw/dist/leaflet.draw-src.css"
                         ],
-                        "scripts": ["node_modules/leaflet/dist/leaflet.js"],
+                        "scripts": [
+                            "node_modules/leaflet/dist/leaflet.js",
+                            "node_modules/leaflet-draw/dist/leaflet.draw.js"
+                        ],
                         "assets": ["src/favicon.ico", "src/assets"],
                         "codeCoverage": true
                     }

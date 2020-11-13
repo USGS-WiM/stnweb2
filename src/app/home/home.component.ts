@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Event } from '../interfaces/event';
 import * as L from 'leaflet';
+import 'leaflet-draw/dist/leaflet-draw.js';
 import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
@@ -288,6 +289,30 @@ export class HomeComponent implements OnInit {
             case 0:
                 return '591,657,550';
         }
+    }
+
+    buildMap() {
+        const drawnItems = L.featureGroup().addTo(this.map);
+        const drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems,
+                poly: {
+                    allowIntersection: false,
+                },
+            },
+            draw: {
+                polygon: {
+                    allowIntersection: false,
+                    showArea: true,
+                },
+                marker: false,
+                circle: false,
+                circlemarker: false,
+                rectangle: false,
+            },
+        });
+
+        this.map.addControl(drawControl);
     }
 
     // another method to get event sites
