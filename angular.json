@@ -26,7 +26,8 @@
                         "styles": [
                             "src/styles.scss",
                             "node_modules/leaflet/dist/leaflet.css",
-                            "node_modules/leaflet-draw/dist/leaflet.draw-src.css"
+                            "node_modules/leaflet-draw/dist/leaflet.draw-src.css",
+                            "node_modules/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css"
                         ],
                         "scripts": [
                             "node_modules/leaflet/dist/leaflet.js",
@@ -99,7 +100,8 @@
                         "styles": [
                             "src/styles.scss",
                             "node_modules/leaflet/dist/leaflet.css",
-                            "node_modules/leaflet-draw/dist/leaflet.draw-src.css"
+                            "node_modules/leaflet-draw/dist/leaflet.draw-src.css",
+                            "node_modules/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css"
                         ],
                         "scripts": [
                             "node_modules/leaflet/dist/leaflet.js",
