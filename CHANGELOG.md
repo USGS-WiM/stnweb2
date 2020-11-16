@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added github super-linter
 -   Added interfaces
 -   Added esri-leaflet geosearch
+-   Added measure tools
 
 ### Changed
 
