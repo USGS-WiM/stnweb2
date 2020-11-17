@@ -35,5 +35,4 @@ export interface Site {
     files: File[],
     site_housing: [],
     hwms: Hwm[]
-
 }
