@@ -17,7 +17,8 @@ import { Event } from '@interfaces/event';
 export class EventsService {
     constructor(private httpClient: HttpClient) { }
 
-    public getAllEvents(): Observable<any> {
+    // retrieve tghe full events list
+    public getAllEvents(): Observable<Event[]> {
         return this.httpClient
             // .get(APP_SETTINGS.EVENTS + '.json', {
             //     headers: APP_SETTINGS.AUTH_JSON_HEADERS,
@@ -32,17 +33,19 @@ export class EventsService {
             );
     }
 
-    // GET ONE Event
-    public getAnEvent(eventID): Observable<any> {
+    // retrieve the details for a single specific event
+    public getEvent(eventID): Observable<Event> {
         return this.httpClient
             .get(APP_SETTINGS.EVENTS + eventID + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
-                map((response: Response) => {
-                    return response.json();
-                })
-            );
+                tap((response) => {
+                    console.log('Event record response recieved: ' + response);
+                    return response;
+                }),
+                catchError(this.handleError<any>('getEvent', {}))
+            );;
     }
 
     // GET Event Sites. Used to populate map.
@@ -52,9 +55,11 @@ export class EventsService {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
-                map((response: Response) => {
-                    return response.json();
-                })
+                tap((response) => {
+                    console.log('Event sites response recieved: ' + response);
+                    return response;
+                }),
+                catchError(this.handleError<any>('getEventSites', []))
             );
     }
 
