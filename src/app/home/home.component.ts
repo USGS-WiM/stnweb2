@@ -86,21 +86,20 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
+    //Create variables for filter dropdowns --start
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
 
     networkControl = new FormControl();
     networks: NetworkName[];
-    filteredNetworks: Observable<NetworkName[]>;
 
     sensorControl = new FormControl();
     sensors: SensorType[];
-    filteredSensors: Observable<SensorType[]>;
 
     stateControl = new FormControl();
     states: State[];
-    filteredStates: Observable<State[]>;
+    //Create variables for filter dropdowns --end
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -243,16 +242,6 @@ export class HomeComponent implements OnInit {
             )
         );
 
-        this.filteredStates = this.stateControl.valueChanges.pipe(
-            startWith(''),
-            map((value) =>
-                typeof value === 'string' ? value : value.state_name
-            ),
-            map((state_name) =>
-                state_name ? this._filterStates(state_name) : this.states
-            )
-        );
-
         //---Start of measure tools---
         const drawnItems = L.featureGroup().addTo(this.map);
 
@@ -370,21 +359,12 @@ export class HomeComponent implements OnInit {
         return state && state.state_name ? state.state_name : '';
     }
 
-    //Match what user is typing to the index of the corresponding state
-    //Not case sensative
-    private _filterStates(state_name: string): State[] {
-        const filterValue = state_name.toLowerCase();
-        return this.states.filter(
-            (state) => state.state_name.toLowerCase().indexOf(filterValue) === 0
-        );
-    }
-
     //Options to be displayed when selecting network filter
     displayNetwork(network: NetworkName): string {
         return network && network.name ? network.name : '';
     }
 
-    //Options to be displayed when selecting network filter
+    //Options to be displayed when selecting sensor type filter
     displaySensor(sensor: SensorType): string {
         return sensor && sensor.sensor ? sensor.sensor : '';
     }
