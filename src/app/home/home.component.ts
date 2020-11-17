@@ -6,11 +6,17 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { Event } from '../interfaces/event';
-import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
+import { Event } from '../interfaces/event';
+import { EventsService } from '../services/events.service';
+import { State } from '../interfaces/state';
+import { StatesService } from '../services/states.service';
+import { NetworkName } from '../interfaces/network-name';
+import { NetworkNamesService } from '../services/network-names.service';
+import { DeploymentType } from '../interfaces/deployment-type';
+import { SensorTypesService } from '../services/sensor-types.service';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -81,6 +87,7 @@ export class HomeComponent implements OnInit {
     markers;
 
     // Dummy data for Networks
+    /*
     networks = new FormControl();
     networkList: string[] = [
         'Network 1',
@@ -88,6 +95,7 @@ export class HomeComponent implements OnInit {
         'Network 3',
         'Network 4',
     ];
+    */
 
     // Dummy data for Sensor Types
     sensors = new FormControl();
@@ -97,11 +105,21 @@ export class HomeComponent implements OnInit {
     events: Event[];
     filteredEvents: Observable<Event[]>;
 
+    // stateList: State[];
+    networkControl = new FormControl();
+    networks: NetworkName[];
+    filteredNetworks: Observable<NetworkName[]>;
+    //sensors = new FormControl();
+    // sensorList: DeploymentType[];
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
         private eventsService: EventsService,
+        // private statesService: StatesService,
+        private networkNamesService: NetworkNamesService,
+        //  private sensorTypesService, SensorTypesService,
         public currentUserService: CurrentUserService
     ) {
         this.eventsService.getAllEvents().subscribe((results) => {
@@ -111,6 +129,9 @@ export class HomeComponent implements OnInit {
                 a.event_start_date < b.event_start_date ? 1 : -1
             );
             // this.mapResults(this.events);
+        });
+        this.networkNamesService.getNetworkNames().subscribe((results) => {
+            this.networks = results;
         });
         // TODO: by default populate map with most recent event
         // this.eventsService
@@ -226,6 +247,13 @@ export class HomeComponent implements OnInit {
             )
         );
 
+        //Allow user to type into the event selector to view matching events
+        this.filteredNetworks = this.networkControl.valueChanges.pipe(
+            startWith(''),
+            map((value) => (typeof value === 'string' ? value : value.name)),
+            map((name) => (name ? this._filterNetworks(name) : this.networks))
+        );
+
         const drawnItems = L.featureGroup().addTo(this.map);
 
         //User can select from drawing a line or polygon; other options are disabled
@@ -333,6 +361,20 @@ export class HomeComponent implements OnInit {
         const filterValue = event_name.toLowerCase();
         return this.events.filter(
             (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
+        );
+    }
+
+    //Options to be displayed when selecting network filter
+    displayNetwork(network: NetworkName): string {
+        return network && network.name ? network.name : '';
+    }
+
+    //Match what user is typing to the index of the corresponding network
+    //Not case sensative
+    private _filterNetworks(name: string): NetworkName[] {
+        const filterValue = name.toLowerCase();
+        return this.networks.filter(
+            (network) => network.name.toLowerCase().indexOf(filterValue) === 0
         );
     }
 

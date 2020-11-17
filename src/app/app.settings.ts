@@ -78,13 +78,13 @@ export class APP_SETTINGS {
     public static get EVENTS(): string {
         return this.API_ROOT + 'Events';
     }
-    public static get NetworkNames(): string {
+    public static get NETWORK_NAMES(): string {
         return this.API_ROOT + 'NetworkNames';
     }
-    public static get States(): string {
+    public static get STATES(): string {
         return this.API_ROOT + 'States';
     }
-    public static get SensorTypes(): string {
+    public static get SENSOR_TYPES(): string {
         return this.API_ROOT + 'SensorTypes';
     }
 

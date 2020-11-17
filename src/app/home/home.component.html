@@ -95,13 +95,13 @@
                                 >
                                 <mat-select
                                     id="networkOptions"
-                                    [formControl]="networks"
+                                    [formControl]="networkControl"
                                     multiple
                                 >
                                     <mat-option
-                                        *ngFor="let network of networkList"
+                                        *ngFor="let network of networks"
                                         [value]="network"
-                                        >{{ network }}</mat-option
+                                        >{{ network.name }}</mat-option
                                     >
                                 </mat-select>
                             </mat-form-field>

@@ -18,7 +18,7 @@ export class StatesService {
     }
 
     public getStates(state_id: string) {
-        const url = APP_SETTINGS.States + '.json';
+        const url = APP_SETTINGS.STATES + '.json';
         const headers = APP_SETTINGS.AUTH_JSON_HEADERS;
         return this.http
             .get<any>(url, { headers })
