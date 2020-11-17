@@ -121,17 +121,34 @@
                                     >
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field
-                                class="form-full-width"
-                                appearance="fill"
-                            >
-                                <mat-label for="state">State(s)</mat-label>
+                            <mat-form-field class="stateSelect">
+                                <mat-label for="stateSelection"
+                                    >State</mat-label
+                                >
                                 <input
+                                    id="stateSelection"
+                                    type="text"
                                     aria-label="Dropdown menu for state selection"
-                                    id="state"
                                     matInput
-                                    placeholder="Ex. California"
+                                    [formControl]="stateControl"
+                                    [matAutocomplete]="auto"
                                 />
+                                <mat-hint
+                                    >Start typing for suggestions</mat-hint
+                                >
+                                <mat-autocomplete
+                                    #auto="matAutocomplete"
+                                    [displayWith]="displayState"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let state of filteredStates | async
+                                        "
+                                        [value]="state"
+                                    >
+                                        {{ state.state_name }}
+                                    </mat-option>
+                                </mat-autocomplete>
                             </mat-form-field>
                             <br />
                             <label

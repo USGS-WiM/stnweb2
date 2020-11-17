@@ -9,8 +9,6 @@ import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-import { Event } from '@interfaces/event';
-
 @Injectable({
     providedIn: 'root',
 })
