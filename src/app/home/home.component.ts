@@ -15,7 +15,7 @@ import { State } from '../interfaces/state';
 import { StatesService } from '../services/states.service';
 import { NetworkName } from '../interfaces/network-name';
 import { NetworkNamesService } from '../services/network-names.service';
-import { DeploymentType } from '../interfaces/deployment-type';
+import { SensorType } from '../interfaces/sensor-type';
 import { SensorTypesService } from '../services/sensor-types.service';
 
 //leaflet imports for geosearch
@@ -98,17 +98,21 @@ export class HomeComponent implements OnInit {
     */
 
     // Dummy data for Sensor Types
-    sensors = new FormControl();
-    sensorList: string[] = ['Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4'];
+    // sensors = new FormControl();
+    //sensorList: string[] = ['Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4'];
 
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
 
-    // stateList: State[];
     networkControl = new FormControl();
     networks: NetworkName[];
     filteredNetworks: Observable<NetworkName[]>;
+
+    sensorControl = new FormControl();
+    sensors: SensorType[];
+    filteredSensors: Observable<SensorType[]>;
+
     //sensors = new FormControl();
     // sensorList: DeploymentType[];
 
@@ -119,7 +123,7 @@ export class HomeComponent implements OnInit {
         private eventsService: EventsService,
         // private statesService: StatesService,
         private networkNamesService: NetworkNamesService,
-        //  private sensorTypesService, SensorTypesService,
+        private sensorTypesService: SensorTypesService,
         public currentUserService: CurrentUserService
     ) {
         this.eventsService.getAllEvents().subscribe((results) => {
@@ -132,6 +136,9 @@ export class HomeComponent implements OnInit {
         });
         this.networkNamesService.getNetworkNames().subscribe((results) => {
             this.networks = results;
+        });
+        this.sensorTypesService.getSensorTypes().subscribe((results) => {
+            this.sensors = results;
         });
         // TODO: by default populate map with most recent event
         // this.eventsService
@@ -247,12 +254,21 @@ export class HomeComponent implements OnInit {
             )
         );
 
-        //Allow user to type into the event selector to view matching events
+        /*
         this.filteredNetworks = this.networkControl.valueChanges.pipe(
             startWith(''),
             map((value) => (typeof value === 'string' ? value : value.name)),
             map((name) => (name ? this._filterNetworks(name) : this.networks))
         );
+        */
+
+        /*
+        this.filteredSensors = this.sensorControl.valueChanges.pipe(
+            startWith(''),
+            map((value) => (typeof value === 'string' ? value : value.sensor)),
+            map((sensor) => (sensor ? this._filterNetworks(sensor) : this.sensors))
+        );
+        */
 
         const drawnItems = L.featureGroup().addTo(this.map);
 
@@ -369,6 +385,12 @@ export class HomeComponent implements OnInit {
         return network && network.name ? network.name : '';
     }
 
+    //Options to be displayed when selecting network filter
+    displaySensor(sensor: SensorType): string {
+        return sensor && sensor.sensor ? sensor.sensor : '';
+    }
+
+    /*
     //Match what user is typing to the index of the corresponding network
     //Not case sensative
     private _filterNetworks(name: string): NetworkName[] {
@@ -377,6 +399,7 @@ export class HomeComponent implements OnInit {
             (network) => network.name.toLowerCase().indexOf(filterValue) === 0
         );
     }
+    */
 
     scaleLookup(mapZoom) {
         switch (mapZoom) {

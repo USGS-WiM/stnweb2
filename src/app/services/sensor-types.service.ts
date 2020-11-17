@@ -26,9 +26,9 @@ export class SensorTypesService {
     }
 
     // GET ONE Sensor Type
-    public getOneNetwork(deployment_type_id: string): Observable<any> {
+    public getOneNetwork(sensor_type_id: string): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.SENSOR_TYPES + deployment_type_id + '.json', {
+            .get(APP_SETTINGS.SENSOR_TYPES + sensor_type_id + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
