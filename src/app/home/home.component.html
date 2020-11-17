@@ -121,34 +121,19 @@
                                     >
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field class="stateSelect">
-                                <mat-label for="stateSelection"
-                                    >State</mat-label
-                                >
-                                <input
-                                    id="stateSelection"
-                                    type="text"
-                                    aria-label="Dropdown menu for state selection"
-                                    matInput
+                            <mat-form-field appearance="fill">
+                                <mat-label for="stateList">States</mat-label>
+                                <mat-select
+                                    id="stateOptions"
                                     [formControl]="stateControl"
-                                    [matAutocomplete]="auto"
-                                />
-                                <mat-hint
-                                    >Start typing for suggestions</mat-hint
-                                >
-                                <mat-autocomplete
-                                    #auto="matAutocomplete"
-                                    [displayWith]="displayState"
+                                    multiple
                                 >
                                     <mat-option
-                                        *ngFor="
-                                            let state of filteredStates | async
-                                        "
+                                        *ngFor="let state of states"
                                         [value]="state"
+                                        >{{ state.state_name }}</mat-option
                                     >
-                                        {{ state.state_name }}
-                                    </mat-option>
-                                </mat-autocomplete>
+                                </mat-select>
                             </mat-form-field>
                             <br />
                             <label
