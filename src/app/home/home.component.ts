@@ -200,7 +200,9 @@ export class HomeComponent implements OnInit {
             'Watches/Warnings': watchesWarnings,
             'AHPS Gages': AHPSGages,
         };
-        L.control.layers(baseMaps, supplementaryLayers).addTo(this.map);
+        L.control
+            .layers(baseMaps, supplementaryLayers, { position: 'topleft' })
+            .addTo(this.map);
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
 
         // begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
