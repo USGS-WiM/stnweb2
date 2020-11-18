@@ -26,14 +26,14 @@ export class SensorTypesService {
     }
 
     // GET ONE Sensor Type
-    public getOneNetwork(sensor_type_id: string): Observable<any> {
+    public getSensorType(sensor_type_id: number): Observable<any> {
         return this.httpClient
             .get(APP_SETTINGS.SENSOR_TYPES + sensor_type_id + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
                 map((response: Response) => {
-                    return response.json();
+                    return response;
                 })
             );
     }

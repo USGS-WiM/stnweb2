@@ -26,14 +26,14 @@ export class StatesService {
     }
 
     // GET ONE State
-    public getOneState(state_id: number): Observable<any> {
+    public getState(state_id: number): Observable<any> {
         return this.httpClient
             .get(APP_SETTINGS.STATES + state_id + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
                 map((response: Response) => {
-                    return response.json();
+                    return response;
                 })
             );
     }

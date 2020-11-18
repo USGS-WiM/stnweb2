@@ -6,7 +6,6 @@ import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-import { throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -26,14 +25,14 @@ export class NetworkNamesService {
     }
 
     // GET ONE Network Name
-    public getOneNetwork(network_name_id: number): Observable<any> {
+    public getNetworkName(network_name_id: number): Observable<any> {
         return this.httpClient
             .get(APP_SETTINGS.NETWORK_NAMES + network_name_id + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
                 map((response: Response) => {
-                    return response.json();
+                    return response;
                 })
             );
     }
