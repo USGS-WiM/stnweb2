@@ -163,6 +163,25 @@ export class HomeComponent implements OnInit {
             }
         );
 
+        // Watersheds hosted by The National Map (USGS)
+        const HUC = esri.dynamicMapLayer({
+            url:
+                'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
+            opacity: 0.7,
+        });
+        const currentWarnings = esri.dynamicMapLayer({
+            url:
+                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/0',
+        });
+        const watchesWarnings = esri.dynamicMapLayer({
+            url:
+                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/1',
+        });
+        const AHPSGages = esri.dynamicMapLayer({
+            url:
+                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer',
+        });
+
         this.map = new L.Map('map', {
             center: new L.LatLng(39.8283, -98.5795),
             zoom: 4,
@@ -175,7 +194,13 @@ export class HomeComponent implements OnInit {
             Grayscale: grayscale,
             Imagery: imagery,
         };
-        L.control.layers(baseMaps).addTo(this.map);
+        const supplementaryLayers = {
+            Watersheds: HUC,
+            'Current Warnings': currentWarnings,
+            'Watches/Warnings': watchesWarnings,
+            'AHPS Gages': AHPSGages,
+        };
+        L.control.layers(baseMaps, supplementaryLayers).addTo(this.map);
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
 
         // begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
