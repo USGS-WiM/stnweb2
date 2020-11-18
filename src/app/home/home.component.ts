@@ -6,11 +6,17 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { Event } from '../interfaces/event';
-import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
+import { Event } from '../interfaces/event';
+import { EventsService } from '../services/events.service';
+import { State } from '../interfaces/state';
+import { StatesService } from '../services/states.service';
+import { NetworkName } from '../interfaces/network-name';
+import { NetworkNamesService } from '../services/network-names.service';
+import { SensorType } from '../interfaces/sensor-type';
+import { SensorTypesService } from '../services/sensor-types.service';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -80,28 +86,29 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
-    // Dummy data for Networks
-    networks = new FormControl();
-    networkList: string[] = [
-        'Network 1',
-        'Network 2',
-        'Network 3',
-        'Network 4',
-    ];
-
-    // Dummy data for Sensor Types
-    sensors = new FormControl();
-    sensorList: string[] = ['Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4'];
-
+    //Create variables for filter dropdowns --start
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
+
+    networkControl = new FormControl();
+    networks: NetworkName[];
+
+    sensorControl = new FormControl();
+    sensors: SensorType[];
+
+    stateControl = new FormControl();
+    states: State[];
+    //Create variables for filter dropdowns --end
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
         private eventsService: EventsService,
+        private statesService: StatesService,
+        private networkNamesService: NetworkNamesService,
+        private sensorTypesService: SensorTypesService,
         public currentUserService: CurrentUserService
     ) {
         this.eventsService.getAllEvents().subscribe((results) => {
@@ -111,6 +118,15 @@ export class HomeComponent implements OnInit {
                 a.event_start_date < b.event_start_date ? 1 : -1
             );
             // this.mapResults(this.events);
+        });
+        this.networkNamesService.getNetworkNames().subscribe((results) => {
+            this.networks = results;
+        });
+        this.sensorTypesService.getSensorTypes().subscribe((results) => {
+            this.sensors = results;
+        });
+        this.statesService.getStates().subscribe((results) => {
+            this.states = results;
         });
         // TODO: by default populate map with most recent event
         // this.eventsService
@@ -226,6 +242,7 @@ export class HomeComponent implements OnInit {
             )
         );
 
+        //---Start of measure tools---
         const drawnItems = L.featureGroup().addTo(this.map);
 
         //User can select from drawing a line or polygon; other options are disabled
@@ -312,6 +329,7 @@ export class HomeComponent implements OnInit {
             });
         });
     }
+    //---End of measure tools---
 
     //When button is clicked, zoom to the full extent of the selected event
     //As a placeholder, currently zooms back the the U.S. extent
@@ -334,6 +352,21 @@ export class HomeComponent implements OnInit {
         return this.events.filter(
             (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
         );
+    }
+
+    //Options to be displayed when selecting state filter
+    displayState(state: State): string {
+        return state && state.state_name ? state.state_name : '';
+    }
+
+    //Options to be displayed when selecting network filter
+    displayNetwork(network: NetworkName): string {
+        return network && network.name ? network.name : '';
+    }
+
+    //Options to be displayed when selecting sensor type filter
+    displaySensor(sensor: SensorType): string {
+        return sensor && sensor.sensor ? sensor.sensor : '';
     }
 
     scaleLookup(mapZoom) {

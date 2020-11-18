@@ -4,8 +4,10 @@ import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { CurrentUserService } from './services/current-user.service';
 import { AuthenticationService } from './services/authentication.service';
-
 import { MatDialog } from '@angular/material/dialog';
+import { StatesService } from './services/states.service';
+import { NetworkNamesService } from './services/network-names.service';
+import { SensorTypesService } from './services/sensor-types.service';
 
 @Component({
     selector: 'app-root',
@@ -25,7 +27,10 @@ export class AppComponent implements OnInit {
     constructor(
         public dialog: MatDialog,
         private authenticationService: AuthenticationService,
-        public currentUserService: CurrentUserService
+        public currentUserService: CurrentUserService,
+        public statesService: StatesService,
+        public networkNamesService: NetworkNamesService,
+        public sensorTypesService: SensorTypesService
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
