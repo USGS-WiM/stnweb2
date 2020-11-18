@@ -101,6 +101,8 @@ export class HomeComponent implements OnInit {
     states: State[];
     //Create variables for filter dropdowns --end
 
+    watershedsVisible = false;
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
@@ -354,6 +356,21 @@ export class HomeComponent implements OnInit {
                     layer.setPopupContent(content);
                 }
             });
+        });
+
+        //When the watershed checkbox is checked, add watershed icon to legend
+        this.map.on('overlayadd', (e) => {
+            console.log('overlayadd');
+            if (e.name === 'Watersheds') {
+                this.watershedsVisible = true;
+            }
+        });
+        //When the watershed checkbox is unchecked, remove watershed icon from legend
+        this.map.on('overlayremove', (e) => {
+            console.log('overlayremove');
+            if (e.name === 'Watersheds') {
+                this.watershedsVisible = false;
+            }
         });
     }
     //---End of measure tools---
