@@ -37,10 +37,6 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    // onNoClick(): void {
-    //     this.loginDialogRef.close();
-    // }
-
     // registration dialog
     // openRegDialog(): void {
     //     this.loginDialogRef.close();

@@ -75,8 +75,5 @@ export class RegistrationComponent implements OnInit {
         this.buildUserRegistrationForm();
     }
 
-    // onNoClick(): void {
-    //     this.regDialogRef.close();
-    // }
     ngOnInit() {}
 }

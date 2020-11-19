@@ -9,6 +9,7 @@ import { map, startWith } from 'rxjs/operators';
 import { Event } from '../interfaces/event';
 import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
+import { APP_UTILITIES } from '@app/app.utilities';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 
@@ -168,7 +169,7 @@ export class HomeComponent implements OnInit {
         // map.on( 'load', function() {
         this.map.whenReady(() => {
             const mapZoom = this.map.getZoom();
-            const tempMapScale = this.scaleLookup(this.map.getZoom());
+            const tempMapScale = APP_UTILITIES.SCALE_LOOKUP(this.map.getZoom());
             this.zoomLevel = mapZoom;
             this.mapScale = tempMapScale;
             const initMapCenter = this.map.getCenter();
@@ -179,7 +180,7 @@ export class HomeComponent implements OnInit {
         // displays map scale on scale change (i.e. zoom level)
         this.map.on('zoomend', () => {
             const mapZoom = this.map.getZoom();
-            const mapScale = this.scaleLookup(mapZoom);
+            const mapScale = APP_UTILITIES.SCALE_LOOKUP(mapZoom);
             this.mapScale = mapScale;
             this.zoomLevel = mapZoom;
         });
@@ -222,7 +223,10 @@ export class HomeComponent implements OnInit {
                 typeof value === 'string' ? value : value.event_name
             ),
             map((event_name) =>
-                event_name ? this._filter(event_name) : this.events
+                // match user text input to the index of the corresponding event
+                event_name
+                    ? APP_UTILITIES.FILTER_EVENT(event_name, this.events)
+                    : this.events
             )
         );
 
@@ -257,11 +261,6 @@ export class HomeComponent implements OnInit {
         //Add the buttons to the map
         this.map.addControl(drawControl);
 
-        // Truncate value based on number of decimals
-        const _round = function (num, len) {
-            return Math.round(num * Math.pow(10, len)) / Math.pow(10, len);
-        };
-
         // Generate popup content based on layer type
         // - Returns HTML string, or null if unknown object
         const getPopupContent = function (layer) {
@@ -284,7 +283,9 @@ export class HomeComponent implements OnInit {
                         distance += latlngs[i].distanceTo(latlngs[i + 1]);
                     }
                     distance = distance * 0.000621371;
-                    return 'Distance: ' + _round(distance, 2) + ' mi';
+                    return (
+                        'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi'
+                    );
                 }
             }
             return null;
@@ -325,60 +326,6 @@ export class HomeComponent implements OnInit {
     //Options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
-    }
-
-    //Match what user is typing to the index of the corresponding event
-    //Not case sensative
-    private _filter(event_name: string): Event[] {
-        const filterValue = event_name.toLowerCase();
-        return this.events.filter(
-            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
-        );
-    }
-
-    scaleLookup(mapZoom) {
-        switch (mapZoom) {
-            case 19:
-                return '1,128';
-            case 18:
-                return '2,256';
-            case 17:
-                return '4,513';
-            case 16:
-                return '9,027';
-            case 15:
-                return '18,055';
-            case 14:
-                return '36,111';
-            case 13:
-                return '72,223';
-            case 12:
-                return '144,447';
-            case 11:
-                return '288,895';
-            case 10:
-                return '577,790';
-            case 9:
-                return '1,155,581';
-            case 8:
-                return '2,311,162';
-            case 7:
-                return '4,622,324';
-            case 6:
-                return '9,244,649';
-            case 5:
-                return '18,489,298';
-            case 4:
-                return '36,978,596';
-            case 3:
-                return '73,957,193';
-            case 2:
-                return '147,914,387';
-            case 1:
-                return '295,828,775';
-            case 0:
-                return '591,657,550';
-        }
     }
 
     // another method to get event sites
