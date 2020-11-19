@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { APP_SETTINGS } from '../app.settings';
 import { APP_UTILITIES } from '@app/app.utilities';
+import { MAP_CONSTANTS } from './map-constants';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 import { Event } from '../interfaces/event';
@@ -120,6 +121,7 @@ export class HomeComponent implements OnInit {
             );
             // this.mapResults(this.events);
         });
+
         this.networkNamesService.getNetworkNames().subscribe((results) => {
             this.networks = results;
         });
@@ -129,6 +131,7 @@ export class HomeComponent implements OnInit {
         this.statesService.getStates().subscribe((results) => {
             this.states = results;
         });
+
         // TODO: by default populate map with most recent event
         // this.eventsService
         //     .getEventSites(this.currentEvent)
@@ -139,70 +142,25 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
+        // this.events = this.retrieveEventsList();
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-        console.log(this.isloggedIn);
-        const osm = L.tileLayer(
-            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {
-                attribution:
-                    '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors.',
-            }
-        );
+        console.log('User logged in?: ' + this.isloggedIn);
+        this.createMap();
+    }
 
-        const grayscale = L.tileLayer(
-            'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-            {
-                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-            }
-        );
-
-        const imagery = L.tileLayer(
-            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            {
-                attribution:
-                    'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-            }
-        );
-
-        // Watersheds hosted by The National Map (USGS)
-        const HUC = esri.dynamicMapLayer({
-            url:
-                'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
-            opacity: 0.7,
-        });
-        const currentWarnings = esri.dynamicMapLayer({
-            url:
-                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/0',
-        });
-        const watchesWarnings = esri.dynamicMapLayer({
-            url:
-                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/1',
-        });
-        const AHPSGages = esri.dynamicMapLayer({
-            url:
-                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer',
-        });
-
+    createMap() {
+        // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('map', {
             center: new L.LatLng(39.8283, -98.5795),
             zoom: 4,
-            layers: [osm],
+            layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
         });
         /* this.markers = L.featureGroup().addTo(this.map); */
 
-        const baseMaps = {
-            'Open Street Map': osm,
-            Grayscale: grayscale,
-            Imagery: imagery,
-        };
-        const supplementaryLayers = {
-            Watersheds: HUC,
-            'Current Warnings': currentWarnings,
-            'Watches/Warnings': watchesWarnings,
-            'AHPS Gages': AHPSGages,
-        };
         L.control
-            .layers(baseMaps, supplementaryLayers, { position: 'topleft' })
+            .layers(MAP_CONSTANTS.baseMaps, MAP_CONSTANTS.supplementaryLayers, {
+                position: 'topleft',
+            })
             .addTo(this.map);
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
 
@@ -273,11 +231,14 @@ export class HomeComponent implements OnInit {
             )
         );
 
-        //---Start of measure tools---
+        this.createDrawControls();
+    }
+
+    createDrawControls() {
         const drawnItems = L.featureGroup().addTo(this.map);
 
-        //User can select from drawing a line or polygon; other options are disabled
-        //Measurements are in miles
+        // User can select from drawing a line or polygon; other options are disabled
+        // Measurements are in miles
         const drawControl = new L.Control.Draw({
             edit: {
                 featureGroup: drawnItems,
@@ -357,10 +318,20 @@ export class HomeComponent implements OnInit {
             });
         });
     }
-    //---End of measure tools---
 
-    //When button is clicked, zoom to the full extent of the selected event
-    //As a placeholder, currently zooms back the the U.S. extent
+    // retrieveEventsList(): Event[] {
+    //     this.eventsService.getAllEvents().subscribe((results: Event[]) => {
+    //         // sort the events by date, most recent at the top of the list
+    //         results.sort((a, b) =>
+    //             a.event_start_date < b.event_start_date ? 1 : -1
+    //         );
+    //         // this.mapResults(this.events);
+    //         return results;
+    //     });
+    // }
+
+    // When button is clicked, zoom to the full extent of the selected event
+    // As a placeholder, currently zooms back the the U.S. extent
     eventExtent() {
         this.map.fitBounds([
             [48, -125],
@@ -371,15 +342,6 @@ export class HomeComponent implements OnInit {
     //Options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
-    }
-
-    //Match what user is typing to the index of the corresponding event
-    //Not case sensative
-    private _filter(event_name: string): Event[] {
-        const filterValue = event_name.toLowerCase();
-        return this.events.filter(
-            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
-        );
     }
 
     //Options to be displayed when selecting state filter
