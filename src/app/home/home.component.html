@@ -47,11 +47,13 @@
                 </mat-expansion-panel-header>
 
                 <div class="legend-panel-content">
-                    <div class="legend-icon">
-                        <label>Layer 1</label>
-                    </div>
-                    <div class="legend-icon">
-                        <label>Layer 2</label>
+                    <div id="watershedsLegend" *ngIf="watershedsVisible">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-square wmm-white wmm-icon-circle wmm-icon-white wmm-size-20 huc-icon"
+                            ></div>
+                            <label>Watersheds</label>
+                        </div>
                     </div>
                 </div>
             </mat-expansion-panel>
