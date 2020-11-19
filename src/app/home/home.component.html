@@ -42,6 +42,20 @@
                     <span id="mapCenterLabel" class="hover-content"></span>
                 </div>
             </div>
+            <mat-expansion-panel id="legend" class="legend">
+                <mat-expansion-panel-header>
+                    <mat-panel-title> Legend </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="legend-panel-content">
+                    <div class="legend-icon">
+                        <label>Layer 1</label>
+                    </div>
+                    <div class="legend-icon">
+                        <label>Layer 2</label>
+                    </div>
+                </div>
+            </mat-expansion-panel>
         </mat-expansion-panel>
         <mat-card id="filtersSection">
             <mat-card-title>
@@ -96,13 +110,13 @@
                                 >
                                 <mat-select
                                     id="networkOptions"
-                                    [formControl]="networks"
+                                    [formControl]="networkControl"
                                     multiple
                                 >
                                     <mat-option
-                                        *ngFor="let network of networkList"
+                                        *ngFor="let network of networks"
                                         [value]="network"
-                                        >{{ network }}</mat-option
+                                        >{{ network.name }}</mat-option
                                     >
                                 </mat-select>
                             </mat-form-field>
@@ -111,27 +125,29 @@
                                     >Sensor Types</mat-label
                                 >
                                 <mat-select
-                                    id="sensorTypes"
-                                    [formControl]="sensors"
+                                    id="sensorOptions"
+                                    [formControl]="sensorControl"
                                 >
                                     <mat-option
-                                        *ngFor="let sensor of sensorList"
+                                        *ngFor="let sensor of sensors"
                                         [value]="sensor"
-                                        >{{ sensor }}</mat-option
+                                        >{{ sensor.sensor }}</mat-option
                                     >
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field
-                                class="form-full-width"
-                                appearance="fill"
-                            >
-                                <mat-label for="state">State(s)</mat-label>
-                                <input
-                                    aria-label="Dropdown menu for state selection"
-                                    id="state"
-                                    matInput
-                                    placeholder="Ex. California"
-                                />
+                            <mat-form-field appearance="fill">
+                                <mat-label for="stateList">States</mat-label>
+                                <mat-select
+                                    id="stateOptions"
+                                    [formControl]="stateControl"
+                                    multiple
+                                >
+                                    <mat-option
+                                        *ngFor="let state of states"
+                                        [value]="state"
+                                        >{{ state.state_name }}</mat-option
+                                    >
+                                </mat-select>
                             </mat-form-field>
                             <br />
                             <label

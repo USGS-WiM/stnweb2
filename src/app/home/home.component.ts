@@ -6,12 +6,18 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { Event } from '../interfaces/event';
-import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
 import { APP_UTILITIES } from '@app/app.utilities';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
+import { Event } from '../interfaces/event';
+import { EventsService } from '../services/events.service';
+import { State } from '../interfaces/state';
+import { StatesService } from '../services/states.service';
+import { NetworkName } from '../interfaces/network-name';
+import { NetworkNamesService } from '../services/network-names.service';
+import { SensorType } from '../interfaces/sensor-type';
+import { SensorTypesService } from '../services/sensor-types.service';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -81,28 +87,29 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
-    // Dummy data for Networks
-    networks = new FormControl();
-    networkList: string[] = [
-        'Network 1',
-        'Network 2',
-        'Network 3',
-        'Network 4',
-    ];
-
-    // Dummy data for Sensor Types
-    sensors = new FormControl();
-    sensorList: string[] = ['Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4'];
-
+    //Create variables for filter dropdowns --start
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
+
+    networkControl = new FormControl();
+    networks: NetworkName[];
+
+    sensorControl = new FormControl();
+    sensors: SensorType[];
+
+    stateControl = new FormControl();
+    states: State[];
+    //Create variables for filter dropdowns --end
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
         private eventsService: EventsService,
+        private statesService: StatesService,
+        private networkNamesService: NetworkNamesService,
+        private sensorTypesService: SensorTypesService,
         public currentUserService: CurrentUserService
     ) {
         this.eventsService.getAllEvents().subscribe((results) => {
@@ -112,6 +119,15 @@ export class HomeComponent implements OnInit {
                 a.event_start_date < b.event_start_date ? 1 : -1
             );
             // this.mapResults(this.events);
+        });
+        this.networkNamesService.getNetworkNames().subscribe((results) => {
+            this.networks = results;
+        });
+        this.sensorTypesService.getSensorTypes().subscribe((results) => {
+            this.sensors = results;
+        });
+        this.statesService.getStates().subscribe((results) => {
+            this.states = results;
         });
         // TODO: by default populate map with most recent event
         // this.eventsService
@@ -148,6 +164,25 @@ export class HomeComponent implements OnInit {
             }
         );
 
+        // Watersheds hosted by The National Map (USGS)
+        const HUC = esri.dynamicMapLayer({
+            url:
+                'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
+            opacity: 0.7,
+        });
+        const currentWarnings = esri.dynamicMapLayer({
+            url:
+                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/0',
+        });
+        const watchesWarnings = esri.dynamicMapLayer({
+            url:
+                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/1',
+        });
+        const AHPSGages = esri.dynamicMapLayer({
+            url:
+                'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer',
+        });
+
         this.map = new L.Map('map', {
             center: new L.LatLng(39.8283, -98.5795),
             zoom: 4,
@@ -160,7 +195,15 @@ export class HomeComponent implements OnInit {
             Grayscale: grayscale,
             Imagery: imagery,
         };
-        L.control.layers(baseMaps).addTo(this.map);
+        const supplementaryLayers = {
+            Watersheds: HUC,
+            'Current Warnings': currentWarnings,
+            'Watches/Warnings': watchesWarnings,
+            'AHPS Gages': AHPSGages,
+        };
+        L.control
+            .layers(baseMaps, supplementaryLayers, { position: 'topleft' })
+            .addTo(this.map);
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
 
         // begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
@@ -230,6 +273,7 @@ export class HomeComponent implements OnInit {
             )
         );
 
+        //---Start of measure tools---
         const drawnItems = L.featureGroup().addTo(this.map);
 
         //User can select from drawing a line or polygon; other options are disabled
@@ -313,6 +357,7 @@ export class HomeComponent implements OnInit {
             });
         });
     }
+    //---End of measure tools---
 
     //When button is clicked, zoom to the full extent of the selected event
     //As a placeholder, currently zooms back the the U.S. extent
@@ -328,6 +373,78 @@ export class HomeComponent implements OnInit {
         return event && event.event_name ? event.event_name : '';
     }
 
+<<<<<<< HEAD
+=======
+    //Match what user is typing to the index of the corresponding event
+    //Not case sensative
+    private _filter(event_name: string): Event[] {
+        const filterValue = event_name.toLowerCase();
+        return this.events.filter(
+            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
+        );
+    }
+
+    //Options to be displayed when selecting state filter
+    displayState(state: State): string {
+        return state && state.state_name ? state.state_name : '';
+    }
+
+    //Options to be displayed when selecting network filter
+    displayNetwork(network: NetworkName): string {
+        return network && network.name ? network.name : '';
+    }
+
+    //Options to be displayed when selecting sensor type filter
+    displaySensor(sensor: SensorType): string {
+        return sensor && sensor.sensor ? sensor.sensor : '';
+    }
+
+    scaleLookup(mapZoom) {
+        switch (mapZoom) {
+            case 19:
+                return '1,128';
+            case 18:
+                return '2,256';
+            case 17:
+                return '4,513';
+            case 16:
+                return '9,027';
+            case 15:
+                return '18,055';
+            case 14:
+                return '36,111';
+            case 13:
+                return '72,223';
+            case 12:
+                return '144,447';
+            case 11:
+                return '288,895';
+            case 10:
+                return '577,790';
+            case 9:
+                return '1,155,581';
+            case 8:
+                return '2,311,162';
+            case 7:
+                return '4,622,324';
+            case 6:
+                return '9,244,649';
+            case 5:
+                return '18,489,298';
+            case 4:
+                return '36,978,596';
+            case 3:
+                return '73,957,193';
+            case 2:
+                return '147,914,387';
+            case 1:
+                return '295,828,775';
+            case 0:
+                return '591,657,550';
+        }
+    }
+
+>>>>>>> 89df7019fd3613debc566b362fab52339923724c
     // another method to get event sites
     /* getEventSites(arr, arr2) {
     const ret = [];

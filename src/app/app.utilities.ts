@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Event } from '@interfaces/event';
 import { Site } from '@interfaces/site';
+import { NetworkName } from '@interfaces/network-name';
+import { State } from '@interfaces/state';
+import { SensorType } from './interfaces/sensor-type';
 
 @Injectable()
 export class APP_UTILITIES {
@@ -175,5 +178,83 @@ export class APP_UTILITIES {
                 hwms: [],
             },
         ];
+    }
+
+    public static get NETWORK_NAMES_DUMMY_DATA_LIST(): NetworkName[] {
+        return [
+            {
+                network_name_id: 2,
+                name: 'SWaTH',
+                network_name_site: [],
+            },
+            {
+                network_name_id: 3,
+                name: 'SCoRE',
+                network_name_site: [],
+            },
+        ];
+    }
+
+    public static get DUMMY_NETWORK_NAME(): NetworkName {
+        return {
+            network_name_id: 5,
+            name: 'Coastal Change Hazards (CCH)',
+            network_name_site: [],
+        };
+    }
+
+    public static get STATES_DUMMY_DATA_LIST(): State[] {
+        return [
+            {
+                state_id: 1,
+                state_name: 'Alabama',
+                state_abbrev: 'AL',
+                counties: [],
+            },
+            {
+                state_id: 7,
+                state_name: 'Colorado',
+                state_abbrev: 'CO',
+                counties: [],
+            },
+        ];
+    }
+
+    public static get DUMMY_STATE(): State {
+        return {
+            state_id: 13,
+            state_name: 'Georgia',
+            state_abbrev: 'GA',
+            counties: [],
+        };
+    }
+
+    public static get SENSOR_TYPES_DUMMY_DATA_LIST(): SensorType[] {
+        return [
+            {
+                deploymenttypes: [],
+                sensor_type_id: 2,
+                sensor: 'Wave Height',
+                sensor_deployment: [],
+                instruments: [],
+            },
+            {
+                deploymenttypes: [],
+                sensor_type_id: 8,
+                sensor: 'Water Temperature',
+                sensor_deployment: [],
+                instruments: [],
+            },
+        ];
+    }
+
+    public static get DUMMY_SENSOR_TYPE(): SensorType {
+        return {
+            deploymenttypes: [],
+            sensor_type_id: 4,
+            sensor: 'Webcam',
+            sensor_deployment: [],
+            instruments: [],
+        };
     }
 }
