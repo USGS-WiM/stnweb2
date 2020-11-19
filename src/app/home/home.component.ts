@@ -144,7 +144,6 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        // this.events = this.retrieveEventsList();
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
         console.log('User logged in?: ' + this.isloggedIn);
         this.createMap();
@@ -335,18 +334,6 @@ export class HomeComponent implements OnInit {
             }
         });
     }
-
-    // retrieveEventsList(): Event[] {
-    //     this.eventsService.getAllEvents().subscribe((results: Event[]) => {
-    //         // sort the events by date, most recent at the top of the list
-    //         results.sort((a, b) =>
-    //             a.event_start_date < b.event_start_date ? 1 : -1
-    //         );
-    //         // this.mapResults(this.events);
-    //         return results;
-    //     });
-    // }
-
     // When button is clicked, zoom to the full extent of the selected event
     // As a placeholder, currently zooms back the the U.S. extent
     eventExtent() {
