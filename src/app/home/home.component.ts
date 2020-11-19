@@ -114,14 +114,45 @@ export class HomeComponent implements OnInit {
         private networkNamesService: NetworkNamesService,
         private sensorTypesService: SensorTypesService,
         public currentUserService: CurrentUserService
-    ) {
+    ) {}
+
+    ngOnInit() {
+        // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
+        console.log('User logged in?: ' + this.isloggedIn);
+
         this.eventsService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
             this.events = this.events.sort((a, b) =>
                 a.event_start_date < b.event_start_date ? 1 : -1
             );
+
+            // allow user to type into the event selector to view matching events
+            this.filteredEvents = this.eventsControl.valueChanges.pipe(
+                startWith(''),
+                map((value) =>
+                    typeof value === 'string' ? value : value.event_name
+                ),
+                map((event_name) =>
+                    // match user text input to the index of the corresponding event
+                    event_name
+                        ? APP_UTILITIES.FILTER_EVENT(event_name, this.events)
+                        : this.events
+                )
+            );
+
+            // create and configure map
+            this.createMap();
+
             // this.mapResults(this.events);
+
+            // TODO: by default populate map with most recent event
+            // this.eventsService
+            //     .getEventSites(this.currentEvent)
+            //     .subscribe((results) => {
+            //         this.eventSites = results;
+            //         this.mapResults(this.eventSites);
+            //     });
         });
 
         this.networkNamesService.getNetworkNames().subscribe((results) => {
@@ -133,20 +164,6 @@ export class HomeComponent implements OnInit {
         this.statesService.getStates().subscribe((results) => {
             this.states = results;
         });
-
-        // TODO: by default populate map with most recent event
-        // this.eventsService
-        //     .getEventSites(this.currentEvent)
-        //     .subscribe((results) => {
-        //         this.eventSites = results;
-        //         this.mapResults(this.eventSites);
-        //     });
-    }
-
-    ngOnInit() {
-        // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-        console.log('User logged in?: ' + this.isloggedIn);
-        this.createMap();
     }
 
     createMap() {
@@ -217,20 +234,6 @@ export class HomeComponent implements OnInit {
                 results.addLayer(L.marker(data.results[i].latlng));
             }
         });
-
-        //Allow user to type into the event selector to view matching events
-        this.filteredEvents = this.eventsControl.valueChanges.pipe(
-            startWith(''),
-            map((value) =>
-                typeof value === 'string' ? value : value.event_name
-            ),
-            map((event_name) =>
-                // match user text input to the index of the corresponding event
-                event_name
-                    ? APP_UTILITIES.FILTER_EVENT(event_name, this.events)
-                    : this.events
-            )
-        );
 
         this.createDrawControls();
     }
