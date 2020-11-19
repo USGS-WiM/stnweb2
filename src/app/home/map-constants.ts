@@ -68,34 +68,4 @@ export class MAP_CONSTANTS {
             'AHPS Gages': this.mapLayers.esriDynamicLayers.AHPSGages,
         };
     }
-
-    // public static get drawnItems(): any {
-    //     return L.featureGroup();
-    // }
-
-    // public static get drawControl(): any {
-    //     return new L.Control.Draw({
-    //         edit: {
-    //             featureGroup: this.drawnItems,
-    //             poly: {
-    //                 allowIntersection: false,
-    //             },
-    //         },
-    //         draw: {
-    //             polygon: {
-    //                 allowIntersection: false,
-    //                 showArea: true,
-    //                 metric: false,
-    //             },
-    //             marker: false,
-    //             circle: false,
-    //             circlemarker: false,
-    //             rectangle: false,
-    //             polyline: {
-    //                 metric: false,
-    //                 feet: false,
-    //             },
-    //         },
-    //     });
-    // }
 }
