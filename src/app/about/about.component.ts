@@ -9,9 +9,5 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 export class AboutComponent implements OnInit {
     constructor(public aboutDialogRef: MatDialogRef<AboutComponent>) {}
 
-    onNoClick(): void {
-        this.aboutDialogRef.close();
-    }
-
     ngOnInit() {}
 }

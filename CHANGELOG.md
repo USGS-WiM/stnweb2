@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added esri-leaflet geosearch
 -   Added measure tools
 -   Added layout to map filters
+-   Added state, sensor type, and network name services and filter selections
+-   Added supplementary layers to toggle
+-   Added legend
+-   Added Watershed layer to legend
 
 ### Changed
 
