@@ -39,6 +39,7 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { EventsService } from '@services/events.service';
 import { UserService } from '@services/user.service';
+import { SitesService } from '@services/sites.service';
 
 @NgModule({
     declarations: [
@@ -84,6 +85,7 @@ import { UserService } from '@services/user.service';
         AuthenticationService,
         EventsService,
         UserService,
+        SitesService,
     ],
     bootstrap: [AppComponent],
     entryComponents: [

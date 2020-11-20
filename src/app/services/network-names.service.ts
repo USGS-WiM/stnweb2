@@ -6,49 +6,34 @@ import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-import { throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
-import { Event } from '@interfaces/event';
 
 @Injectable({
     providedIn: 'root',
 })
-export class EventsService {
+export class NetworkNamesService {
     constructor(private httpClient: HttpClient) {}
 
-    // retrieve tghe full events list
-    public getAllEvents(): Observable<Event[]> {
-        return (
-            this.httpClient
-                // .get(APP_SETTINGS.EVENTS + '.json', {
-                //     headers: APP_SETTINGS.AUTH_JSON_HEADERS,
-                // })
-                .get(APP_SETTINGS.EVENTS + '.json')
-                .pipe(
-                    tap((response) => {
-                        console.log(
-                            'Events list response recieved: ' + response
-                        );
-                        return response;
-                    }),
-                    catchError(this.handleError<any>('getAllEvents', []))
-                )
+    public getNetworkNames(): Observable<any> {
+        return this.httpClient.get(APP_SETTINGS.NETWORK_NAMES + '.json').pipe(
+            tap((response) => {
+                console.log('Network list response recieved: ' + response);
+                return response;
+            }),
+            catchError(this.handleError<any>('getNetworkNames', []))
         );
     }
 
-    // retrieve the details for a single specific event
-    public getEvent(eventID): Observable<Event> {
+    // GET ONE Network Name
+    public getNetworkName(network_name_id: number): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.EVENTS + eventID + '.json', {
+            .get(APP_SETTINGS.NETWORK_NAMES + network_name_id + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
-                tap((response) => {
-                    console.log('Event record response recieved: ' + response);
+                map((response: Response) => {
                     return response;
-                }),
-                catchError(this.handleError<any>('getEvent', {}))
+                })
             );
     }
 

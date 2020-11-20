@@ -33,6 +33,10 @@ mat-icon {
 #mapPanel .mat-expansion-panel-body {
     padding: 0 !important;
 }
+//leaflet draw adjustment
+.leaflet-touch .leaflet-draw-toolbar {
+    margin-top: -1px;
+}
 
 // Expansion Panels
 // Expansion Panels
