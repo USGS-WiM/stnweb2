@@ -19,6 +19,7 @@ export class SitesService {
         return this.eventSitesSubject.asObservable();
     }
 
+    //get sites for a selected event
     public getEventSites(eventID: number): Observable<Site[]> {
         return this.httpClient
             .get(APP_SETTINGS.EVENTS + '/' + eventID + '/Sites.json')
