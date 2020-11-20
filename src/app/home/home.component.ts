@@ -326,7 +326,6 @@ export class HomeComponent implements OnInit {
 
         //When the watershed checkbox is checked, add watershed icon to legend
         this.map.on('overlayadd', (e) => {
-            console.log('overlayadd');
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
@@ -339,7 +338,6 @@ export class HomeComponent implements OnInit {
         });
         //When the watershed checkbox is unchecked, remove watershed icon from legend
         this.map.on('overlayremove', (e) => {
-            console.log('overlayremove');
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }

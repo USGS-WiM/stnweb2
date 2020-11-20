@@ -6,8 +6,6 @@ import { ArgumentOutOfRangeError } from 'rxjs';
 @Injectable()
 export class MAP_CONSTANTS {
     public static get mapLayers(): any {
-        let currWarningCount: number = 0;
-        let watchWarnCount: number = 0;
         return {
             tileLayers: {
                 osm: L.tileLayer(
@@ -47,9 +45,6 @@ export class MAP_CONSTANTS {
                 currentWarnings: esri.featureLayer({
                     url:
                         'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/0',
-                    onEachFeature() {
-                        currWarningCount += 1;
-                    },
                     style: function () {
                         return { color: 'red', weight: 2 };
                     },
@@ -57,16 +52,11 @@ export class MAP_CONSTANTS {
                 watchesWarnings: esri.featureLayer({
                     url:
                         'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/1',
-                    onEachFeature() {
-                        watchWarnCount += 1;
-                    },
                     style: function () {
                         return { color: 'orange', weight: 2 };
                     },
                 }),
             },
-            currWarningCount: currWarningCount,
-            watchWarnCount: watchWarnCount,
         };
     }
     public static get baseMaps(): any {
@@ -78,7 +68,6 @@ export class MAP_CONSTANTS {
     }
 
     public static get supplementaryLayers(): any {
-        // if (currWarningCount != 0 && watchWarnCount != 0) {
         return {
             Watersheds: this.mapLayers.esriDynamicLayers.HUC,
             'Current Warnings': this.mapLayers.esriFeatureLayers
@@ -87,30 +76,5 @@ export class MAP_CONSTANTS {
                 .watchesWarnings,
             'AHPS Gages': this.mapLayers.esriDynamicLayers.AHPSGages,
         };
-        //  }
-        /*
-        if (currWarningCount == 0 && watchWarnCount > 0) {
-            return {
-                Watersheds: this.mapLayers.esriDynamicLayers.HUC,
-                'Watches/Warnings': this.mapLayers.esriFeatureLayers
-                    .watchesWarnings,
-                'AHPS Gages': this.mapLayers.esriDynamicLayers.AHPSGages,
-            };
-        }
-        if (currWarningCount > 0 && watchWarnCount == 0) {
-            return {
-                Watersheds: this.mapLayers.esriDynamicLayers.HUC,
-                'Current Warnings': this.mapLayers.esriFeatureLayers
-                    .currentWarnings,
-                'AHPS Gages': this.mapLayers.esriDynamicLayers.AHPSGages,
-            };
-        }
-        if (currWarningCount == 0 && watchWarnCount == 0) {
-            return {
-                Watersheds: this.mapLayers.esriDynamicLayers.HUC,
-                'AHPS Gages': this.mapLayers.esriDynamicLayers.AHPSGages,
-            };
-        }
-        */
     }
 }
