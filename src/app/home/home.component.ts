@@ -104,6 +104,8 @@ export class HomeComponent implements OnInit {
     //Create variables for filter dropdowns --end
 
     watershedsVisible = false;
+    currWarningsVisible = false;
+    watchWarnVisible = false;
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -328,12 +330,24 @@ export class HomeComponent implements OnInit {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
+            if (e.name === 'Current Warnings') {
+                this.currWarningsVisible = true;
+            }
+            if (e.name === 'Watches/Warnings') {
+                this.watchWarnVisible = true;
+            }
         });
         //When the watershed checkbox is unchecked, remove watershed icon from legend
         this.map.on('overlayremove', (e) => {
             console.log('overlayremove');
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
+            }
+            if (e.name === 'Current Warnings') {
+                this.currWarningsVisible = false;
+            }
+            if (e.name === 'Watches/Warnings') {
+                this.watchWarnVisible = false;
             }
         });
     }
