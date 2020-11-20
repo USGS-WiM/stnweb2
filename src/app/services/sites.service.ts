@@ -45,24 +45,4 @@ export class SitesService {
             return EMPTY;
         };
     }
-
-    //This version returns a subscription, we seem to be using a different pattern elsewhere in the app.
-    /* public getEventSites(eventID: string) {
-        const url = APP_SETTINGS.EVENTS + '/' + eventID + '/Sites.json';
-        const headers = APP_SETTINGS.AUTH_JSON_HEADERS;
-        return this.http
-            .get<any>(url, { headers })
-            .subscribe(
-                (res: any) => {
-                    console.log('getting sites for: ' + eventID);
-                    this.eventSitesSubject.next(res);
-                },
-                (err) => {
-                    console.log(`http error getting {{eventID}}`);
-                },
-                () => {
-                    console.log('getEvents successful for event: ' + eventID);
-                }
-            );
-    } */
 }
