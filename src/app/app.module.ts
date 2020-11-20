@@ -29,6 +29,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 // import { MatAccordion } from '@angular/material/expansion';
 
@@ -78,7 +79,8 @@ import { SitesService } from '@services/sites.service';
         MatCheckboxModule,
         MatInputModule,
         MatSelectModule,
-        //MatAccordion,
+        MatButtonToggleModule,
+        //MatAccordion
     ],
     providers: [
         CurrentUserService,
