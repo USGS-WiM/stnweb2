@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 declare let L: any;
 import * as esri from 'esri-leaflet';
-import { ArgumentOutOfRangeError } from 'rxjs';
 
 @Injectable()
 export class MAP_CONSTANTS {
