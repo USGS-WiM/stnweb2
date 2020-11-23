@@ -19,6 +19,7 @@ import { NetworkName } from '../interfaces/network-name';
 import { NetworkNamesService } from '../services/network-names.service';
 import { SensorType } from '../interfaces/sensor-type';
 import { SensorTypesService } from '../services/sensor-types.service';
+import { SitesService } from '../services/sites.service';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -115,7 +116,8 @@ export class HomeComponent implements OnInit {
         private statesService: StatesService,
         private networkNamesService: NetworkNamesService,
         private sensorTypesService: SensorTypesService,
-        public currentUserService: CurrentUserService
+        public currentUserService: CurrentUserService,
+        private sitesService: SitesService
     ) {}
 
     ngOnInit() {
@@ -149,12 +151,12 @@ export class HomeComponent implements OnInit {
             // this.mapResults(this.events);
 
             // TODO: by default populate map with most recent event
-            // this.eventsService
-            //     .getEventSites(this.currentEvent)
-            //     .subscribe((results) => {
-            //         this.eventSites = results;
-            //         this.mapResults(this.eventSites);
-            //     });
+            this.sitesService
+                .getEventSites(this.currentEvent)
+                .subscribe((results) => {
+                    this.eventSites = results;
+                    this.mapResults(this.eventSites);
+                });
         });
 
         this.networkNamesService.getNetworkNames().subscribe((results) => {

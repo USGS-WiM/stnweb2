@@ -29,6 +29,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 // import { MatAccordion } from '@angular/material/expansion';
 
@@ -39,6 +40,7 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { EventsService } from '@services/events.service';
 import { UserService } from '@services/user.service';
+import { SitesService } from '@services/sites.service';
 
 @NgModule({
     declarations: [
@@ -77,13 +79,15 @@ import { UserService } from '@services/user.service';
         MatCheckboxModule,
         MatInputModule,
         MatSelectModule,
-        //MatAccordion,
+        MatButtonToggleModule,
+        //MatAccordion
     ],
     providers: [
         CurrentUserService,
         AuthenticationService,
         EventsService,
         UserService,
+        SitesService,
     ],
     bootstrap: [AppComponent],
     entryComponents: [
