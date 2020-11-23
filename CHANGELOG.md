@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added supplementary layers to toggle
 -   Added legend
 -   Added Watershed layer to legend
+-   Added Watches/warnings and current warnings to map and legend
+-   Added AHPS gages to map and legend
 
 ### Changed
 
