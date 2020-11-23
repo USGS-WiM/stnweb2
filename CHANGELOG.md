@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added interfaces
 -   Added esri-leaflet geosearch
 -   Added measure tools
+-   Added sites service to get sites by event
+-   Added additional navbar row
 
 ### Changed
 
