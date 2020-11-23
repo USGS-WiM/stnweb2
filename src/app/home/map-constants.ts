@@ -60,42 +60,57 @@ export class MAP_CONSTANTS {
                 AHPSGages: esri.featureLayer({
                     url:
                         'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer/0',
+                    minZoom: 9,
                     onEachFeature: function (feature, layer) {
                         if (feature.properties.status == 'major') {
                             layer.setIcon(
-                                L.divIcon({ className: 'majorFlood' })
+                                L.divIcon({ className: 'gageIcon majorFlood' })
                             );
                         } else if (feature.properties.status == 'moderate') {
                             layer.setIcon(
-                                L.divIcon({ className: 'moderateFlood' })
+                                L.divIcon({
+                                    className: 'gageIcon moderateFlood',
+                                })
                             );
                         } else if (feature.properties.status == 'minor') {
                             layer.setIcon(
-                                L.divIcon({ className: 'minorFlood' })
+                                L.divIcon({ className: 'gageIcon minorFlood' })
                             );
                         } else if (feature.properties.status == 'action') {
                             layer.setIcon(
-                                L.divIcon({ className: 'nearFlood' })
+                                L.divIcon({ className: 'gageIcon nearFlood' })
+                            );
+                        } else if (feature.properties.status == 'no_flooding') {
+                            layer.setIcon(
+                                L.divIcon({ className: 'gageIcon noFlood' })
                             );
                         } else if (feature.properties.status == 'not_defined') {
-                            layer.setIcon(L.divIcon({ className: 'floodND' }));
+                            layer.setIcon(
+                                L.divIcon({ className: 'gageIcon floodND' })
+                            );
                         } else if (
                             feature.properties.status == 'low_threshold'
                         ) {
                             layer.setIcon(
-                                L.divIcon({ className: 'belowThreshold' })
+                                L.divIcon({
+                                    className: 'gageIcon belowThreshold',
+                                })
                             );
                         } else if (
                             feature.properties.status == 'obs_not_current'
                         ) {
                             layer.setIcon(
-                                L.divIcon({ className: 'obsNotCurrent' })
+                                L.divIcon({
+                                    className: 'gageIcon obsNotCurrent',
+                                })
                             );
                         } else if (
                             feature.properties.status == 'out_of_service'
                         ) {
                             layer.setIcon(
-                                L.divIcon({ className: 'outOfService' })
+                                L.divIcon({
+                                    className: 'gageIcon outOfService',
+                                })
                             );
                         }
                     },
