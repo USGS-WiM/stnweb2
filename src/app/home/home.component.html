@@ -47,6 +47,36 @@
                     <mat-panel-title> Legend </mat-panel-title>
                 </mat-expansion-panel-header>
                 <div class="legend-panel-content">
+                    <div id="watershedsLegend" *ngIf="watershedsVisible">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-square wmm-white wmm-icon-circle wmm-icon-white wmm-size-20 huc-icon"
+                            ></div>
+                            <label>Watersheds</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content">
+                    <div id="currWarningLegend" *ngIf="currWarningsVisible">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-square wmm-icon-circle wmm-size-20 warn-icon"
+                            ></div>
+                            <label>Current Warnings</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content">
+                    <div id="watchWarnLegend" *ngIf="watchWarnVisible">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-square wmm-icon-circle wmm-size-20 watch-icon"
+                            ></div>
+                            <label>Watches/Warnings</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content">
                     <div id="AHPSGageLegend" *ngIf="ahpsGagesVisible">
                         <label class="AHPSGageHeader">AHPS Gages</label>
                         <div class="legend-icon">
@@ -103,36 +133,6 @@
                             <div class="AHPSGageLabel">
                                 <p>Out of Service</p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="legend-panel-content">
-                    <div id="currWarningLegend" *ngIf="currWarningsVisible">
-                        <div class="legend-icon">
-                            <div
-                                class="wmm-square wmm-icon-circle wmm-size-20 warn-icon"
-                            ></div>
-                            <label>Current Warnings</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="legend-panel-content">
-                    <div id="watchWarnLegend" *ngIf="watchWarnVisible">
-                        <div class="legend-icon">
-                            <div
-                                class="wmm-square wmm-icon-circle wmm-size-20 watch-icon"
-                            ></div>
-                            <label>Watches/Warnings</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="legend-panel-content">
-                    <div id="watershedsLegend" *ngIf="watershedsVisible">
-                        <div class="legend-icon">
-                            <div
-                                class="wmm-square wmm-white wmm-icon-circle wmm-icon-white wmm-size-20 huc-icon"
-                            ></div>
-                            <label>Watersheds</label>
                         </div>
                     </div>
                 </div>
