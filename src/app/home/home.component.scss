@@ -222,11 +222,11 @@ $borderRadius: 4px;
     z-index: 1000;
     color: black;
     background-color: rgb(255, 255, 255);
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.92);
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
     border-radius: 4px;
     cursor: pointer;
-    opacity: 0.87;
+    opacity: 0.95;
 }
 
 .legend-icon {
@@ -418,4 +418,50 @@ $borderRadius: 4px;
 .watch-icon:after {
     border: 3px solid orange;
     background-color: rgba(255, 165, 0, 0.25);
+}
+.AHPSGageLabel {
+    font-size: small;
+    margin-left: 20px;
+}
+.AHPSGageHeader {
+    margin-left: 20px;
+}
+.gageIcon {
+    border: 1px solid black;
+    height: 10px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    width: 10px;
+    display: block;
+    overflow: hidden;
+    position: absolute;
+    margin-top: 6px;
+}
+.majorFlood {
+    background-color: rgba(204, 51, 255, 255);
+}
+.moderateFlood {
+    background-color: rgba(255, 0, 0, 255);
+}
+.minorFlood {
+    background-color: rgba(255, 153, 0, 255);
+}
+.nearFlood {
+    background-color: rgba(255, 255, 0, 255);
+}
+.noFlood {
+    background-color: rgba(0, 255, 0, 255);
+}
+.floodND {
+    background-color: rgba(114, 175, 233, 255);
+}
+.belowThreshold {
+    background-color: rgba(144, 99, 32, 255);
+}
+.obsNotCurrent {
+    background-color: rgba(189, 194, 187, 255);
+}
+.outOfService {
+    background-color: rgba(102, 102, 102, 255);
 }
