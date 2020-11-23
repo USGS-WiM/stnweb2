@@ -271,7 +271,7 @@ export class HomeComponent implements OnInit {
         this.map.addControl(drawControl);
 
         // Generate popup content based on layer type
-        // - Returns HTML string, or null if unknown object
+        // Returns HTML string, or null if unknown object
         const getPopupContent = function (layer) {
             if (layer instanceof L.Polygon) {
                 const latlngs = layer._defaultShape
@@ -337,6 +337,7 @@ export class HomeComponent implements OnInit {
             }
         });
     }
+
     // When button is clicked, zoom to the full extent of the selected event
     // As a placeholder, currently zooms back the the U.S. extent
     eventExtent() {
