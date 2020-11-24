@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+-   Added prerequisite for at least one layer to be checked before the legend appears
+
 ### Changed
 
 -   Adjusted color of second navbar
@@ -28,7 +30,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added Watershed layer to legend
 -   Added Watches/warnings and current warnings to map and legend
 -   Added AHPS gages to map and legend
--   Added prerequisite for at least one layer to be checked before the legend appears
 
 ## [v0.1.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.1.0) - 2020-11-10
 
