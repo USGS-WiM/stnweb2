@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CurrentUserService } from '../services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -28,6 +29,7 @@ declare let L: any;
 import 'leaflet';
 import 'leaflet-draw';
 import * as esri from 'esri-leaflet';
+import { ThrowStmt } from '@angular/compiler';
 
 export interface PeriodicElement {
     name: string;
@@ -109,6 +111,9 @@ export class HomeComponent implements OnInit {
     watchWarnVisible = false;
     ahpsGagesVisible = false;
 
+    currentZoom: number;
+    previousZoom: number;
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
@@ -118,7 +123,8 @@ export class HomeComponent implements OnInit {
         private networkNamesService: NetworkNamesService,
         private sensorTypesService: SensorTypesService,
         public currentUserService: CurrentUserService,
-        private sitesService: SitesService
+        private sitesService: SitesService,
+        public snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
@@ -168,6 +174,12 @@ export class HomeComponent implements OnInit {
         });
         this.statesService.getStates().subscribe((results) => {
             this.states = results;
+        });
+    }
+
+    openSnackBar(message: string, action: string, duration: number) {
+        this.snackBar.open(message, action, {
+            duration: duration,
         });
     }
 
@@ -237,6 +249,57 @@ export class HomeComponent implements OnInit {
             results.clearLayers();
             for (let i = data.results.length - 1; i >= 0; i--) {
                 results.addLayer(L.marker(data.results[i].latlng));
+            }
+        });
+
+        //When the watershed checkbox is checked, add watershed icon to legend
+        this.map.on('overlayadd', (e) => {
+            if (e.name === 'Watersheds') {
+                this.watershedsVisible = true;
+            }
+            if (e.name === 'Current Warnings') {
+                this.currWarningsVisible = true;
+            }
+            if (e.name === 'Watches/Warnings') {
+                this.watchWarnVisible = true;
+            }
+            if (e.name === 'AHPS Gages') {
+                this.ahpsGagesVisible = true;
+            }
+        });
+        //When the watershed checkbox is unchecked, remove watershed icon from legend
+        this.map.on('overlayremove', (e) => {
+            if (e.name === 'Watersheds') {
+                this.watershedsVisible = false;
+            }
+            if (e.name === 'Current Warnings') {
+                this.currWarningsVisible = false;
+            }
+            if (e.name === 'Watches/Warnings') {
+                this.watchWarnVisible = false;
+            }
+            if (e.name === 'AHPS Gages') {
+                this.ahpsGagesVisible = false;
+            }
+        });
+
+        //Get the value of the previous zoom
+        this.map.on('zoomstart', () => {
+            this.previousZoom = this.map.getZoom();
+        });
+        //Get the value of the current zoom
+        this.map.on('zoomend', () => {
+            this.currentZoom = this.map.getZoom();
+            //If the zoom went from 9 to 8 and the ahps gages are on,
+            //that means the gage layer is checked, but it's not displayed
+            //warn users of that in a snack bar message
+            if (
+                this.ahpsGagesVisible == true &&
+                this.previousZoom == 9 &&
+                this.currentZoom == 8
+            ) {
+                console.log('place a snack bar here');
+                this.openSnackBar('Zoom in to see AHGS Gages', 'act', 2000);
             }
         });
 
@@ -325,37 +388,6 @@ export class HomeComponent implements OnInit {
                     layer.setPopupContent(content);
                 }
             });
-        });
-
-        //When the watershed checkbox is checked, add watershed icon to legend
-        this.map.on('overlayadd', (e) => {
-            if (e.name === 'Watersheds') {
-                this.watershedsVisible = true;
-            }
-            if (e.name === 'Current Warnings') {
-                this.currWarningsVisible = true;
-            }
-            if (e.name === 'Watches/Warnings') {
-                this.watchWarnVisible = true;
-            }
-            if (e.name === 'AHPS Gages') {
-                this.ahpsGagesVisible = true;
-            }
-        });
-        //When the watershed checkbox is unchecked, remove watershed icon from legend
-        this.map.on('overlayremove', (e) => {
-            if (e.name === 'Watersheds') {
-                this.watershedsVisible = false;
-            }
-            if (e.name === 'Current Warnings') {
-                this.currWarningsVisible = false;
-            }
-            if (e.name === 'Watches/Warnings') {
-                this.watchWarnVisible = false;
-            }
-            if (e.name === 'AHPS Gages') {
-                this.ahpsGagesVisible = false;
-            }
         });
     }
     // When button is clicked, zoom to the full extent of the selected event
