@@ -42,11 +42,20 @@
                     <span id="mapCenterLabel" class="hover-content"></span>
                 </div>
             </div>
-            <mat-expansion-panel id="legend" class="legend">
+            <mat-expansion-panel
+                id="legend"
+                class="legend"
+                *ngIf="
+                    watershedsVisible ||
+                    currWarningsVisible ||
+                    watchWarnVisible ||
+                    ahpsGagesVisible
+                "
+            >
                 <mat-expansion-panel-header>
                     <mat-panel-title> Legend </mat-panel-title>
                 </mat-expansion-panel-header>
-                <div class="legend-panel-content">
+                <div class="legend-panel-content" *ngIf="watershedsVisible">
                     <div id="watershedsLegend" *ngIf="watershedsVisible">
                         <div class="legend-icon">
                             <div
@@ -56,8 +65,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="legend-panel-content">
-                    <div id="currWarningLegend" *ngIf="currWarningsVisible">
+                <div class="legend-panel-content" *ngIf="currWarningsVisible">
+                    <div id="currWarningLegend">
                         <div class="legend-icon">
                             <div
                                 class="wmm-square wmm-icon-circle wmm-size-20 warn-icon"
@@ -66,8 +75,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="legend-panel-content">
-                    <div id="watchWarnLegend" *ngIf="watchWarnVisible">
+                <div class="legend-panel-content" *ngIf="watchWarnVisible">
+                    <div id="watchWarnLegend">
                         <div class="legend-icon">
                             <div
                                 class="wmm-square wmm-icon-circle wmm-size-20 watch-icon"
@@ -76,8 +85,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="legend-panel-content">
-                    <div id="AHPSGageLegend" *ngIf="ahpsGagesVisible">
+                <div class="legend-panel-content" *ngIf="ahpsGagesVisible">
+                    <div id="AHPSGageLegend">
                         <label class="AHPSGageHeader">AHPS Gages</label>
                         <div class="legend-icon">
                             <div
