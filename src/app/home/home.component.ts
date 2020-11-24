@@ -76,8 +76,8 @@ export class HomeComponent implements OnInit {
     siteClicked = false;
     siteName;
 
-    currentEvent = 7;
-    currentEventName = 'FEMA 2013 exercise';
+    currentEvent: number;
+    currentEventName: string;
     eventSites: any;
 
     mapScale;
@@ -131,6 +131,9 @@ export class HomeComponent implements OnInit {
             this.events = this.events.sort((a, b) =>
                 a.event_start_date < b.event_start_date ? 1 : -1
             );
+
+            this.currentEvent = this.events[0].event_id;
+            this.currentEventName = this.events[0].event_name;
 
             // allow user to type into the event selector to view matching events
             this.filteredEvents = this.eventsControl.valueChanges.pipe(
