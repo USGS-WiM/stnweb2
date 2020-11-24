@@ -76,9 +76,11 @@ export class HomeComponent implements OnInit {
     siteClicked = false;
     siteName;
 
+    public selectedEvent;
     currentEvent: number;
     currentEventName: string;
     eventSites: any;
+    eventMarkers = L.layerGroup([]);
 
     mapScale;
     latitude;
@@ -154,7 +156,7 @@ export class HomeComponent implements OnInit {
 
             // this.mapResults(this.events);
 
-            // TODO: by default populate map with most recent event
+            // by default populate map with most recent event
             this.sitesService
                 .getEventSites(this.currentEvent)
                 .subscribe((results) => {
@@ -172,6 +174,23 @@ export class HomeComponent implements OnInit {
         this.statesService.getStates().subscribe((results) => {
             this.states = results;
         });
+    }
+
+    displaySelectedEvent() {
+        console.log('this.seletedEvent', this.selectedEvent);
+
+        if (this.eventMarkers !== undefined) {
+            this.eventMarkers.removeFrom(this.map);
+        }
+        this.eventMarkers = L.layerGroup([]);
+        if (this.selectedEvent !== undefined) {
+            this.sitesService
+                .getEventSites(this.selectedEvent.event_id)
+                .subscribe((results) => {
+                    this.eventSites = results;
+                    this.mapResults(this.eventSites);
+                });
+        }
     }
 
     createMap() {
@@ -433,7 +452,10 @@ export class HomeComponent implements OnInit {
         const popup = L.popup()
           .setContent(popupContent); */
 
-                L.marker([lat, long], { icon: myicon }).addTo(this.map);
+                L.marker([lat, long], { icon: myicon }).addTo(
+                    this.eventMarkers
+                );
+
                 /* .bindPopup(popup)
           .on('click',
             (data) => {
@@ -452,6 +474,7 @@ export class HomeComponent implements OnInit {
               // this.eventsLoading = false;
             }); */
             }
+            this.eventMarkers.addTo(this.map);
         }
     }
 }
