@@ -60,10 +60,10 @@ export class HomeComponent implements OnInit {
     map;
     icon;
     isloggedIn = APP_SETTINGS.IS_LOGGEDIN;
+    currentFilter;
 
-    currentFilter = sessionStorage.getItem('currentFilter')
-        ? JSON.parse(sessionStorage.getItem('currentFiler'))
-        : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    drawControl;
+    drawnItems;
 
     // dummy data
     displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
@@ -121,12 +121,15 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
         console.log('User logged in?: ' + this.isloggedIn);
+        this.setCurrentFilter();
 
         this.eventsService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
-            this.events = this.events.sort((a, b) =>
-                a.event_start_date < b.event_start_date ? 1 : -1
+            this.events = APP_UTILITIES.SORT(
+                this.events,
+                'event_start_date',
+                'descend'
             );
 
             // allow user to type into the event selector to view matching events
@@ -166,6 +169,12 @@ export class HomeComponent implements OnInit {
         this.statesService.getStates().subscribe((results) => {
             this.states = results;
         });
+    }
+
+    setCurrentFilter() {
+        this.currentFilter = localStorage.getItem('currentFilter')
+            ? JSON.parse(localStorage.getItem('currentFilter'))
+            : APP_SETTINGS.DEFAULT_FILTER_QUERY;
     }
 
     createMap() {
@@ -240,14 +249,60 @@ export class HomeComponent implements OnInit {
         this.createDrawControls();
     }
 
-    createDrawControls() {
-        const drawnItems = L.featureGroup().addTo(this.map);
+    // For drawn items: generate popup content based on layer type
+    // Returns HTML string, or null if unknown object
+    getDrawnItemPopupContent(layer) {
+        if (layer instanceof L.Polygon) {
+            const latlngs = layer._defaultShape
+                    ? layer._defaultShape()
+                    : layer.getLatLngs(),
+                area = L.GeometryUtil.geodesicArea(latlngs);
+            return 'Area: ' + L.GeometryUtil.readableArea(area);
+            // Polyline - distance
+        } else if (layer instanceof L.Polyline) {
+            const latlngs = layer._defaultShape
+                ? layer._defaultShape()
+                : layer.getLatLngs();
+            let distance = 0;
+            if (latlngs.length < 2) {
+                return 'Distance: N/A';
+            } else {
+                for (let i = 0; i < latlngs.length - 1; i++) {
+                    distance += latlngs[i].distanceTo(latlngs[i + 1]);
+                }
+                distance = distance * 0.000621371;
+                return 'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi';
+            }
+        }
+        return null;
+    }
 
+    // createDrawnItem(event) {
+    //     const layer = event.layer;
+    //     const content = this.getDrawnItemPopupContent(layer);
+    //     if (content !== null) {
+    //         layer.bindPopup(content);
+    //     }
+    //     this.drawnItems.addLayer(layer);
+    // }
+
+    // editDrawnItem(event) {
+    //     const layers = event.layers;
+    //     layers.eachLayer(function (layer) {
+    //         const content = this.getDrawnItemPopupContent(layer);
+    //         if (content !== null) {
+    //             layer.setPopupContent(content);
+    //         }
+    //     });
+    // }
+
+    createDrawControls() {
+        this.drawnItems = L.featureGroup().addTo(this.map);
         // User can select from drawing a line or polygon; other options are disabled
         // Measurements are in miles
-        const drawControl = new L.Control.Draw({
+        this.drawControl = new L.Control.Draw({
             edit: {
-                featureGroup: drawnItems,
+                featureGroup: this.drawnItems,
                 poly: {
                     allowIntersection: false,
                 },
@@ -270,37 +325,31 @@ export class HomeComponent implements OnInit {
         });
 
         //Add the buttons to the map
-        this.map.addControl(drawControl);
+        this.map.addControl(this.drawControl);
 
         // Generate popup content based on layer type
-        // Returns HTML string, or null if unknown object
-        const getPopupContent = function (layer) {
-            if (layer instanceof L.Polygon) {
-                const latlngs = layer._defaultShape
-                        ? layer._defaultShape()
-                        : layer.getLatLngs(),
-                    area = L.GeometryUtil.geodesicArea(latlngs);
-                return 'Area: ' + L.GeometryUtil.readableArea(area);
-                // Polyline - distance
-            } else if (layer instanceof L.Polyline) {
-                const latlngs = layer._defaultShape
-                    ? layer._defaultShape()
-                    : layer.getLatLngs();
-                let distance = 0;
-                if (latlngs.length < 2) {
-                    return 'Distance: N/A';
-                } else {
-                    for (let i = 0; i < latlngs.length - 1; i++) {
-                        distance += latlngs[i].distanceTo(latlngs[i + 1]);
-                    }
-                    distance = distance * 0.000621371;
-                    return (
-                        'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi'
-                    );
-                }
-            }
-            return null;
+        // - Returns HTML string, or null if unknown object
+        const getPopupContent = (layer) => {
+            return this.getDrawnItemPopupContent(layer);
         };
+
+        // // Object created - bind popup to layer, add to feature group
+        // const create = (event) => {
+        //     return this.createDrawnItem(event);
+        // };
+
+        // // Object(s) edited - update popups
+        // const edit = (event) => {
+        //     return this.editDrawnItem(event);
+        // };
+
+        // this.map.on(L.Draw.Event.CREATED, (event) => {
+        //     create(event);
+        // });
+
+        // this.map.on(L.Draw.Event.EDITED, (event) => {
+        //     edit(event);
+        // });
 
         // Object created - bind popup to layer, add to feature group
         this.map.on(L.Draw.Event.CREATED, function (event) {
@@ -309,7 +358,7 @@ export class HomeComponent implements OnInit {
             if (content !== null) {
                 layer.bindPopup(content);
             }
-            drawnItems.addLayer(layer);
+            this.drawnItems.addLayer(layer);
         });
 
         // Object(s) edited - update popups
@@ -428,9 +477,9 @@ export class HomeComponent implements OnInit {
             (data) => {
               this.siteClicked = true;
               this.siteSelected = eventSites[sites]['id'];
-              sessionStorage.setItem('selectedSite', JSON.stringify(this.siteSelected));
+              localStorage.setItem('selectedSite', JSON.stringify(this.siteSelected));
               this.siteName = eventSites[sites]['name'];
-              sessionStorage.setItem('selectedSiteName', JSON.stringify(this.siteName));
+              localStorage.setItem('selectedSiteName', JSON.stringify(this.siteName));
               this.eventSites.getAllEvents()
               .subscribe(eventresults => {
                 this.eventresults = eventresults;

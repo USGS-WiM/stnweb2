@@ -3,12 +3,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 // import { by } from '@angular/platform-browser';
-import * as L from 'leaflet';
+
+declare let L: any;
+import 'leaflet';
+import 'leaflet-draw';
 
 import { Event } from '@interfaces/event';
 
 import { HomeComponent } from './home.component';
 import { APP_UTILITIES } from '@app/app.utilities';
+import { APP_SETTINGS } from '@app/app.settings';
 
 describe('HomeComponent', () => {
     let component: HomeComponent;
@@ -89,5 +93,38 @@ describe('HomeComponent', () => {
             },
         ];
         expect(response).toEqual(expectedResponse);
+    });
+
+    it('currentFilter is set to user-stored filter if it exists', () => {
+        localStorage.setItem('currentFilter', '[1, 7, 8, 15]');
+        component.setCurrentFilter();
+        expect(component.currentFilter).toEqual(JSON.parse('[1, 7, 8, 15]'));
+    });
+
+    it('currentFilter is set to default if no storage filter set', () => {
+        localStorage.clear();
+        component.setCurrentFilter();
+        expect(component.currentFilter).toEqual(
+            APP_SETTINGS.DEFAULT_FILTER_QUERY
+        );
+    });
+
+    it('#getDrawnItemPopupContent returns the appropriate content response', () => {
+        // component.create
+        let latlngs = [
+            [37, -109.05],
+            [41, -109.03],
+            [41, -102.05],
+            [37, -102.04],
+        ];
+        var polygon = L.polygon(latlngs, { color: 'red' }).addTo(component.map);
+        let polygonResponse = component.getDrawnItemPopupContent(polygon);
+        expect(polygonResponse).toEqual(jasmine.any(String));
+        expect(polygonResponse).toContain('Area: ');
+
+        var line = L.polyline(latlngs, { color: 'blue' }).addTo(component.map);
+        let lineResponse = component.getDrawnItemPopupContent(line);
+        expect(lineResponse).toEqual(jasmine.any(String));
+        expect(lineResponse).toContain('Distance: ');
     });
 });

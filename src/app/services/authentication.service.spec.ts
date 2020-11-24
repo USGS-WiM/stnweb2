@@ -9,8 +9,7 @@ describe('AuthenticationService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-
-            providers: [HttpClient, HttpHandler, CurrentUserService]
+            providers: [HttpClient, HttpHandler, CurrentUserService],
         });
         service = TestBed.inject(AuthenticationService);
     });
@@ -19,9 +18,9 @@ describe('AuthenticationService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('#logout should remove user from sessionStorage', () => {
+    it('#logout should remove user from localStorage', () => {
         service.logout();
-        const currentUserStorage = sessionStorage.getItem('currentUser');
+        const currentUserStorage = localStorage.getItem('currentUser');
         expect(currentUserStorage).toBeNull();
     });
 });

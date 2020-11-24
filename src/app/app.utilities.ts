@@ -7,6 +7,21 @@ import { SensorType } from './interfaces/sensor-type';
 
 @Injectable()
 export class APP_UTILITIES {
+    // SORT utlity function
+    // args: sortArray<array>(array to sort), sortField<string>(field on which to sort),
+    // sortDirection<string>('ascend' or 'descend')
+    public static SORT(sortArray, sortField, sortDirection): any {
+        if (sortDirection === 'ascend') {
+            return sortArray.sort((a, b) =>
+                a[sortField] > b[sortField] ? 1 : -1
+            );
+        }
+        if (sortDirection === 'descend') {
+            return sortArray.sort((a, b) =>
+                a[sortField] < b[sortField] ? 1 : -1
+            );
+        }
+    }
     public static FILTER_EVENT(event_name: string, events: Event[]): Event[] {
         const filterValue = event_name.toLowerCase();
         return events.filter(

@@ -15,8 +15,8 @@ export class APP_SETTINGS {
     }
     public static get IS_LOGGEDIN(): boolean {
         return (
-            !!sessionStorage.getItem('username') &&
-            !!sessionStorage.getItem('password')
+            !!localStorage.getItem('username') &&
+            !!localStorage.getItem('password')
         );
     }
     public static get API_USERNAME(): string {
@@ -92,7 +92,7 @@ export class APP_SETTINGS {
         return new HttpHeaders({
             Authorization:
                 'Basic ' +
-                btoa(sessionStorage.username + ':' + sessionStorage.password),
+                btoa(localStorage.username + ':' + localStorage.password),
             Accept: 'application/json',
         });
     }
