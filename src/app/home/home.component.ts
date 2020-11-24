@@ -134,6 +134,7 @@ export class HomeComponent implements OnInit {
                 a.event_start_date < b.event_start_date ? 1 : -1
             );
 
+            //Get id and name of most recent event
             this.currentEvent = this.events[0].event_id;
             this.currentEventName = this.events[0].event_name;
 
@@ -453,6 +454,7 @@ export class HomeComponent implements OnInit {
         const popup = L.popup()
           .setContent(popupContent); */
 
+                //put all the event markers in the same layer group
                 L.marker([lat, long], { icon: myicon }).addTo(
                     this.eventMarkers
                 );
@@ -475,6 +477,8 @@ export class HomeComponent implements OnInit {
               // this.eventsLoading = false;
             }); */
             }
+
+            //add event markers to map
             this.eventMarkers.addTo(this.map);
         }
     }
