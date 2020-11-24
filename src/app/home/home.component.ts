@@ -177,12 +177,13 @@ export class HomeComponent implements OnInit {
     }
 
     displaySelectedEvent() {
-        console.log('this.seletedEvent', this.selectedEvent);
-
+        //Clear the old event markers from the map
         if (this.eventMarkers !== undefined) {
             this.eventMarkers.removeFrom(this.map);
         }
+        //Clear the old markers from the layer
         this.eventMarkers = L.layerGroup([]);
+        //Plot markers for selected event
         if (this.selectedEvent !== undefined) {
             this.sitesService
                 .getEventSites(this.selectedEvent.event_id)
