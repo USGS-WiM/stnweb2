@@ -10,13 +10,13 @@
       - Nav, links, branding, etc
   -->
 <header class="header">
-    <mat-toolbar color="primary">
-        <mat-toolbar-row color="primary" class="mat-typography stns-header">
+    <mat-toolbar>
+        <mat-toolbar-row
+            class="mat-typography stns-header"
+            id="stn-main-toolbar"
+        >
             <div class="stn-header" id="mobile">
                 <a href="" class="stn-title">
-                    <!-- <div class="stn-logo">
-            <img src="./assets/ice_white.png" />
-          </div> -->
                     <span>Short Term Network</span>
                 </a>
                 <span class="stn-subtitle">
@@ -84,8 +84,11 @@
         </span> -->
             </div>
         </mat-toolbar-row>
-        <mat-toolbar-row class="mat-typography stns-header">
-            <div class="nav-toggles" color="primary">
+        <mat-toolbar-row
+            class="mat-typography stns-header"
+            id="stn-nav-toolbar"
+        >
+            <div class="nav-toggles">
                 <!-- <mat-button-toggle-group>
                     <mat-button-toggle value="map" checked="true"
                         >Map</mat-button-toggle

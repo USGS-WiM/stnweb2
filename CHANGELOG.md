@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+-   Adjusted color of second navbar
+
 ### Fixed
 
 ## [v0.2.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.2.0) - 2020-11-24
