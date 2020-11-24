@@ -9,46 +9,32 @@ import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-import { Event } from '@interfaces/event';
-
 @Injectable({
     providedIn: 'root',
 })
-export class EventsService {
+export class StatesService {
     constructor(private httpClient: HttpClient) {}
 
-    // retrieve tghe full events list
-    public getAllEvents(): Observable<Event[]> {
-        return (
-            this.httpClient
-                // .get(APP_SETTINGS.EVENTS + '.json', {
-                //     headers: APP_SETTINGS.AUTH_JSON_HEADERS,
-                // })
-                .get(APP_SETTINGS.EVENTS + '.json')
-                .pipe(
-                    tap((response) => {
-                        console.log(
-                            'Events list response recieved: ' + response
-                        );
-                        return response;
-                    }),
-                    catchError(this.handleError<any>('getAllEvents', []))
-                )
+    public getStates(): Observable<any> {
+        return this.httpClient.get(APP_SETTINGS.STATES + '.json').pipe(
+            tap((response) => {
+                console.log('State list response recieved: ' + response);
+                return response;
+            }),
+            catchError(this.handleError<any>('getStates', []))
         );
     }
 
-    // retrieve the details for a single specific event
-    public getEvent(eventID): Observable<Event> {
+    // GET ONE State
+    public getState(state_id: number): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.EVENTS + eventID + '.json', {
+            .get(APP_SETTINGS.STATES + state_id + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
-                tap((response) => {
-                    console.log('Event record response recieved: ' + response);
+                map((response: Response) => {
                     return response;
-                }),
-                catchError(this.handleError<any>('getEvent', {}))
+                })
             );
     }
 

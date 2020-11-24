@@ -5,34 +5,33 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { Event } from '@interfaces/event';
-import { EventsService } from './events.service';
-import { Site } from '@interfaces/site';
+import { NetworkName } from '@interfaces/network-name';
+import { NetworkNamesService } from './network-names.service';
 
 import { of, defer } from 'rxjs';
 
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '../app.settings';
 
-export const mockEventsList: Event[] = APP_UTILITIES.EVENTS_DUMMY_DATA_LIST;
-export const mockEvent: Event = APP_UTILITIES.DUMMY_EVENT;
-export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
+export const mockNetworkNamesList: NetworkName[] =
+    APP_UTILITIES.NETWORK_NAMES_DUMMY_DATA_LIST;
+export const mockNetworkName: NetworkName = APP_UTILITIES.DUMMY_NETWORK_NAME;
 
 export function responseData<T>(data: T) {
     return defer(() => Promise.resolve(data));
 }
 
-describe('EventsService', () => {
+describe('NetworkNamesService', () => {
     let httpTestingController: HttpTestingController;
-    let service: EventsService;
+    let service: NetworkNamesService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [EventsService, HttpClient],
+            providers: [NetworkNamesService, HttpClient],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
-        service = TestBed.inject(EventsService);
+        service = TestBed.inject(NetworkNamesService);
     });
     afterEach(() => {
         httpTestingController.verify();
@@ -44,27 +43,29 @@ describe('EventsService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('#getAllEvents() should retrieve an events list from the data API', () => {
-        service.getAllEvents().subscribe((results) => {
+    it('#getNetworkNames() should retrieve a network names list from the data API', () => {
+        service.getNetworkNames().subscribe((results) => {
             expect(results).not.toBe(null);
             expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockEventsList)
+                JSON.stringify(mockNetworkNamesList)
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.EVENTS + '.json'
+            APP_SETTINGS.NETWORK_NAMES + '.json'
         );
-        req.flush(mockEventsList);
+        req.flush(mockNetworkNamesList);
     });
 
-    it('#getEvent() should retrieve a single event record from the data API', () => {
-        service.getEvent(24).subscribe((results) => {
+    it('#getNetworkName() should retrieve a network name record from the data API', () => {
+        service.getNetworkName(5).subscribe((results) => {
             expect(results).not.toBe(null);
-            expect(JSON.stringify(results)).toEqual(JSON.stringify(mockEvent));
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockNetworkName)
+            );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.EVENTS + 24 + '.json'
+            APP_SETTINGS.NETWORK_NAMES + 5 + '.json'
         );
-        req.flush(mockEvent);
+        req.flush(mockNetworkName);
     });
 });

@@ -5,34 +5,31 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { Event } from '@interfaces/event';
-import { EventsService } from './events.service';
-import { Site } from '@interfaces/site';
-
+import { SensorType } from '@interfaces/sensor-type';
+import { SensorTypesService } from './sensor-types.service';
 import { of, defer } from 'rxjs';
-
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '../app.settings';
 
-export const mockEventsList: Event[] = APP_UTILITIES.EVENTS_DUMMY_DATA_LIST;
-export const mockEvent: Event = APP_UTILITIES.DUMMY_EVENT;
-export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
+export const mockSensorTypesList: SensorType[] =
+    APP_UTILITIES.SENSOR_TYPES_DUMMY_DATA_LIST;
+export const mockSensorType: SensorType = APP_UTILITIES.DUMMY_SENSOR_TYPE;
 
 export function responseData<T>(data: T) {
     return defer(() => Promise.resolve(data));
 }
 
-describe('EventsService', () => {
+describe('SensorTypesService', () => {
     let httpTestingController: HttpTestingController;
-    let service: EventsService;
+    let service: SensorTypesService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [EventsService, HttpClient],
+            providers: [SensorTypesService, HttpClient],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
-        service = TestBed.inject(EventsService);
+        service = TestBed.inject(SensorTypesService);
     });
     afterEach(() => {
         httpTestingController.verify();
@@ -44,27 +41,29 @@ describe('EventsService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('#getAllEvents() should retrieve an events list from the data API', () => {
-        service.getAllEvents().subscribe((results) => {
+    it('#getSensorTypes() should retrieve a sensor types list from the data API', () => {
+        service.getSensorTypes().subscribe((results) => {
             expect(results).not.toBe(null);
             expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockEventsList)
+                JSON.stringify(mockSensorTypesList)
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.EVENTS + '.json'
+            APP_SETTINGS.SENSOR_TYPES + '.json'
         );
-        req.flush(mockEventsList);
+        req.flush(mockSensorTypesList);
     });
 
-    it('#getEvent() should retrieve a single event record from the data API', () => {
-        service.getEvent(24).subscribe((results) => {
+    it('#getSensorType() should retrieve a single sensor type record from the data API', () => {
+        service.getSensorType(4).subscribe((results) => {
             expect(results).not.toBe(null);
-            expect(JSON.stringify(results)).toEqual(JSON.stringify(mockEvent));
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockSensorType)
+            );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.EVENTS + 24 + '.json'
+            APP_SETTINGS.SENSOR_TYPES + 4 + '.json'
         );
-        req.flush(mockEvent);
+        req.flush(mockSensorType);
     });
 });

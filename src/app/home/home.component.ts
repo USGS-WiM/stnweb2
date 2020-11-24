@@ -6,12 +6,28 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { Event } from '../interfaces/event';
-import * as L from 'leaflet';
-import { EventsService } from '../services/events.service';
 import { APP_SETTINGS } from '../app.settings';
+import { APP_UTILITIES } from '@app/app.utilities';
+import { MAP_CONSTANTS } from './map-constants';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
+import { Event } from '../interfaces/event';
+import { EventsService } from '../services/events.service';
+import { State } from '../interfaces/state';
+import { StatesService } from '../services/states.service';
+import { NetworkName } from '../interfaces/network-name';
+import { NetworkNamesService } from '../services/network-names.service';
+import { SensorType } from '../interfaces/sensor-type';
+import { SensorTypesService } from '../services/sensor-types.service';
+import { SitesService } from '../services/sites.service';
+
+//leaflet imports for geosearch
+import * as esri_geo from 'esri-leaflet-geocoder';
+
+declare let L: any;
+import 'leaflet';
+import 'leaflet-draw';
+import * as esri from 'esri-leaflet';
 
 export interface PeriodicElement {
     name: string;
@@ -73,72 +89,102 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
+    //Create variables for filter dropdowns --start
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
+
+    networkControl = new FormControl();
+    networks: NetworkName[];
+
+    sensorControl = new FormControl();
+    sensors: SensorType[];
+
+    stateControl = new FormControl();
+    states: State[];
+    //Create variables for filter dropdowns --end
+
+    watershedsVisible = false;
+    currWarningsVisible = false;
+    watchWarnVisible = false;
+    ahpsGagesVisible = false;
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
         private eventsService: EventsService,
-        public currentUserService: CurrentUserService
-    ) {
+        private statesService: StatesService,
+        private networkNamesService: NetworkNamesService,
+        private sensorTypesService: SensorTypesService,
+        public currentUserService: CurrentUserService,
+        private sitesService: SitesService
+    ) {}
+
+    ngOnInit() {
+        // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
+        console.log('User logged in?: ' + this.isloggedIn);
+
         this.eventsService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
             this.events = this.events.sort((a, b) =>
                 a.event_start_date < b.event_start_date ? 1 : -1
             );
+
+            // allow user to type into the event selector to view matching events
+            this.filteredEvents = this.eventsControl.valueChanges.pipe(
+                startWith(''),
+                map((value) =>
+                    typeof value === 'string' ? value : value.event_name
+                ),
+                map((event_name) =>
+                    // match user text input to the index of the corresponding event
+                    event_name
+                        ? APP_UTILITIES.FILTER_EVENT(event_name, this.events)
+                        : this.events
+                )
+            );
+
+            // create and configure map
+            this.createMap();
+
             // this.mapResults(this.events);
+
+            // TODO: by default populate map with most recent event
+            this.sitesService
+                .getEventSites(this.currentEvent)
+                .subscribe((results) => {
+                    this.eventSites = results;
+                    this.mapResults(this.eventSites);
+                });
         });
-        // TODO: by default populate map with most recent event
-        // this.eventsService
-        //     .getEventSites(this.currentEvent)
-        //     .subscribe((results) => {
-        //         this.eventSites = results;
-        //         this.mapResults(this.eventSites);
-        //     });
+
+        this.networkNamesService.getNetworkNames().subscribe((results) => {
+            this.networks = results;
+        });
+        this.sensorTypesService.getSensorTypes().subscribe((results) => {
+            this.sensors = results;
+        });
+        this.statesService.getStates().subscribe((results) => {
+            this.states = results;
+        });
     }
 
-    ngOnInit() {
-        // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-        console.log(this.isloggedIn);
-        const osm = L.tileLayer(
-            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {
-                attribution:
-                    '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors.',
-            }
-        );
-
-        const grayscale = L.tileLayer(
-            'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-            {
-                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-            }
-        );
-
-        const imagery = L.tileLayer(
-            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            {
-                attribution:
-                    'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-            }
-        );
-
+    createMap() {
+        // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('map', {
             center: new L.LatLng(39.8283, -98.5795),
             zoom: 4,
-            layers: [osm],
+            layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
         });
         /* this.markers = L.featureGroup().addTo(this.map); */
 
-        const baseMaps = {
-            'Open Street Map': osm,
-            Grayscale: grayscale,
-            Imagery: imagery,
-        };
-        L.control.layers(baseMaps).addTo(this.map);
+        L.control
+            .layers(MAP_CONSTANTS.baseMaps, MAP_CONSTANTS.supplementaryLayers, {
+                position: 'topleft',
+            })
+            .addTo(this.map);
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
 
         // begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +193,7 @@ export class HomeComponent implements OnInit {
         // map.on( 'load', function() {
         this.map.whenReady(() => {
             const mapZoom = this.map.getZoom();
-            const tempMapScale = this.scaleLookup(this.map.getZoom());
+            const tempMapScale = APP_UTILITIES.SCALE_LOOKUP(this.map.getZoom());
             this.zoomLevel = mapZoom;
             this.mapScale = tempMapScale;
             const initMapCenter = this.map.getCenter();
@@ -158,7 +204,7 @@ export class HomeComponent implements OnInit {
         // displays map scale on scale change (i.e. zoom level)
         this.map.on('zoomend', () => {
             const mapZoom = this.map.getZoom();
-            const mapScale = this.scaleLookup(mapZoom);
+            const mapScale = APP_UTILITIES.SCALE_LOOKUP(mapZoom);
             this.mapScale = mapScale;
             this.zoomLevel = mapZoom;
         });
@@ -181,20 +227,139 @@ export class HomeComponent implements OnInit {
         });
         // end latLngScale utility logic/////////
 
-        //Allow user to type into the event selector to view matching events
-        this.filteredEvents = this.eventsControl.valueChanges.pipe(
-            startWith(''),
-            map((value) =>
-                typeof value === 'string' ? value : value.event_name
-            ),
-            map((event_name) =>
-                event_name ? this._filter(event_name) : this.events
-            )
-        );
+        const searchControl = new esri_geo.geosearch().addTo(this.map);
+
+        //This layer will contain the location markers
+        const results = new L.LayerGroup().addTo(this.map);
+
+        //Clear the previous search marker and add a marker at the new location
+        searchControl.on('results', function (data) {
+            results.clearLayers();
+            for (let i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+            }
+        });
+
+        this.createDrawControls();
     }
 
-    //When button is clicked, zoom to the full extent of the selected event
-    //As a placeholder, currently zooms back the the U.S. extent
+    createDrawControls() {
+        const drawnItems = L.featureGroup().addTo(this.map);
+
+        // User can select from drawing a line or polygon; other options are disabled
+        // Measurements are in miles
+        const drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems,
+                poly: {
+                    allowIntersection: false,
+                },
+            },
+            draw: {
+                polygon: {
+                    allowIntersection: false,
+                    showArea: true,
+                    metric: false,
+                },
+                marker: false,
+                circle: false,
+                circlemarker: false,
+                rectangle: false,
+                polyline: {
+                    metric: false,
+                    feet: false,
+                },
+            },
+        });
+
+        //Add the buttons to the map
+        this.map.addControl(drawControl);
+
+        // Generate popup content based on layer type
+        // - Returns HTML string, or null if unknown object
+        const getPopupContent = function (layer) {
+            if (layer instanceof L.Polygon) {
+                const latlngs = layer._defaultShape
+                        ? layer._defaultShape()
+                        : layer.getLatLngs(),
+                    area = L.GeometryUtil.geodesicArea(latlngs);
+                return 'Area: ' + L.GeometryUtil.readableArea(area);
+                // Polyline - distance
+            } else if (layer instanceof L.Polyline) {
+                const latlngs = layer._defaultShape
+                    ? layer._defaultShape()
+                    : layer.getLatLngs();
+                let distance = 0;
+                if (latlngs.length < 2) {
+                    return 'Distance: N/A';
+                } else {
+                    for (let i = 0; i < latlngs.length - 1; i++) {
+                        distance += latlngs[i].distanceTo(latlngs[i + 1]);
+                    }
+                    distance = distance * 0.000621371;
+                    return (
+                        'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi'
+                    );
+                }
+            }
+            return null;
+        };
+
+        // Object created - bind popup to layer, add to feature group
+        this.map.on(L.Draw.Event.CREATED, function (event) {
+            const layer = event.layer;
+            const content = getPopupContent(layer);
+            if (content !== null) {
+                layer.bindPopup(content);
+            }
+            drawnItems.addLayer(layer);
+        });
+
+        // Object(s) edited - update popups
+        this.map.on(L.Draw.Event.EDITED, function (event) {
+            const layers = event.layers;
+            // const content = null;
+            layers.eachLayer(function (layer) {
+                const content = getPopupContent(layer);
+                if (content !== null) {
+                    layer.setPopupContent(content);
+                }
+            });
+        });
+
+        //When the watershed checkbox is checked, add watershed icon to legend
+        this.map.on('overlayadd', (e) => {
+            if (e.name === 'Watersheds') {
+                this.watershedsVisible = true;
+            }
+            if (e.name === 'Current Warnings') {
+                this.currWarningsVisible = true;
+            }
+            if (e.name === 'Watches/Warnings') {
+                this.watchWarnVisible = true;
+            }
+            if (e.name === 'AHPS Gages') {
+                this.ahpsGagesVisible = true;
+            }
+        });
+        //When the watershed checkbox is unchecked, remove watershed icon from legend
+        this.map.on('overlayremove', (e) => {
+            if (e.name === 'Watersheds') {
+                this.watershedsVisible = false;
+            }
+            if (e.name === 'Current Warnings') {
+                this.currWarningsVisible = false;
+            }
+            if (e.name === 'Watches/Warnings') {
+                this.watchWarnVisible = false;
+            }
+            if (e.name === 'AHPS Gages') {
+                this.ahpsGagesVisible = false;
+            }
+        });
+    }
+    // When button is clicked, zoom to the full extent of the selected event
+    // As a placeholder, currently zooms back the the U.S. extent
     eventExtent() {
         this.map.fitBounds([
             [48, -125],
@@ -207,58 +372,19 @@ export class HomeComponent implements OnInit {
         return event && event.event_name ? event.event_name : '';
     }
 
-    //Match what user is typing to the index of the corresponding event
-    //Not case sensative
-    private _filter(event_name: string): Event[] {
-        const filterValue = event_name.toLowerCase();
-        return this.events.filter(
-            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
-        );
+    //Options to be displayed when selecting state filter
+    displayState(state: State): string {
+        return state && state.state_name ? state.state_name : '';
     }
 
-    scaleLookup(mapZoom) {
-        switch (mapZoom) {
-            case 19:
-                return '1,128';
-            case 18:
-                return '2,256';
-            case 17:
-                return '4,513';
-            case 16:
-                return '9,027';
-            case 15:
-                return '18,055';
-            case 14:
-                return '36,111';
-            case 13:
-                return '72,223';
-            case 12:
-                return '144,447';
-            case 11:
-                return '288,895';
-            case 10:
-                return '577,790';
-            case 9:
-                return '1,155,581';
-            case 8:
-                return '2,311,162';
-            case 7:
-                return '4,622,324';
-            case 6:
-                return '9,244,649';
-            case 5:
-                return '18,489,298';
-            case 4:
-                return '36,978,596';
-            case 3:
-                return '73,957,193';
-            case 2:
-                return '147,914,387';
-            case 1:
-                return '295,828,775';
-            case 0:
-                return '591,657,550';
-        }
+    //Options to be displayed when selecting network filter
+    displayNetwork(network: NetworkName): string {
+        return network && network.name ? network.name : '';
+    }
+
+    //Options to be displayed when selecting sensor type filter
+    displaySensor(sensor: SensorType): string {
+        return sensor && sensor.sensor ? sensor.sensor : '';
     }
 
     // another method to get event sites

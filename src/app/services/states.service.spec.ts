@@ -5,34 +5,32 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { Event } from '@interfaces/event';
-import { EventsService } from './events.service';
-import { Site } from '@interfaces/site';
+import { State } from '@interfaces/state';
+import { StatesService } from './states.service';
 
 import { of, defer } from 'rxjs';
 
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '../app.settings';
 
-export const mockEventsList: Event[] = APP_UTILITIES.EVENTS_DUMMY_DATA_LIST;
-export const mockEvent: Event = APP_UTILITIES.DUMMY_EVENT;
-export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
+export const mockStatesList: State[] = APP_UTILITIES.STATES_DUMMY_DATA_LIST;
+export const mockState: State = APP_UTILITIES.DUMMY_STATE;
 
 export function responseData<T>(data: T) {
     return defer(() => Promise.resolve(data));
 }
 
-describe('EventsService', () => {
+describe('StatesService', () => {
     let httpTestingController: HttpTestingController;
-    let service: EventsService;
+    let service: StatesService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [EventsService, HttpClient],
+            providers: [StatesService, HttpClient],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
-        service = TestBed.inject(EventsService);
+        service = TestBed.inject(StatesService);
     });
     afterEach(() => {
         httpTestingController.verify();
@@ -44,27 +42,27 @@ describe('EventsService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('#getAllEvents() should retrieve an events list from the data API', () => {
-        service.getAllEvents().subscribe((results) => {
+    it('#getStates() should retrieve a states list from the data API', () => {
+        service.getStates().subscribe((results) => {
             expect(results).not.toBe(null);
             expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockEventsList)
+                JSON.stringify(mockStatesList)
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.EVENTS + '.json'
+            APP_SETTINGS.STATES + '.json'
         );
-        req.flush(mockEventsList);
+        req.flush(mockStatesList);
     });
 
-    it('#getEvent() should retrieve a single event record from the data API', () => {
-        service.getEvent(24).subscribe((results) => {
+    it('#getState() should retrieve a single state record from the data API', () => {
+        service.getState(13).subscribe((results) => {
             expect(results).not.toBe(null);
-            expect(JSON.stringify(results)).toEqual(JSON.stringify(mockEvent));
+            expect(JSON.stringify(results)).toEqual(JSON.stringify(mockState));
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.EVENTS + 24 + '.json'
+            APP_SETTINGS.STATES + 13 + '.json'
         );
-        req.flush(mockEvent);
+        req.flush(mockState);
     });
 });

@@ -214,7 +214,7 @@ $borderRadius: 4px;
     position: absolute;
     padding: 4px;
     // bottom: 60px !important;
-    top: 10px;
+    top: 80px;
     //left: 15px;
     right: 10px;
     width: 200px;
@@ -222,18 +222,61 @@ $borderRadius: 4px;
     z-index: 1000;
     color: black;
     background-color: rgb(255, 255, 255);
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.92);
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
     border-radius: 4px;
     cursor: pointer;
-    opacity: 0.87;
+    opacity: 0.95;
+}
+
+.legend-icon {
+    display: flex;
+    position: relative;
+
+    label {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 22px;
+        height: 24px;
+    }
+
+    .wmm-pin {
+        z-index: 0;
+        top: 14px;
+        left: 4px;
+        position: absolute !important;
+        transform: scale(0.65);
+    }
+    .wmm-square {
+        position: absolute !important;
+        transform: scale(0.8);
+        top: 1px;
+        left: 4px;
+    }
+}
+
+.legend-panel-content {
+    box-sizing: border-box;
+    padding-left: 15px;
+    padding-top: 10px;
+
+    .wmm-circle,
+    .wmm-diamond {
+        position: relative;
+        top: 2px;
+        left: 6px;
+    }
+    .wmm-diamond {
+        top: 5px;
+    }
 }
 
 .extentBtn {
     position: absolute;
     padding: 4px;
-    top: 85px !important;
-    left: 10px;
+    top: 10px !important;
+    left: 50px;
     z-index: 1000;
     background-color: white;
     border-radius: 4px;
@@ -320,11 +363,66 @@ $borderRadius: 4px;
     padding-left: 40px;
 }
 
-.eventSelect {
-    margin-bottom: 15px;
-    width: 15%;
-}
-
 #filtersSection {
     background-color: #f7f7f7;
+}
+
+.form-container .mat-form-field + .mat-form-field {
+    margin-left: 8px;
+}
+
+.form-container .mat-form-field {
+    width: 220px;
+}
+
+.form-container form {
+    margin-bottom: 20px;
+}
+
+.form-container form > * {
+    margin: 10px 0;
+}
+
+.form-container .mat-radio-button {
+    margin: 0 12px;
+}
+
+.checkbox-section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+}
+
+.checkbox-margin {
+    margin: 0 10px;
+}
+
+.boxes {
+    display: block;
+}
+
+.filter-label {
+    font-weight: bold;
+    padding: 10px;
+}
+
+.huc-icon:after {
+    border: 3px solid #b57dcf;
+    background-color: transparent;
+}
+.warn-icon:after {
+    border: 3px solid red;
+    background-color: rgba(255, 0, 0, 0.25);
+}
+.watch-icon:after {
+    border: 3px solid orange;
+    background-color: rgba(255, 165, 0, 0.25);
+}
+.AHPSGageLabel {
+    font-size: small;
+    margin-left: 20px;
+}
+.AHPSGageHeader {
+    margin-left: 20px;
 }

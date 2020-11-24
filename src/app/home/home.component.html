@@ -17,6 +17,7 @@
             </mat-expansion-panel-header>
 
             <!-- Map -->
+            <div id="testmapdiv"></div>
             <div id="map">
                 <div
                     id="extentBtn"
@@ -41,6 +42,101 @@
                     <span id="mapCenterLabel" class="hover-content"></span>
                 </div>
             </div>
+            <mat-expansion-panel id="legend" class="legend">
+                <mat-expansion-panel-header>
+                    <mat-panel-title> Legend </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="legend-panel-content">
+                    <div id="watershedsLegend" *ngIf="watershedsVisible">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-square wmm-white wmm-icon-circle wmm-icon-white wmm-size-20 huc-icon"
+                            ></div>
+                            <label>Watersheds</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content">
+                    <div id="currWarningLegend" *ngIf="currWarningsVisible">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-square wmm-icon-circle wmm-size-20 warn-icon"
+                            ></div>
+                            <label>Current Warnings</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content">
+                    <div id="watchWarnLegend" *ngIf="watchWarnVisible">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-square wmm-icon-circle wmm-size-20 watch-icon"
+                            ></div>
+                            <label>Watches/Warnings</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content">
+                    <div id="AHPSGageLegend" *ngIf="ahpsGagesVisible">
+                        <label class="AHPSGageHeader">AHPS Gages</label>
+                        <div class="legend-icon">
+                            <div
+                                class="gageIcon majorFlood"
+                                style="border-color: black"
+                            ></div>
+                            <div class="AHPSGageLabel">
+                                <p>Major Flooding</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon moderateFlood"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Moderate Flooding</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon minorFlood"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Minor Flooding</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon nearFlood"></div>
+                            <div class="AHPSGageLabel"><p>Near Flood</p></div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon noFlood"></div>
+                            <div class="AHPSGageLabel">
+                                <p>No Flooding</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon floodND"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Flood Category Not Defined</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon belowThreshold"></div>
+                            <div class="AHPSGageLabel">
+                                <p>At or Below Low Water Threshold</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon obsNotCurrent"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Observations are Not Current</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon outOfService"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Out of Service</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
         </mat-expansion-panel>
         <mat-card id="filtersSection">
             <mat-card-title>
@@ -57,30 +153,142 @@
                             Filters <span class="fal fa-home-alt"></span
                         ></mat-panel-title>
                     </mat-expansion-panel-header>
-                    <form>
-                        <mat-form-field class="eventSelect">
-                            <mat-label>Event</mat-label>
-                            <input
-                                type="text"
-                                aria-label="Dropdown menu for storm event selection"
-                                matInput
-                                [formControl]="eventsControl"
-                                [matAutocomplete]="auto"
-                            />
-                            <mat-hint>Start typing for suggestions</mat-hint>
-                            <mat-autocomplete
-                                #auto="matAutocomplete"
-                                [displayWith]="displayEvent"
-                            >
-                                <mat-option
-                                    *ngFor="let event of filteredEvents | async"
-                                    [value]="event"
+                    <div class="form-container">
+                        <form class="form">
+                            <mat-form-field class="eventSelect">
+                                <mat-label for="eventSelection"
+                                    >Event</mat-label
                                 >
-                                    {{ event.event_name }}
-                                </mat-option>
-                            </mat-autocomplete>
-                        </mat-form-field>
-                    </form>
+                                <input
+                                    id="eventSelection"
+                                    type="text"
+                                    aria-label="Dropdown menu for storm event selection"
+                                    matInput
+                                    [formControl]="eventsControl"
+                                    [matAutocomplete]="auto"
+                                />
+                                <mat-hint
+                                    >Start typing for suggestions</mat-hint
+                                >
+                                <mat-autocomplete
+                                    #auto="matAutocomplete"
+                                    [displayWith]="displayEvent"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let event of filteredEvents | async
+                                        "
+                                        [value]="event"
+                                    >
+                                        {{ event.event_name }}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                            <br />
+                            <mat-form-field appearance="fill">
+                                <mat-label for="networkOptions"
+                                    >Networks</mat-label
+                                >
+                                <mat-select
+                                    id="networkOptions"
+                                    [formControl]="networkControl"
+                                    multiple
+                                >
+                                    <mat-option
+                                        *ngFor="let network of networks"
+                                        [value]="network"
+                                        >{{ network.name }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label for="sensorTypes"
+                                    >Sensor Types</mat-label
+                                >
+                                <mat-select
+                                    id="sensorOptions"
+                                    [formControl]="sensorControl"
+                                >
+                                    <mat-option
+                                        *ngFor="let sensor of sensors"
+                                        [value]="sensor"
+                                        >{{ sensor.sensor }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label for="stateList">States</mat-label>
+                                <mat-select
+                                    id="stateOptions"
+                                    [formControl]="stateControl"
+                                    multiple
+                                >
+                                    <mat-option
+                                        *ngFor="let state of states"
+                                        [value]="state"
+                                        >{{ state.state_name }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+                            <br />
+                            <label
+                                class="filter-label"
+                                aria-label="Optionally select surveyed or unsurveyed HWMS"
+                                >HWMS Surveyed:</label
+                            >
+                            <section class="checkbox-section">
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Surveyed</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Unsurveyed</mat-checkbox
+                                >
+                            </section>
+                            <br />
+                            <label
+                                class="filter-label"
+                                aria-label="Optionally select additional site filters"
+                                >Additional Site Filters:</label
+                            >
+                            <section class="checkbox-section">
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >HWM Only Sites</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Sensor Only Sites</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Surveyed RP Only Sites</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Pre-Deployed Bracket Sites
+                                    Only</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >RDG Only Sites</mat-checkbox
+                                >
+                                <mat-checkbox
+                                    aria-checked="false"
+                                    class="checkbox-margin"
+                                    >Has OP Defined</mat-checkbox
+                                >
+                            </section>
+                        </form>
+                    </div>
                 </mat-expansion-panel>
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
