@@ -35,10 +35,12 @@ export class MAP_CONSTANTS {
                         'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
                     opacity: 0.7,
                 }),
+                /*
                 AHPSGages: esri.dynamicMapLayer({
                     url:
                         'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer',
                 }),
+                */
             },
             esriFeatureLayers: {
                 currentWarnings: esri.featureLayer({
@@ -53,6 +55,64 @@ export class MAP_CONSTANTS {
                         'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/1',
                     style: function () {
                         return { color: 'orange', weight: 2 };
+                    },
+                }),
+                AHPSGages: esri.featureLayer({
+                    url:
+                        'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer/0',
+                    minZoom: 9,
+                    onEachFeature: function (feature, layer) {
+                        if (feature.properties.status == 'major') {
+                            layer.setIcon(
+                                L.divIcon({ className: 'gageIcon majorFlood' })
+                            );
+                        } else if (feature.properties.status == 'moderate') {
+                            layer.setIcon(
+                                L.divIcon({
+                                    className: 'gageIcon moderateFlood',
+                                })
+                            );
+                        } else if (feature.properties.status == 'minor') {
+                            layer.setIcon(
+                                L.divIcon({ className: 'gageIcon minorFlood' })
+                            );
+                        } else if (feature.properties.status == 'action') {
+                            layer.setIcon(
+                                L.divIcon({ className: 'gageIcon nearFlood' })
+                            );
+                        } else if (feature.properties.status == 'no_flooding') {
+                            layer.setIcon(
+                                L.divIcon({ className: 'gageIcon noFlood' })
+                            );
+                        } else if (feature.properties.status == 'not_defined') {
+                            layer.setIcon(
+                                L.divIcon({ className: 'gageIcon floodND' })
+                            );
+                        } else if (
+                            feature.properties.status == 'low_threshold'
+                        ) {
+                            layer.setIcon(
+                                L.divIcon({
+                                    className: 'gageIcon belowThreshold',
+                                })
+                            );
+                        } else if (
+                            feature.properties.status == 'obs_not_current'
+                        ) {
+                            layer.setIcon(
+                                L.divIcon({
+                                    className: 'gageIcon obsNotCurrent',
+                                })
+                            );
+                        } else if (
+                            feature.properties.status == 'out_of_service'
+                        ) {
+                            layer.setIcon(
+                                L.divIcon({
+                                    className: 'gageIcon outOfService',
+                                })
+                            );
+                        }
                     },
                 }),
             },
@@ -73,7 +133,7 @@ export class MAP_CONSTANTS {
                 .currentWarnings,
             'Watches/Warnings': this.mapLayers.esriFeatureLayers
                 .watchesWarnings,
-            'AHPS Gages': this.mapLayers.esriDynamicLayers.AHPSGages,
+            'AHPS Gages': this.mapLayers.esriFeatureLayers.AHPSGages,
         };
     }
 }

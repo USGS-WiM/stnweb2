@@ -107,6 +107,7 @@ export class HomeComponent implements OnInit {
     watershedsVisible = false;
     currWarningsVisible = false;
     watchWarnVisible = false;
+    ahpsGagesVisible = false;
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -337,6 +338,9 @@ export class HomeComponent implements OnInit {
             if (e.name === 'Watches/Warnings') {
                 this.watchWarnVisible = true;
             }
+            if (e.name === 'AHPS Gages') {
+                this.ahpsGagesVisible = true;
+            }
         });
         //When the watershed checkbox is unchecked, remove watershed icon from legend
         this.map.on('overlayremove', (e) => {
@@ -348,6 +352,9 @@ export class HomeComponent implements OnInit {
             }
             if (e.name === 'Watches/Warnings') {
                 this.watchWarnVisible = false;
+            }
+            if (e.name === 'AHPS Gages') {
+                this.ahpsGagesVisible = false;
             }
         });
     }

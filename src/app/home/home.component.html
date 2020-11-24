@@ -47,6 +47,16 @@
                     <mat-panel-title> Legend </mat-panel-title>
                 </mat-expansion-panel-header>
                 <div class="legend-panel-content">
+                    <div id="watershedsLegend" *ngIf="watershedsVisible">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-square wmm-white wmm-icon-circle wmm-icon-white wmm-size-20 huc-icon"
+                            ></div>
+                            <label>Watersheds</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content">
                     <div id="currWarningLegend" *ngIf="currWarningsVisible">
                         <div class="legend-icon">
                             <div
@@ -67,12 +77,62 @@
                     </div>
                 </div>
                 <div class="legend-panel-content">
-                    <div id="watershedsLegend" *ngIf="watershedsVisible">
+                    <div id="AHPSGageLegend" *ngIf="ahpsGagesVisible">
+                        <label class="AHPSGageHeader">AHPS Gages</label>
                         <div class="legend-icon">
                             <div
-                                class="wmm-square wmm-white wmm-icon-circle wmm-icon-white wmm-size-20 huc-icon"
+                                class="gageIcon majorFlood"
+                                style="border-color: black"
                             ></div>
-                            <label>Watersheds</label>
+                            <div class="AHPSGageLabel">
+                                <p>Major Flooding</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon moderateFlood"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Moderate Flooding</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon minorFlood"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Minor Flooding</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon nearFlood"></div>
+                            <div class="AHPSGageLabel"><p>Near Flood</p></div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon noFlood"></div>
+                            <div class="AHPSGageLabel">
+                                <p>No Flooding</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon floodND"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Flood Category Not Defined</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon belowThreshold"></div>
+                            <div class="AHPSGageLabel">
+                                <p>At or Below Low Water Threshold</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon obsNotCurrent"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Observations are Not Current</p>
+                            </div>
+                        </div>
+                        <div class="legend-icon">
+                            <div class="gageIcon outOfService"></div>
+                            <div class="AHPSGageLabel">
+                                <p>Out of Service</p>
+                            </div>
                         </div>
                     </div>
                 </div>
