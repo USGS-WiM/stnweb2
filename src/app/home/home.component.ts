@@ -296,15 +296,17 @@ export class HomeComponent implements OnInit {
             //the gage layer is checked, but it's not displayed
             //warn users of that in a snack bar message
             if (
-                this.ahpsGagesVisible == true &&
-                this.previousZoom == 9 &&
-                this.currentZoom == 8
+                this.ahpsGagesVisible == true ||
+                this.currWarningsVisible == true ||
+                this.watchWarnVisible == true
             ) {
-                this.openSnackBar(
-                    'Zoom to level 9 or higher to view AHPS gages',
-                    'OK',
-                    4000
-                );
+                if (this.previousZoom == 9 && this.currentZoom == 8) {
+                    this.openSnackBar(
+                        'Zoom to level 9 or higher to view additional layers',
+                        'OK',
+                        4000
+                    );
+                }
             }
         });
 
