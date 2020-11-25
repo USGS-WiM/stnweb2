@@ -29,6 +29,88 @@
                         >home</mat-icon
                     >
                 </div>
+                <div
+                    class="leaflet-control-layers leaflet-control"
+                    aria-haspopup="true"
+                    style="margin-left: 200px"
+                >
+                    <a
+                        class="leaflet-control-layers-toggle"
+                        href="#"
+                        title="Layers"
+                    ></a>
+                    <section class="leaflet-control-layers-list">
+                        <div class="leaflet-control-layers-base">
+                            <label>
+                                <div>
+                                    <input
+                                        type="radio"
+                                        class="leaflet-control-layers-selector"
+                                        name="leaflet-base-layers_138"
+                                    />
+                                    <span> Open Street Map</span>
+                                </div>
+                            </label>
+                            <label>
+                                <div>
+                                    <input
+                                        type="radio"
+                                        class="leaflet-control-layers-selector"
+                                        name="leaflet-base-layers_138"
+                                    />
+                                    <span> Grayscale</span>
+                                </div>
+                            </label>
+                            <label>
+                                <div>
+                                    <input
+                                        type="radio"
+                                        class="leaflet-control-layers-selector"
+                                        name="leaflet-base-layers_138"
+                                    />
+                                    <span> Imagery</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="leaflet-control-layers-separator"></div>
+                        <div class="leaflet-control-layers-overlays">
+                            <label>
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        class="leaflet-control-layers-selector"
+                                    />
+                                    <span>Watersheds</span>
+                                </div>
+                            </label>
+                            <label>
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        class="leaflet-control-layers-selector"
+                                    />
+                                    <span> Current Warnings</span>
+                                </div>
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    class="leaflet-control-layers-selector"
+                                />
+                                <span> Watches/Warnings</span>
+                            </label>
+                            <label>
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        class="leaflet-control-layers-selector"
+                                    />
+                                    <span> AHPS Gages</span>
+                                </div>
+                            </label>
+                        </div>
+                    </section>
+                </div>
                 <div id="latLngScale" class="latLngScale">
                     <span class="hover-content"> <b>Map scale </b></span>
                     1:<span id="scale">{{ mapScale }}</span> |

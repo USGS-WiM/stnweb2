@@ -115,6 +115,8 @@ export class HomeComponent implements OnInit {
     currentZoom: number;
     previousZoom: number;
 
+    public testVar: Boolean;
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
@@ -131,6 +133,7 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
         console.log('User logged in?: ' + this.isloggedIn);
+        this.testVar = false;
 
         this.openLoadSnackBar(
             'Zoom to level 9 to enable all layers',

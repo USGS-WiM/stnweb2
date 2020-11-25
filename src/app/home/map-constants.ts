@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HomeComponent } from './home.component';
 declare let L: any;
 import * as esri from 'esri-leaflet';
 
@@ -130,7 +131,8 @@ export class MAP_CONSTANTS {
 
     public static get supplementaryLayers(): any {
         return {
-            Watersheds: this.mapLayers.esriDynamicLayers.HUC,
+            "<span>Watersheds</span><br> <span style='color: gray; text-align: center;' *ngIf='HomeComponent.testVar'>Layers below available at <br> zoom level 9 or greater</span>": this
+                .mapLayers.esriDynamicLayers.HUC,
             'Current Warnings': this.mapLayers.esriFeatureLayers
                 .currentWarnings,
             'Watches/Warnings': this.mapLayers.esriFeatureLayers
