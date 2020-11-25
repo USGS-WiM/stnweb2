@@ -74,7 +74,6 @@ import { SitesService } from '@services/sites.service';
         MatButtonModule,
         MatAutocompleteModule,
         MatSnackBarModule,
-        MatSnackBar,
         MatDialogModule,
         MatTabsModule,
         MatFormFieldModule,
@@ -90,6 +89,7 @@ import { SitesService } from '@services/sites.service';
         EventsService,
         UserService,
         SitesService,
+        MatSnackBar,
     ],
     bootstrap: [AppComponent],
     entryComponents: [
