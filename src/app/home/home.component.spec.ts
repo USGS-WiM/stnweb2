@@ -2,6 +2,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSnackBar } from '@angular/material/snack-bar';
 // import { by } from '@angular/platform-browser';
 import * as L from 'leaflet';
 
@@ -23,6 +24,7 @@ describe('HomeComponent', () => {
                 CurrentUserService,
                 HttpClient,
                 HttpHandler,
+                MatSnackBar,
             ],
         }).compileComponents();
         component = TestBed.inject(HomeComponent);
