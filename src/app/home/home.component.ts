@@ -106,6 +106,7 @@ export class HomeComponent implements OnInit {
     states: State[];
     //Create variables for filter dropdowns --end
 
+    //These variables indicate if each layer is checked
     watershedsVisible = false;
     currWarningsVisible = false;
     watchWarnVisible = false;
@@ -291,15 +292,18 @@ export class HomeComponent implements OnInit {
         this.map.on('zoomend', () => {
             this.currentZoom = this.map.getZoom();
             //If the zoom went from 9 to 8 and the ahps gages are on,
-            //that means the gage layer is checked, but it's not displayed
+            //which means the gage layer is checked, but it's not displayed
             //warn users of that in a snack bar message
             if (
                 this.ahpsGagesVisible == true &&
                 this.previousZoom == 9 &&
                 this.currentZoom == 8
             ) {
-                console.log('place a snack bar here');
-                this.openSnackBar('Zoom in to see AHGS Gages', 'act', 2000);
+                this.openSnackBar(
+                    'Zoom to level 9 or higher to view AHPS gages',
+                    'OK',
+                    4000
+                );
             }
         });
 
