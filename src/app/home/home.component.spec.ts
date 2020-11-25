@@ -18,12 +18,13 @@ describe('HomeComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [HomeComponent],
-            imports: [MatAutocompleteModule, MatSnackBar],
+            imports: [MatAutocompleteModule],
             providers: [
                 HomeComponent,
                 CurrentUserService,
                 HttpClient,
                 HttpHandler,
+                MatSnackBar,
             ],
         }).compileComponents();
         component = TestBed.inject(HomeComponent);

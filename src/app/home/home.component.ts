@@ -21,6 +21,7 @@ import { NetworkNamesService } from '../services/network-names.service';
 import { SensorType } from '../interfaces/sensor-type';
 import { SensorTypesService } from '../services/sensor-types.service';
 import { SitesService } from '../services/sites.service';
+import { NgModule } from '@angular/core';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -29,7 +30,6 @@ declare let L: any;
 import 'leaflet';
 import 'leaflet-draw';
 import * as esri from 'esri-leaflet';
-import { ThrowStmt } from '@angular/compiler';
 
 export interface PeriodicElement {
     name: string;
