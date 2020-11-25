@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 -   Added prerequisite for at least one layer to be checked before the legend appears
+-   Added popup message for when the gage layer is removed due to user zooming out
 
 ### Changed
 
