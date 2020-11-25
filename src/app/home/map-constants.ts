@@ -49,6 +49,7 @@ export class MAP_CONSTANTS {
                     style: function () {
                         return { color: 'red', weight: 2 };
                     },
+                    minZoom: 9,
                 }),
                 watchesWarnings: esri.featureLayer({
                     url:
@@ -56,6 +57,7 @@ export class MAP_CONSTANTS {
                     style: function () {
                         return { color: 'orange', weight: 2 };
                     },
+                    minZoom: 9,
                 }),
                 AHPSGages: esri.featureLayer({
                     url:

@@ -292,19 +292,21 @@ export class HomeComponent implements OnInit {
         //Get the value of the current zoom
         this.map.on('zoomend', () => {
             this.currentZoom = this.map.getZoom();
-            //If the zoom went from 9 to 8 and the ahps gages are on,
-            //the gage layer is checked, but it's not displayed
+            //If the zoom went from 9 to 8 and the gages/watches/warnings are on,
+            //that layer is checked, but it's not displayed
             //warn users of that in a snack bar message
             if (
-                this.ahpsGagesVisible == true &&
-                this.previousZoom == 9 &&
-                this.currentZoom == 8
+                this.ahpsGagesVisible == true ||
+                this.currWarningsVisible == true ||
+                this.watchWarnVisible == true
             ) {
-                this.openSnackBar(
-                    'Zoom to level 9 or higher to view AHPS gages',
-                    'OK',
-                    4000
-                );
+                if (this.previousZoom == 9 && this.currentZoom == 8) {
+                    this.openSnackBar(
+                        'Zoom to level 9 or higher to view additional layers',
+                        'OK',
+                        4000
+                    );
+                }
             }
         });
 
