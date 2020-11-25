@@ -17,7 +17,7 @@ import { Event } from '@interfaces/event';
 export class EventsService {
     constructor(private httpClient: HttpClient) {}
 
-    // retrieve tghe full events list
+    // retrieve the full events list
     public getAllEvents(): Observable<Event[]> {
         return (
             this.httpClient
