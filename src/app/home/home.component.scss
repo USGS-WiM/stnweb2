@@ -426,3 +426,8 @@ $borderRadius: 4px;
 .AHPSGageHeader {
     margin-left: 20px;
 }
+::ng-deep .mat-snack-bar-container.initial-zoom-warning {
+    background-color: rgb(255, 204, 38);
+    color: rgba(78, 78, 50, 0.836);
+    margin-top: 200px;
+}

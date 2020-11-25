@@ -132,6 +132,12 @@ export class HomeComponent implements OnInit {
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
         console.log('User logged in?: ' + this.isloggedIn);
 
+        this.openLoadSnackBar(
+            'Zoom to level 9 to enable all layers',
+            'OK',
+            8000
+        );
+
         this.eventsService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
@@ -179,7 +185,16 @@ export class HomeComponent implements OnInit {
     }
 
     //Temporary message pop up at bottom of screen
-    openSnackBar(message: string, action: string, duration: number) {
+    openLoadSnackBar(message: string, action: string, duration: number) {
+        this.snackBar.open(message, action, {
+            duration: duration,
+            verticalPosition: 'top',
+            panelClass: ['initial-zoom-warning'],
+        });
+    }
+
+    //Temporary message pop up at bottom of screen
+    openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
         });
@@ -301,7 +316,7 @@ export class HomeComponent implements OnInit {
                 this.watchWarnVisible == true
             ) {
                 if (this.previousZoom == 9 && this.currentZoom == 8) {
-                    this.openSnackBar(
+                    this.openZoomOutSnackBar(
                         'Zoom to level 9 or higher to view additional layers',
                         'OK',
                         4000
