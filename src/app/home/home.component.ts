@@ -21,7 +21,6 @@ import { NetworkNamesService } from '../services/network-names.service';
 import { SensorType } from '../interfaces/sensor-type';
 import { SensorTypesService } from '../services/sensor-types.service';
 import { SitesService } from '../services/sites.service';
-import { NgModule } from '@angular/core';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -112,6 +111,7 @@ export class HomeComponent implements OnInit {
     watchWarnVisible = false;
     ahpsGagesVisible = false;
 
+    //Used for determining when to show layer visibility snack bar message
     currentZoom: number;
     previousZoom: number;
 
@@ -178,6 +178,7 @@ export class HomeComponent implements OnInit {
         });
     }
 
+    //Temporary message pop up at bottom of screen
     openSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
@@ -292,7 +293,7 @@ export class HomeComponent implements OnInit {
         this.map.on('zoomend', () => {
             this.currentZoom = this.map.getZoom();
             //If the zoom went from 9 to 8 and the ahps gages are on,
-            //which means the gage layer is checked, but it's not displayed
+            //the gage layer is checked, but it's not displayed
             //warn users of that in a snack bar message
             if (
                 this.ahpsGagesVisible == true &&
