@@ -19,6 +19,7 @@ import { NetworkName } from '../interfaces/network-name';
 import { NetworkNamesService } from '../services/network-names.service';
 import { SensorType } from '../interfaces/sensor-type';
 import { SensorTypesService } from '../services/sensor-types.service';
+import { DisplayValuePipe } from '@pipes/display-value.pipe';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -140,6 +141,7 @@ export class HomeComponent implements OnInit {
                 ),
                 map((event_name) =>
                     // match user text input to the index of the corresponding event
+                    /* istanbul ignore else */
                     event_name
                         ? APP_UTILITIES.FILTER_EVENT(event_name, this.events)
                         : this.events
@@ -180,8 +182,8 @@ export class HomeComponent implements OnInit {
     createMap() {
         // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('map', {
-            center: new L.LatLng(39.8283, -98.5795),
-            zoom: 4,
+            center: MAP_CONSTANTS.defaultCenter,
+            zoom: MAP_CONSTANTS.defaultZoom,
             layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
         });
         /* this.markers = L.featureGroup().addTo(this.map); */
@@ -208,6 +210,7 @@ export class HomeComponent implements OnInit {
         });
 
         // displays map scale on scale change (i.e. zoom level)
+        /* istanbul ignore next */
         this.map.on('zoomend', () => {
             const mapZoom = this.map.getZoom();
             const mapScale = APP_UTILITIES.SCALE_LOOKUP(mapZoom);
@@ -216,6 +219,7 @@ export class HomeComponent implements OnInit {
         });
 
         // updates lat/lng indicator on mouse move. does not apply on devices w/out mouse. removes 'map center' label
+        /* istanbul ignore next */
         this.map.on('mousemove', (cursorPosition) => {
             // $('#mapCenterLabel').css('display', 'none');
             if (cursorPosition.latlng !== null) {
@@ -224,6 +228,7 @@ export class HomeComponent implements OnInit {
             }
         });
         // updates lat/lng indicator to map center after pan and shows 'map center' label.
+        /* istanbul ignore next */
         this.map.on('dragend', () => {
             // displays latitude and longitude of map center
             // $('#mapCenterLabel').css('display', 'inline');
@@ -239,6 +244,7 @@ export class HomeComponent implements OnInit {
         const results = new L.LayerGroup().addTo(this.map);
 
         //Clear the previous search marker and add a marker at the new location
+        /* istanbul ignore next */
         searchControl.on('results', function (data) {
             results.clearLayers();
             for (let i = data.results.length - 1; i >= 0; i--) {
@@ -253,6 +259,7 @@ export class HomeComponent implements OnInit {
     // Returns HTML string, or null if unknown object
     getDrawnItemPopupContent(layer) {
         if (layer instanceof L.Polygon) {
+            /* istanbul ignore next */
             const latlngs = layer._defaultShape
                     ? layer._defaultShape()
                     : layer.getLatLngs(),
@@ -260,6 +267,7 @@ export class HomeComponent implements OnInit {
             return 'Area: ' + L.GeometryUtil.readableArea(area);
             // Polyline - distance
         } else if (layer instanceof L.Polyline) {
+            /* istanbul ignore next */
             const latlngs = layer._defaultShape
                 ? layer._defaultShape()
                 : layer.getLatLngs();
@@ -273,8 +281,9 @@ export class HomeComponent implements OnInit {
                 distance = distance * 0.000621371;
                 return 'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi';
             }
+        } else {
+            return null;
         }
-        return null;
     }
 
     // createDrawnItem(event) {
@@ -329,6 +338,7 @@ export class HomeComponent implements OnInit {
 
         // Generate popup content based on layer type
         // - Returns HTML string, or null if unknown object
+        /* istanbul ignore next */
         const getPopupContent = (layer) => {
             return this.getDrawnItemPopupContent(layer);
         };
@@ -352,6 +362,7 @@ export class HomeComponent implements OnInit {
         // });
 
         // Object created - bind popup to layer, add to feature group
+        /* istanbul ignore next */
         this.map.on(L.Draw.Event.CREATED, function (event) {
             const layer = event.layer;
             const content = getPopupContent(layer);
@@ -362,6 +373,7 @@ export class HomeComponent implements OnInit {
         });
 
         // Object(s) edited - update popups
+        /* istanbul ignore next */
         this.map.on(L.Draw.Event.EDITED, function (event) {
             const layers = event.layers;
             // const content = null;
@@ -374,6 +386,7 @@ export class HomeComponent implements OnInit {
         });
 
         //When the watershed checkbox is checked, add watershed icon to legend
+        /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
@@ -386,6 +399,7 @@ export class HomeComponent implements OnInit {
             }
         });
         //When the watershed checkbox is unchecked, remove watershed icon from legend
+        /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
@@ -399,13 +413,14 @@ export class HomeComponent implements OnInit {
         });
     }
 
-    // When button is clicked, zoom to the full extent of the selected event
-    // As a placeholder, currently zooms back the the U.S. extent
-    eventExtent() {
-        this.map.fitBounds([
-            [48, -125],
-            [25, -65],
-        ]);
+    // When button is clicked, focus center and zoom to the selected event
+    // As a placeholder, currently returns to defaults
+    // TODO: work with extent for event
+    eventFocus() {
+        this.map.setView(
+            MAP_CONSTANTS.defaultCenter,
+            MAP_CONSTANTS.defaultZoom
+        );
     }
 
     //Options to be displayed when selecting event filter

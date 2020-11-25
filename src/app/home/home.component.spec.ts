@@ -13,6 +13,7 @@ import { Event } from '@interfaces/event';
 import { HomeComponent } from './home.component';
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
+import { MAP_CONSTANTS } from './map-constants';
 
 describe('HomeComponent', () => {
     let component: HomeComponent;
@@ -126,5 +127,30 @@ describe('HomeComponent', () => {
         let lineResponse = component.getDrawnItemPopupContent(line);
         expect(lineResponse).toEqual(jasmine.any(String));
         expect(lineResponse).toContain('Distance: ');
+
+        var notLine = L.polyline([latlngs[0]], { color: 'blue' }).addTo(
+            component.map
+        );
+        let notLineResponse = component.getDrawnItemPopupContent(notLine);
+        expect(notLineResponse).toEqual(jasmine.any(String));
+        expect(notLineResponse).toContain('Distance: N/A');
+
+        let notLayer = L.popup();
+        let notLayerResponse = component.getDrawnItemPopupContent(notLayer);
+        expect(notLayerResponse).toBeNull();
     });
+
+    it('#eventFocus sets map to event focused view', () => {
+        // temporarily sets map to U.S, extent instead of event's extent
+        // first set the view to somehting not default to test that the update works
+        let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
+        component.map.setView(notDefaultCenter, 9);
+        component.eventFocus();
+        let mapCenter = component.map.getCenter();
+        let mapZoom = component.map.getZoom();
+        expect(mapCenter).toEqual(MAP_CONSTANTS.defaultCenter);
+        expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
+    });
+
+    xit('#displayState', () => {});
 });

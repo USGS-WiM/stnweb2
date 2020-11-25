@@ -39,6 +39,7 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { EventsService } from '@services/events.service';
 import { UserService } from '@services/user.service';
+import { DisplayValuePipe } from './pipes/display-value.pipe';
 
 @NgModule({
     declarations: [
@@ -49,6 +50,7 @@ import { UserService } from '@services/user.service';
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
+        DisplayValuePipe,
     ],
     imports: [
         BrowserModule,
