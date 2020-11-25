@@ -131,13 +131,13 @@ export class MAP_CONSTANTS {
 
     public static get supplementaryLayers(): any {
         return {
-            "<span>Watersheds</span><br> <span style='color: gray; text-align: center;' *ngIf='HomeComponent.testVar'>Layers below available at <br> zoom level 9 or greater</span>": this
-                .mapLayers.esriDynamicLayers.HUC,
-            'Current Warnings': this.mapLayers.esriFeatureLayers
+            Watersheds: this.mapLayers.esriDynamicLayers.HUC,
+            'Current Warnings*': this.mapLayers.esriFeatureLayers
                 .currentWarnings,
-            'Watches/Warnings': this.mapLayers.esriFeatureLayers
+            'Watches/Warnings*': this.mapLayers.esriFeatureLayers
                 .watchesWarnings,
-            'AHPS Gages': this.mapLayers.esriFeatureLayers.AHPSGages,
+            "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;' *ngIf='HomeComponent.testVar'>*Zoom to level 9 to enable</span> ": this
+                .mapLayers.esriFeatureLayers.AHPSGages,
         };
     }
 }
