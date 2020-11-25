@@ -14,7 +14,8 @@
         "paths": {
             "@app/*": ["app/*"],
             "@services/*": ["app/services/*"],
-            "@interfaces/*": ["app/interfaces/*"]
+            "@interfaces/*": ["app/interfaces/*"],
+            "@pipes/*": ["app/pipes/*"]
         },
         "typeRoots": ["node_modules/@types"],
         "lib": ["es2018", "dom"]

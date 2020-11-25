@@ -41,6 +41,7 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { EventsService } from '@services/events.service';
 import { UserService } from '@services/user.service';
+import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
 
 @NgModule({
@@ -52,6 +53,7 @@ import { SitesService } from '@services/sites.service';
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
+        DisplayValuePipe,
     ],
     imports: [
         BrowserModule,
@@ -89,6 +91,7 @@ import { SitesService } from '@services/sites.service';
         EventsService,
         UserService,
         SitesService,
+        DisplayValuePipe,
         MatSnackBar,
     ],
     bootstrap: [AppComponent],
