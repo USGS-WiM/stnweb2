@@ -67,17 +67,4 @@ describe('EventsService', () => {
         );
         req.flush(mockEvent);
     });
-
-    it('#getEventSites() should retrieve a sites list from the data API', () => {
-        service.getEventSites(7).subscribe((results) => {
-            expect(results).not.toBe(null);
-            expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockSitesList)
-            );
-        });
-        const req = httpTestingController.expectOne(
-            APP_SETTINGS.EVENTS + '/' + 7 + '/Sites.json'
-        );
-        req.flush(mockSitesList);
-    });
 });

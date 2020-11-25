@@ -17,6 +17,7 @@ export class AuthenticationService {
         private currentUserService: CurrentUserService
     ) {}
     // TODO: test this
+    /* istanbul ignore next */
     login(username: string, password: string) {
         // const options = new RequestOptions({
         //     headers: new Headers({
@@ -24,6 +25,7 @@ export class AuthenticationService {
         //     }),
         // });
         const self = this;
+        /* istanbul ignore next */
         return this.http
             .get(APP_SETTINGS.AUTH_URL, {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,

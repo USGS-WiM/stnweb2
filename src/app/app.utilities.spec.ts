@@ -1,23 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { TestBed } from '@angular/core/testing';
 
 import { APP_UTILITIES } from './app.utilities';
 
 describe('APP_UTILITIES', () => {
-    // let component: APP_UTILITIES;
-    // let fixture: ComponentFixture<APP_UTILITIES>;
-
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [APP_UTILITIES],
             providers: [],
-        }).compileComponents();
-    });
-
-    beforeEach(() => {
-        // fixture = TestBed.createComponent(APP_UTILITIES);
-        // component = fixture.componentInstance;
-        // fixture.detectChanges();
+        });
     });
 
     function getExpectedScale(i) {

@@ -10,13 +10,13 @@
       - Nav, links, branding, etc
   -->
 <header class="header">
-    <mat-toolbar color="primary">
-        <mat-toolbar-row color="primary" class="mat-typography stns-header">
+    <mat-toolbar>
+        <mat-toolbar-row
+            class="mat-typography stns-header"
+            id="stn-main-toolbar"
+        >
             <div class="stn-header" id="mobile">
                 <a href="" class="stn-title">
-                    <!-- <div class="stn-logo">
-            <img src="./assets/ice_white.png" />
-          </div> -->
                     <span>Short Term Network</span>
                 </a>
                 <span class="stn-subtitle">
@@ -82,6 +82,60 @@
         <span *ngIf="currentUser.username !== ''" class="login-button-span">{{currentUser.first_name}}
           {{currentUser.last_name}}
         </span> -->
+            </div>
+        </mat-toolbar-row>
+        <mat-toolbar-row
+            class="mat-typography stns-header"
+            id="stn-nav-toolbar"
+        >
+            <div class="nav-toggles">
+                <!-- <mat-button-toggle-group>
+                    <mat-button-toggle value="map" checked="true"
+                        >Map</mat-button-toggle
+                    >
+                    <mat-button-toggle value="approval"
+                        >Approval</mat-button-toggle
+                    >
+                    <mat-button-toggle value="sites">Sites</mat-button-toggle>
+                    <mat-button-toggle value="reporting"
+                        >Reporting</mat-button-toggle
+                    >
+                    <mat-button-toggle value="settings"
+                        >Settings</mat-button-toggle
+                    >
+                    <mat-button-toggle value="review">Review</mat-button-toggle>
+                </mat-button-toggle-group> -->
+                <!--alternative button layout to match existing-->
+                <span class="button-span">
+                    <button mat-button aria-label="Display Map View">
+                        <span class="header-button-text"> Map</span>
+                    </button>
+                </span>
+                <span class="button-span">
+                    <button mat-button aria-label="Display Approval View">
+                        <span class="header-button-text"> Approval</span>
+                    </button>
+                </span>
+                <span class="button-span">
+                    <button mat-button aria-label="Display Sites View">
+                        <span class="header-button-text"> Sites</span>
+                    </button>
+                </span>
+                <span class="button-span">
+                    <button mat-button aria-label="Display Reporting View">
+                        <span class="header-button-text"> Reporting </span>
+                    </button>
+                </span>
+                <span class="button-span">
+                    <button mat-button aria-label="Display Settings View">
+                        <span class="header-button-text"> Settings </span>
+                    </button>
+                </span>
+                <span class="button-span">
+                    <button mat-button aria-label="Display Review View">
+                        <span class="header-button-text"> Review </span>
+                    </button>
+                </span>
             </div>
         </mat-toolbar-row>
     </mat-toolbar>

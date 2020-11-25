@@ -17,6 +17,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class DisplayValuePipe implements PipeTransform {
     transform(
         value: any,
+        idProperty: string,
         displayProperty: string,
         sourceArray: Array<any>
     ): any {
@@ -25,7 +26,7 @@ export class DisplayValuePipe implements PipeTransform {
             displayValue = '';
         } else {
             for (let i = 0; i < sourceArray.length; i++) {
-                if (sourceArray[i].id === parseInt(value, 10)) {
+                if (sourceArray[i][idProperty] === parseInt(value, 10)) {
                     displayValue = sourceArray[i][displayProperty];
                 }
             }

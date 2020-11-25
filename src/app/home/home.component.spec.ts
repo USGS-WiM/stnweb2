@@ -14,6 +14,7 @@ import { HomeComponent } from './home.component';
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
 import { MAP_CONSTANTS } from './map-constants';
+import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
 
 describe('HomeComponent', () => {
     let component: HomeComponent;
@@ -28,6 +29,7 @@ describe('HomeComponent', () => {
                 CurrentUserService,
                 HttpClient,
                 HttpHandler,
+                DisplayValuePipe,
             ],
         }).compileComponents();
         component = TestBed.inject(HomeComponent);

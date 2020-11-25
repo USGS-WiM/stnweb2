@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CurrentUserService } from '../services/current-user.service';
+import { CurrentUserService } from '@services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -11,15 +11,16 @@ import { APP_UTILITIES } from '@app/app.utilities';
 import { MAP_CONSTANTS } from './map-constants';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
-import { Event } from '../interfaces/event';
-import { EventsService } from '../services/events.service';
-import { State } from '../interfaces/state';
-import { StatesService } from '../services/states.service';
-import { NetworkName } from '../interfaces/network-name';
-import { NetworkNamesService } from '../services/network-names.service';
-import { SensorType } from '../interfaces/sensor-type';
-import { SensorTypesService } from '../services/sensor-types.service';
+import { Event } from '@interfaces/event';
+import { EventsService } from '@services/events.service';
+import { State } from '@interfaces/state';
+import { StatesService } from '@services/states.service';
+import { NetworkName } from '@interfaces/network-name';
+import { NetworkNamesService } from '@services/network-names.service';
+import { SensorType } from '@interfaces/sensor-type';
+import { SensorTypesService } from '@services/sensor-types.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
+import { SitesService } from '@services/sites.service';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -107,6 +108,7 @@ export class HomeComponent implements OnInit {
     watershedsVisible = false;
     currWarningsVisible = false;
     watchWarnVisible = false;
+    ahpsGagesVisible = false;
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -116,7 +118,9 @@ export class HomeComponent implements OnInit {
         private statesService: StatesService,
         private networkNamesService: NetworkNamesService,
         private sensorTypesService: SensorTypesService,
-        public currentUserService: CurrentUserService
+        public currentUserService: CurrentUserService,
+        private sitesService: SitesService,
+        private displayValuePipe: DisplayValuePipe
     ) {}
 
     ngOnInit() {
@@ -154,12 +158,12 @@ export class HomeComponent implements OnInit {
             // this.mapResults(this.events);
 
             // TODO: by default populate map with most recent event
-            // this.eventsService
-            //     .getEventSites(this.currentEvent)
-            //     .subscribe((results) => {
-            //         this.eventSites = results;
-            //         this.mapResults(this.eventSites);
-            //     });
+            this.sitesService
+                .getEventSites(this.currentEvent)
+                .subscribe((results) => {
+                    this.eventSites = results;
+                    this.mapResults(this.eventSites);
+                });
         });
 
         this.networkNamesService.getNetworkNames().subscribe((results) => {
@@ -397,6 +401,9 @@ export class HomeComponent implements OnInit {
             if (e.name === 'Watches/Warnings') {
                 this.watchWarnVisible = true;
             }
+            if (e.name === 'AHPS Gages') {
+                this.ahpsGagesVisible = true;
+            }
         });
         //When the watershed checkbox is unchecked, remove watershed icon from legend
         /* istanbul ignore next */
@@ -409,6 +416,9 @@ export class HomeComponent implements OnInit {
             }
             if (e.name === 'Watches/Warnings') {
                 this.watchWarnVisible = false;
+            }
+            if (e.name === 'AHPS Gages') {
+                this.ahpsGagesVisible = false;
             }
         });
     }
@@ -423,24 +433,9 @@ export class HomeComponent implements OnInit {
         );
     }
 
-    //Options to be displayed when selecting event filter
+    // options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
-    }
-
-    //Options to be displayed when selecting state filter
-    displayState(state: State): string {
-        return state && state.state_name ? state.state_name : '';
-    }
-
-    //Options to be displayed when selecting network filter
-    displayNetwork(network: NetworkName): string {
-        return network && network.name ? network.name : '';
-    }
-
-    //Options to be displayed when selecting sensor type filter
-    displaySensor(sensor: SensorType): string {
-        return sensor && sensor.sensor ? sensor.sensor : '';
     }
 
     // another method to get event sites
@@ -457,14 +452,14 @@ export class HomeComponent implements OnInit {
     return ret;
   } */
 
+    /* istanbul ignore next */
     mapResults(eventSites: any) {
         // set/reset resultsMarker var to an empty array
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
         const riverConditions = [];
 
-        // tslint:disable-next-line:forin
-        // loop through results repsonse from a search query
+        // loop through results responsefrom a search query
         if (this.eventSites.length !== undefined) {
             for (const site of this.eventSites) {
                 const lat = Number(site.latitude_dd);
@@ -485,7 +480,7 @@ export class HomeComponent implements OnInit {
 
         const popup = L.popup()
           .setContent(popupContent); */
-
+                /* istanbul ignore next */
                 L.marker([lat, long], { icon: myicon }).addTo(this.map);
                 /* .bindPopup(popup)
           .on('click',
