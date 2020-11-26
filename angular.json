@@ -108,7 +108,11 @@
                             "node_modules/leaflet-draw/dist/leaflet.draw.js"
                         ],
                         "assets": ["src/favicon.ico", "src/assets"],
-                        "codeCoverage": true
+                        "codeCoverage": true,
+                        "codeCoverageExclude": [
+                            "**/app-settings.ts",
+                            "**/app-utilities.ts"
+                        ]
                     }
                 },
                 "lint": {
