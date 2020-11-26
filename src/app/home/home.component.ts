@@ -135,12 +135,6 @@ export class HomeComponent implements OnInit {
         console.log('User logged in?: ' + this.isloggedIn);
         this.testVar = false;
 
-        this.openLoadSnackBar(
-            'Zoom to level 9 to enable all layers',
-            'OK',
-            8000
-        );
-
         this.eventsService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
@@ -184,15 +178,6 @@ export class HomeComponent implements OnInit {
         });
         this.statesService.getStates().subscribe((results) => {
             this.states = results;
-        });
-    }
-
-    //Temporary message pop up at bottom of screen
-    openLoadSnackBar(message: string, action: string, duration: number) {
-        this.snackBar.open(message, action, {
-            duration: duration,
-            verticalPosition: 'top',
-            panelClass: ['initial-zoom-warning'],
         });
     }
 
