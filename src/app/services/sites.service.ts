@@ -15,9 +15,9 @@ export class SitesService {
 
     private eventSitesSubject: Subject<any>;
 
-    public get eventSites(): Observable<any> {
-        return this.eventSitesSubject.asObservable();
-    }
+    // public get eventSites(): Observable<any> {
+    //     return this.eventSitesSubject.asObservable();
+    // }
 
     //get sites for a selected event
     public getEventSites(eventID: number): Observable<Site[]> {
@@ -31,7 +31,7 @@ export class SitesService {
                 catchError(this.handleError<any>('getEventSites', []))
             );
     }
-
+    /* istanbul ignore next */
     private handleError<T>(operation = 'operation', result?: T) {
         return (error: any): Observable<T> => {
             // TODO: send the error to remote logging infrastructure

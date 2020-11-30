@@ -270,7 +270,8 @@ export class HomeComponent implements OnInit {
             }
         });
 
-        //When the watershed checkbox is checked, add watershed icon to legend
+        // When the watershed checkbox is checked, add watershed icon to legend
+        /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
@@ -288,7 +289,8 @@ export class HomeComponent implements OnInit {
                 this.ahpsGagesVisible = true;
             }
         });
-        //When the watershed checkbox is unchecked, remove watershed icon from legend
+        // When the watershed checkbox is unchecked, remove watershed icon from legend
+        /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
@@ -465,7 +467,7 @@ export class HomeComponent implements OnInit {
             });
         });
 
-        //When the watershed checkbox is checked, add watershed icon to legend
+        // When the watershed checkbox is checked, add watershed icon to legend
         /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
             if (e.name === 'Watersheds') {
@@ -481,7 +483,7 @@ export class HomeComponent implements OnInit {
                 this.ahpsGagesVisible = true;
             }
         });
-        //When the watershed checkbox is unchecked, remove watershed icon from legend
+        // When the watershed checkbox is unchecked, remove watershed icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
             if (e.name === 'Watersheds') {
