@@ -175,6 +175,8 @@
                                     matInput
                                     [formControl]="eventsControl"
                                     [matAutocomplete]="auto"
+                                    [(ngModel)]="selectedEvent"
+                                    (ngModelChange)="displaySelectedEvent()"
                                 />
                                 <mat-hint
                                     >Start typing for suggestions</mat-hint

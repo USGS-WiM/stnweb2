@@ -78,9 +78,11 @@ export class HomeComponent implements OnInit {
     siteClicked = false;
     siteName;
 
-    currentEvent = 7;
-    currentEventName = 'FEMA 2013 exercise';
+    public selectedEvent;
+    currentEvent: number;
+    currentEventName: string;
     eventSites: any;
+    eventMarkers = L.layerGroup([]);
 
     mapScale;
     latitude;
@@ -144,6 +146,10 @@ export class HomeComponent implements OnInit {
                 'descend'
             );
 
+            //Get id and name of most recent event
+            this.currentEvent = this.events[0].event_id;
+            this.currentEventName = this.events[0].event_name;
+
             // allow user to type into the event selector to view matching events
             this.filteredEvents = this.eventsControl.valueChanges.pipe(
                 startWith(''),
@@ -164,7 +170,7 @@ export class HomeComponent implements OnInit {
 
             // this.mapResults(this.events);
 
-            // TODO: by default populate map with most recent event
+            // by default populate map with most recent event
             this.sitesService
                 .getEventSites(this.currentEvent)
                 .subscribe((results) => {
@@ -195,6 +201,24 @@ export class HomeComponent implements OnInit {
         this.snackBar.open(message, action, {
             duration: duration,
         });
+    }
+    //TODO: LOOK HERE FIRST
+    displaySelectedEvent() {
+        //Clear the old event markers from the map
+        if (this.eventMarkers !== undefined) {
+            this.eventMarkers.removeFrom(this.map);
+        }
+        //Clear the old markers from the layer
+        this.eventMarkers = L.layerGroup([]);
+        //Plot markers for selected event
+        if (this.selectedEvent !== undefined) {
+            this.sitesService
+                .getEventSites(this.selectedEvent.event_id)
+                .subscribe((results) => {
+                    this.eventSites = results;
+                    this.mapResults(this.eventSites);
+                });
+        }
     }
 
     createMap() {
@@ -570,6 +594,9 @@ export class HomeComponent implements OnInit {
               // this.eventsLoading = false;
             }); */
             }
+
+            //add event markers to map
+            this.eventMarkers.addTo(this.map);
         }
     }
 }
