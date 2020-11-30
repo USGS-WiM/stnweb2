@@ -275,28 +275,35 @@ export class HomeComponent implements OnInit {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
-            if (e.name === 'Current Warnings') {
+            if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = true;
             }
-            if (e.name === 'Watches/Warnings') {
+            if (e.name === 'Watches/Warnings*') {
                 this.watchWarnVisible = true;
             }
-            if (e.name === 'AHPS Gages') {
+            if (
+                e.name ===
+                "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
+            ) {
                 this.ahpsGagesVisible = true;
             }
         });
         //When the watershed checkbox is unchecked, remove watershed icon from legend
         this.map.on('overlayremove', (e) => {
+            console.log('e is', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
-            if (e.name === 'Current Warnings') {
+            if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = false;
             }
-            if (e.name === 'Watches/Warnings') {
+            if (e.name === 'Watches/Warnings*') {
                 this.watchWarnVisible = false;
             }
-            if (e.name === 'AHPS Gages') {
+            if (
+                e.name ===
+                "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
+            ) {
                 this.ahpsGagesVisible = false;
             }
         });

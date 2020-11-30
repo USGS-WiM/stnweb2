@@ -141,7 +141,7 @@ export class MAP_CONSTANTS {
                 .currentWarnings,
             'Watches/Warnings*': this.mapLayers.esriFeatureLayers
                 .watchesWarnings,
-            "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;' *ngIf='HomeComponent.testVar'>*Zoom to level 9 to enable</span> ": this
+            "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
                 .mapLayers.esriFeatureLayers.AHPSGages,
         };
     }
