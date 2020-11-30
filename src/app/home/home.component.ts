@@ -290,7 +290,6 @@ export class HomeComponent implements OnInit {
         });
         //When the watershed checkbox is unchecked, remove watershed icon from legend
         this.map.on('overlayremove', (e) => {
-            console.log('e is', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
