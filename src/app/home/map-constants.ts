@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HomeComponent } from './home.component';
 declare let L: any;
 import * as esri from 'esri-leaflet';
 
