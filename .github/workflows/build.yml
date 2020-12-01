@@ -27,7 +27,7 @@ jobs:
 
             - name: npm test coverage
               run: |
-                  npm rest:coverage
+                  npm test:coverage
 
             - name: npm install and npm run build
               run: |
