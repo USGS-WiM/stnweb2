@@ -30,16 +30,6 @@ jobs:
                   npm ci
                   npm run build:ci
 
-            - name: Run Jasmine tests
-              run: npm run test --no-watch --code-coverage --browsers=ChromeHeadlessCustom
-
-            - name: Comment Test Coverage
-              uses: AthleticNet/comment-test-coverage@1.1
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  path: coverage/coverage-summary.json
-                  title: Karma Test Coverage
-
             #- name: Run Unit Tests
             # run: npm test
             # uses: colbyhill21/angular-full-ci/@v1.0
