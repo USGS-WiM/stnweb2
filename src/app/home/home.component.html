@@ -245,18 +245,17 @@
                                 aria-label="Optionally select surveyed or unsurveyed HWMS"
                                 >HWMS Surveyed:</label
                             >
-                            <section class="checkbox-section">
-                                <mat-checkbox
-                                    aria-checked="false"
-                                    class="checkbox-margin"
-                                    >Surveyed</mat-checkbox
+                            <mat-radio-group
+                                aria-label="Select an option"
+                                class="checkbox-section"
+                            >
+                                <mat-radio-button value="surveyed"
+                                    >Surveyed</mat-radio-button
                                 >
-                                <mat-checkbox
-                                    aria-checked="false"
-                                    class="checkbox-margin"
-                                    >Unsurveyed</mat-checkbox
+                                <mat-radio-button value="unsurveyed"
+                                    >Unsurveyed</mat-radio-button
                                 >
-                            </section>
+                            </mat-radio-group>
                             <br />
                             <label
                                 class="filter-label"
@@ -297,6 +296,26 @@
                                 >
                             </section>
                         </form>
+                        <div class="button-row">
+                            <button
+                                mat-raised-button
+                                color="accent"
+                                type="submit"
+                                aria-label="Filter Sites"
+                            >
+                                <mat-icon>filter_alt</mat-icon>&nbsp;Filter
+                                Sites
+                            </button>
+                            <button
+                                mat-raised-button
+                                color="warn"
+                                type="reset"
+                                aria-label="Clear filters"
+                            >
+                                <mat-icon>clear_all</mat-icon>&nbsp;Clear
+                                Filters
+                            </button>
+                        </div>
                     </div>
                 </mat-expansion-panel>
                 <mat-expansion-panel>

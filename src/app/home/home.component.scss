@@ -115,6 +115,14 @@ $borderRadius: 4px;
     word-wrap: break-word;
 }
 
+.button-row {
+    display: flex;
+    justify-content: center;
+}
+.mat-button-base {
+    margin: 8px 8px 8px 0;
+}
+
 #map {
     height: 600px;
     position: relative;

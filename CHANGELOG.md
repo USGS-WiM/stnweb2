@@ -12,10 +12,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added prerequisite for at least one layer to be checked before the legend appears
 -   Added popup message for when a layer is removed due to user zooming out
 -   Added min zoom warning in layer control
+-   Added placeholder buttons for submitting and clearing filters
 
 ### Changed
 
 -   Adjusted color of second navbar
+-   Changed "HWMS Surveyed" from checkbox to radio buttons
 
 ### Fixed
 
