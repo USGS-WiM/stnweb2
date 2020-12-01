@@ -31,7 +31,7 @@ jobs:
                   npm run build:ci
 
             - name: Run Jasmine tests
-              run: npm run test -- --no-watch --code-coverage --browsers=ChromeHeadlessCI
+              run: npm run test --no-watch --code-coverage --browsers=ChromeHeadlessCustom
 
             - name: Comment Test Coverage
               uses: AthleticNet/comment-test-coverage@1.1
