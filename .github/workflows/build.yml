@@ -33,9 +33,9 @@ jobs:
                   npm ci
                   npm run build:ci
 
-            - name: Run Unit Tests
-            run: npm test
-            uses: /@v1.0
-            uses: ng test
-            with:
-             testcommand: run test:ci
+            # - name: Run Unit Tests
+            # run: npm test
+            # uses: /@v1.0
+            # uses: ng test
+            # with:
+            #  testcommand: run test:ci
