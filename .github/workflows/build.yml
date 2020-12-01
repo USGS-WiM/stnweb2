@@ -25,17 +25,17 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
-            - name: npm test coverage
-              run: npm run test:coverage
+            # - name: npm test coverage
+            #   run: npm run test:coverage
 
             - name: npm install and npm run build
               run: |
                   npm ci
                   npm run build:ci
 
-            #- name: Run Unit Tests
-            # run: npm test
-            # uses: colbyhill21/angular-full-ci/@v1.0
-            #uses: ng test
-            #with:
-            #testcommand: run test:ci
+            - name: Run Unit Tests
+            run: npm test
+            uses: /@v1.0
+            uses: ng test
+            with:
+             testcommand: run test:ci
