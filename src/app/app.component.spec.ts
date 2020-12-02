@@ -67,4 +67,10 @@ describe('AppComponent', () => {
         expect(component.dialog.open).toHaveBeenCalledWith(LoginComponent, {});
         component.dialog.closeAll();
     });
+
+    it(`#logout should remove user data from localStorage`, () => {
+        component.logout();
+        expect(localStorage.getItem('username')).toBeNull();
+        expect(localStorage.getItem('currentUser')).toBeNull();
+    });
 });

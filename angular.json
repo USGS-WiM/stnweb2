@@ -110,8 +110,9 @@
                         "assets": ["src/favicon.ico", "src/assets"],
                         "codeCoverage": true,
                         "codeCoverageExclude": [
-                            "**/app-settings.ts",
-                            "**/app-utilities.ts"
+                            "\\src\\app\\app.settings.ts",
+                            "\\src\\app\\app.utilities.ts",
+                            "\\src\\app\\home\\map-constants.ts"
                         ]
                     }
                 },

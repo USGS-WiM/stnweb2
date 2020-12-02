@@ -2,6 +2,9 @@ import { TestBed } from '@angular/core/testing';
 
 import { APP_UTILITIES } from './app.utilities';
 
+// Note: app.utilities is currently excluded from code coverage reporting (see angular.json codeCoverageExclude field)
+// Leaving this spec file in the codebase in case we later decide to run tests for it. - B.Draper 11/2020
+
 describe('APP_UTILITIES', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({

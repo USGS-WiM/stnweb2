@@ -31,6 +31,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatRadioModule } from '@angular/material/radio';
 
 // import { MatAccordion } from '@angular/material/expansion';
 
@@ -83,6 +84,7 @@ import { SitesService } from '@services/sites.service';
         MatInputModule,
         MatSelectModule,
         MatButtonToggleModule,
+        MatRadioModule,
         //MatAccordion
     ],
     providers: [
