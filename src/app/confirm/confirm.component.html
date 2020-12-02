@@ -8,7 +8,12 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <div class="detail-section-buttons centered">
-        <button mat-button mat-dialog-close *ngIf="data.showCancelButton">
+        <button
+            mat-button
+            mat-dialog-close
+            *ngIf="data.showCancelButton"
+            aria-label="Cancel"
+        >
             Cancel
         </button>
         <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->

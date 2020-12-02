@@ -191,7 +191,7 @@ export class HomeComponent implements OnInit {
     }
 
     //Temporary message pop up at bottom of screen
-    openSnackBar(message: string, action: string, duration: number) {
+    openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
         });
@@ -270,33 +270,41 @@ export class HomeComponent implements OnInit {
             }
         });
 
-        //When the watershed checkbox is checked, add watershed icon to legend
+        // When the watershed checkbox is checked, add watershed icon to legend
+        /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
-            if (e.name === 'Current Warnings') {
+            if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = true;
             }
-            if (e.name === 'Watches/Warnings') {
+            if (e.name === 'Watches/Warnings*') {
                 this.watchWarnVisible = true;
             }
-            if (e.name === 'AHPS Gages') {
+            if (
+                e.name ===
+                "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
+            ) {
                 this.ahpsGagesVisible = true;
             }
         });
-        //When the watershed checkbox is unchecked, remove watershed icon from legend
+        // When the watershed checkbox is unchecked, remove watershed icon from legend
+        /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
-            if (e.name === 'Current Warnings') {
+            if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = false;
             }
-            if (e.name === 'Watches/Warnings') {
+            if (e.name === 'Watches/Warnings*') {
                 this.watchWarnVisible = false;
             }
-            if (e.name === 'AHPS Gages') {
+            if (
+                e.name ===
+                "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
+            ) {
                 this.ahpsGagesVisible = false;
             }
         });
@@ -317,7 +325,7 @@ export class HomeComponent implements OnInit {
                 this.watchWarnVisible == true
             ) {
                 if (this.previousZoom == 9 && this.currentZoom == 8) {
-                    this.openSnackBar(
+                    this.openZoomOutSnackBar(
                         'Zoom to level 9 or higher to view additional layers',
                         'OK',
                         4000
@@ -459,7 +467,7 @@ export class HomeComponent implements OnInit {
             });
         });
 
-        //When the watershed checkbox is checked, add watershed icon to legend
+        // When the watershed checkbox is checked, add watershed icon to legend
         /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
             if (e.name === 'Watersheds') {
@@ -475,7 +483,7 @@ export class HomeComponent implements OnInit {
                 this.ahpsGagesVisible = true;
             }
         });
-        //When the watershed checkbox is unchecked, remove watershed icon from legend
+        // When the watershed checkbox is unchecked, remove watershed icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
             if (e.name === 'Watersheds') {
