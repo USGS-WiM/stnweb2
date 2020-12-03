@@ -151,7 +151,6 @@
             <mat-card-title>
                 <div class="results-card-title-row">
                     <span class="results-card-title">Map Filters</span>
-
                     <span class="spacer"></span>
                 </div>
             </mat-card-title>
@@ -204,7 +203,7 @@
                                     multiple
                                 >
                                     <mat-option
-                                        *ngFor="let network of networks"
+                                        *ngFor="let network of networks | async"
                                         [value]="network"
                                         >{{ network.name }}</mat-option
                                     >
@@ -219,9 +218,12 @@
                                     [formControl]="sensorControl"
                                 >
                                     <mat-option
-                                        *ngFor="let sensor of sensors"
-                                        [value]="sensor"
-                                        >{{ sensor.sensor }}</mat-option
+                                        *ngFor="
+                                            let sensorType of sensorTypes
+                                                | async
+                                        "
+                                        [value]="sensorType"
+                                        >{{ sensorType.sensor }}</mat-option
                                     >
                                 </mat-select>
                             </mat-form-field>
@@ -233,7 +235,7 @@
                                     multiple
                                 >
                                     <mat-option
-                                        *ngFor="let state of states"
+                                        *ngFor="let state of states | async"
                                         [value]="state"
                                         >{{ state.state_name }}</mat-option
                                     >

@@ -13,13 +13,13 @@ import { MAP_CONSTANTS } from './map-constants';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 import { Event } from '@interfaces/event';
-import { EventsService } from '@services/events.service';
+import { EventService } from '@app/services/event.service';
 import { State } from '@interfaces/state';
-import { StatesService } from '@services/states.service';
+import { StateService } from '@app/services/state.service';
 import { NetworkName } from '@interfaces/network-name';
-import { NetworkNamesService } from '@services/network-names.service';
+import { NetworkNameService } from '@app/services/network-name.service';
 import { SensorType } from '@interfaces/sensor-type';
-import { SensorTypesService } from '@services/sensor-types.service';
+import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
 
@@ -30,6 +30,8 @@ declare let L: any;
 import 'leaflet';
 import 'leaflet-draw';
 import * as esri from 'esri-leaflet';
+import { EventTypeService } from '@app/services/event-type.service';
+import { EventType } from '@app/interfaces/event-type';
 
 export interface PeriodicElement {
     name: string;
@@ -91,19 +93,31 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
+    // eventTypes: EventType[];
+
+    eventTypes: Observable<EventType[]>;
+
+    // below is the temp var that holds the all events list for the
+    // new method of connecting events with the service. This will eventually replace
+    // 'events' once refactored.
+    eventsList: Observable<Event[]>;
+
     //Create variables for filter dropdowns --start
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
 
     networkControl = new FormControl();
-    networks: NetworkName[];
+    // networks: NetworkName[];
+    networks: Observable<NetworkName[]>;
 
     sensorControl = new FormControl();
-    sensors: SensorType[];
+    // sensors: SensorType[];
+    sensorTypes: Observable<SensorType[]>;
 
     stateControl = new FormControl();
-    states: State[];
+    // states: State[];
+    states: Observable<State[]>;
     //Create variables for filter dropdowns --end
 
     //These variables indicate if each layer is checked
@@ -120,22 +134,38 @@ export class HomeComponent implements OnInit {
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
-        private eventsService: EventsService,
-        private statesService: StatesService,
-        private networkNamesService: NetworkNamesService,
-        private sensorTypesService: SensorTypesService,
+        private eventService: EventService,
+        private eventTypeService: EventTypeService,
+        private stateService: StateService,
+        private networkNameService: NetworkNameService,
+        private sensorTypeService: SensorTypeService,
         public currentUserService: CurrentUserService,
         private sitesService: SitesService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
-    ) {}
+    ) {
+        this.eventTypes = this.eventTypeService.eventTypes$;
+        this.eventsList = this.eventService.events$;
+
+        this.networks = this.networkNameService.networks$;
+        this.sensorTypes = this.sensorTypeService.sensorTypes$;
+        this.states = this.stateService.states$;
+    }
 
     ngOnInit() {
+        /// demonstration code. to be removed
+        let floodEvents: EventType;
+        this.eventTypeService.getEventsByEventType(4).subscribe((eventType) => {
+            floodEvents = eventType;
+            console.log('flood events: ' + JSON.parse(eventType));
+        });
+        /// end demonstration code
+
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
         console.log('User logged in?: ' + this.isloggedIn);
         this.setCurrentFilter();
 
-        this.eventsService.getAllEvents().subscribe((results) => {
+        this.eventService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
             this.events = APP_UTILITIES.SORT(
@@ -173,15 +203,16 @@ export class HomeComponent implements OnInit {
                 });
         });
 
-        this.networkNamesService.getNetworkNames().subscribe((results) => {
-            this.networks = results;
-        });
-        this.sensorTypesService.getSensorTypes().subscribe((results) => {
-            this.sensors = results;
-        });
-        this.statesService.getStates().subscribe((results) => {
-            this.states = results;
-        });
+        // the following have been replaced with the aysnc pipe method on the template
+        // this.NetworkNameService.getNetworkNames().subscribe((results) => {
+        //     this.networks = results;
+        // });
+        // this.SensorTypeService.getSensorTypes().subscribe((results) => {
+        //     this.sensors = results;
+        // });
+        // this.stateService.getStates().subscribe((results) => {
+        //     this.states = results;
+        // });
     }
 
     setCurrentFilter() {

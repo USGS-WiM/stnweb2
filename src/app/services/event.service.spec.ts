@@ -6,7 +6,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { Event } from '@interfaces/event';
-import { EventsService } from './events.service';
+import { EventService } from './event.service';
 import { Site } from '@interfaces/site';
 
 import { of, defer } from 'rxjs';
@@ -22,17 +22,17 @@ export function responseData<T>(data: T) {
     return defer(() => Promise.resolve(data));
 }
 
-describe('EventsService', () => {
+describe('EventService', () => {
     let httpTestingController: HttpTestingController;
-    let service: EventsService;
+    let service: EventService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [EventsService, HttpClient],
+            providers: [EventService, HttpClient],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
-        service = TestBed.inject(EventsService);
+        service = TestBed.inject(EventService);
     });
     afterEach(() => {
         httpTestingController.verify();

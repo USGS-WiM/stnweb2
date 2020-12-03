@@ -25,63 +25,14 @@ export class APP_SETTINGS {
         return this.API_ROOT + 'login';
     }
 
-    /* istanbul ignore next */
-    public static get AGENCIES_URL(): string {
-        return this.API_ROOT + 'agencies/';
-    }
-    /* istanbul ignore next */
-    public static get DAMAGE_TYPES_URL(): string {
-        return this.API_ROOT + 'damagetypes/';
-    }
-    /* istanbul ignore next */
-    public static get EVENTS_URL(): string {
-        return this.API_ROOT + 'sitevisits/';
-    }
-    /* istanbul ignore next */
-    public static get FILE_TYPES_URL(): string {
-        return this.API_ROOT + 'filetypes/';
-    }
-    /* istanbul ignore next */
-    public static get ICE_CONDITION_TYPES_URL(): string {
-        return this.API_ROOT + 'iceconditiontypes/';
-    }
-    /* istanbul ignore next */
-    public static get JAM_TYPES_URL(): string {
-        return this.API_ROOT + 'jamtypes/';
-    }
-    /* istanbul ignore next */
-    public static get OBSERVERS_URL(): string {
-        return this.API_ROOT + 'observers/';
-    }
-    /* istanbul ignore next */
-    public static get STAGES_URL(): string {
-        return this.API_ROOT + 'stagetypes/';
-    }
-    /* istanbul ignore next */
-    public static get ROLES_URL(): string {
-        return this.API_ROOT + 'roles/';
-    }
-    /* istanbul ignore next */
-    public static get ROUGHNESS_TYPES_URL(): string {
-        return this.API_ROOT + 'roughnesstypes/';
-    }
-    /* istanbul ignore next */
-    public static get RIVER_CONDITION_TYPES(): string {
-        return this.API_ROOT + 'riverconditiontypes/';
-    }
-    /* istanbul ignore next */
-    public static get SITES_URL(): string {
-        return this.API_ROOT + 'sites';
-    }
-    /* istanbul ignore next */
-    public static get WEATHER_CONDITION_TYPES_URL(): string {
-        return this.API_ROOT + 'weatherconditiontypes/';
-    }
-
     // STN
     public static get EVENTS(): string {
         return this.API_ROOT + 'Events';
     }
+    public static get EVENT_TYPES(): string {
+        return this.API_ROOT + 'EventTypes';
+    }
+
     public static get NETWORK_NAMES(): string {
         return this.API_ROOT + 'NetworkNames';
     }

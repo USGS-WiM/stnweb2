@@ -6,7 +6,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { State } from '@interfaces/state';
-import { StatesService } from './states.service';
+import { StateService } from './state.service';
 
 import { of, defer } from 'rxjs';
 
@@ -20,17 +20,17 @@ export function responseData<T>(data: T) {
     return defer(() => Promise.resolve(data));
 }
 
-describe('StatesService', () => {
+describe('StateService', () => {
     let httpTestingController: HttpTestingController;
-    let service: StatesService;
+    let service: StateService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [StatesService, HttpClient],
+            providers: [StateService, HttpClient],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
-        service = TestBed.inject(StatesService);
+        service = TestBed.inject(StateService);
     });
     afterEach(() => {
         httpTestingController.verify();

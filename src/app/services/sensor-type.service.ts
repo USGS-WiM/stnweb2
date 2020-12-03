@@ -1,19 +1,35 @@
 import { Injectable } from '@angular/core';
 import { APP_SETTINGS } from '../app.settings';
 import { Observable } from 'rxjs/Observable';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, tap, shareReplay } from 'rxjs/operators';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { APP_UTILITIES } from '@app/app.utilities';
 
 @Injectable({
     providedIn: 'root',
 })
-export class SensorTypesService {
-    constructor(private httpClient: HttpClient) {}
+export class SensorTypeService {
+    sensorTypes$: Observable<any>;
+
+    constructor(private httpClient: HttpClient) {
+        this.sensorTypes$ = httpClient
+            .get(APP_SETTINGS.SENSOR_TYPES + '.json')
+            .pipe(
+                shareReplay(1),
+                tap(() => console.log('after sharing')),
+                catchError(
+                    APP_UTILITIES.handleError<any>(
+                        'SensorTypeService httpClient GET',
+                        []
+                    )
+                )
+            );
+    }
 
     public getSensorTypes(): Observable<any> {
         return this.httpClient.get(APP_SETTINGS.SENSOR_TYPES + '.json').pipe(
@@ -21,7 +37,7 @@ export class SensorTypesService {
                 console.log('Sensor types list response recieved: ' + response);
                 return response;
             }),
-            catchError(this.handleError<any>('getSensorTypes', []))
+            catchError(APP_UTILITIES.handleError<any>('getSensorTypes', []))
         );
     }
 
@@ -36,26 +52,5 @@ export class SensorTypesService {
                     return response;
                 })
             );
-    }
-
-    /**
-     * Handle Http operation that failed.
-     * Let the app continue.
-     * @param operation - name of the operation that failed
-     * @param result - optional value to return as the observable result
-     */
-    /* istanbul ignore next */
-    private handleError<T>(operation = 'operation', result?: T) {
-        return (error: any): Observable<T> => {
-            // TODO: send the error to remote logging infrastructure
-            console.error(error); // log to console instead
-
-            // TODO: better job of transforming error for user consumption
-            // Consider creating a message service for this (https://angular.io/tutorial/toh-pt4)
-            console.log(`${operation} failed: ${error.message}`);
-
-            // Let the app keep running by returning an empty result.
-            return of(result as T);
-        };
     }
 }
