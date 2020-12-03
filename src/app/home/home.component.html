@@ -166,7 +166,7 @@
                         ></mat-panel-title>
                     </mat-expansion-panel-header>
                     <div class="form-container">
-                        <form class="form">
+                        <form class="form" [formGroup]="mapFilterForm">
                             <mat-form-field class="eventSelect">
                                 <mat-label for="eventSelection"
                                     >Event</mat-label
@@ -176,7 +176,7 @@
                                     type="text"
                                     aria-label="Dropdown menu for storm event selection"
                                     matInput
-                                    [formControl]="eventsControl"
+                                    formControlName="eventsControl"
                                     [matAutocomplete]="auto"
                                 />
                                 <mat-hint
@@ -203,7 +203,7 @@
                                 >
                                 <mat-select
                                     id="networkOptions"
-                                    [formControl]="networkControl"
+                                    formControlName="networkControl"
                                     multiple
                                 >
                                     <mat-option
@@ -221,7 +221,7 @@
                                 >
                                 <mat-select
                                     id="sensorOptions"
-                                    [formControl]="sensorControl"
+                                    formControlName="sensorControl"
                                 >
                                     <mat-option
                                         *ngFor="let sensor of sensors$ | async"
@@ -234,7 +234,7 @@
                                 <mat-label for="stateList">States</mat-label>
                                 <mat-select
                                     id="stateOptions"
-                                    [formControl]="stateControl"
+                                    formControlName="stateControl"
                                     multiple
                                 >
                                     <mat-option
@@ -253,6 +253,7 @@
                             <mat-radio-group
                                 aria-label="Select an option"
                                 class="checkbox-section"
+                                formControlName="surveyedControl"
                             >
                                 <mat-radio-button value="surveyed"
                                     >Surveyed</mat-radio-button
@@ -271,32 +272,38 @@
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="HWMOnlyControl"
                                     >HWM Only Sites</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="sensorOnlyControl"
                                     >Sensor Only Sites</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="surveyedOnlyControl"
                                     >Surveyed RP Only Sites</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="bracketSiteOnlyControl"
                                     >Pre-Deployed Bracket Sites
                                     Only</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="RDGOnlyControl"
                                     >RDG Only Sites</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="OPDefinedControl"
                                     >Has OP Defined</mat-checkbox
                                 >
                             </section>
@@ -307,6 +314,7 @@
                                 color="accent"
                                 type="submit"
                                 aria-label="Filter Sites"
+                                (click)="submitMapFilter()"
                             >
                                 <mat-icon>filter_alt</mat-icon>&nbsp;Filter
                                 Sites
@@ -316,6 +324,7 @@
                                 color="warn"
                                 type="reset"
                                 aria-label="Clear filters"
+                                (click)="clearMapFilterForm()"
                             >
                                 <mat-icon>clear_all</mat-icon>&nbsp;Clear
                                 Filters
