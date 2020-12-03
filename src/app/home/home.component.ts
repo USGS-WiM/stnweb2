@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit {
     siteName;
 
     public selectedEvent;
-    currentEvent: number;
+    currentEvent: number; //change to subject?
     currentEventName: string;
     eventSites: any;
     eventMarkers = L.layerGroup([]);
@@ -96,16 +96,16 @@ export class HomeComponent implements OnInit {
     //Create variables for filter dropdowns --start
     eventsControl = new FormControl();
     events: Event[];
-    filteredEvents: Observable<Event[]>;
+    filteredEvents$: Observable<Event[]>;
 
     networkControl = new FormControl();
-    networks: NetworkName[];
+    networks$: Observable<NetworkName[]>;
 
     sensorControl = new FormControl();
-    sensors: SensorType[];
+    sensors$: Observable<SensorType[]>;
 
     stateControl = new FormControl();
-    states: State[];
+    states$: Observable<State[]>;
     //Create variables for filter dropdowns --end
 
     //These variables indicate if each layer is checked
@@ -149,13 +149,14 @@ export class HomeComponent implements OnInit {
             //Get id and name of most recent event
             this.currentEvent = this.events[0].event_id;
             this.currentEventName = this.events[0].event_name;
+            // TODO: set up subject to track the next current event and move
+            //this.eventSites.next(this.currentEvent)
 
             // allow user to type into the event selector to view matching events
-            this.filteredEvents = this.eventsControl.valueChanges.pipe(
-                startWith(''),
-                map((value) =>
+            this.filteredEvents$ = this.eventsControl.valueChanges.pipe(
+                /* map((value) =>
                     typeof value === 'string' ? value : value.event_name
-                ),
+                ), */
                 map((event_name) =>
                     // match user text input to the index of the corresponding event
                     /* istanbul ignore else */
@@ -164,30 +165,15 @@ export class HomeComponent implements OnInit {
                         : this.events
                 )
             );
-
-            // create and configure map
-            this.createMap();
-
-            // this.mapResults(this.events);
-
-            // by default populate map with most recent event
-            this.sitesService
-                .getEventSites(this.currentEvent)
-                .subscribe((results) => {
-                    this.eventSites = results;
-                    this.mapResults(this.eventSites);
-                });
+            //set up call to get sites for specific event
+            this.displaySelectedEvent();
         });
-
-        this.networkNamesService.getNetworkNames().subscribe((results) => {
-            this.networks = results;
-        });
-        this.sensorTypesService.getSensorTypes().subscribe((results) => {
-            this.sensors = results;
-        });
-        this.statesService.getStates().subscribe((results) => {
-            this.states = results;
-        });
+        // get lists of options for dropdowns
+        this.networks$ = this.networkNamesService.getNetworkNames();
+        this.sensors$ = this.sensorTypesService.getSensorTypes();
+        this.states$ = this.statesService.getStates();
+        // create and configure map
+        this.createMap();
     }
 
     setCurrentFilter() {
@@ -211,14 +197,13 @@ export class HomeComponent implements OnInit {
         //Clear the old markers from the layer
         this.eventMarkers = L.layerGroup([]);
         //Plot markers for selected event
-        if (this.selectedEvent !== undefined) {
-            this.sitesService
-                .getEventSites(this.selectedEvent.event_id)
-                .subscribe((results) => {
-                    this.eventSites = results;
-                    this.mapResults(this.eventSites);
-                });
-        }
+
+        this.sitesService
+            .getEventSites(this.currentEvent)
+            .subscribe((results) => {
+                this.eventSites = results;
+                this.mapResults(this.eventSites);
+            });
     }
 
     createMap() {

@@ -178,8 +178,6 @@
                                     matInput
                                     [formControl]="eventsControl"
                                     [matAutocomplete]="auto"
-                                    [(ngModel)]="selectedEvent"
-                                    (ngModelChange)="displaySelectedEvent()"
                                 />
                                 <mat-hint
                                     >Start typing for suggestions</mat-hint
@@ -190,7 +188,7 @@
                                 >
                                     <mat-option
                                         *ngFor="
-                                            let event of filteredEvents | async
+                                            let event of filteredEvents$ | async
                                         "
                                         [value]="event"
                                     >
@@ -209,7 +207,9 @@
                                     multiple
                                 >
                                     <mat-option
-                                        *ngFor="let network of networks"
+                                        *ngFor="
+                                            let network of networks$ | async
+                                        "
                                         [value]="network"
                                         >{{ network.name }}</mat-option
                                     >
@@ -224,7 +224,7 @@
                                     [formControl]="sensorControl"
                                 >
                                     <mat-option
-                                        *ngFor="let sensor of sensors"
+                                        *ngFor="let sensor of sensors$ | async"
                                         [value]="sensor"
                                         >{{ sensor.sensor }}</mat-option
                                     >
@@ -238,7 +238,7 @@
                                     multiple
                                 >
                                     <mat-option
-                                        *ngFor="let state of states"
+                                        *ngFor="let state of states$ | async"
                                         [value]="state"
                                         >{{ state.state_name }}</mat-option
                                     >
