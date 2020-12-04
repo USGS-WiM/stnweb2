@@ -18,7 +18,10 @@ export class SensorTypesService {
     public getSensorTypes(): Observable<any> {
         return this.httpClient.get(APP_SETTINGS.SENSOR_TYPES + '.json').pipe(
             tap((response) => {
-                console.log('Sensor types list response recieved: ' + response);
+                console.log(
+                    'Sensor types list response received: ' +
+                        JSON.stringify(response)
+                );
                 return response;
             }),
             catchError(this.handleError<any>('getSensorTypes', []))

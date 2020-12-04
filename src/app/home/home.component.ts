@@ -25,6 +25,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 import { Event } from '@interfaces/event';
 import { EventsService } from '@services/events.service';
+import { Site } from '@interfaces/site';
 import { State } from '@interfaces/state';
 import { StatesService } from '@services/states.service';
 import { NetworkName } from '@interfaces/network-name';
@@ -41,6 +42,7 @@ declare let L: any;
 import 'leaflet';
 import 'leaflet-draw';
 import * as esri from 'esri-leaflet';
+import { Subject } from 'rx';
 
 export interface PeriodicElement {
     name: string;
@@ -130,6 +132,9 @@ export class HomeComponent implements OnInit {
     previousZoom: number;
 
     public mapFilterForm: FormGroup;
+
+    private displayedSites: Subject<Site[]> = new Subject<Site[]>();
+    private setDisplayedSites;
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -632,15 +637,62 @@ export class HomeComponent implements OnInit {
     }
 
     public clearMapFilterForm(): void {
+        // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
-        // workaround to change validity
-        this.mapFilterForm.get('networkControl').updateValueAndValidity();
-        this.mapFilterForm.get('sensorControl').updateValueAndValidity();
-        this.mapFilterForm.get('stateControl').updateValueAndValidity();
     }
 
     public submitMapFilter() {
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
-        console.log(filterParams);
+
+        //collect and format selected Filter Form values
+        let eventId = filterParams.eventsControl
+            ? filterParams.eventsControl.event_id
+            : '';
+        let networkIds = filterParams.networkControl
+            ? filterParams.networkControl.toString()
+            : '';
+        let sensorIds = filterParams.sensorControl
+            ? filterParams.sensorControl.toString()
+            : '';
+        let stateAbbrevs = filterParams.stateControl
+            ? filterParams.stateControl.toString()
+            : '';
+        //surveyed = true, unsurveyed = false, or leave empty
+        let surveyed = filterParams.surveyedControl
+            ? filterParams.surveyedControl
+            : '';
+        let HWMTrue = filterParams.HWMOnlyControl ? '1' : '';
+        let sensorTrue = filterParams.sensorOnlyControl ? '1' : '';
+        //Pre-deployed bracket site is HousingTypeOne=1 in API
+        let bracketTrue = filterParams.bracketSiteOnlyControl ? '1' : '';
+        let RDGTrue = filterParams.RDGOnlyControl ? '1' : '';
+        let opDefinedTrue = filterParams.OPDefinedControl ? '1' : '';
+
+        // format url params into single string
+        let urlParamString =
+            'Event=' +
+            eventId +
+            '&State=' +
+            stateAbbrevs +
+            '&SensorType=' +
+            sensorIds +
+            '&NetworkName=' +
+            networkIds +
+            '&OPDefined=' +
+            opDefinedTrue +
+            '&HWMOnly=' +
+            HWMTrue +
+            '&HWMSurveyed=' +
+            surveyed +
+            '&SensorOnly=' +
+            sensorTrue +
+            '&RDGOnly=' +
+            RDGTrue +
+            '&HousingTypeOne=' +
+            bracketTrue;
+
+        this.sitesService.getFilteredSites(urlParamString).subscribe((res) => {
+            //this.mapResults(res);
+        });
     }
 }

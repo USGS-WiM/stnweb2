@@ -210,7 +210,7 @@
                                         *ngFor="
                                             let network of networks$ | async
                                         "
-                                        [value]="network"
+                                        [value]="network.network_name_id"
                                         >{{ network.name }}</mat-option
                                     >
                                 </mat-select>
@@ -223,9 +223,10 @@
                                     id="sensorOptions"
                                     formControlName="sensorControl"
                                 >
+                                    <mat-option>Any</mat-option>
                                     <mat-option
                                         *ngFor="let sensor of sensors$ | async"
-                                        [value]="sensor"
+                                        [value]="sensor.sensor_type_id"
                                         >{{ sensor.sensor }}</mat-option
                                     >
                                 </mat-select>
@@ -239,7 +240,7 @@
                                 >
                                     <mat-option
                                         *ngFor="let state of states$ | async"
-                                        [value]="state"
+                                        [value]="state.state_abbrev"
                                         >{{ state.state_name }}</mat-option
                                     >
                                 </mat-select>
@@ -255,10 +256,10 @@
                                 class="checkbox-section"
                                 formControlName="surveyedControl"
                             >
-                                <mat-radio-button value="surveyed"
+                                <mat-radio-button value="true"
                                     >Surveyed</mat-radio-button
                                 >
-                                <mat-radio-button value="unsurveyed"
+                                <mat-radio-button value="false"
                                     >Unsurveyed</mat-radio-button
                                 >
                             </mat-radio-group>
