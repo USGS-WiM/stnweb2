@@ -4,6 +4,7 @@ import { CurrentUserService } from '@services/current-user.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
 // import { by } from '@angular/platform-browser';
+import { ReactiveFormsModule } from '@angular/forms';
 
 declare let L: any;
 import 'leaflet';
@@ -24,7 +25,7 @@ describe('HomeComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [HomeComponent],
-            imports: [MatAutocompleteModule],
+            imports: [MatAutocompleteModule, ReactiveFormsModule],
             providers: [
                 HomeComponent,
                 CurrentUserService,
