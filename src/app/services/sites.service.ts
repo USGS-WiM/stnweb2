@@ -32,7 +32,7 @@ export class SitesService {
     }
 
     public getFilteredSites(urlParams: string): Observable<Site[]> {
-        //console.log('URL Parameters passed: ' + urlParams)
+        console.log('URL Parameters passed: ' + urlParams);
         return this.httpClient
             .get(APP_SETTINGS.SITES_URL + '/FilteredSites.json?' + urlParams)
             .pipe(

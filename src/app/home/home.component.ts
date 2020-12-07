@@ -106,20 +106,12 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
-    //Create variables for filter dropdowns --start
-    eventsControl = new FormControl();
+    //holds filter values
     events: Event[];
-    filteredEvents$: Observable<Event[]>;
-
-    networkControl = new FormControl();
+    filteredEvents$: Observable<Event[]>; //not used yet
     networks$: Observable<NetworkName[]>;
-
-    sensorControl = new FormControl();
     sensors$: Observable<SensorType[]>;
-
-    stateControl = new FormControl();
     states$: Observable<State[]>;
-    //Create variables for filter dropdowns --end
 
     //These variables indicate if each layer is checked
     watershedsVisible = false;
@@ -588,6 +580,8 @@ export class HomeComponent implements OnInit {
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
         const riverConditions = [];
+        this.eventMarkers.removeFrom(this.map);
+        this.eventMarkers.clearLayers();
 
         // loop through results responsefrom a search query
         if (this.eventSites.length !== undefined) {
@@ -611,7 +605,9 @@ export class HomeComponent implements OnInit {
         const popup = L.popup()
           .setContent(popupContent); */
                 /* istanbul ignore next */
-                L.marker([lat, long], { icon: myicon }).addTo(this.map);
+                L.marker([lat, long], { icon: myicon }).addTo(
+                    this.eventMarkers
+                );
                 /* .bindPopup(popup)
           .on('click',
             (data) => {
@@ -692,7 +688,7 @@ export class HomeComponent implements OnInit {
             bracketTrue;
 
         this.sitesService.getFilteredSites(urlParamString).subscribe((res) => {
-            //this.mapResults(res);
+            this.mapResults(res);
         });
     }
 }
