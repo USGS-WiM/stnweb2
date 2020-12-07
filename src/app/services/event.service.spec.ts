@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
     HttpClientTestingModule,
     HttpTestingController,
@@ -28,7 +27,7 @@ describe('EventService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [EventService, HttpClient],
+            providers: [EventService],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
@@ -66,5 +65,25 @@ describe('EventService', () => {
             APP_SETTINGS.EVENTS + 24 + '.json'
         );
         req.flush(mockEvent);
+    });
+
+    it('#filterEvents() should return an appropriate response of events', () => {
+        let query = { eventType: 2 };
+        service.filterEvents(query).subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockEventsList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.EVENTS + '/FilteredEvents.json?' + '&Type=2'
+        );
+        req.flush(mockEventsList);
+    });
+
+    it('#parseFilterEventsQuery should convert a query object into a query string', () => {
+        let query = { date: '08/01/2012', eventType: 2, state: 'FL' };
+        let parsedResult = service.parseFilterEventsQuery(query);
+        expect(parsedResult).toBe('?&Date=08/01/2012&Type=2&State=FL');
     });
 });

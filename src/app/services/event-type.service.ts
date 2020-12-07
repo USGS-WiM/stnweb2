@@ -32,10 +32,10 @@ export class EventTypeService {
             );
     }
 
-    // this function unsed here, but goes into your component where you want the event types
-    public getEventTypes() {
-        this.eventTypes$.subscribe((data) => (this.eventTypes = data));
-    }
+    // this function unused here, but goes into your component where you want the event types
+    // public getEventTypes() {
+    //     this.eventTypes$.subscribe((data) => (this.eventTypes = data));
+    // }
 
     getEventsByEventType(id: number): Observable<any> {
         console.log('cache: ' + this.eventsByTypeCache);
@@ -44,7 +44,7 @@ export class EventTypeService {
         return this.eventsByTypeCache[id];
     }
 
-    fetchEventsByEventType(id: number) {
+    fetchEventsByEventType(id: number): Observable<any> {
         return this.httpClient
             .get(APP_SETTINGS.EVENT_TYPES + '/' + id + '/Events.json')
             .map((rawData) => this.mapEvents(rawData, id))
@@ -56,9 +56,9 @@ export class EventTypeService {
         return { event_type_id: id, events: rawData };
     }
 
-    notify(id) {
-        console.log(`fetch events by type: ${id}`);
-    }
+    // notify(id) {
+    //     console.log(`fetch events by type: ${id}`);
+    // }
 
     // public getEventTypes(): Observable<any> {
     //     return this.httpClient.get(APP_SETTINGS.EVENT_TYPES).pipe(
@@ -69,25 +69,4 @@ export class EventTypeService {
     //         catchError(this.handleError<any>('getEventTypes', []))
     //     );
     // }
-
-    /**
-     * Handle Http operation that failed.
-     * Let the app continue.
-     * @param operation - name of the operation that failed
-     * @param result - optional value to return as the observable result
-     */
-    /* istanbul ignore next */
-    private handleError<T>(operation = 'operation', result?: T) {
-        return (error: any): Observable<T> => {
-            // TODO: send the error to remote logging infrastructure
-            console.error(error); // log to console instead
-
-            // TODO: better job of transforming error for user consumption
-            // Consider creating a message service for this (https://angular.io/tutorial/toh-pt4)
-            console.log(`${operation} failed: ${error.message}`);
-
-            // Let the app keep running by returning an empty result.
-            return of(result as T);
-        };
-    }
 }

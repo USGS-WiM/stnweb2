@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
     HttpClientTestingModule,
     HttpTestingController,
@@ -26,7 +25,7 @@ describe('StateService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [StateService, HttpClient],
+            providers: [StateService],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);

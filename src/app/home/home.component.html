@@ -163,6 +163,44 @@
                     </mat-expansion-panel-header>
                     <div class="form-container">
                         <form class="form">
+                            <mat-form-field appearance="fill">
+                                <mat-label for="eventType"
+                                    >Event Type</mat-label
+                                >
+                                <mat-select
+                                    id="eventTypeOptions"
+                                    [formControl]="eventTypeControl"
+                                    (selectionChange)="updateEventFilter()"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let eventType of eventTypes | async
+                                        "
+                                        [value]="eventType"
+                                        >{{ eventType.type }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="fill">
+                                <mat-label for="eventType"
+                                    >Event State</mat-label
+                                >
+                                <mat-select
+                                    id="eventStateOptions"
+                                    [formControl]="eventStateControl"
+                                    (selectionChange)="updateEventFilter()"
+                                >
+                                    <mat-option
+                                        *ngFor="let state of states | async"
+                                        [value]="state"
+                                        >{{ state.state_name }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+
+                            <br />
+
                             <mat-form-field class="eventSelect">
                                 <mat-label for="eventSelection"
                                     >Event</mat-label
@@ -173,13 +211,13 @@
                                     aria-label="Dropdown menu for storm event selection"
                                     matInput
                                     [formControl]="eventsControl"
-                                    [matAutocomplete]="auto"
+                                    [matAutocomplete]="eventAutoComplete"
                                 />
                                 <mat-hint
                                     >Start typing for suggestions</mat-hint
                                 >
                                 <mat-autocomplete
-                                    #auto="matAutocomplete"
+                                    #eventAutoComplete="matAutocomplete"
                                     [displayWith]="displayEvent"
                                 >
                                     <mat-option

@@ -1,4 +1,3 @@
-import { HttpClient, HttpHandler } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -16,6 +15,7 @@ import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
 import { MAP_CONSTANTS } from './map-constants';
 import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('HomeComponent', () => {
     let component: HomeComponent;
@@ -24,12 +24,10 @@ describe('HomeComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [HomeComponent],
-            imports: [MatAutocompleteModule],
+            imports: [MatAutocompleteModule, HttpClientTestingModule],
             providers: [
                 HomeComponent,
                 CurrentUserService,
-                HttpClient,
-                HttpHandler,
                 DisplayValuePipe,
                 MatSnackBar,
             ],
@@ -48,6 +46,8 @@ describe('HomeComponent', () => {
     });
 
     it('leaflet map should be initialized', () => {
+        component.ngOnInit();
+        component.createMap();
         expect(component.map).toBeDefined();
     });
 
@@ -115,7 +115,8 @@ describe('HomeComponent', () => {
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {
-        // component.create
+        component.ngOnInit();
+        component.createMap();
         let latlngs = [
             [37, -109.05],
             [41, -109.03],
@@ -147,6 +148,8 @@ describe('HomeComponent', () => {
     it('#eventFocus sets map to event focused view', () => {
         // temporarily sets map to U.S, extent instead of event's extent
         // first set the view to somehting not default to test that the update works
+        component.ngOnInit();
+        component.createMap();
         let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
         component.map.setView(notDefaultCenter, 9);
         component.eventFocus();

@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
     HttpClientTestingModule,
     HttpTestingController,
@@ -27,7 +26,7 @@ describe('NetworkNameService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [NetworkNameService, HttpClient],
+            providers: [NetworkNameService],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
@@ -43,18 +42,19 @@ describe('NetworkNameService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('#getNetworkNames() should retrieve a network names list from the data API', () => {
-        service.getNetworkNames().subscribe((results) => {
-            expect(results).not.toBe(null);
-            expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockNetworkNamesList)
-            );
-        });
-        const req = httpTestingController.expectOne(
-            APP_SETTINGS.NETWORK_NAMES + '.json'
-        );
-        req.flush(mockNetworkNamesList);
-    });
+    // deprecated for now due to use of a different approach for full list retrieval(see constructor)
+    // xit('#getNetworkNames() should retrieve a network names list from the data API', () => {
+    //     service.getNetworkNames().subscribe((results) => {
+    //         expect(results).not.toBe(null);
+    //         expect(JSON.stringify(results)).toEqual(
+    //             JSON.stringify(mockNetworkNamesList)
+    //         );
+    //     });
+    //     const req = httpTestingController.expectOne(
+    //         APP_SETTINGS.NETWORK_NAMES + '.json'
+    //     );
+    //     req.flush(mockNetworkNamesList);
+    // });
 
     it('#getNetworkName() should retrieve a network name record from the data API', () => {
         service.getNetworkName(5).subscribe((results) => {

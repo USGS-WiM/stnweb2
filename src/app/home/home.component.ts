@@ -22,6 +22,7 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
+import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -93,16 +94,20 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
-    // eventTypes: EventType[];
-
-    eventTypes: Observable<EventType[]>;
-
     // below is the temp var that holds the all events list for the
     // new method of connecting events with the service. This will eventually replace
     // 'events' once refactored.
     eventsList: Observable<Event[]>;
 
     //Create variables for filter dropdowns --start
+
+    eventTypeControl = new FormControl();
+    // eventTypes: EventType[];
+    eventTypes: Observable<EventType[]>;
+    // filteredEventTypes: Observable<Event[]>;
+
+    eventStateControl = new FormControl();
+
     eventsControl = new FormControl();
     events: Event[];
     filteredEvents: Observable<Event[]>;
@@ -219,6 +224,29 @@ export class HomeComponent implements OnInit {
         this.currentFilter = localStorage.getItem('currentFilter')
             ? JSON.parse(localStorage.getItem('currentFilter'))
             : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    }
+
+    updateEventFilter() {
+        this.eventService
+            .filterEvents({
+                eventType: this.eventTypeControl.value
+                    ? this.eventTypeControl.value.event_type_id
+                    : null,
+                state: this.eventStateControl.value
+                    ? this.eventStateControl.value.state_abbrev
+                    : null,
+            })
+            .subscribe((filterResponse) => {
+                // update events array to the filter response
+                this.events = filterResponse;
+                // this line necessary to update the list (hack)
+                this.eventsControl.setValue('');
+            });
+
+        // this.events = this.eventService.filterEvents({
+        //     eventType: typeArray.toString(),
+        //     state: this.eventStateControl.value.state_abbrev,
+        // });
     }
 
     //Temporary message pop up at bottom of screen

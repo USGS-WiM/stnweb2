@@ -1,4 +1,3 @@
-import { HttpClient, HttpHandler } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -14,6 +13,7 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AboutComponent } from '@app/about/about.component';
 import { LoginComponent } from '@app/login/login.component';
 import { FormBuilder } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AppComponent', () => {
     let component: AppComponent;
@@ -27,12 +27,11 @@ describe('AppComponent', () => {
                 RouterTestingModule,
                 MatDialogModule,
                 BrowserAnimationsModule,
+                HttpClientTestingModule,
             ],
             declarations: [AppComponent],
             providers: [
                 AppComponent,
-                HttpClient,
-                HttpHandler,
                 CurrentUserService,
                 FormBuilder,
                 { provide: MatDialogRef, useValue: {} },
