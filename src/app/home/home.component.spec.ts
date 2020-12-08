@@ -1,7 +1,13 @@
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 // import { by } from '@angular/platform-browser';
 
 declare let L: any;
@@ -24,13 +30,23 @@ describe('HomeComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [HomeComponent],
-            imports: [MatAutocompleteModule, HttpClientTestingModule],
+            imports: [
+                BrowserAnimationsModule,
+                MatAutocompleteModule,
+                HttpClientTestingModule,
+                FormsModule,
+                ReactiveFormsModule,
+                MatSelectModule,
+                MatFormFieldModule,
+                MatInputModule,
+            ],
             providers: [
                 HomeComponent,
                 CurrentUserService,
                 DisplayValuePipe,
                 MatSnackBar,
             ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         component = TestBed.inject(HomeComponent);
     });

@@ -1,6 +1,7 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
     MatDialog,
     MatDialogModule,
@@ -36,6 +37,7 @@ describe('AppComponent', () => {
                 FormBuilder,
                 { provide: MatDialogRef, useValue: {} },
             ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         component = TestBed.inject(AppComponent);
         // dialogSpy = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue(dialogRefSpyObj);

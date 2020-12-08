@@ -25,7 +25,6 @@ export class SitesService {
             .get(APP_SETTINGS.EVENTS + '/' + eventID + '/Sites.json')
             .pipe(
                 tap((response) => {
-                    console.log('Sites response: ' + response);
                     return response;
                 }),
                 catchError(this.handleError<any>('getEventSites', []))

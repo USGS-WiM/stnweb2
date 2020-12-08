@@ -68,6 +68,6 @@ export class AppComponent implements OnInit {
     logout() {
         // remove user from local storage to log user out
         this.authenticationService.logout();
-        console.log('logged out');
+        // console.log('logged out');
     }
 }

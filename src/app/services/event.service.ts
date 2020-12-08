@@ -37,9 +37,6 @@ export class EventService {
                 .get(APP_SETTINGS.EVENTS + '.json')
                 .pipe(
                     tap((response) => {
-                        console.log(
-                            'Events list response recieved: ' + response
-                        );
                         return response;
                     }),
                     catchError(
@@ -57,7 +54,6 @@ export class EventService {
             })
             .pipe(
                 tap((response) => {
-                    console.log('Event record response recieved: ' + response);
                     return response;
                 }),
                 catchError(APP_UTILITIES.handleError<any>('getEvent', {}))
@@ -75,7 +71,6 @@ export class EventService {
             })
             .pipe(
                 tap((response) => {
-                    console.log('Event query response recieved: ' + response);
                     return response;
                 }),
                 catchError(APP_UTILITIES.handleError<any>('filterEvents', {}))

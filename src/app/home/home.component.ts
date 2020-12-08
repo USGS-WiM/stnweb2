@@ -24,6 +24,9 @@ import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
 
@@ -159,15 +162,15 @@ export class HomeComponent implements OnInit {
 
     ngOnInit() {
         /// demonstration code. to be removed
-        let floodEvents: EventType;
-        this.eventTypeService.getEventsByEventType(4).subscribe((eventType) => {
-            floodEvents = eventType;
-            console.log('flood events: ' + JSON.parse(eventType));
-        });
+        // let floodEvents: EventType;
+        // this.eventTypeService.getEventsByEventType(4).subscribe((eventType) => {
+        //     floodEvents = eventType;
+        //     console.log('flood events: ' + JSON.parse(eventType));
+        // });
         /// end demonstration code
 
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-        console.log('User logged in?: ' + this.isloggedIn);
+        // console.log('User logged in?: ' + this.isloggedIn);
         this.setCurrentFilter();
 
         this.eventService.getAllEvents().subscribe((results) => {

@@ -38,7 +38,6 @@ export class EventTypeService {
     // }
 
     getEventsByEventType(id: number): Observable<any> {
-        console.log('cache: ' + this.eventsByTypeCache);
         this.eventsByTypeCache[id] =
             this.eventsByTypeCache[id] || this.fetchEventsByEventType(id);
         return this.eventsByTypeCache[id];
