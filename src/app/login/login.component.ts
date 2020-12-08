@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
 
     //     dialogRef.afterClosed().subscribe((result) => {});
     // }
-
+    /* istanbul ignore next */
     ngOnInit() {
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
@@ -58,11 +58,7 @@ export class LoginComponent implements OnInit {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
-    // convenience getter for easy access to form fields
-    get f() {
-        return this.loginForm.controls;
-    }
-
+    /* istanbul ignore next */
     onSubmit() {
         this.submitted = true;
 
@@ -71,6 +67,7 @@ export class LoginComponent implements OnInit {
             return;
         }
 
+        /* istanbul ignore next */
         this.loading = true;
         // this.authenticationService
         //     .login(this.f.username.value, this.f.password.value)

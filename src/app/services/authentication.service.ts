@@ -14,9 +14,10 @@ export class AuthenticationService {
 
     constructor(
         private http: HttpClient,
-        private currentUserService: CurrentUserService,
-    ) { }
+        private currentUserService: CurrentUserService
+    ) {}
     // TODO: test this
+    /* istanbul ignore next */
     login(username: string, password: string) {
         // const options = new RequestOptions({
         //     headers: new Headers({
@@ -24,19 +25,17 @@ export class AuthenticationService {
         //     }),
         // });
         const self = this;
+        /* istanbul ignore next */
         return this.http
             .get(APP_SETTINGS.AUTH_URL, {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .map((res: any) => {
                 self.user = res.json();
-                sessionStorage.setItem('username', username);
-                sessionStorage.setItem('password', password);
-                sessionStorage.setItem('observerID', self.user.id.toString());
-                sessionStorage.setItem(
-                    'currentUser',
-                    JSON.stringify(self.user)
-                );
+                localStorage.setItem('username', username);
+                localStorage.setItem('password', password);
+                localStorage.setItem('observerID', self.user.id.toString());
+                localStorage.setItem('currentUser', JSON.stringify(self.user));
                 this.currentUserService.updateCurrentUser(self.user);
                 return res;
             });
@@ -54,12 +53,11 @@ export class AuthenticationService {
         // remove user from local storage to log user out
         // this.user = undefined;
         this.currentUserService.updateCurrentUser({ username: '' });
-        sessionStorage.removeItem('username');
-        sessionStorage.removeItem('password');
-        sessionStorage.removeItem('observerID');
-        sessionStorage.removeItem('currentUser');
+        localStorage.removeItem('username');
+        localStorage.removeItem('password');
+        localStorage.removeItem('observerID');
+        localStorage.removeItem('currentUser');
 
         return of(true);
-
     }
 }

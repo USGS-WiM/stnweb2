@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CurrentUserService } from '../services/current-user.service';
+import { CurrentUserService } from '@services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -11,15 +12,16 @@ import { APP_UTILITIES } from '@app/app.utilities';
 import { MAP_CONSTANTS } from './map-constants';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
-import { Event } from '../interfaces/event';
-import { EventsService } from '../services/events.service';
-import { State } from '../interfaces/state';
-import { StatesService } from '../services/states.service';
-import { NetworkName } from '../interfaces/network-name';
-import { NetworkNamesService } from '../services/network-names.service';
-import { SensorType } from '../interfaces/sensor-type';
-import { SensorTypesService } from '../services/sensor-types.service';
-import { SitesService } from '../services/sites.service';
+import { Event } from '@interfaces/event';
+import { EventsService } from '@services/events.service';
+import { State } from '@interfaces/state';
+import { StatesService } from '@services/states.service';
+import { NetworkName } from '@interfaces/network-name';
+import { NetworkNamesService } from '@services/network-names.service';
+import { SensorType } from '@interfaces/sensor-type';
+import { SensorTypesService } from '@services/sensor-types.service';
+import { DisplayValuePipe } from '@pipes/display-value.pipe';
+import { SitesService } from '@services/sites.service';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -61,10 +63,10 @@ export class HomeComponent implements OnInit {
     map;
     icon;
     isloggedIn = APP_SETTINGS.IS_LOGGEDIN;
+    currentFilter;
 
-    currentFilter = sessionStorage.getItem('currentFilter')
-        ? JSON.parse(sessionStorage.getItem('currentFiler'))
-        : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    drawControl;
+    drawnItems;
 
     // dummy data
     displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
@@ -104,10 +106,15 @@ export class HomeComponent implements OnInit {
     states: State[];
     //Create variables for filter dropdowns --end
 
+    //These variables indicate if each layer is checked
     watershedsVisible = false;
     currWarningsVisible = false;
     watchWarnVisible = false;
     ahpsGagesVisible = false;
+
+    //Used for determining when to show layer visibility snack bar message
+    currentZoom: number;
+    previousZoom: number;
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -118,18 +125,23 @@ export class HomeComponent implements OnInit {
         private networkNamesService: NetworkNamesService,
         private sensorTypesService: SensorTypesService,
         public currentUserService: CurrentUserService,
-        private sitesService: SitesService
+        private sitesService: SitesService,
+        private displayValuePipe: DisplayValuePipe,
+        public snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
         console.log('User logged in?: ' + this.isloggedIn);
+        this.setCurrentFilter();
 
         this.eventsService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
-            this.events = this.events.sort((a, b) =>
-                a.event_start_date < b.event_start_date ? 1 : -1
+            this.events = APP_UTILITIES.SORT(
+                this.events,
+                'event_start_date',
+                'descend'
             );
 
             // allow user to type into the event selector to view matching events
@@ -140,6 +152,7 @@ export class HomeComponent implements OnInit {
                 ),
                 map((event_name) =>
                     // match user text input to the index of the corresponding event
+                    /* istanbul ignore else */
                     event_name
                         ? APP_UTILITIES.FILTER_EVENT(event_name, this.events)
                         : this.events
@@ -171,11 +184,24 @@ export class HomeComponent implements OnInit {
         });
     }
 
+    setCurrentFilter() {
+        this.currentFilter = localStorage.getItem('currentFilter')
+            ? JSON.parse(localStorage.getItem('currentFilter'))
+            : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    }
+
+    //Temporary message pop up at bottom of screen
+    openZoomOutSnackBar(message: string, action: string, duration: number) {
+        this.snackBar.open(message, action, {
+            duration: duration,
+        });
+    }
+
     createMap() {
         // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('map', {
-            center: new L.LatLng(39.8283, -98.5795),
-            zoom: 4,
+            center: MAP_CONSTANTS.defaultCenter,
+            zoom: MAP_CONSTANTS.defaultZoom,
             layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
         });
         /* this.markers = L.featureGroup().addTo(this.map); */
@@ -202,6 +228,7 @@ export class HomeComponent implements OnInit {
         });
 
         // displays map scale on scale change (i.e. zoom level)
+        /* istanbul ignore next */
         this.map.on('zoomend', () => {
             const mapZoom = this.map.getZoom();
             const mapScale = APP_UTILITIES.SCALE_LOOKUP(mapZoom);
@@ -210,6 +237,7 @@ export class HomeComponent implements OnInit {
         });
 
         // updates lat/lng indicator on mouse move. does not apply on devices w/out mouse. removes 'map center' label
+        /* istanbul ignore next */
         this.map.on('mousemove', (cursorPosition) => {
             // $('#mapCenterLabel').css('display', 'none');
             if (cursorPosition.latlng !== null) {
@@ -218,6 +246,7 @@ export class HomeComponent implements OnInit {
             }
         });
         // updates lat/lng indicator to map center after pan and shows 'map center' label.
+        /* istanbul ignore next */
         this.map.on('dragend', () => {
             // displays latitude and longitude of map center
             // $('#mapCenterLabel').css('display', 'inline');
@@ -233,6 +262,7 @@ export class HomeComponent implements OnInit {
         const results = new L.LayerGroup().addTo(this.map);
 
         //Clear the previous search marker and add a marker at the new location
+        /* istanbul ignore next */
         searchControl.on('results', function (data) {
             results.clearLayers();
             for (let i = data.results.length - 1; i >= 0; i--) {
@@ -240,17 +270,130 @@ export class HomeComponent implements OnInit {
             }
         });
 
+        // When the watershed checkbox is checked, add watershed icon to legend
+        /* istanbul ignore next */
+        this.map.on('overlayadd', (e) => {
+            if (e.name === 'Watersheds') {
+                this.watershedsVisible = true;
+            }
+            if (e.name === 'Current Warnings*') {
+                this.currWarningsVisible = true;
+            }
+            if (e.name === 'Watches/Warnings*') {
+                this.watchWarnVisible = true;
+            }
+            if (
+                e.name ===
+                "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
+            ) {
+                this.ahpsGagesVisible = true;
+            }
+        });
+        // When the watershed checkbox is unchecked, remove watershed icon from legend
+        /* istanbul ignore next */
+        this.map.on('overlayremove', (e) => {
+            if (e.name === 'Watersheds') {
+                this.watershedsVisible = false;
+            }
+            if (e.name === 'Current Warnings*') {
+                this.currWarningsVisible = false;
+            }
+            if (e.name === 'Watches/Warnings*') {
+                this.watchWarnVisible = false;
+            }
+            if (
+                e.name ===
+                "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
+            ) {
+                this.ahpsGagesVisible = false;
+            }
+        });
+
+        //Get the value of the previous zoom
+        this.map.on('zoomstart', () => {
+            this.previousZoom = this.map.getZoom();
+        });
+        //Get the value of the current zoom
+        this.map.on('zoomend', () => {
+            this.currentZoom = this.map.getZoom();
+            //If the zoom went from 9 to 8 and the gages/watches/warnings are on,
+            //that layer is checked, but it's not displayed
+            //warn users of that in a snack bar message
+            if (
+                this.ahpsGagesVisible == true ||
+                this.currWarningsVisible == true ||
+                this.watchWarnVisible == true
+            ) {
+                if (this.previousZoom == 9 && this.currentZoom == 8) {
+                    this.openZoomOutSnackBar(
+                        'Zoom to level 9 or higher to view additional layers',
+                        'OK',
+                        4000
+                    );
+                }
+            }
+        });
+
         this.createDrawControls();
     }
 
-    createDrawControls() {
-        const drawnItems = L.featureGroup().addTo(this.map);
+    // For drawn items: generate popup content based on layer type
+    // Returns HTML string, or null if unknown object
+    getDrawnItemPopupContent(layer) {
+        if (layer instanceof L.Polygon) {
+            /* istanbul ignore next */
+            const latlngs = layer._defaultShape
+                    ? layer._defaultShape()
+                    : layer.getLatLngs(),
+                area = L.GeometryUtil.geodesicArea(latlngs);
+            return 'Area: ' + L.GeometryUtil.readableArea(area);
+            // Polyline - distance
+        } else if (layer instanceof L.Polyline) {
+            /* istanbul ignore next */
+            const latlngs = layer._defaultShape
+                ? layer._defaultShape()
+                : layer.getLatLngs();
+            let distance = 0;
+            if (latlngs.length < 2) {
+                return 'Distance: N/A';
+            } else {
+                for (let i = 0; i < latlngs.length - 1; i++) {
+                    distance += latlngs[i].distanceTo(latlngs[i + 1]);
+                }
+                distance = distance * 0.000621371;
+                return 'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi';
+            }
+        } else {
+            return null;
+        }
+    }
 
+    // createDrawnItem(event) {
+    //     const layer = event.layer;
+    //     const content = this.getDrawnItemPopupContent(layer);
+    //     if (content !== null) {
+    //         layer.bindPopup(content);
+    //     }
+    //     this.drawnItems.addLayer(layer);
+    // }
+
+    // editDrawnItem(event) {
+    //     const layers = event.layers;
+    //     layers.eachLayer(function (layer) {
+    //         const content = this.getDrawnItemPopupContent(layer);
+    //         if (content !== null) {
+    //             layer.setPopupContent(content);
+    //         }
+    //     });
+    // }
+
+    createDrawControls() {
+        this.drawnItems = L.featureGroup().addTo(this.map);
         // User can select from drawing a line or polygon; other options are disabled
         // Measurements are in miles
-        const drawControl = new L.Control.Draw({
+        this.drawControl = new L.Control.Draw({
             edit: {
-                featureGroup: drawnItems,
+                featureGroup: this.drawnItems,
                 poly: {
                     allowIntersection: false,
                 },
@@ -273,49 +416,46 @@ export class HomeComponent implements OnInit {
         });
 
         //Add the buttons to the map
-        this.map.addControl(drawControl);
+        this.map.addControl(this.drawControl);
 
         // Generate popup content based on layer type
         // - Returns HTML string, or null if unknown object
-        const getPopupContent = function (layer) {
-            if (layer instanceof L.Polygon) {
-                const latlngs = layer._defaultShape
-                        ? layer._defaultShape()
-                        : layer.getLatLngs(),
-                    area = L.GeometryUtil.geodesicArea(latlngs);
-                return 'Area: ' + L.GeometryUtil.readableArea(area);
-                // Polyline - distance
-            } else if (layer instanceof L.Polyline) {
-                const latlngs = layer._defaultShape
-                    ? layer._defaultShape()
-                    : layer.getLatLngs();
-                let distance = 0;
-                if (latlngs.length < 2) {
-                    return 'Distance: N/A';
-                } else {
-                    for (let i = 0; i < latlngs.length - 1; i++) {
-                        distance += latlngs[i].distanceTo(latlngs[i + 1]);
-                    }
-                    distance = distance * 0.000621371;
-                    return (
-                        'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi'
-                    );
-                }
-            }
-            return null;
+        /* istanbul ignore next */
+        const getPopupContent = (layer) => {
+            return this.getDrawnItemPopupContent(layer);
         };
 
+        // // Object created - bind popup to layer, add to feature group
+        // const create = (event) => {
+        //     return this.createDrawnItem(event);
+        // };
+
+        // // Object(s) edited - update popups
+        // const edit = (event) => {
+        //     return this.editDrawnItem(event);
+        // };
+
+        // this.map.on(L.Draw.Event.CREATED, (event) => {
+        //     create(event);
+        // });
+
+        // this.map.on(L.Draw.Event.EDITED, (event) => {
+        //     edit(event);
+        // });
+
         // Object created - bind popup to layer, add to feature group
+        /* istanbul ignore next */
         this.map.on(L.Draw.Event.CREATED, function (event) {
             const layer = event.layer;
             const content = getPopupContent(layer);
             if (content !== null) {
                 layer.bindPopup(content);
             }
-            drawnItems.addLayer(layer);
+            this.drawnItems.addLayer(layer);
         });
 
         // Object(s) edited - update popups
+        /* istanbul ignore next */
         this.map.on(L.Draw.Event.EDITED, function (event) {
             const layers = event.layers;
             // const content = null;
@@ -327,7 +467,8 @@ export class HomeComponent implements OnInit {
             });
         });
 
-        //When the watershed checkbox is checked, add watershed icon to legend
+        // When the watershed checkbox is checked, add watershed icon to legend
+        /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
@@ -342,7 +483,8 @@ export class HomeComponent implements OnInit {
                 this.ahpsGagesVisible = true;
             }
         });
-        //When the watershed checkbox is unchecked, remove watershed icon from legend
+        // When the watershed checkbox is unchecked, remove watershed icon from legend
+        /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
@@ -358,33 +500,20 @@ export class HomeComponent implements OnInit {
             }
         });
     }
-    // When button is clicked, zoom to the full extent of the selected event
-    // As a placeholder, currently zooms back the the U.S. extent
-    eventExtent() {
-        this.map.fitBounds([
-            [48, -125],
-            [25, -65],
-        ]);
+
+    // When button is clicked, focus center and zoom to the selected event
+    // As a placeholder, currently returns to defaults
+    // TODO: work with extent for event
+    eventFocus() {
+        this.map.setView(
+            MAP_CONSTANTS.defaultCenter,
+            MAP_CONSTANTS.defaultZoom
+        );
     }
 
-    //Options to be displayed when selecting event filter
+    // options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
-    }
-
-    //Options to be displayed when selecting state filter
-    displayState(state: State): string {
-        return state && state.state_name ? state.state_name : '';
-    }
-
-    //Options to be displayed when selecting network filter
-    displayNetwork(network: NetworkName): string {
-        return network && network.name ? network.name : '';
-    }
-
-    //Options to be displayed when selecting sensor type filter
-    displaySensor(sensor: SensorType): string {
-        return sensor && sensor.sensor ? sensor.sensor : '';
     }
 
     // another method to get event sites
@@ -401,14 +530,14 @@ export class HomeComponent implements OnInit {
     return ret;
   } */
 
+    /* istanbul ignore next */
     mapResults(eventSites: any) {
         // set/reset resultsMarker var to an empty array
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
         const riverConditions = [];
 
-        // tslint:disable-next-line:forin
-        // loop through results repsonse from a search query
+        // loop through results responsefrom a search query
         if (this.eventSites.length !== undefined) {
             for (const site of this.eventSites) {
                 const lat = Number(site.latitude_dd);
@@ -429,16 +558,16 @@ export class HomeComponent implements OnInit {
 
         const popup = L.popup()
           .setContent(popupContent); */
-
+                /* istanbul ignore next */
                 L.marker([lat, long], { icon: myicon }).addTo(this.map);
                 /* .bindPopup(popup)
           .on('click',
             (data) => {
               this.siteClicked = true;
               this.siteSelected = eventSites[sites]['id'];
-              sessionStorage.setItem('selectedSite', JSON.stringify(this.siteSelected));
+              localStorage.setItem('selectedSite', JSON.stringify(this.siteSelected));
               this.siteName = eventSites[sites]['name'];
-              sessionStorage.setItem('selectedSiteName', JSON.stringify(this.siteName));
+              localStorage.setItem('selectedSiteName', JSON.stringify(this.siteName));
               this.eventSites.getAllEvents()
               .subscribe(eventresults => {
                 this.eventresults = eventresults;

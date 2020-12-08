@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
     title = 'STN';
     siteid = '';
 
-    // aboutDialogRef: MatDialogRef<AboutComponent>;
+    //aboutDialogRef: MatDialogRef<AboutComponent>;
     // loginDialogRef: MatDialogRef<AboutComponent>;
     // regDialogRef: MatDialogRef<AboutComponent>;
 
@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
 
     openAboutDialog(): void {
         const dialogRef = this.dialog.open(AboutComponent, {});
-        dialogRef.afterClosed().subscribe((result) => { });
+        dialogRef.afterClosed().subscribe((result) => {});
     }
 
     openLoginDialog(): void {
@@ -51,9 +51,9 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (sessionStorage.getItem('currentUser')) {
+        if (localStorage.getItem('currentUser')) {
             const currentUserObj = JSON.parse(
-                sessionStorage.getItem('currentUser')
+                localStorage.getItem('currentUser')
             );
             this.currentUserService.updateCurrentUser(currentUserObj);
         } else {

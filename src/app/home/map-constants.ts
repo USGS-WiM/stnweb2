@@ -4,6 +4,12 @@ import * as esri from 'esri-leaflet';
 
 @Injectable()
 export class MAP_CONSTANTS {
+    public static get defaultCenter(): any {
+        return new L.LatLng(39.8283, -98.5795);
+    }
+    public static get defaultZoom(): any {
+        return 4;
+    }
     public static get mapLayers(): any {
         return {
             tileLayers: {
@@ -49,6 +55,7 @@ export class MAP_CONSTANTS {
                     style: function () {
                         return { color: 'red', weight: 2 };
                     },
+                    minZoom: 9,
                 }),
                 watchesWarnings: esri.featureLayer({
                     url:
@@ -56,6 +63,7 @@ export class MAP_CONSTANTS {
                     style: function () {
                         return { color: 'orange', weight: 2 };
                     },
+                    minZoom: 9,
                 }),
                 AHPSGages: esri.featureLayer({
                     url:
@@ -129,11 +137,12 @@ export class MAP_CONSTANTS {
     public static get supplementaryLayers(): any {
         return {
             Watersheds: this.mapLayers.esriDynamicLayers.HUC,
-            'Current Warnings': this.mapLayers.esriFeatureLayers
+            'Current Warnings*': this.mapLayers.esriFeatureLayers
                 .currentWarnings,
-            'Watches/Warnings': this.mapLayers.esriFeatureLayers
+            'Watches/Warnings*': this.mapLayers.esriFeatureLayers
                 .watchesWarnings,
-            'AHPS Gages': this.mapLayers.esriFeatureLayers.AHPSGages,
+            "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
+                .mapLayers.esriFeatureLayers.AHPSGages,
         };
     }
 }
