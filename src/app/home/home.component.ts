@@ -560,20 +560,6 @@ export class HomeComponent implements OnInit {
         return event && event.event_name ? event.event_name : '';
     }
 
-    // another method to get event sites
-    /* getEventSites(arr, arr2) {
-    const ret = [];
-    for (const i in arr2) {
-        if (arr2.indexOf(arr2[i]) > -1) {
-            ret.push(arr2[i]);
-        }
-    }
-
-    this.eventSites = ret;
-    console.log(this.eventSites);
-    return ret;
-  } */
-
     /* istanbul ignore next */
     mapResults(eventSites: any) {
         // set/reset resultsMarker var to an empty array

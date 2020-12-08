@@ -202,5 +202,24 @@ describe('HomeComponent', () => {
         expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
     });
 
+    it('mapFilterForm should be a valid form on submit', () => {
+        component.submitMapFilter();
+        expect(component.mapFilterForm.valid).toBe(true);
+    });
+
+    it('#clearMapFilterForm resets the filter form', () => {
+        component.clearMapFilterForm();
+        let formValues = component.mapFilterForm.value;
+        expect(formValues.eventsControl).toBeFalsy();
+        expect(formValues.networkControl).toBeFalsy();
+        expect(formValues.sensorControl).toBeFalsy();
+        expect(formValues.stateControl).toBeFalsy();
+        expect(formValues.surveyedControl).toBeFalsy();
+        expect(formValues.surveyedOnlyControl).toBeFalsy();
+        expect(formValues.bracketSiteOnlyControl).toBeFalsy();
+        expect(formValues.RDGOnlyControl).toBeFalsy();
+        expect(formValues.OpDefinedControl).toBeFalsy();
+    });
+
     xit('#displayState', () => {});
 });
