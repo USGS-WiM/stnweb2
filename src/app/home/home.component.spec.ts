@@ -1,4 +1,4 @@
-import { HttpClient, HttpHandler } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
 
@@ -51,6 +51,7 @@ describe('HomeComponent', () => {
             declarations: [HomeComponent],
             imports: [
                 BrowserAnimationsModule,
+                HttpClientTestingModule,
                 MatToolbarModule,
                 MatIconModule,
                 MatExpansionModule,
@@ -73,8 +74,6 @@ describe('HomeComponent', () => {
             providers: [
                 HomeComponent,
                 CurrentUserService,
-                HttpClient,
-                HttpHandler,
                 DisplayValuePipe,
                 MatSnackBar,
             ],
@@ -93,8 +92,8 @@ describe('HomeComponent', () => {
     });
 
     it('leaflet map should be initialized', () => {
-        component.ngOnInit();
-        component.createMap();
+        // component.ngOnInit();
+        // component.createMap();
         expect(component.map).toBeDefined();
     });
 
