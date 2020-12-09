@@ -17,7 +17,7 @@ import { Event } from '@interfaces/event';
 export class EventsService {
     constructor(private httpClient: HttpClient) {}
 
-    // retrieve tghe full events list
+    // retrieve the full events list
     public getAllEvents(): Observable<Event[]> {
         return (
             this.httpClient
@@ -28,7 +28,8 @@ export class EventsService {
                 .pipe(
                     tap((response) => {
                         console.log(
-                            'Events list response recieved: ' + response
+                            'Events list response received: ' +
+                                JSON.stringify(response)
                         );
                         return response;
                     }),
@@ -45,7 +46,7 @@ export class EventsService {
             })
             .pipe(
                 tap((response) => {
-                    console.log('Event record response recieved: ' + response);
+                    //console.log('Event record response received: ' + JSON.stringify(response));
                     return response;
                 }),
                 catchError(this.handleError<any>('getEvent', {}))

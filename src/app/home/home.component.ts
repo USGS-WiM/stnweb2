@@ -4,9 +4,20 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    FormGroupDirective,
+    Validators,
+} from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import {
+    map,
+    debounceTime,
+    distinctUntilChanged,
+    switchMap,
+} from 'rxjs/operators';
 import { APP_SETTINGS } from '../app.settings';
 import { APP_UTILITIES } from '@app/app.utilities';
 import { MAP_CONSTANTS } from './map-constants';
@@ -14,6 +25,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 import { Event } from '@interfaces/event';
 import { EventsService } from '@services/events.service';
+import { Site } from '@interfaces/site';
 import { State } from '@interfaces/state';
 import { StatesService } from '@services/states.service';
 import { NetworkName } from '@interfaces/network-name';
@@ -30,6 +42,7 @@ declare let L: any;
 import 'leaflet';
 import 'leaflet-draw';
 import * as esri from 'esri-leaflet';
+import { Subject } from 'rx';
 
 export interface PeriodicElement {
     name: string;
@@ -78,9 +91,11 @@ export class HomeComponent implements OnInit {
     siteClicked = false;
     siteName;
 
-    currentEvent = 7;
-    currentEventName = 'FEMA 2013 exercise';
+    public selectedEvent;
+    currentEvent: number; //change to subject?
+    currentEventName: string;
     eventSites: any;
+    eventMarkers = L.layerGroup([]);
 
     mapScale;
     latitude;
@@ -91,20 +106,12 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
-    //Create variables for filter dropdowns --start
-    eventsControl = new FormControl();
+    //holds filter values
     events: Event[];
-    filteredEvents: Observable<Event[]>;
-
-    networkControl = new FormControl();
-    networks: NetworkName[];
-
-    sensorControl = new FormControl();
-    sensors: SensorType[];
-
-    stateControl = new FormControl();
-    states: State[];
-    //Create variables for filter dropdowns --end
+    filteredEvents$: Observable<Event[]>; //not used yet
+    networks$: Observable<NetworkName[]>;
+    sensors$: Observable<SensorType[]>;
+    states$: Observable<State[]>;
 
     //These variables indicate if each layer is checked
     watershedsVisible = false;
@@ -116,11 +123,17 @@ export class HomeComponent implements OnInit {
     currentZoom: number;
     previousZoom: number;
 
+    public mapFilterForm: FormGroup;
+
+    private displayedSites: Subject<Site[]> = new Subject<Site[]>();
+    private setDisplayedSites;
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
         private eventsService: EventsService,
+        private formBuilder: FormBuilder,
         private statesService: StatesService,
         private networkNamesService: NetworkNamesService,
         private sensorTypesService: SensorTypesService,
@@ -128,7 +141,21 @@ export class HomeComponent implements OnInit {
         private sitesService: SitesService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
-    ) {}
+    ) {
+        this.mapFilterForm = formBuilder.group({
+            eventsControl: null,
+            networkControl: null,
+            sensorControl: null,
+            stateControl: '',
+            surveyedControl: true,
+            HWMOnlyControl: false,
+            sensorOnlyControl: false,
+            surveyedOnlyControl: false,
+            bracketSiteOnlyControl: false,
+            RDGOnlyControl: false,
+            OPDefinedControl: false,
+        });
+    }
 
     ngOnInit() {
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
@@ -144,44 +171,44 @@ export class HomeComponent implements OnInit {
                 'descend'
             );
 
-            // allow user to type into the event selector to view matching events
-            this.filteredEvents = this.eventsControl.valueChanges.pipe(
-                startWith(''),
-                map((value) =>
-                    typeof value === 'string' ? value : value.event_name
-                ),
-                map((event_name) =>
-                    // match user text input to the index of the corresponding event
-                    /* istanbul ignore else */
-                    event_name
-                        ? APP_UTILITIES.FILTER_EVENT(event_name, this.events)
-                        : this.events
+            //Get id and name of most recent event
+            this.currentEvent = this.events[0].event_id;
+            this.currentEventName = this.events[0].event_name;
+            // TODO: set up subject to track the next current event and move
+            //this.eventSites.next(this.currentEvent)
+
+            /* this.filteredEvents$ = this.eventsControl.valueChanges.pipe(
+                debounceTime(200),
+                distinctUntilChanged(),
+                switchMap((searchTerm) =>
+                    APP_UTILITIES.FILTER_EVENT(searchTerm, this.events)
                 )
-            );
+            ); */
 
-            // create and configure map
-            this.createMap();
-
-            // this.mapResults(this.events);
-
-            // TODO: by default populate map with most recent event
-            this.sitesService
-                .getEventSites(this.currentEvent)
-                .subscribe((results) => {
-                    this.eventSites = results;
-                    this.mapResults(this.eventSites);
-                });
+            // allow user to type into the event selector to view matching events
+            this.filteredEvents$ = this.mapFilterForm
+                .get('eventsControl')
+                .valueChanges.pipe(
+                    map((event_name) =>
+                        // match user text input to the index of the corresponding event
+                        /* istanbul ignore else */
+                        event_name
+                            ? APP_UTILITIES.FILTER_EVENT(
+                                  event_name,
+                                  this.events
+                              )
+                            : this.events
+                    )
+                );
+            //set up call to get sites for specific event
+            this.displaySelectedEvent();
         });
-
-        this.networkNamesService.getNetworkNames().subscribe((results) => {
-            this.networks = results;
-        });
-        this.sensorTypesService.getSensorTypes().subscribe((results) => {
-            this.sensors = results;
-        });
-        this.statesService.getStates().subscribe((results) => {
-            this.states = results;
-        });
+        // get lists of options for dropdowns
+        this.networks$ = this.networkNamesService.getNetworkNames();
+        this.sensors$ = this.sensorTypesService.getSensorTypes();
+        this.states$ = this.statesService.getStates();
+        // create and configure map
+        this.createMap();
     }
 
     setCurrentFilter() {
@@ -195,6 +222,23 @@ export class HomeComponent implements OnInit {
         this.snackBar.open(message, action, {
             duration: duration,
         });
+    }
+    //TODO: LOOK HERE FIRST
+    displaySelectedEvent() {
+        //Clear the old event markers from the map
+        if (this.eventMarkers !== undefined) {
+            this.eventMarkers.removeFrom(this.map);
+        }
+        //Clear the old markers from the layer
+        this.eventMarkers = L.layerGroup([]);
+        //Plot markers for selected event
+
+        this.sitesService
+            .getEventSites(this.currentEvent)
+            .subscribe((results) => {
+                this.eventSites = results;
+                this.mapResults(this.eventSites);
+            });
     }
 
     createMap() {
@@ -516,26 +560,14 @@ export class HomeComponent implements OnInit {
         return event && event.event_name ? event.event_name : '';
     }
 
-    // another method to get event sites
-    /* getEventSites(arr, arr2) {
-    const ret = [];
-    for (const i in arr2) {
-        if (arr2.indexOf(arr2[i]) > -1) {
-            ret.push(arr2[i]);
-        }
-    }
-
-    this.eventSites = ret;
-    console.log(this.eventSites);
-    return ret;
-  } */
-
     /* istanbul ignore next */
     mapResults(eventSites: any) {
         // set/reset resultsMarker var to an empty array
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
         const riverConditions = [];
+        this.eventMarkers.removeFrom(this.map);
+        this.eventMarkers.clearLayers();
 
         // loop through results responsefrom a search query
         if (this.eventSites.length !== undefined) {
@@ -559,7 +591,9 @@ export class HomeComponent implements OnInit {
         const popup = L.popup()
           .setContent(popupContent); */
                 /* istanbul ignore next */
-                L.marker([lat, long], { icon: myicon }).addTo(this.map);
+                L.marker([lat, long], { icon: myicon }).addTo(
+                    this.eventMarkers
+                );
                 /* .bindPopup(popup)
           .on('click',
             (data) => {
@@ -578,6 +612,69 @@ export class HomeComponent implements OnInit {
               // this.eventsLoading = false;
             }); */
             }
+
+            //add event markers to map
+            this.eventMarkers.addTo(this.map);
         }
+    }
+
+    public clearMapFilterForm(): void {
+        // this works but will not fully clear mat-selects if they're open when the box is clicked
+        this.mapFilterForm.reset();
+    }
+
+    public submitMapFilter() {
+        let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
+
+        //collect and format selected Filter Form values
+        let eventId = filterParams.eventsControl
+            ? filterParams.eventsControl.event_id
+            : '';
+        let networkIds = filterParams.networkControl
+            ? filterParams.networkControl.toString()
+            : '';
+        let sensorIds = filterParams.sensorControl
+            ? filterParams.sensorControl.toString()
+            : '';
+        let stateAbbrevs = filterParams.stateControl
+            ? filterParams.stateControl.toString()
+            : '';
+        //surveyed = true, unsurveyed = false, or leave empty
+        let surveyed = filterParams.surveyedControl
+            ? filterParams.surveyedControl
+            : '';
+        let HWMTrue = filterParams.HWMOnlyControl ? '1' : '';
+        let sensorTrue = filterParams.sensorOnlyControl ? '1' : '';
+        //Pre-deployed bracket site is HousingTypeOne=1 in API
+        let bracketTrue = filterParams.bracketSiteOnlyControl ? '1' : '';
+        let RDGTrue = filterParams.RDGOnlyControl ? '1' : '';
+        let opDefinedTrue = filterParams.OPDefinedControl ? '1' : '';
+
+        // format url params into single string
+        let urlParamString =
+            'Event=' +
+            eventId +
+            '&State=' +
+            stateAbbrevs +
+            '&SensorType=' +
+            sensorIds +
+            '&NetworkName=' +
+            networkIds +
+            '&OPDefined=' +
+            opDefinedTrue +
+            '&HWMOnly=' +
+            HWMTrue +
+            '&HWMSurveyed=' +
+            surveyed +
+            '&SensorOnly=' +
+            sensorTrue +
+            '&RDGOnly=' +
+            RDGTrue +
+            '&HousingTypeOne=' +
+            bracketTrue;
+
+        this.sitesService.getFilteredSites(urlParamString).subscribe((res) => {
+            this.mapResults(res);
+        });
     }
 }

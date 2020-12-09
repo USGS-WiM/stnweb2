@@ -1,9 +1,34 @@
-import { HttpClient, HttpHandler } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatRadioModule } from '@angular/material/radio';
 // import { by } from '@angular/platform-browser';
+import {
+    ReactiveFormsModule,
+    FormBuilder,
+    FormControl,
+    FormGroup,
+} from '@angular/forms';
 
 declare let L: any;
 import 'leaflet';
@@ -24,12 +49,31 @@ describe('HomeComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [HomeComponent],
-            imports: [MatAutocompleteModule],
+            imports: [
+                BrowserAnimationsModule,
+                HttpClientTestingModule,
+                MatToolbarModule,
+                MatIconModule,
+                MatExpansionModule,
+                MatCardModule,
+                MatTableModule,
+                MatPaginatorModule,
+                MatButtonModule,
+                MatAutocompleteModule,
+                MatSnackBarModule,
+                MatDialogModule,
+                MatTabsModule,
+                MatFormFieldModule,
+                MatCheckboxModule,
+                MatInputModule,
+                MatSelectModule,
+                MatButtonToggleModule,
+                MatRadioModule,
+                ReactiveFormsModule,
+            ],
             providers: [
                 HomeComponent,
                 CurrentUserService,
-                HttpClient,
-                HttpHandler,
                 DisplayValuePipe,
                 MatSnackBar,
             ],
@@ -48,6 +92,8 @@ describe('HomeComponent', () => {
     });
 
     it('leaflet map should be initialized', () => {
+        // component.ngOnInit();
+        // component.createMap();
         expect(component.map).toBeDefined();
     });
 
@@ -154,6 +200,25 @@ describe('HomeComponent', () => {
         let mapZoom = component.map.getZoom();
         expect(mapCenter).toEqual(MAP_CONSTANTS.defaultCenter);
         expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
+    });
+
+    it('mapFilterForm should be a valid form on submit', () => {
+        component.submitMapFilter();
+        expect(component.mapFilterForm.valid).toBe(true);
+    });
+
+    it('#clearMapFilterForm resets the filter form', () => {
+        component.clearMapFilterForm();
+        let formValues = component.mapFilterForm.value;
+        expect(formValues.eventsControl).toBeFalsy();
+        expect(formValues.networkControl).toBeFalsy();
+        expect(formValues.sensorControl).toBeFalsy();
+        expect(formValues.stateControl).toBeFalsy();
+        expect(formValues.surveyedControl).toBeFalsy();
+        expect(formValues.surveyedOnlyControl).toBeFalsy();
+        expect(formValues.bracketSiteOnlyControl).toBeFalsy();
+        expect(formValues.RDGOnlyControl).toBeFalsy();
+        expect(formValues.OpDefinedControl).toBeFalsy();
     });
 
     xit('#displayState', () => {});

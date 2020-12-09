@@ -18,7 +18,9 @@ export class StatesService {
     public getStates(): Observable<any> {
         return this.httpClient.get(APP_SETTINGS.STATES + '.json').pipe(
             tap((response) => {
-                console.log('State list response recieved: ' + response);
+                console.log(
+                    'State list response received: ' + JSON.stringify(response)
+                );
                 return response;
             }),
             catchError(this.handleError<any>('getStates', []))

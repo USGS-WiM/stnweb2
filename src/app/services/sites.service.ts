@@ -25,10 +25,25 @@ export class SitesService {
             .get(APP_SETTINGS.EVENTS + '/' + eventID + '/Sites.json')
             .pipe(
                 tap((response) => {
-                    console.log('Sites response: ' + response);
                     return response;
                 }),
                 catchError(this.handleError<any>('getEventSites', []))
+            );
+    }
+
+    public getFilteredSites(urlParams: string): Observable<Site[]> {
+        console.log('URL Parameters passed: ' + urlParams);
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/FilteredSites.json?' + urlParams)
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getFilteredSites response received: ' +
+                            JSON.stringify(response)
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getFilteredSites', []))
             );
     }
     /* istanbul ignore next */

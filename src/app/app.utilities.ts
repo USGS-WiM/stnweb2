@@ -272,4 +272,8 @@ export class APP_UTILITIES {
             instruments: [],
         };
     }
+
+    public static get FILTERED_SITES_SAMPLE_QUERY_PARAMS(): string {
+        return `Event=&State=MS&SensorType=&NetworkName=&OPDefined=&HWMOnly=&HWMSurveyed=&SensorOnly=&RDGOnly=&HousingTypeOne=1`;
+    }
 }
