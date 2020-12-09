@@ -46,4 +46,21 @@ describe('SitesService', () => {
         );
         req.flush(mockSiteList);
     });
+
+    it('#getFilteredSites() should retrieve a list of sites based on input query params', () => {
+        service
+            .getFilteredSites(APP_UTILITIES.FILTERED_SITES_SAMPLE_QUERY_PARAMS)
+            .subscribe((results) => {
+                expect(results).not.toBe(null);
+                expect(JSON.stringify(results)).toEqual(
+                    JSON.stringify(mockSiteList)
+                );
+            });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.SITES_URL +
+                '/FilteredSites.json?' +
+                APP_UTILITIES.FILTERED_SITES_SAMPLE_QUERY_PARAMS
+        );
+        req.flush(mockSiteList);
+    });
 });

@@ -42,6 +42,10 @@ export class APP_SETTINGS {
     public static get SENSOR_TYPES(): string {
         return this.API_ROOT + 'SensorTypes';
     }
+    /* istanbul ignore next */
+    public static get SITES_URL(): string {
+        return this.API_ROOT + 'sites';
+    }
 
     public static get AUTH_JSON_HEADERS() {
         return new HttpHeaders({

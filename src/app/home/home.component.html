@@ -42,6 +42,7 @@
                     <span id="mapCenterLabel" class="hover-content"></span>
                 </div>
             </div>
+            <!-- Legend -->
             <mat-expansion-panel
                 id="legend"
                 class="legend"
@@ -147,6 +148,7 @@
                 </div>
             </mat-expansion-panel>
         </mat-expansion-panel>
+        <!-- Filter/Results -->
         <mat-card id="filtersSection">
             <mat-card-title>
                 <div class="results-card-title-row">
@@ -155,6 +157,7 @@
                 </div>
             </mat-card-title>
             <mat-card-content>
+                <!--Filters-->
                 <mat-expansion-panel expanded>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
@@ -162,19 +165,19 @@
                         ></mat-panel-title>
                     </mat-expansion-panel-header>
                     <div class="form-container">
-                        <form class="form">
+                        <form class="form" [formGroup]="mapFilterForm">
                             <mat-form-field appearance="fill">
                                 <mat-label for="eventType"
                                     >Event Type</mat-label
                                 >
                                 <mat-select
                                     id="eventTypeOptions"
-                                    [formControl]="eventTypeControl"
+                                    formControlName="eventTypeControl"
                                     (selectionChange)="updateEventFilter()"
                                 >
                                     <mat-option
                                         *ngFor="
-                                            let eventType of eventTypes | async
+                                            let eventType of eventTypes$ | async
                                         "
                                         [value]="eventType"
                                         >{{ eventType.type }}</mat-option
@@ -188,11 +191,11 @@
                                 >
                                 <mat-select
                                     id="eventStateOptions"
-                                    [formControl]="eventStateControl"
+                                    formControlName="eventStateControl"
                                     (selectionChange)="updateEventFilter()"
                                 >
                                     <mat-option
-                                        *ngFor="let state of states | async"
+                                        *ngFor="let state of states$ | async"
                                         [value]="state"
                                         >{{ state.state_name }}</mat-option
                                     >
@@ -211,19 +214,19 @@
                                     type="text"
                                     aria-label="Dropdown menu for storm event selection"
                                     matInput
-                                    [formControl]="eventsControl"
-                                    [matAutocomplete]="eventAutoComplete"
+                                    formControlName="eventsControl"
+                                    [matAutocomplete]="eventAutocomplete"
                                 />
                                 <mat-hint
                                     >Start typing for suggestions</mat-hint
                                 >
                                 <mat-autocomplete
-                                    #eventAutoComplete="matAutocomplete"
+                                    #eventAutocomplete="matAutocomplete"
                                     [displayWith]="displayEvent"
                                 >
                                     <mat-option
                                         *ngFor="
-                                            let event of filteredEvents | async
+                                            let event of filteredEvents$ | async
                                         "
                                         [value]="event"
                                     >
@@ -238,12 +241,14 @@
                                 >
                                 <mat-select
                                     id="networkOptions"
-                                    [formControl]="networkControl"
+                                    formControlName="networkControl"
                                     multiple
                                 >
                                     <mat-option
-                                        *ngFor="let network of networks | async"
-                                        [value]="network"
+                                        *ngFor="
+                                            let network of networks$ | async
+                                        "
+                                        [value]="network.network_name_id"
                                         >{{ network.name }}</mat-option
                                     >
                                 </mat-select>
@@ -254,14 +259,15 @@
                                 >
                                 <mat-select
                                     id="sensorOptions"
-                                    [formControl]="sensorControl"
+                                    formControlName="sensorTypeControl"
                                 >
+                                    <mat-option>Any</mat-option>
                                     <mat-option
                                         *ngFor="
-                                            let sensorType of sensorTypes
+                                            let sensorType of sensorTypes$
                                                 | async
                                         "
-                                        [value]="sensorType"
+                                        [value]="sensorType.sensor_type_id"
                                         >{{ sensorType.sensor }}</mat-option
                                     >
                                 </mat-select>
@@ -270,12 +276,12 @@
                                 <mat-label for="stateList">States</mat-label>
                                 <mat-select
                                     id="stateOptions"
-                                    [formControl]="stateControl"
+                                    formControlName="stateControl"
                                     multiple
                                 >
                                     <mat-option
-                                        *ngFor="let state of states | async"
-                                        [value]="state"
+                                        *ngFor="let state of states$ | async"
+                                        [value]="state.state_abbrev"
                                         >{{ state.state_name }}</mat-option
                                     >
                                 </mat-select>
@@ -289,11 +295,12 @@
                             <mat-radio-group
                                 aria-label="Select an option"
                                 class="checkbox-section"
+                                formControlName="surveyedControl"
                             >
-                                <mat-radio-button value="surveyed"
+                                <mat-radio-button value="true"
                                     >Surveyed</mat-radio-button
                                 >
-                                <mat-radio-button value="unsurveyed"
+                                <mat-radio-button value="false"
                                     >Unsurveyed</mat-radio-button
                                 >
                             </mat-radio-group>
@@ -307,32 +314,38 @@
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="HWMOnlyControl"
                                     >HWM Only Sites</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="sensorOnlyControl"
                                     >Sensor Only Sites</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="surveyedOnlyControl"
                                     >Surveyed RP Only Sites</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="bracketSiteOnlyControl"
                                     >Pre-Deployed Bracket Sites
                                     Only</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="RDGOnlyControl"
                                     >RDG Only Sites</mat-checkbox
                                 >
                                 <mat-checkbox
                                     aria-checked="false"
                                     class="checkbox-margin"
+                                    formControlName="OPDefinedControl"
                                     >Has OP Defined</mat-checkbox
                                 >
                             </section>
@@ -343,6 +356,7 @@
                                 color="accent"
                                 type="submit"
                                 aria-label="Filter Sites"
+                                (click)="submitMapFilter()"
                             >
                                 <mat-icon>filter_alt</mat-icon>&nbsp;Filter
                                 Sites
@@ -352,6 +366,7 @@
                                 color="warn"
                                 type="reset"
                                 aria-label="Clear filters"
+                                (click)="clearMapFilterForm()"
                             >
                                 <mat-icon>clear_all</mat-icon>&nbsp;Clear
                                 Filters
@@ -359,6 +374,7 @@
                         </div>
                     </div>
                 </mat-expansion-panel>
+                <!-- Results-->
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <mat-panel-title> Results </mat-panel-title>

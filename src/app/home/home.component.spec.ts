@@ -1,14 +1,35 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
+
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatRadioModule } from '@angular/material/radio';
 // import { by } from '@angular/platform-browser';
+import {
+    FormsModule,
+    ReactiveFormsModule,
+    FormBuilder,
+    FormControl,
+    FormGroup,
+} from '@angular/forms';
 
 declare let L: any;
 import 'leaflet';
@@ -21,7 +42,6 @@ import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
 import { MAP_CONSTANTS } from './map-constants';
 import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('HomeComponent', () => {
     let component: HomeComponent;
@@ -39,6 +59,25 @@ describe('HomeComponent', () => {
                 MatSelectModule,
                 MatFormFieldModule,
                 MatInputModule,
+                HttpClientTestingModule,
+                MatToolbarModule,
+                MatIconModule,
+                MatExpansionModule,
+                MatCardModule,
+                MatTableModule,
+                MatPaginatorModule,
+                MatButtonModule,
+                MatAutocompleteModule,
+                MatSnackBarModule,
+                MatDialogModule,
+                MatTabsModule,
+                MatFormFieldModule,
+                MatCheckboxModule,
+                MatInputModule,
+                MatSelectModule,
+                MatButtonToggleModule,
+                MatRadioModule,
+                ReactiveFormsModule,
             ],
             providers: [
                 HomeComponent,
@@ -62,8 +101,8 @@ describe('HomeComponent', () => {
     });
 
     it('leaflet map should be initialized', () => {
-        component.ngOnInit();
-        component.createMap();
+        // component.ngOnInit();
+        // component.createMap();
         expect(component.map).toBeDefined();
     });
 
@@ -131,8 +170,8 @@ describe('HomeComponent', () => {
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {
-        component.ngOnInit();
-        component.createMap();
+        // component.ngOnInit();
+        // component.createMap();
         let latlngs = [
             [37, -109.05],
             [41, -109.03],
@@ -164,8 +203,8 @@ describe('HomeComponent', () => {
     it('#eventFocus sets map to event focused view', () => {
         // temporarily sets map to U.S, extent instead of event's extent
         // first set the view to somehting not default to test that the update works
-        component.ngOnInit();
-        component.createMap();
+        // component.ngOnInit();
+        // component.createMap();
         let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
         component.map.setView(notDefaultCenter, 9);
         component.eventFocus();
@@ -173,6 +212,25 @@ describe('HomeComponent', () => {
         let mapZoom = component.map.getZoom();
         expect(mapCenter).toEqual(MAP_CONSTANTS.defaultCenter);
         expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
+    });
+
+    it('mapFilterForm should be a valid form on submit', () => {
+        component.submitMapFilter();
+        expect(component.mapFilterForm.valid).toBe(true);
+    });
+
+    it('#clearMapFilterForm resets the filter form', () => {
+        component.clearMapFilterForm();
+        let formValues = component.mapFilterForm.value;
+        expect(formValues.eventsControl).toBeFalsy();
+        expect(formValues.networkControl).toBeFalsy();
+        expect(formValues.sensorControl).toBeFalsy();
+        expect(formValues.stateControl).toBeFalsy();
+        expect(formValues.surveyedControl).toBeFalsy();
+        expect(formValues.surveyedOnlyControl).toBeFalsy();
+        expect(formValues.bracketSiteOnlyControl).toBeFalsy();
+        expect(formValues.RDGOnlyControl).toBeFalsy();
+        expect(formValues.OpDefinedControl).toBeFalsy();
     });
 
     xit('#displayState', () => {});
