@@ -1,4 +1,4 @@
-import { HttpClient, HttpHandler } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
 
@@ -51,6 +51,7 @@ describe('HomeComponent', () => {
             declarations: [HomeComponent],
             imports: [
                 BrowserAnimationsModule,
+                HttpClientTestingModule,
                 MatToolbarModule,
                 MatIconModule,
                 MatExpansionModule,
@@ -73,8 +74,6 @@ describe('HomeComponent', () => {
             providers: [
                 HomeComponent,
                 CurrentUserService,
-                HttpClient,
-                HttpHandler,
                 DisplayValuePipe,
                 MatSnackBar,
             ],
@@ -93,8 +92,8 @@ describe('HomeComponent', () => {
     });
 
     it('leaflet map should be initialized', () => {
-        component.ngOnInit();
-        component.createMap();
+        // component.ngOnInit();
+        // component.createMap();
         expect(component.map).toBeDefined();
     });
 
@@ -201,6 +200,25 @@ describe('HomeComponent', () => {
         let mapZoom = component.map.getZoom();
         expect(mapCenter).toEqual(MAP_CONSTANTS.defaultCenter);
         expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
+    });
+
+    it('mapFilterForm should be a valid form on submit', () => {
+        component.submitMapFilter();
+        expect(component.mapFilterForm.valid).toBe(true);
+    });
+
+    it('#clearMapFilterForm resets the filter form', () => {
+        component.clearMapFilterForm();
+        let formValues = component.mapFilterForm.value;
+        expect(formValues.eventsControl).toBeFalsy();
+        expect(formValues.networkControl).toBeFalsy();
+        expect(formValues.sensorControl).toBeFalsy();
+        expect(formValues.stateControl).toBeFalsy();
+        expect(formValues.surveyedControl).toBeFalsy();
+        expect(formValues.surveyedOnlyControl).toBeFalsy();
+        expect(formValues.bracketSiteOnlyControl).toBeFalsy();
+        expect(formValues.RDGOnlyControl).toBeFalsy();
+        expect(formValues.OpDefinedControl).toBeFalsy();
     });
 
     xit('#displayState', () => {});

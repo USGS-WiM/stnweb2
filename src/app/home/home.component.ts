@@ -143,17 +143,17 @@ export class HomeComponent implements OnInit {
         public snackBar: MatSnackBar
     ) {
         this.mapFilterForm = formBuilder.group({
-            eventsControl: new FormControl(),
-            networkControl: new FormControl(),
-            sensorControl: new FormControl(),
-            stateControl: new FormControl(),
-            surveyedControl: new FormControl(),
-            HWMOnlyControl: new FormControl(),
-            sensorOnlyControl: new FormControl(),
-            surveyedOnlyControl: new FormControl(),
-            bracketSiteOnlyControl: new FormControl(),
-            RDGOnlyControl: new FormControl(),
-            OPDefinedControl: new FormControl(),
+            eventsControl: null,
+            networkControl: null,
+            sensorControl: null,
+            stateControl: '',
+            surveyedControl: true,
+            HWMOnlyControl: false,
+            sensorOnlyControl: false,
+            surveyedOnlyControl: false,
+            bracketSiteOnlyControl: false,
+            RDGOnlyControl: false,
+            OPDefinedControl: false,
         });
     }
 
@@ -559,20 +559,6 @@ export class HomeComponent implements OnInit {
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
     }
-
-    // another method to get event sites
-    /* getEventSites(arr, arr2) {
-    const ret = [];
-    for (const i in arr2) {
-        if (arr2.indexOf(arr2[i]) > -1) {
-            ret.push(arr2[i]);
-        }
-    }
-
-    this.eventSites = ret;
-    console.log(this.eventSites);
-    return ret;
-  } */
 
     /* istanbul ignore next */
     mapResults(eventSites: any) {
