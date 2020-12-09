@@ -143,17 +143,17 @@ export class HomeComponent implements OnInit {
         public snackBar: MatSnackBar
     ) {
         this.mapFilterForm = formBuilder.group({
-            eventsControl: new FormControl(),
-            networkControl: new FormControl(),
-            sensorControl: new FormControl(),
-            stateControl: new FormControl(),
-            surveyedControl: new FormControl(),
-            HWMOnlyControl: new FormControl(),
-            sensorOnlyControl: new FormControl(),
-            surveyedOnlyControl: new FormControl(),
-            bracketSiteOnlyControl: new FormControl(),
-            RDGOnlyControl: new FormControl(),
-            OPDefinedControl: new FormControl(),
+            eventsControl: null,
+            networkControl: null,
+            sensorControl: null,
+            stateControl: '',
+            surveyedControl: true,
+            HWMOnlyControl: false,
+            sensorOnlyControl: false,
+            surveyedOnlyControl: false,
+            bracketSiteOnlyControl: false,
+            RDGOnlyControl: false,
+            OPDefinedControl: false,
         });
     }
 
