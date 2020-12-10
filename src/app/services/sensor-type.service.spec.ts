@@ -5,33 +5,31 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { NetworkName } from '@interfaces/network-name';
-import { NetworkNamesService } from './network-names.service';
-
+import { SensorType } from '@interfaces/sensor-type';
+import { SensorTypeService } from './sensor-type.service';
 import { of, defer } from 'rxjs';
-
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '../app.settings';
 
-export const mockNetworkNamesList: NetworkName[] =
-    APP_UTILITIES.NETWORK_NAMES_DUMMY_DATA_LIST;
-export const mockNetworkName: NetworkName = APP_UTILITIES.DUMMY_NETWORK_NAME;
+export const mockSensorTypesList: SensorType[] =
+    APP_UTILITIES.SENSOR_TYPES_DUMMY_DATA_LIST;
+export const mockSensorType: SensorType = APP_UTILITIES.DUMMY_SENSOR_TYPE;
 
 export function responseData<T>(data: T) {
     return defer(() => Promise.resolve(data));
 }
 
-describe('NetworkNamesService', () => {
+describe('SensorTypeService', () => {
     let httpTestingController: HttpTestingController;
-    let service: NetworkNamesService;
+    let service: SensorTypeService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [NetworkNamesService, HttpClient],
+            providers: [SensorTypeService, HttpClient],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
-        service = TestBed.inject(NetworkNamesService);
+        service = TestBed.inject(SensorTypeService);
     });
     afterEach(() => {
         httpTestingController.verify();
@@ -43,29 +41,29 @@ describe('NetworkNamesService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('#getNetworkNames() should retrieve a network names list from the data API', () => {
-        service.getNetworkNames().subscribe((results) => {
+    it('#getSensorTypes() should retrieve a sensor types list from the data API', () => {
+        service.getSensorTypes().subscribe((results) => {
             expect(results).not.toBe(null);
             expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockNetworkNamesList)
+                JSON.stringify(mockSensorTypesList)
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.NETWORK_NAMES + '.json'
+            APP_SETTINGS.SENSOR_TYPES + '.json'
         );
-        req.flush(mockNetworkNamesList);
+        req.flush(mockSensorTypesList);
     });
 
-    it('#getNetworkName() should retrieve a network name record from the data API', () => {
-        service.getNetworkName(5).subscribe((results) => {
+    it('#getSensorType() should retrieve a single sensor type record from the data API', () => {
+        service.getSensorType(4).subscribe((results) => {
             expect(results).not.toBe(null);
             expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockNetworkName)
+                JSON.stringify(mockSensorType)
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.NETWORK_NAMES + 5 + '.json'
+            APP_SETTINGS.SENSOR_TYPES + 4 + '.json'
         );
-        req.flush(mockNetworkName);
+        req.flush(mockSensorType);
     });
 });

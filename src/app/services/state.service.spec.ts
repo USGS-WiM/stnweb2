@@ -1,35 +1,35 @@
-import { HttpClient } from '@angular/common/http';
 import {
     HttpClientTestingModule,
     HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { SensorType } from '@interfaces/sensor-type';
-import { SensorTypesService } from './sensor-types.service';
+import { State } from '@interfaces/state';
+import { StateService } from './state.service';
+
 import { of, defer } from 'rxjs';
+
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '../app.settings';
 
-export const mockSensorTypesList: SensorType[] =
-    APP_UTILITIES.SENSOR_TYPES_DUMMY_DATA_LIST;
-export const mockSensorType: SensorType = APP_UTILITIES.DUMMY_SENSOR_TYPE;
+export const mockStatesList: State[] = APP_UTILITIES.STATES_DUMMY_DATA_LIST;
+export const mockState: State = APP_UTILITIES.DUMMY_STATE;
 
 export function responseData<T>(data: T) {
     return defer(() => Promise.resolve(data));
 }
 
-describe('SensorTypesService', () => {
+describe('StateService', () => {
     let httpTestingController: HttpTestingController;
-    let service: SensorTypesService;
+    let service: StateService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [SensorTypesService, HttpClient],
+            providers: [StateService],
             imports: [HttpClientTestingModule],
         });
         httpTestingController = TestBed.inject(HttpTestingController);
-        service = TestBed.inject(SensorTypesService);
+        service = TestBed.inject(StateService);
     });
     afterEach(() => {
         httpTestingController.verify();
@@ -41,29 +41,27 @@ describe('SensorTypesService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('#getSensorTypes() should retrieve a sensor types list from the data API', () => {
-        service.getSensorTypes().subscribe((results) => {
+    it('#getStates() should retrieve a states list from the data API', () => {
+        service.getStates().subscribe((results) => {
             expect(results).not.toBe(null);
             expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockSensorTypesList)
+                JSON.stringify(mockStatesList)
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.SENSOR_TYPES + '.json'
+            APP_SETTINGS.STATES + '.json'
         );
-        req.flush(mockSensorTypesList);
+        req.flush(mockStatesList);
     });
 
-    it('#getSensorType() should retrieve a single sensor type record from the data API', () => {
-        service.getSensorType(4).subscribe((results) => {
+    it('#getState() should retrieve a single state record from the data API', () => {
+        service.getState(13).subscribe((results) => {
             expect(results).not.toBe(null);
-            expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockSensorType)
-            );
+            expect(JSON.stringify(results)).toEqual(JSON.stringify(mockState));
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.SENSOR_TYPES + 4 + '.json'
+            APP_SETTINGS.STATES + 13 + '.json'
         );
-        req.flush(mockSensorType);
+        req.flush(mockState);
     });
 });
