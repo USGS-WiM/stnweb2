@@ -116,6 +116,30 @@ describe('HomeComponent', () => {
         expect(roundedNumber).toBe(1.65);
     });
 
+    /*
+    it('APP_UTILITIES.SORT returns an sorted list', () => {
+        let unsorted = [
+            { id: 1, value: 5 },
+            { id: 2, value: 19 },
+            { id: 3, value: 3 },
+            { id: 4, value: 1 },
+            { id: 5, value: 789 },
+            { id: 6, value: 138 },
+        ];
+        let sorted = APP_UTILITIES.SORT(unsorted, 'value', 'ascend');
+        expect(sorted).toEqual([
+            { id: 4, value: 1 },
+            { id: 3, value: 3 },
+            { id: 1, value: 5 },
+            { id: 2, value: 19 },
+            { id: 6, value: 138 },
+            { id: 5, value: 789 },
+        ]);
+    });
+    */
+
+    //  it('#display selected event returns ')
+
     it('#display event returns the event name', () => {
         const event: Event = {
             event_id: 24,
@@ -167,6 +191,21 @@ describe('HomeComponent', () => {
         expect(component.currentFilter).toEqual(
             APP_SETTINGS.DEFAULT_FILTER_QUERY
         );
+    });
+
+    it('should call displaySelectedEvent', () => {
+        component.displaySelectedEvent();
+    });
+
+    it('should call openZoomOutSnackBar', () => {
+        let message = 'hello';
+        let action = 'OK';
+        let duration = 5;
+        component.openZoomOutSnackBar(message, action, duration);
+    });
+
+    it('should call updateEventFilter', () => {
+        component.updateEventFilter();
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {
