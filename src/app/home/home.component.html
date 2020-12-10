@@ -50,7 +50,8 @@
                     watershedsVisible ||
                     currWarningsVisible ||
                     watchWarnVisible ||
-                    ahpsGagesVisible
+                    ahpsGagesVisible ||
+                    allSitesVisible
                 "
             >
                 <mat-expansion-panel-header>
@@ -63,6 +64,16 @@
                                 class="wmm-square wmm-white wmm-icon-circle wmm-icon-white wmm-size-20 huc-icon"
                             ></div>
                             <label>Watersheds</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content" *ngIf="allSitesVisible">
+                    <div id="allSitesLegend">
+                        <div class="legend-icon allSitesLegend">
+                            <div class="allSiteIcon"></div>
+                            <label class="allSitesLegendLabel"
+                                >All STN Sites</label
+                            >
                         </div>
                     </div>
                 </div>

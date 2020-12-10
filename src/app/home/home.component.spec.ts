@@ -2,7 +2,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
-
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -22,6 +21,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
+
 // import { by } from '@angular/platform-browser';
 import {
     FormsModule,
@@ -167,6 +167,21 @@ describe('HomeComponent', () => {
         expect(component.currentFilter).toEqual(
             APP_SETTINGS.DEFAULT_FILTER_QUERY
         );
+    });
+
+    it('should call displaySelectedEvent', () => {
+        component.displaySelectedEvent();
+    });
+
+    it('should call openZoomOutSnackBar', () => {
+        let message = 'hello';
+        let action = 'OK';
+        let duration = 5;
+        component.openZoomOutSnackBar(message, action, duration);
+    });
+
+    it('should call updateEventFilter', () => {
+        component.updateEventFilter();
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {

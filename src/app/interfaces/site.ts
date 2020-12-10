@@ -23,16 +23,17 @@ export interface Site {
     usgs_sid: string;
     noaa_sid: string;
     hcollect_method_id: number;
+    member_id: number;
     site_notes: string;
     safety_notes: string;
     access_granted: string;
     last_updated: string;
-    last_updated_by: number
-    network_name_site: NetworkName[],
-    network_type_site: NetworkType[],
-    objective_points: ObjectivePoint[],
-    instruments: Sensor[],
-    files: File[],
-    site_housing: [],
-    hwms: Hwm[]
+    last_updated_by: number;
+    network_name_site: NetworkName[];
+    network_type_site: NetworkType[];
+    objective_points: ObjectivePoint[];
+    instruments: Sensor[];
+    files: File[];
+    site_housing: [];
+    hwms: Hwm[];
 }
