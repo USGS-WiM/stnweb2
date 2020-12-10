@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -40,7 +40,7 @@ import { RegistrationComponent } from './registration/registration.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
-import { EventsService } from '@services/events.service';
+import { EventService } from '@services/event.service';
 import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
@@ -90,7 +90,7 @@ import { SitesService } from '@services/sites.service';
     providers: [
         CurrentUserService,
         AuthenticationService,
-        EventsService,
+        EventService,
         UserService,
         SitesService,
         DisplayValuePipe,
@@ -103,5 +103,6 @@ import { SitesService } from '@services/sites.service';
         RegistrationComponent,
         ConfirmComponent,
     ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}
