@@ -36,7 +36,6 @@ import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
 import { SiteService } from '@services/site.service';
 import 'leaflet.markercluster';
-import 'leaflet.markercluster.freezable';
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
 import { MatInputModule } from '@angular/material/input';
@@ -356,7 +355,6 @@ export class HomeComponent implements OnInit {
             layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
             renderer: L.canvas(),
         });
-        /* this.markers = L.featureGroup().addTo(this.map); */
 
         this.supplementaryLayers = {
             Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
@@ -436,7 +434,6 @@ export class HomeComponent implements OnInit {
         // When layer is checked, add layer icon to legend
         /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
-            console.log('this is e add', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
@@ -648,7 +645,6 @@ export class HomeComponent implements OnInit {
         // When layer is checked, add layer icon to legend
         /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
-            console.log('this is e add', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
