@@ -5,7 +5,7 @@ import { RegistrationComponent } from './registration/registration.component';
 import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { MatDialog } from '@angular/material/dialog';
-import { StateService } from '@app/services/state.service';
+import { StateService } from '@services/state.service';
 import { NetworkNameService } from '@services/network-name.service';
 import { SensorTypeService } from '@services/sensor-type.service';
 
