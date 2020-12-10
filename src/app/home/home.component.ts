@@ -183,7 +183,7 @@ export class HomeComponent implements OnInit {
             networkControl: null,
             sensorTypeControl: null,
             stateControl: '',
-            surveyedControl: true,
+            surveyedControl: null,
             HWMOnlyControl: false,
             sensorOnlyControl: false,
             surveyedOnlyControl: false,
