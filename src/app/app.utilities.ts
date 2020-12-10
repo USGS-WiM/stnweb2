@@ -144,6 +144,7 @@ export class APP_UTILITIES {
                 usgs_sid: '',
                 noaa_sid: '',
                 hcollect_method_id: 1,
+                member_id: null,
                 site_notes:
                     'Sensor on second piling from land on east side of fishing pier in Sebastian Inlet State Park 0.5 miles west of entrance station south of bridge.',
                 safety_notes: '',
@@ -178,6 +179,7 @@ export class APP_UTILITIES {
                 usgs_sid: '',
                 noaa_sid: '',
                 hcollect_method_id: 4,
+                member_id: null,
                 site_notes:
                     'off 520 - 520 E to Riveredge Blvd, turn right and go to Lee Wenner Park, turn left\n\nWooden pilings on T-dock left of boat launch (enter the park and bear left to boat ramp, T-dock is past the ramp',
                 safety_notes: '',

@@ -34,6 +34,9 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypesService } from '@services/sensor-types.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
+import { SiteService } from '@services/site.service';
+import 'leaflet.markercluster';
+import 'leaflet.markercluster.freezable';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -42,6 +45,7 @@ declare let L: any;
 import 'leaflet';
 import 'leaflet-draw';
 import * as esri from 'esri-leaflet';
+import { canvas } from 'leaflet';
 import { Subject } from 'rx';
 
 export interface PeriodicElement {
@@ -113,11 +117,18 @@ export class HomeComponent implements OnInit {
     sensors$: Observable<SensorType[]>;
     states$: Observable<State[]>;
 
+    //for All STN Sites layer
+    allSites: Site[];
+
+    //for all layers that aren't base maps
+    supplementaryLayers;
+
     //These variables indicate if each layer is checked
     watershedsVisible = false;
     currWarningsVisible = false;
     watchWarnVisible = false;
     ahpsGagesVisible = false;
+    allSitesVisible = false;
 
     //Used for determining when to show layer visibility snack bar message
     currentZoom: number;
@@ -127,6 +138,11 @@ export class HomeComponent implements OnInit {
 
     private displayedSites: Subject<Site[]> = new Subject<Site[]>();
     private setDisplayedSites;
+
+    eventIcon = L.divIcon({
+        className:
+            ' wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20',
+    });
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
@@ -139,6 +155,7 @@ export class HomeComponent implements OnInit {
         private sensorTypesService: SensorTypesService,
         public currentUserService: CurrentUserService,
         private sitesService: SitesService,
+        private siteService: SiteService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
     ) {
@@ -209,6 +226,20 @@ export class HomeComponent implements OnInit {
         this.states$ = this.statesService.getStates();
         // create and configure map
         this.createMap();
+
+        const siteIcon = L.divIcon({
+            className: ' allSiteIcon ',
+            iconSize: 32,
+        });
+
+        this.siteService.getAllSites().subscribe((results) => {
+            this.allSites = results;
+            this.mapResults(
+                this.allSites,
+                siteIcon,
+                this.siteService.siteMarkers
+            );
+        });
     }
 
     setCurrentFilter() {
@@ -237,7 +268,11 @@ export class HomeComponent implements OnInit {
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
                 this.eventSites = results;
-                this.mapResults(this.eventSites);
+                this.mapResults(
+                    this.eventSites,
+                    this.eventIcon,
+                    this.eventMarkers
+                );
             });
     }
 
@@ -247,11 +282,23 @@ export class HomeComponent implements OnInit {
             center: MAP_CONSTANTS.defaultCenter,
             zoom: MAP_CONSTANTS.defaultZoom,
             layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
+            renderer: L.canvas,
         });
         /* this.markers = L.featureGroup().addTo(this.map); */
 
+        this.supplementaryLayers = {
+            Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
+            'All STN Sites': this.siteService.siteMarkers,
+            'Current Warnings*':
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings,
+            'Watches/Warnings*':
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings,
+            "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable":
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages,
+        };
+
         L.control
-            .layers(MAP_CONSTANTS.baseMaps, MAP_CONSTANTS.supplementaryLayers, {
+            .layers(MAP_CONSTANTS.baseMaps, this.supplementaryLayers, {
                 position: 'topleft',
             })
             .addTo(this.map);
@@ -320,6 +367,9 @@ export class HomeComponent implements OnInit {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
+            if (e.name === 'All STN Sites') {
+                this.allSitesVisible = true;
+            }
             if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = true;
             }
@@ -328,7 +378,7 @@ export class HomeComponent implements OnInit {
             }
             if (
                 e.name ===
-                "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
+                "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable"
             ) {
                 this.ahpsGagesVisible = true;
             }
@@ -339,6 +389,9 @@ export class HomeComponent implements OnInit {
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
+            if (e.name === 'All STN Sites') {
+                this.allSitesVisible = false;
+            }
             if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = false;
             }
@@ -347,7 +400,7 @@ export class HomeComponent implements OnInit {
             }
             if (
                 e.name ===
-                "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
+                "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable"
             ) {
                 this.ahpsGagesVisible = false;
             }
@@ -360,6 +413,13 @@ export class HomeComponent implements OnInit {
         //Get the value of the current zoom
         this.map.on('zoomend', () => {
             this.currentZoom = this.map.getZoom();
+            //Disable clustering for the All STN Sites layer when zoom >= 12 so we can see individual sites
+            if (this.currentZoom >= 12) {
+                this.siteService.siteMarkers.disableClustering();
+            }
+            if (this.currentZoom < 12) {
+                this.siteService.siteMarkers.enableClustering();
+            }
             //If the zoom went from 9 to 8 and the gages/watches/warnings are on,
             //that layer is checked, but it's not displayed
             //warn users of that in a snack bar message
@@ -510,39 +570,6 @@ export class HomeComponent implements OnInit {
                 }
             });
         });
-
-        // When the watershed checkbox is checked, add watershed icon to legend
-        /* istanbul ignore next */
-        this.map.on('overlayadd', (e) => {
-            if (e.name === 'Watersheds') {
-                this.watershedsVisible = true;
-            }
-            if (e.name === 'Current Warnings') {
-                this.currWarningsVisible = true;
-            }
-            if (e.name === 'Watches/Warnings') {
-                this.watchWarnVisible = true;
-            }
-            if (e.name === 'AHPS Gages') {
-                this.ahpsGagesVisible = true;
-            }
-        });
-        // When the watershed checkbox is unchecked, remove watershed icon from legend
-        /* istanbul ignore next */
-        this.map.on('overlayremove', (e) => {
-            if (e.name === 'Watersheds') {
-                this.watershedsVisible = false;
-            }
-            if (e.name === 'Current Warnings') {
-                this.currWarningsVisible = false;
-            }
-            if (e.name === 'Watches/Warnings') {
-                this.watchWarnVisible = false;
-            }
-            if (e.name === 'AHPS Gages') {
-                this.ahpsGagesVisible = false;
-            }
-        });
     }
 
     // When button is clicked, focus center and zoom to the selected event
@@ -561,24 +588,17 @@ export class HomeComponent implements OnInit {
     }
 
     /* istanbul ignore next */
-    mapResults(eventSites: any) {
+    mapResults(eventSites: any, myIcon: any, layerType: any) {
         // set/reset resultsMarker var to an empty array
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
         const riverConditions = [];
-        this.eventMarkers.removeFrom(this.map);
-        this.eventMarkers.clearLayers();
 
         // loop through results responsefrom a search query
-        if (this.eventSites.length !== undefined) {
-            for (const site of this.eventSites) {
+        if (eventSites.length !== undefined) {
+            for (const site of eventSites) {
                 const lat = Number(site.latitude_dd);
                 const long = Number(site.longitude_dd);
-
-                const myicon = L.divIcon({
-                    className:
-                        ' wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20',
-                });
 
                 /* let popupContent = '';
 
@@ -591,9 +611,28 @@ export class HomeComponent implements OnInit {
         const popup = L.popup()
           .setContent(popupContent); */
                 /* istanbul ignore next */
-                L.marker([lat, long], { icon: myicon }).addTo(
-                    this.eventMarkers
-                );
+                if (isNaN(lat) || isNaN(long)) {
+                    console.log(
+                        'Skipped site ' +
+                            site.site_no +
+                            ' in All STN Sites layer due to null lat/lng'
+                    );
+                } else {
+                    //put all the event markers in the same layer group
+                    if (layerType == this.eventMarkers) {
+                        L.marker([lat, long], { icon: myIcon }).addTo(
+                            layerType
+                        );
+                    }
+                    //Make circle markers for the All STN Sites layer
+                    if (layerType == this.siteService.siteMarkers) {
+                        L.marker([lat, long], {
+                            icon: myIcon,
+                            iconSize: 32,
+                        }).addTo(layerType);
+                    }
+                }
+
                 /* .bindPopup(popup)
           .on('click',
             (data) => {
@@ -613,7 +652,10 @@ export class HomeComponent implements OnInit {
             }); */
             }
 
-            //add event markers to map
+            // myMarkers.addTo(this.map);
+        }
+
+        if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
         }
     }
@@ -674,7 +716,7 @@ export class HomeComponent implements OnInit {
             bracketTrue;
 
         this.sitesService.getFilteredSites(urlParamString).subscribe((res) => {
-            this.mapResults(res);
+            this.mapResults(res, this.eventIcon, this.eventMarkers);
         });
     }
 }
