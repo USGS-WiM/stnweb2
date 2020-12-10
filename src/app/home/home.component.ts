@@ -36,6 +36,7 @@ import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
 import { SiteService } from '@services/site.service';
 import 'leaflet.markercluster';
+import 'leaflet.markercluster.freezable';
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
 import { MatInputModule } from '@angular/material/input';
