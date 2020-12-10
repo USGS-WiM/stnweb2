@@ -40,7 +40,7 @@ import { RegistrationComponent } from './registration/registration.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
-import { EventService } from '@app/services/event.service';
+import { EventService } from '@services/event.service';
 import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
