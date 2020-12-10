@@ -24,19 +24,23 @@ import { MAP_CONSTANTS } from './map-constants';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/forkJoin';
 import { Event } from '@interfaces/event';
-import { EventsService } from '@services/events.service';
+import { EventService } from '@app/services/event.service';
 import { Site } from '@interfaces/site';
 import { State } from '@interfaces/state';
-import { StatesService } from '@services/states.service';
+import { StateService } from '@app/services/state.service';
 import { NetworkName } from '@interfaces/network-name';
-import { NetworkNamesService } from '@services/network-names.service';
+import { NetworkNameService } from '@app/services/network-name.service';
 import { SensorType } from '@interfaces/sensor-type';
-import { SensorTypesService } from '@services/sensor-types.service';
+import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SitesService } from '@services/sites.service';
 import { SiteService } from '@services/site.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
+import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
+
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -46,6 +50,8 @@ import 'leaflet';
 import 'leaflet-draw';
 import * as esri from 'esri-leaflet';
 import { canvas } from 'leaflet';
+import { EventTypeService } from '@app/services/event-type.service';
+import { EventType } from '@app/interfaces/event-type';
 import { Subject } from 'rx';
 
 export interface PeriodicElement {
@@ -110,11 +116,29 @@ export class HomeComponent implements OnInit {
     public currentUser;
     markers;
 
+    // below is the temp var that holds the all events list for the
+    // new method of connecting events with the service. This will eventually replace
+    // 'events' once refactored.
+    // eventsList: Observable<Event[]>;
+
+    //Create variables for filter dropdowns --start
+
+    // eventTypeControl = new FormControl();
+    // // eventTypes: EventType[];
+    // eventTypes: Observable<EventType[]>;
+    // // filteredEventTypes: Observable<Event[]>;
+
+    // eventStateControl = new FormControl();
+
+    // eventsControl = new FormControl();
+
     //holds filter values
     events: Event[];
+
+    eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
     networks$: Observable<NetworkName[]>;
-    sensors$: Observable<SensorType[]>;
+    sensorTypes$: Observable<SensorType[]>;
     states$: Observable<State[]>;
 
     //for All STN Sites layer
@@ -148,21 +172,33 @@ export class HomeComponent implements OnInit {
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
-        private eventsService: EventsService,
+        private eventService: EventService,
+        private eventTypeService: EventTypeService,
+        private stateService: StateService,
+        private networkNameService: NetworkNameService,
+        private sensorTypeService: SensorTypeService,
+        private eventsService: EventService,
         private formBuilder: FormBuilder,
-        private statesService: StatesService,
-        private networkNamesService: NetworkNamesService,
-        private sensorTypesService: SensorTypesService,
+        private networkNamesService: NetworkNameService,
+        private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
         private sitesService: SitesService,
         private siteService: SiteService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
     ) {
+        this.eventTypes$ = this.eventTypeService.eventTypes$;
+
+        this.networks$ = this.networkNameService.networks$;
+        this.sensorTypes$ = this.sensorTypeService.sensorTypes$;
+        this.states$ = this.stateService.states$;
+
         this.mapFilterForm = formBuilder.group({
+            eventTypeControl: null,
+            eventStateControl: '',
             eventsControl: null,
             networkControl: null,
-            sensorControl: null,
+            sensorTypeControl: null,
             stateControl: '',
             surveyedControl: true,
             HWMOnlyControl: false,
@@ -175,11 +211,19 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
+        /// demonstration code. to be removed
+        // let floodEvents: EventType;
+        // this.eventTypeService.getEventsByEventType(4).subscribe((eventType) => {
+        //     floodEvents = eventType;
+        //     console.log('flood events: ' + JSON.parse(eventType));
+        // });
+        /// end demonstration code
+
         // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-        console.log('User logged in?: ' + this.isloggedIn);
+        // console.log('User logged in?: ' + this.isloggedIn);
         this.setCurrentFilter();
 
-        this.eventsService.getAllEvents().subscribe((results) => {
+        this.eventService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
             this.events = APP_UTILITIES.SORT(
@@ -221,9 +265,9 @@ export class HomeComponent implements OnInit {
             this.displaySelectedEvent();
         });
         // get lists of options for dropdowns
-        this.networks$ = this.networkNamesService.getNetworkNames();
-        this.sensors$ = this.sensorTypesService.getSensorTypes();
-        this.states$ = this.statesService.getStates();
+        // this.networks$ = this.networkNamesService.getNetworkNames();
+        // this.sensorTypes$ = this.sensorTypesService.getSensorTypes();
+        this.states$ = this.stateService.getStates();
         // create and configure map
         this.createMap();
 
@@ -246,6 +290,33 @@ export class HomeComponent implements OnInit {
         this.currentFilter = localStorage.getItem('currentFilter')
             ? JSON.parse(localStorage.getItem('currentFilter'))
             : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    }
+
+    // TODO: update this
+    updateEventFilter() {
+        this.mapFilterForm;
+        this.eventService
+            .filterEvents({
+                eventType: this.mapFilterForm.get('eventTypeControl').value
+                    ? this.mapFilterForm.get('eventTypeControl').value
+                          .event_type_id
+                    : null,
+                state: this.mapFilterForm.get('eventStateControl').value
+                    ? this.mapFilterForm.get('eventStateControl').value
+                          .state_abbrev
+                    : null,
+            })
+            .subscribe((filterResponse) => {
+                // update events array to the filter response
+                this.events = filterResponse;
+                // this line necessary to update the list (hack)
+                this.mapFilterForm.get('eventsControl').setValue(null);
+            });
+
+        // this.events = this.eventService.filterEvents({
+        //     eventType: typeArray.toString(),
+        //     state: this.eventStateControl.value.state_abbrev,
+        // });
     }
 
     //Temporary message pop up at bottom of screen
@@ -675,8 +746,8 @@ export class HomeComponent implements OnInit {
         let networkIds = filterParams.networkControl
             ? filterParams.networkControl.toString()
             : '';
-        let sensorIds = filterParams.sensorControl
-            ? filterParams.sensorControl.toString()
+        let sensorIds = filterParams.sensorTypeControl
+            ? filterParams.sensorTypeControl.toString()
             : '';
         let stateAbbrevs = filterParams.stateControl
             ? filterParams.stateControl.toString()

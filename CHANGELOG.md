@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
--Added all STN sites layer
+-   Added all STN sites layer
+-   Added EventType and EventState Filters to filter the Events choice list
+-   Added site filter options for: HWMs Surveyed, HWM Only, Sensor Only, Surveyed RP Only, Pre-Deployed Bracket, RDG Only, Has OP Defined
 
 ### Changed
 

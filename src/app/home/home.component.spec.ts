@@ -1,7 +1,7 @@
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -12,17 +12,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 
 // import { by } from '@angular/platform-browser';
 import {
+    FormsModule,
     ReactiveFormsModule,
     FormBuilder,
     FormControl,
@@ -50,6 +52,13 @@ describe('HomeComponent', () => {
             declarations: [HomeComponent],
             imports: [
                 BrowserAnimationsModule,
+                MatAutocompleteModule,
+                HttpClientTestingModule,
+                FormsModule,
+                ReactiveFormsModule,
+                MatSelectModule,
+                MatFormFieldModule,
+                MatInputModule,
                 HttpClientTestingModule,
                 MatToolbarModule,
                 MatIconModule,
@@ -76,6 +85,7 @@ describe('HomeComponent', () => {
                 DisplayValuePipe,
                 MatSnackBar,
             ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         component = TestBed.inject(HomeComponent);
     });
@@ -160,7 +170,8 @@ describe('HomeComponent', () => {
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {
-        // component.create
+        // component.ngOnInit();
+        // component.createMap();
         let latlngs = [
             [37, -109.05],
             [41, -109.03],
@@ -192,6 +203,8 @@ describe('HomeComponent', () => {
     it('#eventFocus sets map to event focused view', () => {
         // temporarily sets map to U.S, extent instead of event's extent
         // first set the view to somehting not default to test that the update works
+        // component.ngOnInit();
+        // component.createMap();
         let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
         component.map.setView(notDefaultCenter, 9);
         component.eventFocus();

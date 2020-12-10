@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { AboutComponent } from './about.component';
 
@@ -11,6 +12,7 @@ describe('AboutComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [AboutComponent],
             providers: [{ provide: MatDialogRef, useValue: {} }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     });
 

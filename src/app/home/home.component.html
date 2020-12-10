@@ -164,7 +164,6 @@
             <mat-card-title>
                 <div class="results-card-title-row">
                     <span class="results-card-title">Map Filters</span>
-
                     <span class="spacer"></span>
                 </div>
             </mat-card-title>
@@ -178,23 +177,62 @@
                     </mat-expansion-panel-header>
                     <div class="form-container">
                         <form class="form" [formGroup]="mapFilterForm">
+                            <mat-form-field appearance="fill">
+                                <mat-label for="eventType"
+                                    >Event Type</mat-label
+                                >
+                                <mat-select
+                                    id="eventTypeOptions"
+                                    formControlName="eventTypeControl"
+                                    (selectionChange)="updateEventFilter()"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let eventType of eventTypes$ | async
+                                        "
+                                        [value]="eventType"
+                                        >{{ eventType.type }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="fill">
+                                <mat-label for="eventType"
+                                    >Event State</mat-label
+                                >
+                                <mat-select
+                                    id="eventStateOptions"
+                                    formControlName="eventStateControl"
+                                    (selectionChange)="updateEventFilter()"
+                                >
+                                    <mat-option
+                                        *ngFor="let state of states$ | async"
+                                        [value]="state"
+                                        >{{ state.state_name }}</mat-option
+                                    >
+                                </mat-select>
+                            </mat-form-field>
+
+                            <br />
+
                             <mat-form-field class="eventSelect">
                                 <mat-label for="eventSelection"
                                     >Event</mat-label
                                 >
                                 <input
+                                    matInput
                                     id="eventSelection"
                                     type="text"
                                     aria-label="Dropdown menu for storm event selection"
                                     matInput
                                     formControlName="eventsControl"
-                                    [matAutocomplete]="auto"
+                                    [matAutocomplete]="eventAutocomplete"
                                 />
                                 <mat-hint
                                     >Start typing for suggestions</mat-hint
                                 >
                                 <mat-autocomplete
-                                    #auto="matAutocomplete"
+                                    #eventAutocomplete="matAutocomplete"
                                     [displayWith]="displayEvent"
                                 >
                                     <mat-option
@@ -232,13 +270,16 @@
                                 >
                                 <mat-select
                                     id="sensorOptions"
-                                    formControlName="sensorControl"
+                                    formControlName="sensorTypeControl"
                                 >
                                     <mat-option>Any</mat-option>
                                     <mat-option
-                                        *ngFor="let sensor of sensors$ | async"
-                                        [value]="sensor.sensor_type_id"
-                                        >{{ sensor.sensor }}</mat-option
+                                        *ngFor="
+                                            let sensorType of sensorTypes$
+                                                | async
+                                        "
+                                        [value]="sensorType.sensor_type_id"
+                                        >{{ sensorType.sensor }}</mat-option
                                     >
                                 </mat-select>
                             </mat-form-field>
