@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './home/home.component';
+import { MapComponent } from './map/map.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent },
+    { path: '', redirectTo: 'map', pathMatch: 'full' },
+    { path: 'map', component: MapComponent },
     /* { path: 'event/:id', component: EventDetailsComponent },
   { path: 'userdashboard', component: UserDashboardComponent, canActivate: [AuthenticationGuard] }, */
 ];

@@ -37,19 +37,19 @@ import 'leaflet-draw';
 
 import { Event } from '@interfaces/event';
 
-import { HomeComponent } from './home.component';
+import { MapComponent } from './map.component';
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
 import { MAP_CONSTANTS } from './map-constants';
 import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
 
-describe('HomeComponent', () => {
-    let component: HomeComponent;
-    let fixture: ComponentFixture<HomeComponent>;
+describe('MapComponent', () => {
+    let component: MapComponent;
+    let fixture: ComponentFixture<MapComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [HomeComponent],
+            declarations: [MapComponent],
             imports: [
                 BrowserAnimationsModule,
                 MatAutocompleteModule,
@@ -80,18 +80,18 @@ describe('HomeComponent', () => {
                 ReactiveFormsModule,
             ],
             providers: [
-                HomeComponent,
+                MapComponent,
                 CurrentUserService,
                 DisplayValuePipe,
                 MatSnackBar,
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
-        component = TestBed.inject(HomeComponent);
+        component = TestBed.inject(MapComponent);
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(HomeComponent);
+        fixture = TestBed.createComponent(MapComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
