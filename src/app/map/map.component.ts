@@ -711,6 +711,10 @@ export class MapComponent implements OnInit {
         return event && event.event_name ? event.event_name : '';
     }
 
+    //eventSites = the full site object to be mapped
+    //myIcon = what the marker will look like
+    //layerType = empty leaflet layer type
+    //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
     mapResults(
         eventSites: any,
