@@ -215,6 +215,14 @@ describe('HomeComponent', () => {
         expect(notLayerResponse).toBeNull();
     });
 
+    /*
+    it('should be a variable', () => {
+        expect(component.events).toBeDefined;
+        expect(component.currentEvent).toBeDefined;
+        expect(component.currentEventName).toBeDefined;
+    });
+    */
+
     it('#eventFocus sets map to event focused view', () => {
         // temporarily sets map to U.S, extent instead of event's extent
         // first set the view to somehting not default to test that the update works
@@ -231,7 +239,24 @@ describe('HomeComponent', () => {
 
     it('mapFilterForm should be a valid form on submit', () => {
         component.submitMapFilter();
+        component.mapFilterForm.value.eventsControl = true;
         expect(component.mapFilterForm.valid).toBe(true);
+    });
+
+    it('mapFilterForm should test all variations', () => {
+        component.mapFilterForm.value.eventsControl = 7;
+        component.mapFilterForm.value.networkControl = 'SWaTH';
+        component.mapFilterForm.value.sensorTypeControl = 'Webcam';
+        component.mapFilterForm.value.stateControl = 'California';
+        component.mapFilterForm.value.surveyedControl = 'Surveyed';
+
+        component.mapFilterForm.value.HWMOnlyControl = '1';
+        component.mapFilterForm.value.sensorOnlyControl = '1';
+        component.mapFilterForm.value.bracketSiteOnlyControl = '1';
+        component.mapFilterForm.value.RDGOnlyControl = '1';
+        component.mapFilterForm.value.OPDefinedControl = '1';
+
+        component.submitMapFilter();
     });
 
     it('#clearMapFilterForm resets the filter form', () => {

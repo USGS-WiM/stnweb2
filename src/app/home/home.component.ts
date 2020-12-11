@@ -785,6 +785,7 @@ export class HomeComponent implements OnInit {
 
     public submitMapFilter() {
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
+        console.log('filterParams', filterParams);
 
         //collect and format selected Filter Form values
         let eventId = filterParams.eventsControl
