@@ -56,14 +56,14 @@ export class APP_SETTINGS {
         });
     }
 
-    // default display query (display verison of search query above) for initial load of home page
+    // default display query (display verison of search query above) for initial load of map page
     // public static get DEFAULT_DISPLAY_QUERY(): FilterQuery {
     //     return {
     //         events: [],
     //     };
     // }
 
-    // default filter query (display verison of search query above) for initial load of home page
+    // default filter query (display verison of search query above) for initial load of map page
     public static get DEFAULT_FILTER_QUERY() {
         return {
             events: [],
