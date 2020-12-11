@@ -74,11 +74,11 @@ const ELEMENT_DATA: PeriodicElement[] = [
 ];
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss'],
+    selector: 'app-map',
+    templateUrl: './map.component.html',
+    styleUrls: ['./map.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class MapComponent implements OnInit {
     siteid: string;
     panelOpenState = false;
     errorMessage: string;
@@ -834,6 +834,11 @@ export class HomeComponent implements OnInit {
             '&HousingTypeOne=' +
             bracketTrue;
 
+        //Clear current markers when a new filter is submitted
+        if (this.map.hasLayer(this.eventMarkers)) {
+            this.eventMarkers.removeFrom(this.map);
+            this.eventMarkers = L.layerGroup([]);
+        }
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
             this.mapResults(res, this.eventIcon, this.eventMarkers);
         });
