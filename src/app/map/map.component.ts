@@ -693,7 +693,6 @@ export class MapComponent implements OnInit {
         });
     }
 
-    // When button is clicked, focus center and zoom to the selected event
     eventFocus() {
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
@@ -785,6 +784,7 @@ export class MapComponent implements OnInit {
         }
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
+            //When filtering sites, zoom to layer, close the filters pane and open map pane
             if (zoomToLayer == true) {
                 this.eventFocus();
                 this.mapPanelState = true;
