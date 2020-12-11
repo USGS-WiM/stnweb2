@@ -215,14 +215,6 @@ describe('HomeComponent', () => {
         expect(notLayerResponse).toBeNull();
     });
 
-    /*
-    it('should be a variable', () => {
-        expect(component.events).toBeDefined;
-        expect(component.currentEvent).toBeDefined;
-        expect(component.currentEventName).toBeDefined;
-    });
-    */
-
     it('#eventFocus sets map to event focused view', () => {
         // temporarily sets map to U.S, extent instead of event's extent
         // first set the view to somehting not default to test that the update works
