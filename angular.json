@@ -116,7 +116,7 @@
                         "codeCoverageExclude": [
                             "\\src\\app\\app.settings.ts",
                             "\\src\\app\\app.utilities.ts",
-                            "\\src\\app\\home\\map-constants.ts"
+                            "\\src\\app\\map\\map-constants.ts"
                         ]
                     }
                 },
