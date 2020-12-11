@@ -183,7 +183,7 @@ export class HomeComponent implements OnInit {
         public currentUserService: CurrentUserService,
         private siteService: SiteService,
         private displayValuePipe: DisplayValuePipe,
-        public snackBar: MatSnackBar //private siteService: SiteService
+        public snackBar: MatSnackBar
     ) {
         this.eventTypes$ = this.eventTypeService.eventTypes$;
 
