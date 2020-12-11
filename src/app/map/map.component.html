@@ -11,7 +11,7 @@
         <!-- <div class="data-loading-shade">
       <mat-spinner></mat-spinner>
     </div> -->
-        <mat-expansion-panel expanded id="mapPanel">
+        <mat-expansion-panel [(expanded)]="mapPanelState" id="mapPanel">
             <mat-expansion-panel-header>
                 <mat-panel-title id="resultsMapHeader"> Map </mat-panel-title>
             </mat-expansion-panel-header>
@@ -169,7 +169,7 @@
             </mat-card-title>
             <mat-card-content>
                 <!--Filters-->
-                <mat-expansion-panel expanded>
+                <mat-expansion-panel [(expanded)]="filtersPanelState">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             Filters <span class="fal fa-home-alt"></span

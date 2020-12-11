@@ -116,7 +116,10 @@ export class MapComponent implements OnInit {
 
     eventsLoading = false;
     public currentUser;
-    markers;
+
+    //Begin with the map and filters panels expanded
+    mapPanelState: boolean = true;
+    filtersPanelState: boolean = true;
 
     // below is the temp var that holds the all events list for the
     // new method of connecting events with the service. This will eventually replace
@@ -280,7 +283,8 @@ export class MapComponent implements OnInit {
             this.mapResults(
                 this.allSites,
                 siteIcon,
-                this.siteService.siteMarkers
+                this.siteService.siteMarkers,
+                false
             );
         });
     }
@@ -341,7 +345,8 @@ export class MapComponent implements OnInit {
                 this.mapResults(
                     this.eventSites,
                     this.eventIcon,
-                    this.eventMarkers
+                    this.eventMarkers,
+                    false
                 );
             });
     }
@@ -707,7 +712,12 @@ export class MapComponent implements OnInit {
     }
 
     /* istanbul ignore next */
-    mapResults(eventSites: any, myIcon: any, layerType: any) {
+    mapResults(
+        eventSites: any,
+        myIcon: any,
+        layerType: any,
+        zoomToLayer: boolean
+    ) {
         // set/reset resultsMarker var to an empty array
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
@@ -775,6 +785,11 @@ export class MapComponent implements OnInit {
         }
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
+            if (zoomToLayer == true) {
+                this.eventFocus();
+                this.mapPanelState = true;
+                this.filtersPanelState = false;
+            }
         }
     }
 
@@ -839,7 +854,7 @@ export class MapComponent implements OnInit {
             this.eventMarkers = L.featureGroup([]);
         }
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
-            this.mapResults(res, this.eventIcon, this.eventMarkers);
+            this.mapResults(res, this.eventIcon, this.eventMarkers, true);
         });
         return urlParamString;
     }
