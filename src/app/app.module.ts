@@ -43,7 +43,7 @@ import { AuthenticationService } from '@services/authentication.service';
 import { EventService } from '@services/event.service';
 import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
-import { SitesService } from '@services/sites.service';
+import { SiteService } from '@services/site.service';
 
 @NgModule({
     declarations: [
@@ -92,7 +92,7 @@ import { SitesService } from '@services/sites.service';
         AuthenticationService,
         EventService,
         UserService,
-        SitesService,
+        SiteService,
         DisplayValuePipe,
         MatSnackBar,
     ],

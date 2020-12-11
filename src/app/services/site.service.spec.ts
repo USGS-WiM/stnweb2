@@ -4,11 +4,12 @@ import {
     HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Site } from '@interfaces/site';
-import { SiteService } from './site.service';
-import { of, defer } from 'rxjs';
+import { APP_SETTINGS } from '@app/app.settings';
 import { APP_UTILITIES } from '@app/app.utilities';
-import { APP_SETTINGS } from '../app.settings';
+import { of, defer } from 'rxjs';
+import { Site } from '@app/interfaces/site';
+
+import { SiteService } from './site.service';
 
 export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
 
@@ -33,9 +34,38 @@ describe('SiteService', () => {
         TestBed.resetTestingModule();
     });
 
-    /// Tests begin ///
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    it('#getEventSites() should retrieve a list of Event sites from the API', () => {
+        service.getEventSites(7).subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockSitesList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.EVENTS + '/' + 7 + '/Sites.json'
+        );
+        req.flush(mockSitesList);
+    });
+
+    it('#getFilteredSites() should retrieve a list of sites based on input query params', () => {
+        service
+            .getFilteredSites(APP_UTILITIES.FILTERED_SITES_SAMPLE_QUERY_PARAMS)
+            .subscribe((results) => {
+                expect(results).not.toBe(null);
+                expect(JSON.stringify(results)).toEqual(
+                    JSON.stringify(mockSitesList)
+                );
+            });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.SITES_URL +
+                '/FilteredSites.json?' +
+                APP_UTILITIES.FILTERED_SITES_SAMPLE_QUERY_PARAMS
+        );
+        req.flush(mockSitesList);
     });
 
     it('#getAllSites() should retrieve a sites list from the data API', () => {
