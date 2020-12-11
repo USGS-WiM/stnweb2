@@ -689,9 +689,9 @@ export class MapComponent implements OnInit {
     }
 
     // When button is clicked, focus center and zoom to the selected event
-    // As a placeholder, currently returns to defaults
-    // TODO: work with extent for event
     eventFocus() {
+        //If there are site markers, zoom to those
+        //Otherwise, zoom back to default extent
         if (this.map.hasLayer(this.eventMarkers)) {
             this.map.fitBounds(this.eventMarkers.getBounds());
         } else {
@@ -773,10 +773,8 @@ export class MapComponent implements OnInit {
 
             // myMarkers.addTo(this.map);
         }
-
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
-            this.eventFocus();
         }
     }
 
