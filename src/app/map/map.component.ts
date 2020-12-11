@@ -116,6 +116,7 @@ export class MapComponent implements OnInit {
 
     eventsLoading = false;
     public currentUser;
+    markers;
 
     //Begin with the map and filters panels expanded
     mapPanelState: boolean = true;
