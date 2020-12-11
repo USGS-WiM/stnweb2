@@ -45,11 +45,20 @@ export class APP_UTILITIES {
             );
         }
     }
-    public static FILTER_EVENT(event_name: string, events: Event[]): Event[] {
-        const filterValue = event_name.toLowerCase();
-        return events.filter(
-            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
-        );
+    public static FILTER_EVENT(event_name: any, events: Event[]): Event[] {
+        if (typeof event_name == 'string') {
+            const filterValue = event_name.toLowerCase();
+            return events.filter(
+                (event) =>
+                    event.event_name.toLowerCase().indexOf(filterValue) === 0
+            );
+        } else {
+            const filterValue = event_name.event_name.toLowerCase();
+            return events.filter(
+                (event) =>
+                    event.event_name.toLowerCase().indexOf(filterValue) === 0
+            );
+        }
     }
     public static ROUND(num, len): any {
         return Math.round(num * Math.pow(10, len)) / Math.pow(10, len);

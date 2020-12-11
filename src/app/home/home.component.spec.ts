@@ -249,14 +249,19 @@ describe('HomeComponent', () => {
         component.mapFilterForm.value.sensorTypeControl = 'Webcam';
         component.mapFilterForm.value.stateControl = 'California';
         component.mapFilterForm.value.surveyedControl = 'Surveyed';
-
         component.mapFilterForm.value.HWMOnlyControl = '1';
         component.mapFilterForm.value.sensorOnlyControl = '1';
         component.mapFilterForm.value.bracketSiteOnlyControl = '1';
         component.mapFilterForm.value.RDGOnlyControl = '1';
         component.mapFilterForm.value.OPDefinedControl = '1';
-
         component.submitMapFilter();
+        //expect(component.submitMapFilter().urlParamString).toBe('Event=7&State=California&SensorType=Webcam&NetworkName=SWaTH&OPDefined=1&HWMOnly=');
+    });
+
+    it('updateEventFilter should reach all branches', () => {
+        component.mapFilterForm.value.eventTypeControl.event_id = 7;
+        component.mapFilterForm.value.eventTypeControl = 7;
+        component.updateEventFilter();
     });
 
     it('#clearMapFilterForm resets the filter form', () => {

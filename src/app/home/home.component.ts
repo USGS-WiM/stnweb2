@@ -296,6 +296,7 @@ export class HomeComponent implements OnInit {
     // TODO: update this
     updateEventFilter() {
         this.mapFilterForm;
+        console.log('this.mapFilterForm', this.mapFilterForm);
         this.eventService
             .filterEvents({
                 eventType: this.mapFilterForm.get('eventTypeControl').value
