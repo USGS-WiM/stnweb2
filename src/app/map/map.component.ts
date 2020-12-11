@@ -831,6 +831,11 @@ export class MapComponent implements OnInit {
             '&HousingTypeOne=' +
             bracketTrue;
 
+        //Clear current markers when a new filter is submitted
+        if (this.map.hasLayer(this.eventMarkers)) {
+            this.eventMarkers.removeFrom(this.map);
+            this.eventMarkers = L.layerGroup([]);
+        }
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
             this.mapResults(res, this.eventIcon, this.eventMarkers);
         });
