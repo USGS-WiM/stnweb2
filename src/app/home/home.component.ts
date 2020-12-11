@@ -713,7 +713,7 @@ export class HomeComponent implements OnInit {
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
         const riverConditions = [];
 
-        // loop through results responsefrom a search query
+        // loop through results response from a search query
         if (eventSites.length !== undefined) {
             for (const site of eventSites) {
                 const lat = Number(site.latitude_dd);
