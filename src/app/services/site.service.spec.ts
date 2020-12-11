@@ -6,12 +6,16 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { APP_SETTINGS } from '@app/app.settings';
 import { APP_UTILITIES } from '@app/app.utilities';
-
+import { of, defer } from 'rxjs';
 import { Site } from '@app/interfaces/site';
 
 import { SiteService } from './site.service';
 
-export const mockSiteList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
+export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
+
+export function responseData<T>(data: T) {
+    return defer(() => Promise.resolve(data));
+}
 
 describe('SiteService', () => {
     let httpTestingController: HttpTestingController;
@@ -38,13 +42,13 @@ describe('SiteService', () => {
         service.getEventSites(7).subscribe((results) => {
             expect(results).not.toBe(null);
             expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockSiteList)
+                JSON.stringify(mockSitesList)
             );
         });
         const req = httpTestingController.expectOne(
             APP_SETTINGS.EVENTS + '/' + 7 + '/Sites.json'
         );
-        req.flush(mockSiteList);
+        req.flush(mockSitesList);
     });
 
     it('#getFilteredSites() should retrieve a list of sites based on input query params', () => {
@@ -53,7 +57,7 @@ describe('SiteService', () => {
             .subscribe((results) => {
                 expect(results).not.toBe(null);
                 expect(JSON.stringify(results)).toEqual(
-                    JSON.stringify(mockSiteList)
+                    JSON.stringify(mockSitesList)
                 );
             });
         const req = httpTestingController.expectOne(
@@ -61,6 +65,19 @@ describe('SiteService', () => {
                 '/FilteredSites.json?' +
                 APP_UTILITIES.FILTERED_SITES_SAMPLE_QUERY_PARAMS
         );
-        req.flush(mockSiteList);
+        req.flush(mockSitesList);
+    });
+
+    it('#getAllSites() should retrieve a sites list from the data API', () => {
+        service.getAllSites().subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockSitesList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.SITES_URL + '.json'
+        );
+        req.flush(mockSitesList);
     });
 });

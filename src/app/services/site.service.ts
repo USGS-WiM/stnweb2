@@ -11,8 +11,6 @@ import 'rxjs/add/operator/catch';
 import { EMPTY, Subject } from 'rxjs';
 import { Site } from '@interfaces/site';
 
-export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
-
 declare let L: any;
 import 'leaflet';
 
@@ -22,8 +20,7 @@ import 'leaflet';
 export class SiteService {
     constructor(private httpClient: HttpClient) {}
 
-    private eventSitesSubject: Subject<any>;
-
+    //private eventSitesSubject: Subject<any>;
     // public get eventSites(): Observable<any> {
     //     return this.eventSitesSubject.asObservable();
     // }
@@ -66,13 +63,6 @@ export class SiteService {
         );
     }
 
-    /**
-     * Handle Http operation that failed.
-     * Let the app continue.
-     * @param operation - name of the operation that failed
-     * @param result - optional value to return as the observable result
-     */
-
     // public siteMarkers = new L.layerGroup([]);
 
     public siteMarkers = new L.markerClusterGroup({
@@ -101,7 +91,14 @@ export class SiteService {
     public allSiteMarker(): Observable<any> {
         return this._allSiteMarkers.asObservable();
     }
-    /* istanbul ignore next */
+
+    /**
+     * Handle Http operation that failed.
+     * Let the app continue.
+     * @param operation - name of the operation that failed
+     * @param result - optional value to return as the observable result
+     */
+
     private handleError<T>(operation = 'operation', result?: T) {
         return (error: any): Observable<T> => {
             // TODO: send the error to remote logging infrastructure
