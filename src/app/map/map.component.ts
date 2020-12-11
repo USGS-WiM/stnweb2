@@ -693,7 +693,7 @@ export class MapComponent implements OnInit {
     // TODO: work with extent for event
     eventFocus() {
         if (this.map.hasLayer(this.eventMarkers)) {
-            console.log('zoom to event markers');
+            this.map.fitBounds(this.eventMarkers.getBounds());
         } else {
             this.map.setView(
                 MAP_CONSTANTS.defaultCenter,
@@ -776,6 +776,7 @@ export class MapComponent implements OnInit {
 
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
+            this.eventFocus();
         }
     }
 
@@ -837,12 +838,11 @@ export class MapComponent implements OnInit {
         //Clear current markers when a new filter is submitted
         if (this.map.hasLayer(this.eventMarkers)) {
             this.eventMarkers.removeFrom(this.map);
-            this.eventMarkers = L.layerGroup([]);
+            this.eventMarkers = L.featureGroup([]);
         }
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
             this.mapResults(res, this.eventIcon, this.eventMarkers);
         });
-
         return urlParamString;
     }
 }
