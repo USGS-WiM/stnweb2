@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
+import { MapComponent } from './map/map.component';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 import { AboutComponent } from './about/about.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -49,7 +49,7 @@ import { SiteService } from '@services/site.service';
     declarations: [
         AppComponent,
         AboutComponent,
-        HomeComponent,
+        MapComponent,
         SearchDialogComponent,
         LoginComponent,
         RegistrationComponent,
