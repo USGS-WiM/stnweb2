@@ -107,7 +107,7 @@ export class HomeComponent implements OnInit {
     currentEvent: number; //change to subject?
     currentEventName: string;
     eventSites: any;
-    eventMarkers = L.layerGroup([]);
+    eventMarkers = L.featureGroup([]);
 
     mapScale;
     latitude;
@@ -331,7 +331,7 @@ export class HomeComponent implements OnInit {
             this.eventMarkers.removeFrom(this.map);
         }
         //Clear the old markers from the layer
-        this.eventMarkers = L.layerGroup([]);
+        this.eventMarkers = L.featureGroup([]);
         //Plot markers for selected event
 
         this.siteService
@@ -692,12 +692,15 @@ export class HomeComponent implements OnInit {
     // As a placeholder, currently returns to defaults
     // TODO: work with extent for event
     eventFocus() {
-        this.map.setView(
-            MAP_CONSTANTS.defaultCenter,
-            MAP_CONSTANTS.defaultZoom
-        );
+        if (this.map.hasLayer(this.eventMarkers)) {
+            console.log('zoom to event markers');
+        } else {
+            this.map.setView(
+                MAP_CONSTANTS.defaultCenter,
+                MAP_CONSTANTS.defaultZoom
+            );
+        }
     }
-
     // options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
