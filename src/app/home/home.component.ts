@@ -33,7 +33,6 @@ import { NetworkNameService } from '@app/services/network-name.service';
 import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
-import { SitesService } from '@services/sites.service';
 import { SiteService } from '@services/site.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
@@ -182,10 +181,9 @@ export class HomeComponent implements OnInit {
         private networkNamesService: NetworkNameService,
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
-        private sitesService: SitesService,
+        private siteService: SiteService,
         private displayValuePipe: DisplayValuePipe,
-        public snackBar: MatSnackBar,
-        private siteService: SiteService
+        public snackBar: MatSnackBar //private siteService: SiteService
     ) {
         this.eventTypes$ = this.eventTypeService.eventTypes$;
 
@@ -336,7 +334,7 @@ export class HomeComponent implements OnInit {
         this.eventMarkers = L.layerGroup([]);
         //Plot markers for selected event
 
-        this.sitesService
+        this.siteService
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
                 this.eventSites = results;
@@ -833,7 +831,7 @@ export class HomeComponent implements OnInit {
             '&HousingTypeOne=' +
             bracketTrue;
 
-        this.sitesService.getFilteredSites(urlParamString).subscribe((res) => {
+        this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
             this.mapResults(res, this.eventIcon, this.eventMarkers);
         });
 
