@@ -250,12 +250,6 @@ describe('HomeComponent', () => {
         //expect(component.submitMapFilter().urlParamString).toBe('Event=7&State=California&SensorType=Webcam&NetworkName=SWaTH&OPDefined=1&HWMOnly=');
     });
 
-    it('updateEventFilter should reach all branches', () => {
-        component.mapFilterForm.value.eventTypeControl.event_id = 7;
-        component.mapFilterForm.value.eventTypeControl = 7;
-        component.updateEventFilter();
-    });
-
     it('#clearMapFilterForm resets the filter form', () => {
         component.clearMapFilterForm();
         let formValues = component.mapFilterForm.value;
