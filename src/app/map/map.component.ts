@@ -107,7 +107,7 @@ export class MapComponent implements OnInit {
     currentEvent: number; //change to subject?
     currentEventName: string;
     eventSites: any;
-    eventMarkers = L.layerGroup([]);
+    eventMarkers = L.featureGroup([]);
 
     mapScale;
     latitude;
@@ -117,6 +117,10 @@ export class MapComponent implements OnInit {
     eventsLoading = false;
     public currentUser;
     markers;
+
+    //Begin with the map and filters panels expanded
+    mapPanelState: boolean = true;
+    filtersPanelState: boolean = true;
 
     // below is the temp var that holds the all events list for the
     // new method of connecting events with the service. This will eventually replace
@@ -280,7 +284,8 @@ export class MapComponent implements OnInit {
             this.mapResults(
                 this.allSites,
                 siteIcon,
-                this.siteService.siteMarkers
+                this.siteService.siteMarkers,
+                false
             );
         });
     }
@@ -331,7 +336,7 @@ export class MapComponent implements OnInit {
             this.eventMarkers.removeFrom(this.map);
         }
         //Clear the old markers from the layer
-        this.eventMarkers = L.layerGroup([]);
+        this.eventMarkers = L.featureGroup([]);
         //Plot markers for selected event
 
         this.siteService
@@ -341,7 +346,8 @@ export class MapComponent implements OnInit {
                 this.mapResults(
                     this.eventSites,
                     this.eventIcon,
-                    this.eventMarkers
+                    this.eventMarkers,
+                    false
                 );
             });
     }
@@ -688,23 +694,34 @@ export class MapComponent implements OnInit {
         });
     }
 
-    // When button is clicked, focus center and zoom to the selected event
-    // As a placeholder, currently returns to defaults
-    // TODO: work with extent for event
     eventFocus() {
-        this.map.setView(
-            MAP_CONSTANTS.defaultCenter,
-            MAP_CONSTANTS.defaultZoom
-        );
+        //If there are site markers, zoom to those
+        //Otherwise, zoom back to default extent
+        if (this.map.hasLayer(this.eventMarkers)) {
+            this.map.fitBounds(this.eventMarkers.getBounds());
+        } else {
+            this.map.setView(
+                MAP_CONSTANTS.defaultCenter,
+                MAP_CONSTANTS.defaultZoom
+            );
+        }
     }
-
     // options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
     }
 
+    //eventSites = the full site object to be mapped
+    //myIcon = what the marker will look like
+    //layerType = empty leaflet layer type
+    //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
-    mapResults(eventSites: any, myIcon: any, layerType: any) {
+    mapResults(
+        eventSites: any,
+        myIcon: any,
+        layerType: any,
+        zoomToLayer: boolean
+    ) {
         // set/reset resultsMarker var to an empty array
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
@@ -770,9 +787,14 @@ export class MapComponent implements OnInit {
 
             // myMarkers.addTo(this.map);
         }
-
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
+            //When filtering sites, zoom to layer, close the filters pane and open map pane
+            if (zoomToLayer == true) {
+                this.eventFocus();
+                this.mapPanelState = true;
+                this.filtersPanelState = false;
+            }
         }
     }
 
@@ -834,12 +856,11 @@ export class MapComponent implements OnInit {
         //Clear current markers when a new filter is submitted
         if (this.map.hasLayer(this.eventMarkers)) {
             this.eventMarkers.removeFrom(this.map);
-            this.eventMarkers = L.layerGroup([]);
+            this.eventMarkers = L.featureGroup([]);
         }
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
-            this.mapResults(res, this.eventIcon, this.eventMarkers);
+            this.mapResults(res, this.eventIcon, this.eventMarkers, true);
         });
-
         return urlParamString;
     }
 }
