@@ -740,6 +740,11 @@ export class MapComponent implements OnInit {
             for (const site of eventSites) {
                 const lat = Number(site.latitude_dd);
                 const long = Number(site.longitude_dd);
+                if (long < -103.3896) {
+                    if (lat < 29.7918 && lat > 29.6928) {
+                        console.log('SITE', site);
+                    }
+                }
 
                 /* let popupContent = '';
 
