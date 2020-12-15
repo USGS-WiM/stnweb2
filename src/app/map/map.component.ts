@@ -729,7 +729,6 @@ export class MapComponent implements OnInit {
     displayEventState(state: any): string {
         return state && state.state_name ? state.state_name : '';
     }
-
     //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
