@@ -140,6 +140,7 @@ export class MapComponent implements OnInit {
 
     //holds filter values
     events: Event[];
+    states: State[];
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -269,7 +270,21 @@ export class MapComponent implements OnInit {
         // get lists of options for dropdowns
         // this.networks$ = this.networkNamesService.getNetworkNames();
         // this.sensorTypes$ = this.sensorTypesService.getSensorTypes();
-        this.states$ = this.stateService.getStates();
+        this.stateService.getStates().subscribe((results) => {
+            this.states = results;
+            this.states$ = this.mapFilterForm
+                .get('eventStateControl')
+                .valueChanges.pipe(
+                    map((state_name) =>
+                        state_name
+                            ? APP_UTILITIES.FILTER_STATE(
+                                  state_name,
+                                  this.states
+                              )
+                            : this.states
+                    )
+                );
+        });
         // create and configure map
         this.createMap();
 
@@ -709,6 +724,10 @@ export class MapComponent implements OnInit {
     // options to be displayed when selecting event filter
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
+    }
+    //will return a comma separated list of selected states
+    displayEventState(state: any): string {
+        return state && state.state_name ? state.state_name : '';
     }
 
     //eventSites = the full site object to be mapped

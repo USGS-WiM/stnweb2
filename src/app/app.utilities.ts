@@ -60,6 +60,26 @@ export class APP_UTILITIES {
             );
         }
     }
+    public static FILTER_STATE(state_name: any, states: State[]): State[] {
+        //state_name turns into the full state object when a state is selected
+        //when you're typing, your text will be matched, when you select a state, the object will be matched
+        if (typeof state_name == 'string') {
+            const filterValue = state_name.toLowerCase();
+            return states.filter(
+                (state) =>
+                    state.state_name.toLowerCase().indexOf(filterValue) === 0
+            );
+        } else {
+            if (state_name[0] !== undefined) {
+                const filterValue = state_name[0].state_name.toLowerCase();
+                return states.filter(
+                    (state) =>
+                        state.state_name.toLowerCase().indexOf(filterValue) ===
+                        0
+                );
+            }
+        }
+    }
     public static ROUND(num, len): any {
         return Math.round(num * Math.pow(10, len)) / Math.pow(10, len);
     }
