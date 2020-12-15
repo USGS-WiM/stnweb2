@@ -208,7 +208,6 @@
                                     matInput
                                     formControlName="eventStateControl"
                                     [matAutocomplete]="eventStateAutocomplete"
-                                    (selectionChange)="updateEventFilter()"
                                 />
                                 <mat-hint
                                     >Start typing for suggestions</mat-hint
@@ -219,6 +218,7 @@
                                 >
                                     <mat-option
                                         *ngFor="let state of states$ | async"
+                                        (click)="updateEventFilter()"
                                         [value]="state"
                                         >{{ state.state_name }}</mat-option
                                     >

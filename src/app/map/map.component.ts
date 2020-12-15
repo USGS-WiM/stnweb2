@@ -519,7 +519,6 @@ export class MapComponent implements OnInit {
                 }
             }
         });
-
         this.createDrawControls();
     }
 
