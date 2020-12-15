@@ -50,13 +50,13 @@ export class APP_UTILITIES {
             const filterValue = event_name.toLowerCase();
             return events.filter(
                 (event) =>
-                    event.event_name.toLowerCase().indexOf(filterValue) === 0
+                    event.event_name.toLowerCase().indexOf(filterValue) != -1
             );
         } else {
             const filterValue = event_name.event_name.toLowerCase();
             return events.filter(
                 (event) =>
-                    event.event_name.toLowerCase().indexOf(filterValue) === 0
+                    event.event_name.toLowerCase().indexOf(filterValue) != -1
             );
         }
     }

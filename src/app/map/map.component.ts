@@ -249,15 +249,17 @@ export class MapComponent implements OnInit {
             ); */
 
             // allow user to type into the event selector to view matching events
+            // allow user to type into the event selector to view matching events
             this.filteredEvents$ = this.mapFilterForm
                 .get('eventsControl')
                 .valueChanges.pipe(
-                    map((event_name) =>
-                        // match user text input to the index of the corresponding event
-                        /* istanbul ignore else */
-                        event_name
+                    debounceTime(200),
+                    distinctUntilChanged(),
+                    /* istanbul ignore else */
+                    map((searchTerm) =>
+                        searchTerm
                             ? APP_UTILITIES.FILTER_EVENT(
-                                  event_name,
+                                  searchTerm,
                                   this.events
                               )
                             : this.events
