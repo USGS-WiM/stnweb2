@@ -237,27 +237,18 @@ export class MapComponent implements OnInit {
             //Get id and name of most recent event
             this.currentEvent = this.events[0].event_id;
             this.currentEventName = this.events[0].event_name;
-            // TODO: set up subject to track the next current event and move
-            //this.eventSites.next(this.currentEvent)
-
-            /* this.filteredEvents$ = this.eventsControl.valueChanges.pipe(
-                debounceTime(200),
-                distinctUntilChanged(),
-                switchMap((searchTerm) =>
-                    APP_UTILITIES.FILTER_EVENT(searchTerm, this.events)
-                )
-            ); */
 
             // allow user to type into the event selector to view matching events
             this.filteredEvents$ = this.mapFilterForm
                 .get('eventsControl')
                 .valueChanges.pipe(
-                    map((event_name) =>
-                        // match user text input to the index of the corresponding event
-                        /* istanbul ignore else */
-                        event_name
+                    debounceTime(200),
+                    distinctUntilChanged(),
+                    /* istanbul ignore else */
+                    map((searchTerm) =>
+                        searchTerm
                             ? APP_UTILITIES.FILTER_EVENT(
-                                  event_name,
+                                  searchTerm,
                                   this.events
                               )
                             : this.events

@@ -134,7 +134,7 @@ describe('MapComponent', () => {
 
     it('APP_UTILITIES.FILTER_EVENT returns an array of matching events value given a partial name string input', () => {
         const response = APP_UTILITIES.FILTER_EVENT(
-            'wil',
+            'ilma',
             APP_UTILITIES.EVENTS_DUMMY_DATA_LIST
         );
         const expectedResponse: Event[] = [
