@@ -142,6 +142,7 @@ export class MapComponent implements OnInit {
     events: Event[];
     states: State[];
     eventStates: State[];
+    selectedStates: State[] = new Array<State>();
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -346,7 +347,24 @@ export class MapComponent implements OnInit {
         //     state: this.eventStateControl.value.state_abbrev,
         // });
     }
+    optionClicked(clickEvent: any, state: State) {
+        clickEvent.stopPropagation();
+        this.toggleSelection(state);
+    }
 
+    toggleSelection(state: State) {
+        state.selected = !state.selected;
+        if (state.selected) {
+            this.selectedStates.push(state);
+        } else {
+            const i = this.selectedStates.findIndex(
+                (value) => value.state_name === state.state_name
+            );
+            this.selectedStates.splice(i, 1);
+        }
+
+        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
+    }
     //Temporary message pop up at bottom of screen
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
@@ -736,6 +754,32 @@ export class MapComponent implements OnInit {
     //will return a comma separated list of selected states
     displayEventState(state: any): string {
         return state && state.state_name ? state.state_name : '';
+    }
+    //will return a comma separated list of selected states
+    displayState(state: any): string {
+        console.log('displayState, state', state);
+        // for (state_name in state) {
+        //   console.log(state_name);
+        // }
+        let stateCount: number;
+        let stateIndex: number;
+        let stateList = '';
+        let currentState: string;
+        if (state !== null) {
+            stateIndex = state.length;
+            console.log(stateIndex);
+        }
+        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
+            console.log('stateCount', stateCount, 'stateIndex', stateIndex);
+            currentState = state[stateCount].state_name;
+            console.log('currentState', currentState);
+            if (stateCount === 0) {
+                stateList = stateList.concat(currentState);
+            } else {
+                stateList = stateList.concat(', ' + currentState);
+            }
+        }
+        return stateList;
     }
     //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like

@@ -298,20 +298,41 @@
                                     >
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field appearance="fill">
+
+                            <mat-form-field>
                                 <mat-label for="stateList">States</mat-label>
-                                <mat-select
-                                    id="stateOptions"
+                                <input
+                                    matInput
+                                    type="text"
+                                    aria-label="Dropdown menu for state selection"
+                                    matInput
                                     formControlName="stateControl"
-                                    multiple
+                                    [matAutocomplete]="stateAutocomplete"
+                                />
+                                <mat-hint
+                                    >Start typing for suggestions</mat-hint
                                 >
-                                    <mat-option
-                                        *ngFor="let state of states$ | async"
-                                        [value]="state.state_abbrev"
-                                        >{{ state.state_name }}</mat-option
-                                    >
-                                </mat-select>
                             </mat-form-field>
+                            <mat-autocomplete
+                                #stateAutocomplete="matAutocomplete"
+                                [displayWith]="displayState"
+                            >
+                                <mat-option
+                                    *ngFor="let state of states$ | async"
+                                    [value]="state"
+                                >
+                                    <div (click)="optionClicked($event, state)">
+                                        <mat-checkbox
+                                            [checked]="state.selected"
+                                            (change)="toggleSelection(state)"
+                                            (click)="$event.stopPropagation()"
+                                        >
+                                            {{ state.state_name }}
+                                        </mat-checkbox>
+                                    </div>
+                                </mat-option>
+                            </mat-autocomplete>
+
                             <br />
                             <label
                                 class="filter-label"
