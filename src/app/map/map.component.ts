@@ -141,11 +141,13 @@ export class MapComponent implements OnInit {
     //holds filter values
     events: Event[];
     states: State[];
+    eventStates: State[];
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
     networks$: Observable<NetworkName[]>;
     sensorTypes$: Observable<SensorType[]>;
+    eventStates$: Observable<State[]>;
     states$: Observable<State[]>;
 
     //These variables indicate if each layer is checked
@@ -194,6 +196,7 @@ export class MapComponent implements OnInit {
 
         this.networks$ = this.networkNameService.networks$;
         this.sensorTypes$ = this.sensorTypeService.sensorTypes$;
+        this.eventStates$ = this.stateService.eventStates$;
         this.states$ = this.stateService.states$;
 
         this.mapFilterForm = formBuilder.group({
@@ -262,9 +265,24 @@ export class MapComponent implements OnInit {
         // this.networks$ = this.networkNamesService.getNetworkNames();
         // this.sensorTypes$ = this.sensorTypesService.getSensorTypes();
         this.stateService.getStates().subscribe((results) => {
+            this.eventStates = results;
+            this.eventStates$ = this.mapFilterForm
+                .get('eventStateControl')
+                .valueChanges.pipe(
+                    map((state_name) =>
+                        state_name
+                            ? APP_UTILITIES.FILTER_STATE(
+                                  state_name,
+                                  this.eventStates
+                              )
+                            : this.eventStates
+                    )
+                );
+        });
+        this.stateService.getStates().subscribe((results) => {
             this.states = results;
             this.states$ = this.mapFilterForm
-                .get('eventStateControl')
+                .get('stateControl')
                 .valueChanges.pipe(
                     map((state_name) =>
                         state_name
@@ -740,11 +758,6 @@ export class MapComponent implements OnInit {
             for (const site of eventSites) {
                 const lat = Number(site.latitude_dd);
                 const long = Number(site.longitude_dd);
-                if (long < -103.3896) {
-                    if (lat < 29.7918 && lat > 29.6928) {
-                        console.log('SITE', site);
-                    }
-                }
 
                 /* let popupContent = '';
 
