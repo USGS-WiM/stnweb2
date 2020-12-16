@@ -319,7 +319,7 @@
                             >
                                 <mat-option
                                     *ngFor="let state of states$ | async"
-                                    [value]="state"
+                                    [value]="state.state_abbrev"
                                 >
                                     <div (click)="optionClicked($event, state)">
                                         <mat-checkbox

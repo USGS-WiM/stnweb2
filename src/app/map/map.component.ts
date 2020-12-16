@@ -144,6 +144,7 @@ export class MapComponent implements OnInit {
     eventStates: State[];
     selectedStates: State[] = new Array<State>();
     stateList = '';
+    setStateAbbrev = '';
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -354,6 +355,7 @@ export class MapComponent implements OnInit {
     }
 
     toggleSelection(state: State) {
+        let numStates: number;
         state.selected = !state.selected;
         if (state.selected) {
             this.selectedStates.push(state);
@@ -364,6 +366,23 @@ export class MapComponent implements OnInit {
             this.selectedStates.splice(i, 1);
         }
         console.log('this.selectedStates', this.selectedStates);
+
+        if (this.selectedStates !== undefined) {
+            numStates = this.selectedStates.length;
+            for (let numAbbrev = 0; numAbbrev < numStates; numAbbrev++) {
+                if (numAbbrev === 0) {
+                    this.setStateAbbrev = this.setStateAbbrev.concat(
+                        this.selectedStates[numAbbrev].state_abbrev
+                    );
+                } else {
+                    this.setStateAbbrev = this.setStateAbbrev.concat(
+                        ',' + this.selectedStates[numAbbrev].state_abbrev
+                    );
+                }
+            }
+        }
+        console.log('setAbbrev', this.setStateAbbrev);
+
         this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
     }
     //Temporary message pop up at bottom of screen
@@ -764,7 +783,6 @@ export class MapComponent implements OnInit {
         this.stateList = '';
         if (state !== null) {
             stateIndex = state.length;
-            console.log(stateIndex);
         }
         for (stateCount = 0; stateCount < stateIndex; stateCount++) {
             console.log('stateCount', stateCount, 'stateIndex', stateIndex);
@@ -792,6 +810,7 @@ export class MapComponent implements OnInit {
         layerType: any,
         zoomToLayer: boolean
     ) {
+        document.getElementById('selectedStateList').innerHTML = '';
         // set/reset resultsMarker var to an empty array
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
@@ -863,7 +882,6 @@ export class MapComponent implements OnInit {
             if (zoomToLayer == true) {
                 this.eventFocus();
                 this.mapPanelState = true;
-                this.filtersPanelState = false;
             }
         }
     }
@@ -874,6 +892,8 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
+        this.filtersPanelState = false;
+        this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
         //collect and format selected Filter Form values
@@ -889,6 +909,7 @@ export class MapComponent implements OnInit {
         let stateAbbrevs = filterParams.stateControl
             ? filterParams.stateControl.toString()
             : '';
+        console.log('stateAbbrevs', stateAbbrevs);
         //surveyed = true, unsurveyed = false, or leave empty
         let surveyed = filterParams.surveyedControl
             ? filterParams.surveyedControl
