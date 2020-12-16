@@ -1,9 +1,9 @@
-.example-container {
+.login-form-container {
     display: flex;
     flex-direction: column;
 }
 
-.example-container > * {
+.login-form-container > * {
     width: 100%;
 }
 
@@ -42,4 +42,23 @@ input.example-right-align {
     margin: 2%;
     font-weight: bold;
     /* width: 80px; */
+}
+
+.horizontal-form-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.vertical-form-container {
+    display: flex;
+    flex-direction: column;
+}
+.form-control {
+    width: 18em;
+}
+.forgot-password-div {
+    width: 20em;
+}
+.text-small {
+    font-size: small;
 }

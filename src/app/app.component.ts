@@ -8,6 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { StateService } from '@services/state.service';
 import { NetworkNameService } from '@services/network-name.service';
 import { SensorTypeService } from '@services/sensor-type.service';
+import { APP_SETTINGS } from './app.settings';
+import { Member } from '@interfaces/member';
 
 @Component({
     selector: 'app-root',
@@ -16,11 +18,6 @@ import { SensorTypeService } from '@services/sensor-type.service';
 })
 export class AppComponent implements OnInit {
     title = 'STN';
-    siteid = '';
-
-    //aboutDialogRef: MatDialogRef<AboutComponent>;
-    // loginDialogRef: MatDialogRef<AboutComponent>;
-    // regDialogRef: MatDialogRef<AboutComponent>;
 
     public currentUser;
 
@@ -58,10 +55,11 @@ export class AppComponent implements OnInit {
             this.currentUserService.updateCurrentUser(currentUserObj);
         } else {
             this.currentUserService.updateCurrentUser({
-                first_name: '',
-                last_name: '',
+                fname: '',
+                lname: '',
                 username: '',
             });
+            this.openLoginDialog();
         }
     }
 

@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map, tap } from 'rxjs/operators';
 import { EMPTY, Subject } from 'rxjs';
+import { APP_UTILITIES } from 'app/app.utilities';
 
 import { Site } from '@interfaces/site';
 
@@ -27,7 +28,7 @@ export class SitesService {
                 tap((response) => {
                     return response;
                 }),
-                catchError(this.handleError<any>('getEventSites', []))
+                catchError(APP_UTILITIES.handleError<any>('getEventSites', []))
             );
     }
 

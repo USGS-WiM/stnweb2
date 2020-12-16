@@ -32,6 +32,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatMenuModule } from '@angular/material/menu';
 
 // import { MatAccordion } from '@angular/material/expansion';
 
@@ -85,6 +86,7 @@ import { SitesService } from '@services/sites.service';
         MatSelectModule,
         MatButtonToggleModule,
         MatRadioModule,
+        MatMenuModule,
         //MatAccordion
     ],
     providers: [
