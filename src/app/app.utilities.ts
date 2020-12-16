@@ -45,11 +45,20 @@ export class APP_UTILITIES {
             );
         }
     }
-    public static FILTER_EVENT(event_name: string, events: Event[]): Event[] {
-        const filterValue = event_name.toLowerCase();
-        return events.filter(
-            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
-        );
+    public static FILTER_EVENT(event_name: any, events: Event[]): Event[] {
+        if (typeof event_name == 'string') {
+            const filterValue = event_name.toLowerCase();
+            return events.filter(
+                (event) =>
+                    event.event_name.toLowerCase().indexOf(filterValue) != -1
+            );
+        } else {
+            const filterValue = event_name.event_name.toLowerCase();
+            return events.filter(
+                (event) =>
+                    event.event_name.toLowerCase().indexOf(filterValue) != -1
+            );
+        }
     }
     public static ROUND(num, len): any {
         return Math.round(num * Math.pow(10, len)) / Math.pow(10, len);
@@ -167,6 +176,7 @@ export class APP_UTILITIES {
                 usgs_sid: '',
                 noaa_sid: '',
                 hcollect_method_id: 1,
+                member_id: null,
                 site_notes:
                     'Sensor on second piling from land on east side of fishing pier in Sebastian Inlet State Park 0.5 miles west of entrance station south of bridge.',
                 safety_notes: '',
@@ -201,6 +211,7 @@ export class APP_UTILITIES {
                 usgs_sid: '',
                 noaa_sid: '',
                 hcollect_method_id: 4,
+                member_id: null,
                 site_notes:
                     'off 520 - 520 E to Riveredge Blvd, turn right and go to Lee Wenner Park, turn left\n\nWooden pilings on T-dock left of boat launch (enter the park and bear left to boat ramp, T-dock is past the ramp',
                 safety_notes: '',

@@ -41,12 +41,6 @@ export class MAP_CONSTANTS {
                         'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
                     opacity: 0.7,
                 }),
-                /*
-                AHPSGages: esri.dynamicMapLayer({
-                    url:
-                        'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer',
-                }),
-                */
             },
             esriFeatureLayers: {
                 currentWarnings: esri.featureLayer({
@@ -131,18 +125,6 @@ export class MAP_CONSTANTS {
             'Open Street Map': this.mapLayers.tileLayers.osm,
             Grayscale: this.mapLayers.tileLayers.grayscale,
             Imagery: this.mapLayers.tileLayers.imagery,
-        };
-    }
-
-    public static get supplementaryLayers(): any {
-        return {
-            Watersheds: this.mapLayers.esriDynamicLayers.HUC,
-            'Current Warnings*': this.mapLayers.esriFeatureLayers
-                .currentWarnings,
-            'Watches/Warnings*': this.mapLayers.esriFeatureLayers
-                .watchesWarnings,
-            "<span>AHPS Gages*</span><br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
-                .mapLayers.esriFeatureLayers.AHPSGages,
         };
     }
 }

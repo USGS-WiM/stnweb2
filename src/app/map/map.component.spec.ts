@@ -2,7 +2,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
-
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -22,6 +21,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
+
 // import { by } from '@angular/platform-browser';
 import {
     FormsModule,
@@ -37,19 +37,19 @@ import 'leaflet-draw';
 
 import { Event } from '@interfaces/event';
 
-import { HomeComponent } from './home.component';
+import { MapComponent } from './map.component';
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
 import { MAP_CONSTANTS } from './map-constants';
 import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
 
-describe('HomeComponent', () => {
-    let component: HomeComponent;
-    let fixture: ComponentFixture<HomeComponent>;
+describe('MapComponent', () => {
+    let component: MapComponent;
+    let fixture: ComponentFixture<MapComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [HomeComponent],
+            declarations: [MapComponent],
             imports: [
                 BrowserAnimationsModule,
                 MatAutocompleteModule,
@@ -80,18 +80,18 @@ describe('HomeComponent', () => {
                 ReactiveFormsModule,
             ],
             providers: [
-                HomeComponent,
+                MapComponent,
                 CurrentUserService,
                 DisplayValuePipe,
                 MatSnackBar,
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
-        component = TestBed.inject(HomeComponent);
+        component = TestBed.inject(MapComponent);
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(HomeComponent);
+        fixture = TestBed.createComponent(MapComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
@@ -134,7 +134,7 @@ describe('HomeComponent', () => {
 
     it('APP_UTILITIES.FILTER_EVENT returns an array of matching events value given a partial name string input', () => {
         const response = APP_UTILITIES.FILTER_EVENT(
-            'wil',
+            'ilma',
             APP_UTILITIES.EVENTS_DUMMY_DATA_LIST
         );
         const expectedResponse: Event[] = [
@@ -167,6 +167,21 @@ describe('HomeComponent', () => {
         expect(component.currentFilter).toEqual(
             APP_SETTINGS.DEFAULT_FILTER_QUERY
         );
+    });
+
+    it('should call displaySelectedEvent', () => {
+        component.displaySelectedEvent();
+    });
+
+    it('should call openZoomOutSnackBar', () => {
+        let message = 'hello';
+        let action = 'OK';
+        let duration = 5;
+        component.openZoomOutSnackBar(message, action, duration);
+    });
+
+    it('should call updateEventFilter', () => {
+        component.updateEventFilter();
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {
@@ -216,7 +231,23 @@ describe('HomeComponent', () => {
 
     it('mapFilterForm should be a valid form on submit', () => {
         component.submitMapFilter();
+        component.mapFilterForm.value.eventsControl = true;
         expect(component.mapFilterForm.valid).toBe(true);
+    });
+
+    it('mapFilterForm should test all variations', () => {
+        component.mapFilterForm.value.eventsControl = 7;
+        component.mapFilterForm.value.networkControl = 'SWaTH';
+        component.mapFilterForm.value.sensorTypeControl = 'Webcam';
+        component.mapFilterForm.value.stateControl = 'California';
+        component.mapFilterForm.value.surveyedControl = 'Surveyed';
+        component.mapFilterForm.value.HWMOnlyControl = '1';
+        component.mapFilterForm.value.sensorOnlyControl = '1';
+        component.mapFilterForm.value.bracketSiteOnlyControl = '1';
+        component.mapFilterForm.value.RDGOnlyControl = '1';
+        component.mapFilterForm.value.OPDefinedControl = '1';
+        component.submitMapFilter();
+        //expect(component.submitMapFilter().urlParamString).toBe('Event=7&State=California&SensorType=Webcam&NetworkName=SWaTH&OPDefined=1&HWMOnly=');
     });
 
     it('#clearMapFilterForm resets the filter form', () => {

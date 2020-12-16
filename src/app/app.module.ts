@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
+import { MapComponent } from './map/map.component';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 import { AboutComponent } from './about/about.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -44,18 +44,20 @@ import { AuthenticationService } from '@services/authentication.service';
 import { EventService } from '@services/event.service';
 import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
-import { SitesService } from '@services/sites.service';
+import { SiteService } from '@services/site.service';
+import { FilterResultsComponent } from './filter-results/filter-results.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         AboutComponent,
-        HomeComponent,
+        MapComponent,
         SearchDialogComponent,
         LoginComponent,
         RegistrationComponent,
         ConfirmComponent,
         DisplayValuePipe,
+        FilterResultsComponent,
     ],
     imports: [
         BrowserModule,
@@ -94,7 +96,7 @@ import { SitesService } from '@services/sites.service';
         AuthenticationService,
         EventService,
         UserService,
-        SitesService,
+        SiteService,
         DisplayValuePipe,
         MatSnackBar,
     ],
