@@ -196,6 +196,38 @@
                                 </mat-select>
                             </mat-form-field>
 
+                            <mat-form-field appearance="fill">
+                                <mat-label for="eventType"
+                                    >Event State</mat-label
+                                >
+                                <input
+                                    matInput
+                                    id="eventStateOptions"
+                                    type="text"
+                                    aria-label="Dropdown menu for state selection"
+                                    matInput
+                                    formControlName="eventStateControl"
+                                    [matAutocomplete]="eventStateAutocomplete"
+                                />
+                                <mat-hint
+                                    >Start typing for suggestions</mat-hint
+                                >
+                                <mat-autocomplete
+                                    #eventStateAutocomplete="matAutocomplete"
+                                    [displayWith]="displayEventState"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let eventState of eventStates$
+                                                | async
+                                        "
+                                        (click)="updateEventFilter()"
+                                        [value]="eventState"
+                                        >{{ eventState.state_name }}</mat-option
+                                    >
+                                </mat-autocomplete>
+                            </mat-form-field>
+
                             <br />
 
                             <mat-form-field class="eventSelect">
