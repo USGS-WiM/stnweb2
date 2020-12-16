@@ -44,6 +44,7 @@ import { EventService } from '@services/event.service';
 import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
+import { FilterResultsComponent } from './filter-results/filter-results.component';
 
 @NgModule({
     declarations: [
@@ -55,6 +56,7 @@ import { SiteService } from '@services/site.service';
         RegistrationComponent,
         ConfirmComponent,
         DisplayValuePipe,
+        FilterResultsComponent,
     ],
     imports: [
         BrowserModule,
