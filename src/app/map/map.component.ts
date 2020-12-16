@@ -720,20 +720,41 @@ export class MapComponent implements OnInit {
 
         // loop through results response from a search query
         if (eventSites.length !== undefined) {
-            for (const site of eventSites) {
-                const lat = Number(site.latitude_dd);
-                const long = Number(site.longitude_dd);
+            for (let site of eventSites) {
+                let lat = Number(site.latitude_dd);
+                let long = Number(site.longitude_dd);
 
-                /* let popupContent = '';
+                let popupContent =
+                    '<h3>' +
+                    '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
+                    site.site_name +
+                    '</h3>' +
+                    '<span class="popupLabel"><b>State</b>:</span> ' +
+                    site.state +
+                    '<br/>' +
+                    '<span class="popupLabel"><b>County</b>:</span> ' +
+                    site.county +
+                    '<br/>' +
+                    '<span class="popupLabel"><b>Waterbody</b>:</span> ' +
+                    site.waterbody +
+                    '<br/>';
 
-        popupContent = popupContent + '<h3>' + String(eventSites[site]['name']) + '</h3>' +
-          '<span class="popupLabel"><b>State</b>:</span> ' + String(eventSites[site]['state']) + '<br/>' +
-          '<span class="popupLabel"><b>County</b>:</span> ' + String(eventSites[site]['county']) + '<br/>' +
-          '<span class="popupLabel"><b>River</b>:</span> ' + String(eventSites[site]['riverName']) + '<br/>' +
-          '<span class="popupLabel"><b>USGSID</b>:</span> ' + String(eventSites[site]['usgsid']);
+                site.is_permanent_housing_installed
+                    ? (popupContent +=
+                          '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
+                          site.is_permanent_housing_installed +
+                          '<br/>')
+                    : (popupContent +=
+                          '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
+                          'No<br/>');
 
-        const popup = L.popup()
-          .setContent(popupContent); */
+                if (site.Events) {
+                    popupContent +=
+                        '<span class="popupLabel"><b>Event(s)</b>:</span> ' +
+                        site.Events.toString() +
+                        '<br/>';
+                }
+
                 /* istanbul ignore next */
                 if (isNaN(lat) || isNaN(long)) {
                     console.log(
@@ -744,39 +765,21 @@ export class MapComponent implements OnInit {
                 } else {
                     //put all the event markers in the same layer group
                     if (layerType == this.eventMarkers) {
-                        L.marker([lat, long], { icon: myIcon }).addTo(
-                            layerType
-                        );
+                        L.marker([lat, long], { icon: myIcon })
+                            .bindPopup(popupContent)
+                            .addTo(layerType);
                     }
                     //Make circle markers for the All STN Sites layer
                     if (layerType == this.siteService.siteMarkers) {
                         L.marker([lat, long], {
                             icon: myIcon,
                             iconSize: 32,
-                        }).addTo(layerType);
+                        })
+                            .bindPopup(popupContent)
+                            .addTo(layerType);
                     }
                 }
-
-                /* .bindPopup(popup)
-          .on('click',
-            (data) => {
-              this.siteClicked = true;
-              this.siteSelected = eventSites[sites]['id'];
-              localStorage.setItem('selectedSite', JSON.stringify(this.siteSelected));
-              this.siteName = eventSites[sites]['name'];
-              localStorage.setItem('selectedSiteName', JSON.stringify(this.siteName));
-              this.eventSites.getAllEvents()
-              .subscribe(eventresults => {
-                this.eventresults = eventresults;
-                console.log(eventresults);
-                this.eventSites = eventresults.filter(event => event['siteID'] === this.siteSelected);
-                console.log(this.eventSites);
-              });
-              // this.eventsLoading = false;
-            }); */
             }
-
-            // myMarkers.addTo(this.map);
         }
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
