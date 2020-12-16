@@ -365,8 +365,7 @@ export class MapComponent implements OnInit {
             );
             this.selectedStates.splice(i, 1);
         }
-        console.log('this.selectedStates', this.selectedStates);
-
+        //Create a string containing the list of state abbreviations
         if (this.selectedStates !== undefined) {
             numStates = this.selectedStates.length;
             for (let numAbbrev = 0; numAbbrev < numStates; numAbbrev++) {
@@ -381,8 +380,7 @@ export class MapComponent implements OnInit {
                 }
             }
         }
-        console.log('setAbbrev', this.setStateAbbrev);
-
+        //set the value of the state control to the full object of each state so that the list of state names can be displayed
         this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
     }
     //Temporary message pop up at bottom of screen
@@ -523,7 +521,6 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
-            console.log('this is e remove', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -733,7 +730,6 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
-            console.log('this is e remove', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -776,6 +772,7 @@ export class MapComponent implements OnInit {
         return state && state.state_name ? state.state_name : '';
     }
     //will return a comma separated list of selected states
+    //prints list of states next to filter instead of filling the filter rectangle
     displayState(state: any): string {
         let stateCount: number;
         let stateIndex: number;
@@ -785,9 +782,7 @@ export class MapComponent implements OnInit {
             stateIndex = state.length;
         }
         for (stateCount = 0; stateCount < stateIndex; stateCount++) {
-            console.log('stateCount', stateCount, 'stateIndex', stateIndex);
             currentState = state[stateCount].state_name;
-            console.log('currentState', currentState);
             if (stateCount === 0) {
                 this.stateList = this.stateList.concat(
                     ' Selected States: ' + currentState
@@ -797,7 +792,7 @@ export class MapComponent implements OnInit {
             }
         }
         document.getElementById('selectedStateList').innerHTML = this.stateList;
-        return currentState;
+        return null;
     }
     //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like
@@ -810,7 +805,7 @@ export class MapComponent implements OnInit {
         layerType: any,
         zoomToLayer: boolean
     ) {
-        document.getElementById('selectedStateList').innerHTML = '';
+        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
         // set/reset resultsMarker var to an empty array
         const markers = [];
         const iconClass = ' wmm-icon-diamond wmm-icon-white ';
@@ -878,7 +873,7 @@ export class MapComponent implements OnInit {
         }
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
-            //When filtering sites, zoom to layer, close the filters pane and open map pane
+            //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
                 this.eventFocus();
                 this.mapPanelState = true;
@@ -892,8 +887,11 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
+        //close the filter panel
         this.filtersPanelState = false;
+        //set the state control to the state abbreviations
         this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
+
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
         //collect and format selected Filter Form values
@@ -909,7 +907,6 @@ export class MapComponent implements OnInit {
         let stateAbbrevs = filterParams.stateControl
             ? filterParams.stateControl.toString()
             : '';
-        console.log('stateAbbrevs', stateAbbrevs);
         //surveyed = true, unsurveyed = false, or leave empty
         let surveyed = filterParams.surveyedControl
             ? filterParams.surveyedControl
