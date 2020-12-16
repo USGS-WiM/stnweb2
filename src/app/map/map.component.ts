@@ -143,6 +143,7 @@ export class MapComponent implements OnInit {
     states: State[];
     eventStates: State[];
     selectedStates: State[] = new Array<State>();
+    stateList = '';
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -362,7 +363,7 @@ export class MapComponent implements OnInit {
             );
             this.selectedStates.splice(i, 1);
         }
-
+        console.log('this.selectedStates', this.selectedStates);
         this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
     }
     //Temporary message pop up at bottom of screen
@@ -757,14 +758,10 @@ export class MapComponent implements OnInit {
     }
     //will return a comma separated list of selected states
     displayState(state: any): string {
-        console.log('displayState, state', state);
-        // for (state_name in state) {
-        //   console.log(state_name);
-        // }
         let stateCount: number;
         let stateIndex: number;
-        let stateList = '';
         let currentState: string;
+        this.stateList = '';
         if (state !== null) {
             stateIndex = state.length;
             console.log(stateIndex);
@@ -774,12 +771,15 @@ export class MapComponent implements OnInit {
             currentState = state[stateCount].state_name;
             console.log('currentState', currentState);
             if (stateCount === 0) {
-                stateList = stateList.concat(currentState);
+                this.stateList = this.stateList.concat(
+                    ' Selected States: ' + currentState
+                );
             } else {
-                stateList = stateList.concat(', ' + currentState);
+                this.stateList = this.stateList.concat(', ' + currentState);
             }
         }
-        return stateList;
+        document.getElementById('selectedStateList').innerHTML = this.stateList;
+        return currentState;
     }
     //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like
