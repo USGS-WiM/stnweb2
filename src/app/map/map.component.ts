@@ -361,7 +361,6 @@ export class MapComponent implements OnInit {
         //Clear the old markers from the layer
         this.eventMarkers = L.featureGroup([]);
         //Plot markers for selected event
-
         this.siteService
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
