@@ -21,6 +21,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
+import { of } from 'rxjs';
 
 // import { by } from '@angular/platform-browser';
 import {
@@ -42,6 +43,7 @@ import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
 import { MAP_CONSTANTS } from './map-constants';
 import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
+import { Site } from '@app/interfaces/site';
 
 describe('MapComponent', () => {
     let component: MapComponent;
@@ -169,6 +171,25 @@ describe('MapComponent', () => {
         );
     });
 
+    it('should call getEventSites and return events', () => {
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getEventSites').and.returnValue(
+            of(response)
+        );
+        component.displaySelectedEvent();
+        fixture.detectChanges();
+        expect(component.sites).toEqual(response);
+    });
+
+    it('on load, should call getAllSites and return list of all sites', () => {
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getAllSites').and.returnValue(
+            of(response)
+        );
+        fixture.detectChanges();
+        expect(component.sites).toEqual(response);
+    });
+
     it('displayEventState returns the appropriate response', () => {
         let state = {
             counties: null,
@@ -272,22 +293,18 @@ describe('MapComponent', () => {
 
     it('mapFilterForm should test all variations', () => {
         component.mapFilterForm.get('stateControl').setValue('NC');
-        component.mapFilterForm.get('networkControl').setValue(['SWaTH']);
-
+        component.mapFilterForm.get('networkControl').setValue([1, 2, 3]);
         component.mapFilterForm.get('sensorOnlyControl').setValue('1');
-
-        component.mapFilterForm.get('eventsControl').setValue(7);
-
-        component.mapFilterForm.value.sensorTypeControl = 'Webcam';
+        component.mapFilterForm.get('eventsControl').setValue(291);
+        component.mapFilterForm.get('sensorTypeControl').setValue('');
         component.mapFilterForm.value.surveyedControl = 'Surveyed';
         component.mapFilterForm.value.HWMOnlyControl = '1';
-        // component.mapFilterForm.value.sensorOnlyControl = '1';
         component.mapFilterForm.value.bracketSiteOnlyControl = '1';
         component.mapFilterForm.value.RDGOnlyControl = '1';
         component.mapFilterForm.value.OPDefinedControl = '1';
         component.submitMapFilter();
         expect(component.mapFilterForm).toBeTruthy;
-        expect(component.mapFilterForm.value.networkControl).toEqual(['SWaTH']);
+        expect(component.mapFilterForm.value.eventsControl).toEqual(291);
         //expect(component.mapResults).toHaveBeenCalled();
         //expect(component.submitMapFilter().urlParamString).toBe('Event=7&State=California&SensorType=Webcam&NetworkName=SWaTH&OPDefined=1&HWMOnly=');
     });

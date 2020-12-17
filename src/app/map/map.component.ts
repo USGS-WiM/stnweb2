@@ -167,7 +167,7 @@ export class MapComponent implements OnInit {
         private networkNamesService: NetworkNameService,
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
-        private siteService: SiteService,
+        public siteService: SiteService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
     ) {
@@ -729,7 +729,6 @@ export class MapComponent implements OnInit {
     eventFocus() {
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
-        console.log('this.eventMarkers', this.eventMarkers);
         if (this.map.hasLayer(this.eventMarkers)) {
             this.map.fitBounds(this.eventMarkers.getBounds());
         } else {
@@ -924,8 +923,6 @@ export class MapComponent implements OnInit {
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
             this.mapResults(res, this.eventIcon, this.eventMarkers, true);
         });
-        console.log('testing test', this.mapFilterForm.value.stateControl);
-        console.log('test2', this.mapFilterForm.get('stateControl').value);
         return urlParamString;
     }
 }
