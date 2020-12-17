@@ -249,16 +249,6 @@ export class MapComponent implements OnInit {
             //set up call to get sites for specific event
             this.displaySelectedEvent();
         });
-        //Add all the STN sites to a layer when the map loads
-        this.siteService.getAllSites().subscribe((results) => {
-            this.allSites = results;
-            this.mapResults(
-                this.allSites,
-                this.siteIcon,
-                this.siteService.siteMarkers,
-                false
-            );
-        });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
             this.eventStates = results;
@@ -287,6 +277,16 @@ export class MapComponent implements OnInit {
                             : this.states
                     )
                 );
+        });
+        //Add all the STN sites to a layer when the map loads
+        this.siteService.getAllSites().subscribe((results) => {
+            this.allSites = results;
+            this.mapResults(
+                this.allSites,
+                this.siteIcon,
+                this.siteService.siteMarkers,
+                false
+            );
         });
     }
 
@@ -320,6 +320,8 @@ export class MapComponent implements OnInit {
     toggleStateSelection(state: State) {
         let numStates: number;
         state.selected = !state.selected;
+        document.getElementById('selectedStateList').innerHTML = '';
+        this.setStateAbbrev = '';
         if (state.selected) {
             this.selectedStates.push(state);
         } else {
@@ -346,10 +348,17 @@ export class MapComponent implements OnInit {
         //set the value of the state control to the full object of each state so that the list of state names can be displayed
         this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
     }
-    //Temporary message pop up at bottom of screen
+    //Temporary message pop up when user zooms out and layers are removed
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
+        });
+    }
+    //Temporary message pop up when user's query returns no data
+    noDataSnackBar(message: string, action: string, duration: number) {
+        this.snackBar.open(message, action, {
+            duration: duration,
+            panelClass: ['no-data-warning'],
         });
     }
     //TODO: LOOK HERE FIRST
@@ -768,8 +777,6 @@ export class MapComponent implements OnInit {
         layerType: any,
         zoomToLayer: boolean
     ) {
-        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
-
         // loop through results response from a search query
         if (eventSites.length !== undefined) {
             for (let site of eventSites) {
@@ -849,10 +856,9 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
-        //close the filter panel
-        this.filtersPanelState = false;
         //set the state control to the state abbreviations
         this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
+        document.getElementById('selectedStateList').innerHTML = '';
 
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
@@ -908,8 +914,25 @@ export class MapComponent implements OnInit {
             this.eventMarkers.removeFrom(this.map);
             this.eventMarkers = L.featureGroup([]);
         }
+        //Find sites that match the user's query
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
-            this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+            //set the state control back to state names instead of abbreviations
+            this.mapFilterForm
+                .get('stateControl')
+                .setValue(this.selectedStates);
+            //only call mapResults if the query returns data
+            if (res.length > 0) {
+                //close the filter panel
+                this.filtersPanelState = false;
+                this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+            } else {
+                //if nothing is returned, show a snack bar message
+                this.noDataSnackBar(
+                    'No results for your query. Try using fewer filters.',
+                    'OK',
+                    4500
+                );
+            }
         });
         return urlParamString;
     }
