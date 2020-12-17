@@ -116,11 +116,17 @@ export class MapComponent implements OnInit {
 
     //holds filter values
     events: Event[];
+    states: State[];
+    eventStates: State[];
+    selectedStates: State[] = new Array<State>();
+    stateList = '';
+    setStateAbbrev = '';
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
     networks$: Observable<NetworkName[]>;
     sensorTypes$: Observable<SensorType[]>;
+    eventStates$: Observable<State[]>;
     states$: Observable<State[]>;
 
     //These variables indicate if each layer is checked
@@ -151,9 +157,9 @@ export class MapComponent implements OnInit {
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
-        private eventService: EventService,
+        public eventService: EventService,
         private eventTypeService: EventTypeService,
-        private stateService: StateService,
+        public stateService: StateService,
         private networkNameService: NetworkNameService,
         private sensorTypeService: SensorTypeService,
         private eventsService: EventService,
@@ -161,7 +167,7 @@ export class MapComponent implements OnInit {
         private networkNamesService: NetworkNameService,
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
-        private siteService: SiteService,
+        public siteService: SiteService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
     ) {
@@ -169,6 +175,7 @@ export class MapComponent implements OnInit {
 
         this.networks$ = this.networkNameService.networks$;
         this.sensorTypes$ = this.sensorTypeService.sensorTypes$;
+        this.eventStates$ = this.stateService.eventStates$;
         this.states$ = this.stateService.states$;
 
         this.mapFilterForm = formBuilder.group({
@@ -236,7 +243,8 @@ export class MapComponent implements OnInit {
         // get lists of options for dropdowns
         // this.networks$ = this.networkNamesService.getNetworkNames();
         // this.sensorTypes$ = this.sensorTypesService.getSensorTypes();
-        this.states$ = this.stateService.getStates();
+        this.getStates();
+
         // create and configure map
         this.createMap();
 
@@ -261,6 +269,37 @@ export class MapComponent implements OnInit {
         this.currentFilter = localStorage.getItem('currentFilter')
             ? JSON.parse(localStorage.getItem('currentFilter'))
             : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    }
+
+    getStates() {
+        this.stateService.getStates().subscribe((results) => {
+            this.eventStates = results;
+            this.states = results;
+            this.eventStates$ = this.mapFilterForm
+                .get('eventStateControl')
+                .valueChanges.pipe(
+                    map((state_name) =>
+                        state_name
+                            ? APP_UTILITIES.FILTER_STATE(
+                                  state_name,
+                                  this.eventStates
+                              )
+                            : this.eventStates
+                    )
+                );
+            this.states$ = this.mapFilterForm
+                .get('stateControl')
+                .valueChanges.pipe(
+                    map((state_name) =>
+                        state_name
+                            ? APP_UTILITIES.FILTER_STATE(
+                                  state_name,
+                                  this.states
+                              )
+                            : this.states
+                    )
+                );
+        });
     }
 
     // TODO: update this
@@ -290,6 +329,35 @@ export class MapComponent implements OnInit {
         // });
     }
 
+    toggleStateSelection(state: State) {
+        let numStates: number;
+        state.selected = !state.selected;
+        if (state.selected) {
+            this.selectedStates.push(state);
+        } else {
+            const i = this.selectedStates.findIndex(
+                (value) => value.state_name === state.state_name
+            );
+            this.selectedStates.splice(i, 1);
+        }
+        //Create a string containing the list of state abbreviations
+        if (this.selectedStates !== undefined) {
+            numStates = this.selectedStates.length;
+            for (let numAbbrev = 0; numAbbrev < numStates; numAbbrev++) {
+                if (numAbbrev === 0) {
+                    this.setStateAbbrev = this.setStateAbbrev.concat(
+                        this.selectedStates[numAbbrev].state_abbrev
+                    );
+                } else {
+                    this.setStateAbbrev = this.setStateAbbrev.concat(
+                        ',' + this.selectedStates[numAbbrev].state_abbrev
+                    );
+                }
+            }
+        }
+        //set the value of the state control to the full object of each state so that the list of state names can be displayed
+        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
+    }
     //Temporary message pop up at bottom of screen
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
@@ -428,7 +496,6 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
-            console.log('this is e remove', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -480,7 +547,6 @@ export class MapComponent implements OnInit {
                 }
             }
         });
-
         this.createDrawControls();
     }
 
@@ -639,7 +705,6 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
-            console.log('this is e remove', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -677,7 +742,33 @@ export class MapComponent implements OnInit {
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
     }
-
+    //will return a comma separated list of selected states
+    displayEventState(state: any): string {
+        return state && state.state_name ? state.state_name : '';
+    }
+    //will return a comma separated list of selected states
+    //prints list of states next to filter instead of filling the filter rectangle
+    displayState(state: any): string {
+        let stateCount: number;
+        let stateIndex: number;
+        let currentState: string;
+        this.stateList = '';
+        if (state !== null) {
+            stateIndex = state.length;
+        }
+        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
+            currentState = state[stateCount].state_name;
+            if (stateCount === 0) {
+                this.stateList = this.stateList.concat(
+                    ' Selected States: ' + currentState
+                );
+            } else {
+                this.stateList = this.stateList.concat(', ' + currentState);
+            }
+        }
+        document.getElementById('selectedStateList').innerHTML = this.stateList;
+        return null;
+    }
     //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
@@ -689,10 +780,7 @@ export class MapComponent implements OnInit {
         layerType: any,
         zoomToLayer: boolean
     ) {
-        // set/reset resultsMarker var to an empty array
-        const markers = [];
-        const iconClass = ' wmm-icon-diamond wmm-icon-white ';
-        const riverConditions = [];
+        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
 
         // loop through results response from a search query
         if (eventSites.length !== undefined) {
@@ -759,11 +847,10 @@ export class MapComponent implements OnInit {
         }
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
-            //When filtering sites, zoom to layer, close the filters pane and open map pane
+            //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
                 this.eventFocus();
                 this.mapPanelState = true;
-                this.filtersPanelState = false;
             }
         }
     }
@@ -774,6 +861,11 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
+        //close the filter panel
+        this.filtersPanelState = false;
+        //set the state control to the state abbreviations
+        this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
+
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
         //collect and format selected Filter Form values

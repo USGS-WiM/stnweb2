@@ -15,8 +15,19 @@ import { APP_UTILITIES } from '@app/app.utilities';
 })
 export class StateService {
     states$: Observable<any>;
+    eventStates$: Observable<any>;
     constructor(private httpClient: HttpClient) {
         this.states$ = httpClient.get(APP_SETTINGS.STATES + '.json').pipe(
+            shareReplay(1),
+            tap(() => console.log('after sharing')),
+            catchError(
+                APP_UTILITIES.handleError<any>(
+                    'StateService httpClient GET',
+                    []
+                )
+            )
+        );
+        this.eventStates$ = httpClient.get(APP_SETTINGS.STATES + '.json').pipe(
             shareReplay(1),
             tap(() => console.log('after sharing')),
             catchError(

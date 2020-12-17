@@ -21,6 +21,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
+import { of } from 'rxjs';
 
 // import { by } from '@angular/platform-browser';
 import {
@@ -42,6 +43,8 @@ import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
 import { MAP_CONSTANTS } from './map-constants';
 import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
+import { Site } from '@app/interfaces/site';
+import { State } from '@app/interfaces/state';
 
 describe('MapComponent', () => {
     let component: MapComponent;
@@ -169,8 +172,72 @@ describe('MapComponent', () => {
         );
     });
 
+    it('should call getEventSites and return sites', () => {
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getEventSites').and.returnValue(
+            of(response)
+        );
+        component.displaySelectedEvent();
+        fixture.detectChanges();
+        expect(component.sites).toEqual(response);
+    });
+
+    it('on load, should call getAllSites and return list of all sites', () => {
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getAllSites').and.returnValue(
+            of(response)
+        );
+        fixture.detectChanges();
+        expect(component.sites).toEqual(response);
+    });
+
+    it('should call getStates and return list of all states', () => {
+        const response: State[] = [];
+        spyOn(component.stateService, 'getStates').and.returnValue(
+            of(response)
+        );
+        component.getStates();
+        fixture.detectChanges();
+        expect(component.states).toEqual(response);
+        expect(component.eventStates).toEqual(response);
+    });
+
+    it('should call filterEvents and return list of filtered events', () => {
+        const response: Event[] = [];
+        spyOn(component.eventService, 'filterEvents').and.returnValue(
+            of(response)
+        );
+        component.updateEventFilter();
+        fixture.detectChanges();
+        expect(component.events).toEqual(response);
+    });
+
+    it('displayEventState returns the appropriate response', () => {
+        let state = {
+            counties: null,
+            selected: true,
+            state_abbrev: 'AK',
+            state_id: 2,
+            state_name: 'Alaska',
+        };
+        let response = component.displayEventState(state);
+        expect(response).toEqual(state && state.state_name);
+    });
+
     it('should call displaySelectedEvent', () => {
         component.displaySelectedEvent();
+    });
+
+    it('displayState returns null', () => {
+        let state = {
+            counties: null,
+            selected: true,
+            state_abbrev: 'AK',
+            state_id: 2,
+            state_name: 'Alaska',
+        };
+        let displayStateResponse = component.displayState(state);
+        expect(displayStateResponse).toEqual(null);
     });
 
     it('should call openZoomOutSnackBar', () => {
@@ -216,10 +283,7 @@ describe('MapComponent', () => {
     });
 
     it('#eventFocus sets map to event focused view', () => {
-        // temporarily sets map to U.S, extent instead of event's extent
         // first set the view to somehting not default to test that the update works
-        // component.ngOnInit();
-        // component.createMap();
         let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
         component.map.setView(notDefaultCenter, 9);
         component.eventFocus();
@@ -229,6 +293,18 @@ describe('MapComponent', () => {
         expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
     });
 
+    it('mapFilterForm should be valid after toggleStateSelection', () => {
+        let state = {
+            counties: null,
+            selected: true,
+            state_abbrev: 'AK',
+            state_id: 2,
+            state_name: 'Alaska',
+        };
+        component.toggleStateSelection(state);
+        expect(component.mapFilterForm.valid).toBe(true);
+    });
+
     it('mapFilterForm should be a valid form on submit', () => {
         component.submitMapFilter();
         component.mapFilterForm.value.eventsControl = true;
@@ -236,17 +312,20 @@ describe('MapComponent', () => {
     });
 
     it('mapFilterForm should test all variations', () => {
-        component.mapFilterForm.value.eventsControl = 7;
-        component.mapFilterForm.value.networkControl = 'SWaTH';
-        component.mapFilterForm.value.sensorTypeControl = 'Webcam';
-        component.mapFilterForm.value.stateControl = 'California';
+        component.mapFilterForm.get('stateControl').setValue('NC');
+        component.mapFilterForm.get('networkControl').setValue([1, 2, 3]);
+        component.mapFilterForm.get('sensorOnlyControl').setValue('1');
+        component.mapFilterForm.get('eventsControl').setValue(291);
+        component.mapFilterForm.get('sensorTypeControl').setValue('');
         component.mapFilterForm.value.surveyedControl = 'Surveyed';
         component.mapFilterForm.value.HWMOnlyControl = '1';
-        component.mapFilterForm.value.sensorOnlyControl = '1';
         component.mapFilterForm.value.bracketSiteOnlyControl = '1';
         component.mapFilterForm.value.RDGOnlyControl = '1';
         component.mapFilterForm.value.OPDefinedControl = '1';
         component.submitMapFilter();
+        expect(component.mapFilterForm).toBeTruthy;
+        expect(component.mapFilterForm.value.eventsControl).toEqual(291);
+        //expect(component.mapResults).toHaveBeenCalled();
         //expect(component.submitMapFilter().urlParamString).toBe('Event=7&State=California&SensorType=Webcam&NetworkName=SWaTH&OPDefined=1&HWMOnly=');
     });
 
