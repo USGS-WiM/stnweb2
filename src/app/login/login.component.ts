@@ -35,12 +35,6 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    // registration dialog
-    // openRegDialog(): void {
-    //     this.loginDialogRef.close();
-
-    //     dialogRef.afterClosed().subscribe((result) => {});
-    // }
     /* istanbul ignore next */
     ngOnInit() {
         this.loginForm = this.formBuilder.group({
