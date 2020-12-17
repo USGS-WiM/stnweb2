@@ -249,16 +249,6 @@ export class MapComponent implements OnInit {
             //set up call to get sites for specific event
             this.displaySelectedEvent();
         });
-        //Add all the STN sites to a layer when the map loads
-        this.siteService.getAllSites().subscribe((results) => {
-            this.allSites = results;
-            this.mapResults(
-                this.allSites,
-                this.siteIcon,
-                this.siteService.siteMarkers,
-                false
-            );
-        });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
             this.eventStates = results;
@@ -287,6 +277,16 @@ export class MapComponent implements OnInit {
                             : this.states
                     )
                 );
+        });
+        //Add all the STN sites to a layer when the map loads
+        this.siteService.getAllSites().subscribe((results) => {
+            this.allSites = results;
+            this.mapResults(
+                this.allSites,
+                this.siteIcon,
+                this.siteService.siteMarkers,
+                false
+            );
         });
     }
 
