@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AboutComponent } from './about/about.component';
 import { LoginComponent } from './login/login.component';
-import { RegistrationComponent } from './registration/registration.component';
 import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
 import { MatDialog } from '@angular/material/dialog';

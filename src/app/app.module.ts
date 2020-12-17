@@ -7,7 +7,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
-import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 import { AboutComponent } from './about/about.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
@@ -36,7 +35,6 @@ import { MatRadioModule } from '@angular/material/radio';
 // import { MatAccordion } from '@angular/material/expansion';
 
 import { LoginComponent } from './login/login.component';
-import { RegistrationComponent } from './registration/registration.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
@@ -51,9 +49,7 @@ import { FilterResultsComponent } from './filter-results/filter-results.componen
         AppComponent,
         AboutComponent,
         MapComponent,
-        SearchDialogComponent,
         LoginComponent,
-        RegistrationComponent,
         ConfirmComponent,
         DisplayValuePipe,
         FilterResultsComponent,
@@ -99,12 +95,7 @@ import { FilterResultsComponent } from './filter-results/filter-results.componen
         MatSnackBar,
     ],
     bootstrap: [AppComponent],
-    entryComponents: [
-        AboutComponent,
-        LoginComponent,
-        RegistrationComponent,
-        ConfirmComponent,
-    ],
+    entryComponents: [AboutComponent, LoginComponent, ConfirmComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

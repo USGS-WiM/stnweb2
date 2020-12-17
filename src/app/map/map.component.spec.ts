@@ -187,6 +187,7 @@ describe('MapComponent', () => {
         spyOn(component.siteService, 'getAllSites').and.returnValue(
             of(response)
         );
+        component.getData();
         fixture.detectChanges();
         expect(component.sites).toEqual(response);
     });
@@ -196,7 +197,7 @@ describe('MapComponent', () => {
         spyOn(component.stateService, 'getStates').and.returnValue(
             of(response)
         );
-        component.getStates();
+        component.getData();
         fixture.detectChanges();
         expect(component.states).toEqual(response);
         expect(component.eventStates).toEqual(response);
@@ -212,6 +213,16 @@ describe('MapComponent', () => {
         expect(component.events).toEqual(response);
     });
 
+    it('should call getAllEvents and return list of all events', () => {
+        const response: Event[] = [];
+        spyOn(component.eventService, 'getAllEvents').and.returnValue(
+            of(response)
+        );
+        component.getData();
+        fixture.detectChanges();
+        expect(component.events).toEqual(response);
+    });
+
     it('displayEventState returns the appropriate response', () => {
         let state = {
             counties: null,
@@ -222,10 +233,6 @@ describe('MapComponent', () => {
         };
         let response = component.displayEventState(state);
         expect(response).toEqual(state && state.state_name);
-    });
-
-    it('should call displaySelectedEvent', () => {
-        component.displaySelectedEvent();
     });
 
     it('displayState returns null', () => {

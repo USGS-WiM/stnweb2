@@ -148,9 +148,15 @@ export class MapComponent implements OnInit {
     private displayedSites: Subject<Site[]> = new Subject<Site[]>();
     private setDisplayedSites;
 
+    //for sites displayed on map load and when running queries
     eventIcon = L.divIcon({
         className:
             ' wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20',
+    });
+    //for the All STN Sites layer
+    siteIcon = L.divIcon({
+        className: ' allSiteIcon ',
+        iconSize: 32,
     });
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
@@ -196,18 +202,21 @@ export class MapComponent implements OnInit {
     }
 
     ngOnInit() {
-        /// demonstration code. to be removed
-        // let floodEvents: EventType;
-        // this.eventTypeService.getEventsByEventType(4).subscribe((eventType) => {
-        //     floodEvents = eventType;
-        //     console.log('flood events: ' + JSON.parse(eventType));
-        // });
-        /// end demonstration code
-
-        // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-        // console.log('User logged in?: ' + this.isloggedIn);
+        //subscribe to services to get data
+        this.getData();
         this.setCurrentFilter();
+        // create and configure map
+        this.createMap();
+    }
 
+    setCurrentFilter() {
+        this.currentFilter = localStorage.getItem('currentFilter')
+            ? JSON.parse(localStorage.getItem('currentFilter'))
+            : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    }
+
+    getData() {
+        //Get all events, populate the event filter, get most recent event
         this.eventService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
@@ -240,38 +249,17 @@ export class MapComponent implements OnInit {
             //set up call to get sites for specific event
             this.displaySelectedEvent();
         });
-        // get lists of options for dropdowns
-        // this.networks$ = this.networkNamesService.getNetworkNames();
-        // this.sensorTypes$ = this.sensorTypesService.getSensorTypes();
-        this.getStates();
-
-        // create and configure map
-        this.createMap();
-
-        const siteIcon = L.divIcon({
-            className: ' allSiteIcon ',
-            iconSize: 32,
-        });
-
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
             this.allSites = results;
             this.mapResults(
                 this.allSites,
-                siteIcon,
+                this.siteIcon,
                 this.siteService.siteMarkers,
                 false
             );
         });
-    }
-
-    setCurrentFilter() {
-        this.currentFilter = localStorage.getItem('currentFilter')
-            ? JSON.parse(localStorage.getItem('currentFilter'))
-            : APP_SETTINGS.DEFAULT_FILTER_QUERY;
-    }
-
-    getStates() {
+        //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
             this.eventStates = results;
             this.states = results;
