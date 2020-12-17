@@ -844,8 +844,6 @@ export class MapComponent implements OnInit {
             this.eventMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
-                //close the filter panel
-                this.filtersPanelState = false;
                 this.eventFocus();
                 this.mapPanelState = true;
             }
@@ -924,6 +922,8 @@ export class MapComponent implements OnInit {
                 .setValue(this.selectedStates);
             //only call mapResults if the query returns data
             if (res.length > 0) {
+                //close the filter panel
+                this.filtersPanelState = false;
                 this.mapResults(res, this.eventIcon, this.eventMarkers, true);
             } else {
                 //if nothing is returned, show a snack bar message
