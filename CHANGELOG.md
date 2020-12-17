@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Extent button now zooms to site markers
 -   Map zooms to sites when filters are submitted
+-   Made state filters searchable
 
 ### Fixed
 

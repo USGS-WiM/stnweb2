@@ -169,8 +169,32 @@ describe('MapComponent', () => {
         );
     });
 
+    it('displayEventState returns the appropriate response', () => {
+        let state = {
+            counties: null,
+            selected: true,
+            state_abbrev: 'AK',
+            state_id: 2,
+            state_name: 'Alaska',
+        };
+        let response = component.displayEventState(state);
+        expect(response).toEqual(state && state.state_name);
+    });
+
     it('should call displaySelectedEvent', () => {
         component.displaySelectedEvent();
+    });
+
+    it('displayState returns null', () => {
+        let state = {
+            counties: null,
+            selected: true,
+            state_abbrev: 'AK',
+            state_id: 2,
+            state_name: 'Alaska',
+        };
+        let displayStateResponse = component.displayState(state);
+        expect(displayStateResponse).toEqual(null);
     });
 
     it('should call openZoomOutSnackBar', () => {
@@ -181,7 +205,9 @@ describe('MapComponent', () => {
     });
 
     it('should call updateEventFilter', () => {
-        component.updateEventFilter();
+        component.mapFilterForm.value.stateControl = 'NC';
+        //component.updateEventFilter();
+        expect(component.mapFilterForm.get('stateControl').value).toEqual('NC');
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {
@@ -216,10 +242,7 @@ describe('MapComponent', () => {
     });
 
     it('#eventFocus sets map to event focused view', () => {
-        // temporarily sets map to U.S, extent instead of event's extent
         // first set the view to somehting not default to test that the update works
-        // component.ngOnInit();
-        // component.createMap();
         let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
         component.map.setView(notDefaultCenter, 9);
         component.eventFocus();
@@ -229,6 +252,18 @@ describe('MapComponent', () => {
         expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
     });
 
+    it('mapFilterForm should be valid after toggleStateSelection', () => {
+        let state = {
+            counties: null,
+            selected: true,
+            state_abbrev: 'AK',
+            state_id: 2,
+            state_name: 'Alaska',
+        };
+        component.toggleStateSelection(state);
+        expect(component.mapFilterForm.valid).toBe(true);
+    });
+
     it('mapFilterForm should be a valid form on submit', () => {
         component.submitMapFilter();
         component.mapFilterForm.value.eventsControl = true;
@@ -236,10 +271,10 @@ describe('MapComponent', () => {
     });
 
     it('mapFilterForm should test all variations', () => {
+        component.mapFilterForm.get('stateControl').setValue('NC');
+        component.mapFilterForm.get('networkControl').setValue(['SWaTH']);
         component.mapFilterForm.value.eventsControl = 7;
-        component.mapFilterForm.value.networkControl = 'SWaTH';
         component.mapFilterForm.value.sensorTypeControl = 'Webcam';
-        component.mapFilterForm.value.stateControl = 'California';
         component.mapFilterForm.value.surveyedControl = 'Surveyed';
         component.mapFilterForm.value.HWMOnlyControl = '1';
         component.mapFilterForm.value.sensorOnlyControl = '1';
@@ -247,6 +282,7 @@ describe('MapComponent', () => {
         component.mapFilterForm.value.RDGOnlyControl = '1';
         component.mapFilterForm.value.OPDefinedControl = '1';
         component.submitMapFilter();
+        expect(component.mapFilterForm).toBeTruthy;
         //expect(component.submitMapFilter().urlParamString).toBe('Event=7&State=California&SensorType=Webcam&NetworkName=SWaTH&OPDefined=1&HWMOnly=');
     });
 
