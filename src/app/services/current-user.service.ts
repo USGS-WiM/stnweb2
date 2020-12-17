@@ -4,12 +4,19 @@ import { Member } from '@interfaces/member';
 
 @Injectable()
 export class CurrentUserService {
-    private userSource = new BehaviorSubject('None');
-    currentUser = this.userSource.asObservable();
+    private userSubject = new BehaviorSubject(null);
+    currentUser = this.userSubject.asObservable();
+
+    private loggedInSubject = new BehaviorSubject(false);
+    loggedIn = this.loggedInSubject.asObservable();
 
     constructor() {}
 
     updateCurrentUser(user) {
-        this.userSource.next(user);
+        this.userSubject.next(user);
+    }
+
+    updateLoggedInStatus(status) {
+        this.loggedInSubject.next(status);
     }
 }

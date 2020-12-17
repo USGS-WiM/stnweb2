@@ -1,6 +1,10 @@
 <h1 mat-dialog-title><mat-icon>login</mat-icon> Login to STNWeb</h1>
 <mat-dialog-content>
-    <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="onSubmitLogin()">
+    <form
+        [formGroup]="loginForm"
+        id="loginForm"
+        (ngSubmit)="onSubmitLogin(loginForm.value)"
+    >
         <div class="vertical-form-container">
             <mat-form-field class="form-control">
                 <input
@@ -43,7 +47,6 @@
             mat-button
             type="submit"
             [disabled]="loginForm.invalid"
-            (click)="onSubmitLogin(loginForm.value)"
             form="loginForm"
         >
             <mat-icon>login</mat-icon> Login

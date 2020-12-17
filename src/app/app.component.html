@@ -44,7 +44,7 @@
                 <!-- Login button, only visible when user not already logged in -->
                 <span
                     class="login-button-span header-button-text"
-                    *ngIf="currentUser.username == ''"
+                    *ngIf="!loggedIn"
                 >
                     <button
                         mat-button
@@ -60,7 +60,7 @@
                 <!--User Menu, only visible when user is logged in -->
                 <span
                     class="login-button-span"
-                    *ngIf="currentUser.username !== ''"
+                    *ngIf="loggedIn"
                     class="header-button-text"
                 >
                     <button mat-button [matMenuTriggerFor]="userMenu">
@@ -111,6 +111,7 @@
         <mat-toolbar-row
             class="mat-typography stns-header"
             id="stn-nav-toolbar"
+            *ngIf="loggedIn"
         >
             <div class="nav-toggles">
                 <!-- <mat-button-toggle-group>

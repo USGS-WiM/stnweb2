@@ -21,7 +21,6 @@ export class LoginComponent implements OnInit {
     hide = true;
     loginForm: FormGroup;
     requestPending = false;
-    submitted = false;
     returnUrl: string;
     error = '';
     public currentUser;
@@ -56,8 +55,6 @@ export class LoginComponent implements OnInit {
 
     /* istanbul ignore next */
     onSubmitLogin(formValue: any) {
-        this.submitted = true;
-
         /* istanbul ignore next */
         this.requestPending = true;
         this.authenticationService

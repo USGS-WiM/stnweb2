@@ -37,6 +37,7 @@ export class AuthenticationService {
                         JSON.stringify(response)
                     );
                     this.currentUserService.updateCurrentUser(response);
+                    this.currentUserService.updateLoggedInStatus(true);
                     return response;
                 }),
                 catchError(APP_UTILITIES.handleError<any>('login', []))
@@ -50,6 +51,7 @@ export class AuthenticationService {
         localStorage.removeItem('username');
         localStorage.removeItem('password');
         localStorage.removeItem('currentUser');
+        this.currentUserService.updateLoggedInStatus(false);
 
         return of(true);
     }
