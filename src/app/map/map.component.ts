@@ -243,36 +243,8 @@ export class MapComponent implements OnInit {
         // get lists of options for dropdowns
         // this.networks$ = this.networkNamesService.getNetworkNames();
         // this.sensorTypes$ = this.sensorTypesService.getSensorTypes();
-        this.stateService.getStates().subscribe((results) => {
-            this.eventStates = results;
-            this.eventStates$ = this.mapFilterForm
-                .get('eventStateControl')
-                .valueChanges.pipe(
-                    map((state_name) =>
-                        state_name
-                            ? APP_UTILITIES.FILTER_STATE(
-                                  state_name,
-                                  this.eventStates
-                              )
-                            : this.eventStates
-                    )
-                );
-        });
-        this.stateService.getStates().subscribe((results) => {
-            this.states = results;
-            this.states$ = this.mapFilterForm
-                .get('stateControl')
-                .valueChanges.pipe(
-                    map((state_name) =>
-                        state_name
-                            ? APP_UTILITIES.FILTER_STATE(
-                                  state_name,
-                                  this.states
-                              )
-                            : this.states
-                    )
-                );
-        });
+        this.getStates();
+
         // create and configure map
         this.createMap();
 
@@ -297,6 +269,37 @@ export class MapComponent implements OnInit {
         this.currentFilter = localStorage.getItem('currentFilter')
             ? JSON.parse(localStorage.getItem('currentFilter'))
             : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    }
+
+    getStates() {
+        this.stateService.getStates().subscribe((results) => {
+            this.eventStates = results;
+            this.states = results;
+            this.eventStates$ = this.mapFilterForm
+                .get('eventStateControl')
+                .valueChanges.pipe(
+                    map((state_name) =>
+                        state_name
+                            ? APP_UTILITIES.FILTER_STATE(
+                                  state_name,
+                                  this.eventStates
+                              )
+                            : this.eventStates
+                    )
+                );
+            this.states$ = this.mapFilterForm
+                .get('stateControl')
+                .valueChanges.pipe(
+                    map((state_name) =>
+                        state_name
+                            ? APP_UTILITIES.FILTER_STATE(
+                                  state_name,
+                                  this.states
+                              )
+                            : this.states
+                    )
+                );
+        });
     }
 
     // TODO: update this
@@ -779,10 +782,6 @@ export class MapComponent implements OnInit {
         zoomToLayer: boolean
     ) {
         this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
-        // set/reset resultsMarker var to an empty array
-        const markers = [];
-        const iconClass = ' wmm-icon-diamond wmm-icon-white ';
-        const riverConditions = [];
 
         // loop through results response from a search query
         if (eventSites.length !== undefined) {

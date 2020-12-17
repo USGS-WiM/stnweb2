@@ -206,8 +206,8 @@ describe('MapComponent', () => {
 
     it('should call updateEventFilter', () => {
         component.mapFilterForm.value.stateControl = 'NC';
-        //component.updateEventFilter();
-        expect(component.mapFilterForm.get('stateControl').value).toEqual('NC');
+        component.updateEventFilter();
+        //expect(component.mapFilterForm.get('stateControl').value).toEqual('NC');
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {
@@ -273,16 +273,22 @@ describe('MapComponent', () => {
     it('mapFilterForm should test all variations', () => {
         component.mapFilterForm.get('stateControl').setValue('NC');
         component.mapFilterForm.get('networkControl').setValue(['SWaTH']);
-        component.mapFilterForm.value.eventsControl = 7;
+
+        component.mapFilterForm.get('sensorOnlyControl').setValue('1');
+
+        component.mapFilterForm.get('eventsControl').setValue(7);
+
         component.mapFilterForm.value.sensorTypeControl = 'Webcam';
         component.mapFilterForm.value.surveyedControl = 'Surveyed';
         component.mapFilterForm.value.HWMOnlyControl = '1';
-        component.mapFilterForm.value.sensorOnlyControl = '1';
+        // component.mapFilterForm.value.sensorOnlyControl = '1';
         component.mapFilterForm.value.bracketSiteOnlyControl = '1';
         component.mapFilterForm.value.RDGOnlyControl = '1';
         component.mapFilterForm.value.OPDefinedControl = '1';
         component.submitMapFilter();
         expect(component.mapFilterForm).toBeTruthy;
+        expect(component.mapFilterForm.value.networkControl).toEqual(['SWaTH']);
+        //expect(component.mapResults).toHaveBeenCalled();
         //expect(component.submitMapFilter().urlParamString).toBe('Event=7&State=California&SensorType=Webcam&NetworkName=SWaTH&OPDefined=1&HWMOnly=');
     });
 
