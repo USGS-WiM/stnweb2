@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { RegistrationComponent } from '../registration/registration.component';
 // import { CurrentUserService } from '../services/current-user.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { first } from 'rxjs/operators';
@@ -26,7 +25,6 @@ export class LoginComponent implements OnInit {
     constructor(
         //public dialog: MatDialog,
         //public loginDialogRef: MatDialogRef<LoginComponent>,
-        //public regDialogRef: MatDialogRef<RegistrationComponent>,
         public formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
@@ -37,13 +35,6 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    // registration dialog
-    // openRegDialog(): void {
-    //     this.loginDialogRef.close();
-    //     const dialogRef = this.dialog.open(RegistrationComponent, {});
-
-    //     dialogRef.afterClosed().subscribe((result) => {});
-    // }
     /* istanbul ignore next */
     ngOnInit() {
         this.loginForm = this.formBuilder.group({
