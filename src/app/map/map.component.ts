@@ -348,13 +348,13 @@ export class MapComponent implements OnInit {
         //set the value of the state control to the full object of each state so that the list of state names can be displayed
         this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
     }
-    //Temporary message pop up at bottom of screen
+    //Temporary message pop up when user zooms out and layers are removed
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
         });
     }
-    //Temporary message pop up at bottom of screen
+    //Temporary message pop up when user's query returns no data
     noDataSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
