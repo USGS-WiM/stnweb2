@@ -171,7 +171,7 @@ describe('MapComponent', () => {
         );
     });
 
-    it('should call getEventSites and return events', () => {
+    it('should call getEventSites and return sites', () => {
         const response: Site[] = [];
         spyOn(component.siteService, 'getEventSites').and.returnValue(
             of(response)
@@ -226,9 +226,7 @@ describe('MapComponent', () => {
     });
 
     it('should call updateEventFilter', () => {
-        component.mapFilterForm.value.stateControl = 'NC';
         component.updateEventFilter();
-        //expect(component.mapFilterForm.get('stateControl').value).toEqual('NC');
     });
 
     it('#getDrawnItemPopupContent returns the appropriate content response', () => {
