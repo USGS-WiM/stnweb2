@@ -157,9 +157,9 @@ export class MapComponent implements OnInit {
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
-        private eventService: EventService,
+        public eventService: EventService,
         private eventTypeService: EventTypeService,
-        private stateService: StateService,
+        public stateService: StateService,
         private networkNameService: NetworkNameService,
         private sensorTypeService: SensorTypeService,
         private eventsService: EventService,

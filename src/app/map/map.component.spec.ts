@@ -44,6 +44,7 @@ import { APP_SETTINGS } from '@app/app.settings';
 import { MAP_CONSTANTS } from './map-constants';
 import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
 import { Site } from '@app/interfaces/site';
+import { State } from '@app/interfaces/state';
 
 describe('MapComponent', () => {
     let component: MapComponent;
@@ -188,6 +189,27 @@ describe('MapComponent', () => {
         );
         fixture.detectChanges();
         expect(component.sites).toEqual(response);
+    });
+
+    it('should call getStates and return list of all states', () => {
+        const response: State[] = [];
+        spyOn(component.stateService, 'getStates').and.returnValue(
+            of(response)
+        );
+        component.getStates();
+        fixture.detectChanges();
+        expect(component.states).toEqual(response);
+        expect(component.eventStates).toEqual(response);
+    });
+
+    it('should call filterEvents and return list of filtered events', () => {
+        const response: Event[] = [];
+        spyOn(component.eventService, 'filterEvents').and.returnValue(
+            of(response)
+        );
+        component.updateEventFilter();
+        fixture.detectChanges();
+        expect(component.events).toEqual(response);
     });
 
     it('displayEventState returns the appropriate response', () => {
