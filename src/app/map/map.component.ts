@@ -332,6 +332,8 @@ export class MapComponent implements OnInit {
     toggleStateSelection(state: State) {
         let numStates: number;
         state.selected = !state.selected;
+        document.getElementById('selectedStateList').innerHTML = '';
+        this.setStateAbbrev = '';
         if (state.selected) {
             this.selectedStates.push(state);
         } else {
@@ -362,6 +364,13 @@ export class MapComponent implements OnInit {
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
+        });
+    }
+    //Temporary message pop up at bottom of screen
+    noDataSnackBar(message: string, action: string, duration: number) {
+        this.snackBar.open(message, action, {
+            duration: duration,
+            panelClass: ['no-data-warning'],
         });
     }
     //TODO: LOOK HERE FIRST
@@ -780,8 +789,6 @@ export class MapComponent implements OnInit {
         layerType: any,
         zoomToLayer: boolean
     ) {
-        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
-
         // loop through results response from a search query
         if (eventSites.length !== undefined) {
             for (let site of eventSites) {
@@ -849,6 +856,8 @@ export class MapComponent implements OnInit {
             this.eventMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
+                //close the filter panel
+                this.filtersPanelState = false;
                 this.eventFocus();
                 this.mapPanelState = true;
             }
@@ -861,10 +870,9 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
-        //close the filter panel
-        this.filtersPanelState = false;
         //set the state control to the state abbreviations
         this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
+        document.getElementById('selectedStateList').innerHTML = '';
 
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
@@ -920,8 +928,23 @@ export class MapComponent implements OnInit {
             this.eventMarkers.removeFrom(this.map);
             this.eventMarkers = L.featureGroup([]);
         }
+        //Find sites that match the user's query
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
-            this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+            //set the state control back to state names instead of abbreviations
+            this.mapFilterForm
+                .get('stateControl')
+                .setValue(this.selectedStates);
+            //only call mapResults if the query returns data
+            if (res.length > 0) {
+                this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+            } else {
+                //if nothing is returned, show a snack bar message
+                this.noDataSnackBar(
+                    'No results for your query. Try using fewer filters.',
+                    'OK',
+                    4500
+                );
+            }
         });
         return urlParamString;
     }
