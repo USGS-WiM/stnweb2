@@ -49,7 +49,6 @@ import { FilterResultsComponent } from './filter-results/filter-results.componen
         AppComponent,
         AboutComponent,
         MapComponent,
-        SearchDialogComponent,
         LoginComponent,
         ConfirmComponent,
         DisplayValuePipe,
