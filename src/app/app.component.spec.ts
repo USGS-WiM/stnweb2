@@ -78,6 +78,17 @@ describe('AppComponent', () => {
         component.dialog.closeAll();
     });
 
+    it(`#updateCurrentUser should be called on load`, () => {
+        spyOn(
+            component.currentUserService,
+            'updateCurrentUser'
+        ).and.callThrough();
+        component.ngOnInit();
+        expect(
+            component.currentUserService.updateCurrentUser
+        ).toHaveBeenCalled();
+    });
+
     it(`#logout should remove user data from localStorage`, () => {
         component.logout();
         expect(localStorage.getItem('username')).toBeNull();

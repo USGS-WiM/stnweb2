@@ -4,13 +4,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { RegistrationComponent } from '../registration/registration.component';
-// import { CurrentUserService } from '../services/current-user.service';
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from '../services/authentication.service';
 import { CurrentUserService } from '../services/current-user.service';
-// import { User } from '@interfaces/user';
 
 @Component({
     selector: 'app-login',

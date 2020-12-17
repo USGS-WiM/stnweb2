@@ -445,3 +445,8 @@ $borderRadius: 4px;
 .AHPSGageHeader {
     margin-left: 20px;
 }
+::ng-deep .mat-snack-bar-container.no-data-warning {
+    background-color: rgba(255, 166, 0, 0.801);
+    color: white;
+    margin-bottom: 300px;
+}

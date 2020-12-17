@@ -13,11 +13,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added EventType and EventState Filters to filter the Events choice list
 -   Added site filter options for: HWMs Surveyed, HWM Only, Sensor Only, Surveyed RP Only, Pre-Deployed Bracket, RDG Only, Has OP Defined
 -   Added popup on site click with site information
+-   Added warning message when user's query returns no data
 
 ### Changed
 
 -   Extent button now zooms to site markers
 -   Map zooms to sites when filters are submitted
+-   State filters are searchable
 
 ### Fixed
 

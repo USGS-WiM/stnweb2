@@ -116,11 +116,17 @@ export class MapComponent implements OnInit {
 
     //holds filter values
     events: Event[];
+    states: State[];
+    eventStates: State[];
+    selectedStates: State[] = new Array<State>();
+    stateList = '';
+    setStateAbbrev = '';
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
     networks$: Observable<NetworkName[]>;
     sensorTypes$: Observable<SensorType[]>;
+    eventStates$: Observable<State[]>;
     states$: Observable<State[]>;
 
     //These variables indicate if each layer is checked
@@ -142,18 +148,24 @@ export class MapComponent implements OnInit {
     private displayedSites: Subject<Site[]> = new Subject<Site[]>();
     private setDisplayedSites;
 
+    //for sites displayed on map load and when running queries
     eventIcon = L.divIcon({
         className:
             ' wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20',
+    });
+    //for the All STN Sites layer
+    siteIcon = L.divIcon({
+        className: ' allSiteIcon ',
+        iconSize: 32,
     });
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
     constructor(
-        private eventService: EventService,
+        public eventService: EventService,
         private eventTypeService: EventTypeService,
-        private stateService: StateService,
+        public stateService: StateService,
         private networkNameService: NetworkNameService,
         private sensorTypeService: SensorTypeService,
         private eventsService: EventService,
@@ -161,7 +173,7 @@ export class MapComponent implements OnInit {
         private networkNamesService: NetworkNameService,
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
-        private siteService: SiteService,
+        public siteService: SiteService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
     ) {
@@ -169,6 +181,7 @@ export class MapComponent implements OnInit {
 
         this.networks$ = this.networkNameService.networks$;
         this.sensorTypes$ = this.sensorTypeService.sensorTypes$;
+        this.eventStates$ = this.stateService.eventStates$;
         this.states$ = this.stateService.states$;
 
         this.mapFilterForm = formBuilder.group({
@@ -189,18 +202,21 @@ export class MapComponent implements OnInit {
     }
 
     ngOnInit() {
-        /// demonstration code. to be removed
-        // let floodEvents: EventType;
-        // this.eventTypeService.getEventsByEventType(4).subscribe((eventType) => {
-        //     floodEvents = eventType;
-        //     console.log('flood events: ' + JSON.parse(eventType));
-        // });
-        /// end demonstration code
-
-        // this.selectedSiteService.currentID.subscribe(siteid => this.siteid = siteid);
-        // console.log('User logged in?: ' + this.isloggedIn);
+        //subscribe to services to get data
+        this.getData();
         this.setCurrentFilter();
+        // create and configure map
+        this.createMap();
+    }
 
+    setCurrentFilter() {
+        this.currentFilter = localStorage.getItem('currentFilter')
+            ? JSON.parse(localStorage.getItem('currentFilter'))
+            : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+    }
+
+    getData() {
+        //Get all events, populate the event filter, get most recent event
         this.eventService.getAllEvents().subscribe((results) => {
             this.events = results;
             //sort the events by date, most recent at the top of the list
@@ -233,34 +249,45 @@ export class MapComponent implements OnInit {
             //set up call to get sites for specific event
             this.displaySelectedEvent();
         });
-        // get lists of options for dropdowns
-        // this.networks$ = this.networkNamesService.getNetworkNames();
-        // this.sensorTypes$ = this.sensorTypesService.getSensorTypes();
-        this.states$ = this.stateService.getStates();
-        // create and configure map
-        this.createMap();
-
-        const siteIcon = L.divIcon({
-            className: ' allSiteIcon ',
-            iconSize: 32,
+        //Get states to fill state filters
+        this.stateService.getStates().subscribe((results) => {
+            this.eventStates = results;
+            this.states = results;
+            this.eventStates$ = this.mapFilterForm
+                .get('eventStateControl')
+                .valueChanges.pipe(
+                    map((state_name) =>
+                        state_name
+                            ? APP_UTILITIES.FILTER_STATE(
+                                  state_name,
+                                  this.eventStates
+                              )
+                            : this.eventStates
+                    )
+                );
+            this.states$ = this.mapFilterForm
+                .get('stateControl')
+                .valueChanges.pipe(
+                    map((state_name) =>
+                        state_name
+                            ? APP_UTILITIES.FILTER_STATE(
+                                  state_name,
+                                  this.states
+                              )
+                            : this.states
+                    )
+                );
         });
-
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
             this.allSites = results;
             this.mapResults(
                 this.allSites,
-                siteIcon,
+                this.siteIcon,
                 this.siteService.siteMarkers,
                 false
             );
         });
-    }
-
-    setCurrentFilter() {
-        this.currentFilter = localStorage.getItem('currentFilter')
-            ? JSON.parse(localStorage.getItem('currentFilter'))
-            : APP_SETTINGS.DEFAULT_FILTER_QUERY;
     }
 
     // TODO: update this
@@ -290,10 +317,48 @@ export class MapComponent implements OnInit {
         // });
     }
 
-    //Temporary message pop up at bottom of screen
+    toggleStateSelection(state: State) {
+        let numStates: number;
+        state.selected = !state.selected;
+        document.getElementById('selectedStateList').innerHTML = '';
+        this.setStateAbbrev = '';
+        if (state.selected) {
+            this.selectedStates.push(state);
+        } else {
+            const i = this.selectedStates.findIndex(
+                (value) => value.state_name === state.state_name
+            );
+            this.selectedStates.splice(i, 1);
+        }
+        //Create a string containing the list of state abbreviations
+        if (this.selectedStates !== undefined) {
+            numStates = this.selectedStates.length;
+            for (let numAbbrev = 0; numAbbrev < numStates; numAbbrev++) {
+                if (numAbbrev === 0) {
+                    this.setStateAbbrev = this.setStateAbbrev.concat(
+                        this.selectedStates[numAbbrev].state_abbrev
+                    );
+                } else {
+                    this.setStateAbbrev = this.setStateAbbrev.concat(
+                        ',' + this.selectedStates[numAbbrev].state_abbrev
+                    );
+                }
+            }
+        }
+        //set the value of the state control to the full object of each state so that the list of state names can be displayed
+        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
+    }
+    //Temporary message pop up when user zooms out and layers are removed
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
+        });
+    }
+    //Temporary message pop up when user's query returns no data
+    noDataSnackBar(message: string, action: string, duration: number) {
+        this.snackBar.open(message, action, {
+            duration: duration,
+            panelClass: ['no-data-warning'],
         });
     }
     //TODO: LOOK HERE FIRST
@@ -428,7 +493,6 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
-            console.log('this is e remove', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -480,7 +544,6 @@ export class MapComponent implements OnInit {
                 }
             }
         });
-
         this.createDrawControls();
     }
 
@@ -639,7 +702,6 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
-            console.log('this is e remove', e);
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -677,7 +739,33 @@ export class MapComponent implements OnInit {
     displayEvent(event: Event): string {
         return event && event.event_name ? event.event_name : '';
     }
-
+    //will return a comma separated list of selected states
+    displayEventState(state: any): string {
+        return state && state.state_name ? state.state_name : '';
+    }
+    //will return a comma separated list of selected states
+    //prints list of states next to filter instead of filling the filter rectangle
+    displayState(state: any): string {
+        let stateCount: number;
+        let stateIndex: number;
+        let currentState: string;
+        this.stateList = '';
+        if (state !== null) {
+            stateIndex = state.length;
+        }
+        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
+            currentState = state[stateCount].state_name;
+            if (stateCount === 0) {
+                this.stateList = this.stateList.concat(
+                    ' Selected States: ' + currentState
+                );
+            } else {
+                this.stateList = this.stateList.concat(', ' + currentState);
+            }
+        }
+        document.getElementById('selectedStateList').innerHTML = this.stateList;
+        return null;
+    }
     //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
@@ -689,11 +777,6 @@ export class MapComponent implements OnInit {
         layerType: any,
         zoomToLayer: boolean
     ) {
-        // set/reset resultsMarker var to an empty array
-        const markers = [];
-        const iconClass = ' wmm-icon-diamond wmm-icon-white ';
-        const riverConditions = [];
-
         // loop through results response from a search query
         if (eventSites.length !== undefined) {
             for (let site of eventSites) {
@@ -759,11 +842,10 @@ export class MapComponent implements OnInit {
         }
         if (layerType == this.eventMarkers) {
             this.eventMarkers.addTo(this.map);
-            //When filtering sites, zoom to layer, close the filters pane and open map pane
+            //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
                 this.eventFocus();
                 this.mapPanelState = true;
-                this.filtersPanelState = false;
             }
         }
     }
@@ -774,6 +856,10 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
+        //set the state control to the state abbreviations
+        this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
+        document.getElementById('selectedStateList').innerHTML = '';
+
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
         //collect and format selected Filter Form values
@@ -828,8 +914,25 @@ export class MapComponent implements OnInit {
             this.eventMarkers.removeFrom(this.map);
             this.eventMarkers = L.featureGroup([]);
         }
+        //Find sites that match the user's query
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
-            this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+            //set the state control back to state names instead of abbreviations
+            this.mapFilterForm
+                .get('stateControl')
+                .setValue(this.selectedStates);
+            //only call mapResults if the query returns data
+            if (res.length > 0) {
+                //close the filter panel
+                this.filtersPanelState = false;
+                this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+            } else {
+                //if nothing is returned, show a snack bar message
+                this.noDataSnackBar(
+                    'No results for your query. Try using fewer filters.',
+                    'OK',
+                    4500
+                );
+            }
         });
         return urlParamString;
     }
