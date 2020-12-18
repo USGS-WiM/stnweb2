@@ -43,6 +43,7 @@ import { EventService } from '@services/event.service';
 import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
+import { FiltersService } from '@services/filters.service';
 import { FilterResultsComponent } from './filter-results/filter-results.component';
 
 @NgModule({
@@ -93,6 +94,7 @@ import { FilterResultsComponent } from './filter-results/filter-results.componen
         EventService,
         UserService,
         SiteService,
+        FiltersService,
         DisplayValuePipe,
         MatSnackBar,
     ],

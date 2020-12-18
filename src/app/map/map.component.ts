@@ -34,6 +34,7 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
+import { FiltersService } from '@services/filters.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
@@ -174,6 +175,7 @@ export class MapComponent implements OnInit {
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
         public siteService: SiteService,
+        public filtersService: FiltersService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
     ) {
@@ -281,12 +283,26 @@ export class MapComponent implements OnInit {
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
             this.allSites = results;
-            this.mapResults(
+            this.filtersService.mapResults(
                 this.allSites,
                 this.siteIcon,
                 this.siteService.siteMarkers,
                 false
             );
+
+            /* this.mapResults(
+                this.allSites,
+                this.siteIcon,
+                this.siteService.siteMarkers,
+                false
+            ); */
+
+            this.eventMarkers.addTo(this.map);
+            //When filtering sites, zoom to layer, and open map pane
+            /* if (zoomToLayer == true) {
+                this.eventFocus();
+                this.mapPanelState = true;
+            } */
         });
     }
 
@@ -374,7 +390,7 @@ export class MapComponent implements OnInit {
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
                 this.eventSites = results;
-                this.mapResults(
+                this.filtersService.mapResults(
                     this.eventSites,
                     this.eventIcon,
                     this.eventMarkers,
@@ -770,7 +786,7 @@ export class MapComponent implements OnInit {
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
-    mapResults(
+    mapResultsOLD(
         eventSites: any,
         myIcon: any,
         layerType: any,
@@ -778,6 +794,7 @@ export class MapComponent implements OnInit {
     ) {
         // loop through results response from a search query
         if (eventSites.length !== undefined) {
+            console.log(layerType);
             for (let site of eventSites) {
                 let lat = Number(site.latitude_dd);
                 let long = Number(site.longitude_dd);
@@ -923,7 +940,12 @@ export class MapComponent implements OnInit {
             if (res.length > 0) {
                 //close the filter panel
                 this.filtersPanelState = false;
-                this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+                this.filtersService.mapResults(
+                    res,
+                    this.eventIcon,
+                    this.eventMarkers,
+                    true
+                );
             } else {
                 //if nothing is returned, show a snack bar message
                 this.noDataSnackBar(
