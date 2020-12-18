@@ -28,6 +28,12 @@ body {
 mat-icon {
     font-family: 'Material Icons' !important;
 }
+.header-button-text {
+    color: white;
+}
+.navbar-button-text {
+    color: darkslategrey;
+}
 
 // Remove padding around map
 #mapPanel .mat-expansion-panel-body {
@@ -132,6 +138,22 @@ mat-icon {
         background-color: $bg;
         margin-top: -1px;
     }
+}
+
+.form-buttons-flex {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 0;
+
+    &.center {
+        justify-content: center;
+    }
+}
+// Change spacing between form elements
+.form-control {
+    margin: 6px 10px !important;
 }
 
 // styles.scss

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-// import { CurrentUserService } from '../services/current-user.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from '../services/authentication.service';
@@ -16,19 +18,19 @@ import { CurrentUserService } from '../services/current-user.service';
 export class LoginComponent implements OnInit {
     hide = true;
     loginForm: FormGroup;
-    loading = false;
-    submitted = false;
+    requestPending = false;
     returnUrl: string;
     error = '';
     public currentUser;
 
     constructor(
-        //public dialog: MatDialog,
-        //public loginDialogRef: MatDialogRef<LoginComponent>,
+        public dialog: MatDialog,
+        public loginDialogRef: MatDialogRef<LoginComponent>,
         public formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
-        public currentUserService: CurrentUserService
+        public currentUserService: CurrentUserService,
+        private snackBar: MatSnackBar
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -43,34 +45,66 @@ export class LoginComponent implements OnInit {
         });
 
         // reset login status
-        this.authenticationService.logout();
+        // this.authenticationService.logout();
 
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
     /* istanbul ignore next */
-    onSubmit() {
-        this.submitted = true;
-
-        // stop here if form is invalid
-        if (this.loginForm.invalid) {
-            return;
-        }
-
+    onSubmitLogin(formValue: any) {
         /* istanbul ignore next */
-        this.loading = true;
-        // this.authenticationService
-        //     .login(this.f.username.value, this.f.password.value)
-        //     .pipe(first())
-        //     .subscribe(
-        //         (data) => {
-        //             this.router.navigate([this.returnUrl]);
-        //         },
-        //         (error) => {
-        //             this.error = error;
-        //             this.loading = false;
-        //         }
-        //     );
+        this.requestPending = true;
+        this.authenticationService
+            .login(formValue.username, formValue.password)
+            .pipe(first())
+            .subscribe(
+                (user: any) => {
+                    //this.router.navigate([this.returnUrl]);
+                    this.requestPending = false;
+                    this.loginDialogRef.close();
+                    this.openSnackBar('Successfully logged in!', 'OK', 5000);
+                },
+                (error) => {
+                    this.error = error;
+                    this.requestPending = false;
+                    if (error.status === 403) {
+                        this.openSnackBar(
+                            'Invalid username and/or password. Please try again.',
+                            'OK',
+                            8000
+                        );
+                    } else {
+                        this.openSnackBar(
+                            'Error. Failed to login. Error message: ' + error,
+                            'OK',
+                            8000
+                        );
+                    }
+                }
+            );
+    }
+
+    onSubmitLogout() {
+        this.authenticationService.logout();
+        // if (this.router.url === '/home') {
+        //   location.reload();
+        // } else {
+        //   this.router.navigate([`../home/`], { relativeTo: this.route });
+        // }
+    }
+
+    openSnackBar(message: string, action: string, duration: number) {
+        this.snackBar.open(message, action, {
+            duration: duration,
+        });
+    }
+
+    getErrorMessage(formControlName) {
+        return this.loginForm.get(formControlName).hasError('required')
+            ? 'Please enter a value'
+            : this.loginForm.get(formControlName).hasError('email')
+            ? 'Not a valid email'
+            : '';
     }
 }
