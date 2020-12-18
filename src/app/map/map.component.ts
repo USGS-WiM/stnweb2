@@ -226,10 +226,6 @@ export class MapComponent implements OnInit {
                 'descend'
             );
 
-            //Get id and name of most recent event
-            this.currentEvent = this.events[0].event_id;
-            this.currentEventName = this.events[0].event_name;
-
             // allow user to type into the event selector to view matching events
             this.filteredEvents$ = this.mapFilterForm
                 .get('eventsControl')
@@ -363,6 +359,10 @@ export class MapComponent implements OnInit {
     }
     //TODO: LOOK HERE FIRST
     displaySelectedEvent() {
+        //Get id and name of most recent event
+        this.currentEvent = this.events[0].event_id;
+        this.currentEventName = this.events[0].event_name;
+
         //Clear the old event markers from the map
         if (this.eventMarkers !== undefined) {
             this.eventMarkers.removeFrom(this.map);
