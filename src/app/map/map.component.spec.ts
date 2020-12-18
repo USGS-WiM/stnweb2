@@ -179,7 +179,7 @@ describe('MapComponent', () => {
         );
         component.displaySelectedEvent();
         fixture.detectChanges();
-        expect(component.sites).toEqual(response);
+        expect(component.eventSites).toEqual(response);
     });
 
     it('on load, should call getAllSites and return list of all sites', () => {
