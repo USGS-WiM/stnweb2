@@ -906,6 +906,7 @@ export class MapComponent implements OnInit {
                 'OK',
                 4500
             );
+            //If the user has at least one Event, Network, Sensor, or State filter select, continue with http request
         } else {
             // format url params into single string
             let urlParamString =
