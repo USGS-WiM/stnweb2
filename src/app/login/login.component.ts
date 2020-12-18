@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
                 (error) => {
                     this.error = error;
                     this.requestPending = false;
-                    if (error.status === 403) {
+                    if (error.status === 403 || error.status === 401) {
                         this.openSnackBar(
                             'Invalid username and/or password. Please try again.',
                             'OK',
