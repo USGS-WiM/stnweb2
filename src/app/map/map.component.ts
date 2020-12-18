@@ -821,20 +821,28 @@ export class MapComponent implements OnInit {
                             ' in All STN Sites layer due to null lat/lng'
                     );
                 } else {
-                    //put all the event markers in the same layer group
-                    if (layerType == this.eventMarkers) {
-                        L.marker([lat, long], { icon: myIcon })
-                            .bindPopup(popupContent)
-                            .addTo(layerType);
-                    }
-                    //Make circle markers for the All STN Sites layer
-                    if (layerType == this.siteService.siteMarkers) {
-                        L.marker([lat, long], {
-                            icon: myIcon,
-                            iconSize: 32,
-                        })
-                            .bindPopup(popupContent)
-                            .addTo(layerType);
+                    //These sites are in the Atlantic Ocean or otherwise clearly out of place
+                    if (
+                        site.site_no !== 'AKALE27857' &&
+                        site.site_no !== 'AKALE27855' &&
+                        site.site_no !== 'ASTUT27853' &&
+                        site.site_no !== 'AZGRA27856'
+                    ) {
+                        //put all the event markers in the same layer group
+                        if (layerType == this.eventMarkers) {
+                            L.marker([lat, long], { icon: myIcon })
+                                .bindPopup(popupContent)
+                                .addTo(layerType);
+                        }
+                        //Make circle markers for the All STN Sites layer
+                        if (layerType == this.siteService.siteMarkers) {
+                            L.marker([lat, long], {
+                                icon: myIcon,
+                                iconSize: 32,
+                            })
+                                .bindPopup(popupContent)
+                                .addTo(layerType);
+                        }
                     }
                 }
             }

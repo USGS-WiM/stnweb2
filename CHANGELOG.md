@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Map zooms to sites when filters are submitted
 -   State filters are searchable
 -   Removed extra navbar buttons, changed style of Map button
+-   Skips out of place sites
 
 ### Fixed
 
