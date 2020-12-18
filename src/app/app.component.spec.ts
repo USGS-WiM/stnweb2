@@ -94,4 +94,14 @@ describe('AppComponent', () => {
         expect(localStorage.getItem('username')).toBeNull();
         expect(localStorage.getItem('currentUser')).toBeNull();
     });
+
+    //can't really test this function until there are more buttons, leaving this as a placeholder
+    /*
+    it('#toggleNavButtons should change the css of the button clicked', () => {
+        //this should be updated to see if class changes when another button is added
+        //right now, as filler, just makes shows that section has the class listed
+        //let navBtnID = document.getElementById('navBarButtons');
+        component.toggleNavButtons();
+        //expect(navBtnID).toHaveClass('navBarBtn');
+    }); */
 });

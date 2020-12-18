@@ -172,16 +172,6 @@ describe('MapComponent', () => {
         );
     });
 
-    it('should call getEventSites and return sites', () => {
-        const response: Site[] = [];
-        spyOn(component.siteService, 'getEventSites').and.returnValue(
-            of(response)
-        );
-        component.displaySelectedEvent();
-        fixture.detectChanges();
-        expect(component.sites).toEqual(response);
-    });
-
     it('on load, should call getAllSites and return list of all sites', () => {
         const response: Site[] = [];
         spyOn(component.siteService, 'getAllSites').and.returnValue(
@@ -224,7 +214,6 @@ describe('MapComponent', () => {
     });
 
     it('should call getFilteredSites and return list of queried sites', () => {
-        component.mapFilterForm.get('eventsControl').setValue(291);
         const response: Site[] = [];
         spyOn(component.siteService, 'getFilteredSites').and.returnValue(
             of(response)

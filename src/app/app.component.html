@@ -113,52 +113,15 @@
             id="stn-nav-toolbar"
             *ngIf="loggedIn"
         >
-            <div class="nav-toggles">
-                <!-- <mat-button-toggle-group>
-                    <mat-button-toggle value="map" checked="true"
-                        >Map</mat-button-toggle
+            <div id="navBarButtons" class="navBarBtn">
+                <span>
+                    <button
+                        class="navBarBtnActive"
+                        mat-button
+                        aria-label="Display Map View"
+                        (click)="toggleNavButtons()"
                     >
-                    <mat-button-toggle value="approval"
-                        >Approval</mat-button-toggle
-                    >
-                    <mat-button-toggle value="sites">Sites</mat-button-toggle>
-                    <mat-button-toggle value="reporting"
-                        >Reporting</mat-button-toggle
-                    >
-                    <mat-button-toggle value="settings"
-                        >Settings</mat-button-toggle
-                    >
-                    <mat-button-toggle value="review">Review</mat-button-toggle>
-                </mat-button-toggle-group> -->
-                <!--alternative button layout to match existing-->
-                <span class="button-span">
-                    <button mat-button aria-label="Display Map View">
-                        <span class="navbar-button-text"> Map</span>
-                    </button>
-                </span>
-                <span class="button-span">
-                    <button mat-button aria-label="Display Approval View">
-                        <span class="navbar-button-text"> Approval</span>
-                    </button>
-                </span>
-                <span class="button-span">
-                    <button mat-button aria-label="Display Sites View">
-                        <span class="navbar-button-text"> Sites</span>
-                    </button>
-                </span>
-                <span class="button-span">
-                    <button mat-button aria-label="Display Reporting View">
-                        <span class="navbar-button-text"> Reporting </span>
-                    </button>
-                </span>
-                <span class="button-span">
-                    <button mat-button aria-label="Display Settings View">
-                        <span class="navbar-button-text"> Settings </span>
-                    </button>
-                </span>
-                <span class="button-span">
-                    <button mat-button aria-label="Display Review View">
-                        <span class="navbar-button-text"> Review </span>
+                        <span> Map</span>
                     </button>
                 </span>
             </div>
