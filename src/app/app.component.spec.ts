@@ -85,4 +85,13 @@ describe('AppComponent', () => {
         expect(localStorage.getItem('username')).toBeNull();
         expect(localStorage.getItem('currentUser')).toBeNull();
     });
+
+    it('#toggleNavButtons should change the css of the button clicked', () => {
+        //since there are no other buttons to test toggling between,
+        //this should be updated to see if class changes when another button is added
+        //right now, as filler, just makes shows that section has the class listed
+        let btnID = document.getElementById('stn-nav-toolbar');
+        component.toggleNavButtons();
+        expect(btnID).toHaveClass('stns-header');
+    });
 });

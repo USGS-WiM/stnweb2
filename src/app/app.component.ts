@@ -69,4 +69,21 @@ export class AppComponent implements OnInit {
         this.authenticationService.logout();
         // console.log('logged out');
     }
+
+    toggleNavButtons() {
+        let btnID = document.getElementById('navBarButtons');
+        let navBtn = btnID.getElementsByClassName('navBarBtn');
+        for (let i = 0; i < navBtn.length; i++) {
+            navBtn[i].addEventListener('click', function () {
+                var current = document.getElementsByClassName(
+                    'navBarBtnActive'
+                );
+                current[0].className = current[0].className.replace(
+                    ' navBarBtnActive',
+                    ''
+                );
+                this.className += ' navBarBtnActive';
+            });
+        }
+    }
 }
