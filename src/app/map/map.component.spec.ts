@@ -214,7 +214,6 @@ describe('MapComponent', () => {
     });
 
     it('should call getFilteredSites and return list of queried sites', () => {
-        component.mapFilterForm.get('eventsControl').setValue(291);
         const response: Site[] = [];
         spyOn(component.siteService, 'getFilteredSites').and.returnValue(
             of(response)
