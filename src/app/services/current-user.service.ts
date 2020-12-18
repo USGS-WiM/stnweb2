@@ -1,16 +1,22 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Member } from '@interfaces/member';
 
 @Injectable()
 export class CurrentUserService {
+    private userSubject = new BehaviorSubject(null);
+    currentUser = this.userSubject.asObservable();
 
-  private userSource = new BehaviorSubject('None');
-  currentUser = this.userSource.asObservable();
+    private loggedInSubject = new BehaviorSubject(false);
+    loggedIn = this.loggedInSubject.asObservable();
 
-  constructor() { }
+    constructor() {}
 
-  updateCurrentUser(user) {
-    this.userSource.next(user);
-  }
+    updateCurrentUser(user) {
+        this.userSubject.next(user);
+    }
 
+    updateLoggedInStatus(status) {
+        this.loggedInSubject.next(status);
+    }
 }
