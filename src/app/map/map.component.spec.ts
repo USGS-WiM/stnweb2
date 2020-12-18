@@ -223,6 +223,17 @@ describe('MapComponent', () => {
         expect(component.events).toEqual(response);
     });
 
+    it('should call getFilteredSites and return list of queried sites', () => {
+        component.mapFilterForm.get('eventsControl').setValue(291);
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getFilteredSites').and.returnValue(
+            of(response)
+        );
+        component.submitMapFilter();
+        fixture.detectChanges();
+        expect(component.sites).toEqual(response);
+    });
+
     it('displayEventState returns the appropriate response', () => {
         let state = {
             counties: null,

@@ -1,5 +1,5 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
@@ -15,9 +15,11 @@ import { AboutComponent } from '@app/about/about.component';
 import { LoginComponent } from '@app/login/login.component';
 import { FormBuilder } from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 describe('AppComponent', () => {
     let component: AppComponent;
+    let fixture: ComponentFixture<AppComponent>;
     // let dialogSpy: jasmine.Spy;
     // let dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of({}), close: null });
     // dialogRefSpyObj.componentInstance = { body: '' }; // attach componentInstance to the spy object...
@@ -35,12 +37,19 @@ describe('AppComponent', () => {
                 AppComponent,
                 CurrentUserService,
                 FormBuilder,
+                MatSnackBar,
                 { provide: MatDialogRef, useValue: {} },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         component = TestBed.inject(AppComponent);
         // dialogSpy = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue(dialogRefSpyObj);
+    });
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(AppComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
     });
 
     it('should create the app', () => {
