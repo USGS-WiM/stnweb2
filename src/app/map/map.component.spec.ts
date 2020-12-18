@@ -172,16 +172,6 @@ describe('MapComponent', () => {
         );
     });
 
-    it('should call getEventSites and return sites', () => {
-        const response: Site[] = [];
-        spyOn(component.siteService, 'getEventSites').and.returnValue(
-            of(response)
-        );
-        component.displaySelectedEvent();
-        fixture.detectChanges();
-        expect(component.eventSites).toEqual(response);
-    });
-
     it('on load, should call getAllSites and return list of all sites', () => {
         const response: Site[] = [];
         spyOn(component.siteService, 'getAllSites').and.returnValue(
