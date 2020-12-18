@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
     title = 'STN';
 
     public currentUser;
-    private loggedIn: boolean = false;
+    public loggedIn: boolean = false;
 
     constructor(
         public dialog: MatDialog,
