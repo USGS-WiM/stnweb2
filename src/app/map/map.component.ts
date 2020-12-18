@@ -225,7 +225,8 @@ export class MapComponent implements OnInit {
                 'event_start_date',
                 'descend'
             );
-
+            //set up call to get sites for specific event
+            this.displaySelectedEvent();
             // allow user to type into the event selector to view matching events
             this.filteredEvents$ = this.mapFilterForm
                 .get('eventsControl')
@@ -242,8 +243,6 @@ export class MapComponent implements OnInit {
                             : this.events
                     )
                 );
-            //set up call to get sites for specific event
-            this.displaySelectedEvent();
         });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
