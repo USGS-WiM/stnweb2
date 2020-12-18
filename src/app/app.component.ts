@@ -79,10 +79,28 @@ export class AppComponent implements OnInit {
 
         // console.log('logged out');
     }
-
     openSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
         });
     }
+    //toggling between buttons in the nav toolbar changes the color of the selected button
+    /* I think this is causing the Angular test to fail until we add a second button, so commenting out for now
+    toggleNavButtons() {
+        let btnID = document.getElementById('navBarButtons');
+        let navBtn = btnID.getElementsByClassName('navBarBtn');
+        for (let i = 0; i < navBtn.length; i++) {
+            navBtn[i].addEventListener('click', function () {
+                var current = document.getElementsByClassName(
+                    'navBarBtnActive'
+                );
+                current[0].className = current[0].className.replace(
+                    ' navBarBtnActive',
+                    ''
+                );
+                this.className += ' navBarBtnActive';
+            });
+        }
+    }
+    */
 }

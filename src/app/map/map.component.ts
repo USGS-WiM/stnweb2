@@ -225,11 +225,8 @@ export class MapComponent implements OnInit {
                 'event_start_date',
                 'descend'
             );
-
-            //Get id and name of most recent event
-            this.currentEvent = this.events[0].event_id;
-            this.currentEventName = this.events[0].event_name;
-
+            //set up call to get sites for specific event
+            this.displaySelectedEvent();
             // allow user to type into the event selector to view matching events
             this.filteredEvents$ = this.mapFilterForm
                 .get('eventsControl')
@@ -246,8 +243,6 @@ export class MapComponent implements OnInit {
                             : this.events
                     )
                 );
-            //set up call to get sites for specific event
-            this.displaySelectedEvent();
         });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
@@ -363,6 +358,10 @@ export class MapComponent implements OnInit {
     }
     //TODO: LOOK HERE FIRST
     displaySelectedEvent() {
+        //Get id and name of most recent event
+        this.currentEvent = this.events[0].event_id;
+        this.currentEventName = this.events[0].event_name;
+
         //Clear the old event markers from the map
         if (this.eventMarkers !== undefined) {
             this.eventMarkers.removeFrom(this.map);

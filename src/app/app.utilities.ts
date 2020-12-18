@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Event } from '@interfaces/event';
 import { Site } from '@interfaces/site';
 import { NetworkName } from '@interfaces/network-name';
@@ -25,7 +25,8 @@ export class APP_UTILITIES {
             console.log(`${operation} failed: ${error.message}`);
 
             // Let the app keep running by returning an empty result.
-            return of(result as T);
+            //return of(result as T);
+            return throwError(error);
         };
     }
     /**
