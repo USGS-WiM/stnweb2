@@ -10,6 +10,7 @@ import { Member } from '@interfaces/member';
 
 import { CurrentUserService } from '@services/current-user.service';
 import { of } from 'rxjs';
+import { Observable } from 'rx';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {

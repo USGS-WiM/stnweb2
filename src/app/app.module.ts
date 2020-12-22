@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -67,6 +68,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
     ],
     imports: [
         BrowserModule,
+        OverlayModule,
         RouterModule,
         AppRoutingModule,
         HttpClientModule,

@@ -5,7 +5,8 @@ import { Event } from '@interfaces/event';
 import { Site } from '@interfaces/site';
 import { NetworkName } from '@interfaces/network-name';
 import { State } from '@interfaces/state';
-import { SensorType } from './interfaces/sensor-type';
+import { SensorType } from '@interfaces/sensor-type';
+import { Member } from '@interfaces/member';
 
 @Injectable()
 export class APP_UTILITIES {
@@ -127,6 +128,29 @@ export class APP_UTILITIES {
             case 0:
                 return '591,657,550';
         }
+    }
+
+    public static get DUMMY_USER(): Member {
+        return {
+            member_id: 1,
+            fname: 'Bob',
+            lname: 'Jones',
+            agency_id: 1,
+            phone: '(123) 456-7890',
+            email: 'stnadmin@usgs.gov',
+            role_id: 1,
+            username: 'user',
+            password: 'password',
+            salt: '',
+            instrument_status: [],
+            events: [],
+            peak_summary: [],
+            sites: [],
+            approvals: [],
+            data_file: [],
+            hwms: [],
+            hwms1: [],
+        };
     }
 
     public static get EVENTS_DUMMY_DATA_LIST(): Event[] {

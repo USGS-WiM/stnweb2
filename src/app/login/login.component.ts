@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from '../services/authentication.service';
 import { CurrentUserService } from '../services/current-user.service';
@@ -22,13 +20,13 @@ export class LoginComponent implements OnInit {
     returnUrl: string;
     error = '';
     public currentUser;
+    public returnedUser;
 
     constructor(
         public dialog: MatDialog,
         public loginDialogRef: MatDialogRef<LoginComponent>,
         public formBuilder: FormBuilder,
-        private route: ActivatedRoute,
-        private authenticationService: AuthenticationService,
+        public authenticationService: AuthenticationService,
         public currentUserService: CurrentUserService,
         private snackBar: MatSnackBar
     ) {
@@ -43,17 +41,10 @@ export class LoginComponent implements OnInit {
             username: ['', Validators.required],
             password: ['', Validators.required],
         });
-
-        // reset login status
-        // this.authenticationService.logout();
-
-        // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
-    /* istanbul ignore next */
     onSubmitLogin(formValue: any) {
-        /* istanbul ignore next */
+        this.returnedUser = null;
         this.requestPending = true;
         this.authenticationService
             .login(formValue.username, formValue.password)
@@ -61,6 +52,7 @@ export class LoginComponent implements OnInit {
             .subscribe(
                 (user: any) => {
                     //this.router.navigate([this.returnUrl]);
+                    this.returnedUser = user;
                     this.requestPending = false;
                     this.loginDialogRef.close();
                     this.openSnackBar('Successfully logged in!', 'OK', 5000);
@@ -87,6 +79,7 @@ export class LoginComponent implements OnInit {
 
     onSubmitLogout() {
         this.authenticationService.logout();
+        this.returnedUser = null;
         // if (this.router.url === '/home') {
         //   location.reload();
         // } else {

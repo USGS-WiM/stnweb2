@@ -359,8 +359,10 @@ export class MapComponent implements OnInit {
     //TODO: LOOK HERE FIRST
     displaySelectedEvent() {
         //Get id and name of most recent event
-        this.currentEvent = this.events[0].event_id;
-        this.currentEventName = this.events[0].event_name;
+        if (this.events.length > 0) {
+            this.currentEvent = this.events[0].event_id;
+            this.currentEventName = this.events[0].event_name;
+        }
 
         //Clear the old event markers from the map
         if (this.eventMarkers !== undefined) {
