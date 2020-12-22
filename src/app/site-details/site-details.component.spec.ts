@@ -1,25 +1,38 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 
 import { SiteDetailsComponent } from './site-details.component';
 
 describe('SiteDetailsComponent', () => {
-  let component: SiteDetailsComponent;
-  let fixture: ComponentFixture<SiteDetailsComponent>;
+    let component: SiteDetailsComponent;
+    let fixture: ComponentFixture<SiteDetailsComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ SiteDetailsComponent ]
-    })
-    .compileComponents();
-  });
+    const fakeActivatedRoute = {
+        snapshot: {
+            paramMap: {
+                get(): string {
+                    return '123';
+                },
+            },
+        },
+    };
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SiteDetailsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [SiteDetailsComponent],
+            providers: [
+                { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+            ],
+        }).compileComponents();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(SiteDetailsComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });
