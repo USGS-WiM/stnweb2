@@ -46,7 +46,7 @@ describe('LoginComponent', () => {
                 CurrentUserService,
                 MatDialog,
                 MatSnackBar,
-                { provide: MatDialogRef, useValue: { dialogMock } },
+                { provide: MatDialogRef, useValue: dialogMock },
                 { provide: MAT_DIALOG_DATA, useValue: {} },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
