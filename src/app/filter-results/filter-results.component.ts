@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { FiltersService } from '@services/filters.service';
 
 @Component({
     selector: 'app-filter-results',
@@ -6,8 +8,10 @@ import { Component, OnInit, Input } from '@angular/core';
     styleUrls: ['./filter-results.component.css'],
 })
 export class FilterResultsComponent implements OnInit {
-    @Input('eventSites') eventSites: Object;
-
+    @Input('sitesDataArray') sitesDataArray: Object;
+    currentSites;
+    sitedata;
+    ELEMENT_DATA: [];
     // dummy data
     displayedColumns: string[] = [
         'siteId',
@@ -22,11 +26,16 @@ export class FilterResultsComponent implements OnInit {
     ];
     dataSource;
 
-    constructor() {}
+    constructor(private filtersService: FiltersService) {
+        this.filtersService.selectedSites.subscribe(
+            (currentSites) => (this.currentSites = currentSites)
+        );
+    }
 
     ngOnInit(): void {
+        //
         setTimeout(() => {
-            this.dataSource = this.eventSites;
-        }, 5000);
+            this.dataSource = new MatTableDataSource(this.currentSites);
+        }, 500);
     }
 }

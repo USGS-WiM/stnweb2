@@ -45,6 +45,7 @@ import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
 import { FiltersService } from '@services/filters.service';
 import { FilterResultsComponent } from './filter-results/filter-results.component';
+import { FilterComponent } from './filter/filter.component';
 
 @NgModule({
     declarations: [
@@ -55,6 +56,7 @@ import { FilterResultsComponent } from './filter-results/filter-results.componen
         ConfirmComponent,
         DisplayValuePipe,
         FilterResultsComponent,
+        FilterComponent,
     ],
     imports: [
         BrowserModule,

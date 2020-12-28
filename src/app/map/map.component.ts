@@ -72,7 +72,7 @@ export class MapComponent implements OnInit {
     drawnItems;
 
     // events = [];
-    sites = [];
+    sitesData = L.featureGroup([]);
     siteSelected;
     siteClicked = false;
     siteName;
@@ -81,9 +81,10 @@ export class MapComponent implements OnInit {
     allSites: Site[];
 
     public selectedEvent;
+    currentSites;
     currentEvent: number; //change to subject?
     currentEventName: string;
-    eventSites: any;
+    sitesDataArray: any;
     eventMarkers = L.featureGroup([]);
 
     mapScale;
@@ -209,6 +210,10 @@ export class MapComponent implements OnInit {
         this.setCurrentFilter();
         // create and configure map
         this.createMap();
+
+        this.filtersService.selectedSites.subscribe(
+            (currentSites) => (this.currentSites = currentSites)
+        );
     }
 
     setCurrentFilter() {
@@ -283,26 +288,12 @@ export class MapComponent implements OnInit {
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
             this.allSites = results;
-            this.filtersService.mapResults(
+            this.mapResults(
                 this.allSites,
                 this.siteIcon,
                 this.siteService.siteMarkers,
                 false
             );
-
-            /* this.mapResults(
-                this.allSites,
-                this.siteIcon,
-                this.siteService.siteMarkers,
-                false
-            ); */
-
-            this.eventMarkers.addTo(this.map);
-            //When filtering sites, zoom to layer, and open map pane
-            /* if (zoomToLayer == true) {
-                this.eventFocus();
-                this.mapPanelState = true;
-            } */
         });
     }
 
@@ -389,12 +380,13 @@ export class MapComponent implements OnInit {
         this.siteService
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
-                this.eventSites = results;
-                this.filtersService.mapResults(
-                    this.eventSites,
+                this.sitesDataArray = results;
+                this.filtersService.updateSites(results);
+                this.mapResults(
+                    this.sitesDataArray,
                     this.eventIcon,
                     this.eventMarkers,
-                    false
+                    true
                 );
             });
     }
@@ -738,55 +730,11 @@ export class MapComponent implements OnInit {
         });
     }
 
-    eventFocus() {
-        //If there are site markers, zoom to those
-        //Otherwise, zoom back to default extent
-        if (this.map.hasLayer(this.eventMarkers)) {
-            this.map.fitBounds(this.eventMarkers.getBounds());
-        } else {
-            this.map.setView(
-                MAP_CONSTANTS.defaultCenter,
-                MAP_CONSTANTS.defaultZoom
-            );
-        }
-    }
-    // options to be displayed when selecting event filter
-    displayEvent(event: Event): string {
-        return event && event.event_name ? event.event_name : '';
-    }
-    //will return a comma separated list of selected states
-    displayEventState(state: any): string {
-        return state && state.state_name ? state.state_name : '';
-    }
-    //will return a comma separated list of selected states
-    //prints list of states next to filter instead of filling the filter rectangle
-    displayState(state: any): string {
-        let stateCount: number;
-        let stateIndex: number;
-        let currentState: string;
-        this.stateList = '';
-        if (state !== null) {
-            stateIndex = state.length;
-        }
-        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
-            currentState = state[stateCount].state_name;
-            if (stateCount === 0) {
-                this.stateList = this.stateList.concat(
-                    ' Selected States: ' + currentState
-                );
-            } else {
-                this.stateList = this.stateList.concat(', ' + currentState);
-            }
-        }
-        document.getElementById('selectedStateList').innerHTML = this.stateList;
-        return null;
-    }
-    //eventSites = the full site object to be mapped
+    //sitesDataArray = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
-    /* istanbul ignore next */
-    mapResultsOLD(
+    mapResults(
         eventSites: any,
         myIcon: any,
         layerType: any,
@@ -794,7 +742,6 @@ export class MapComponent implements OnInit {
     ) {
         // loop through results response from a search query
         if (eventSites.length !== undefined) {
-            console.log(layerType);
             for (let site of eventSites) {
                 let lat = Number(site.latitude_dd);
                 let long = Number(site.longitude_dd);
@@ -838,20 +785,28 @@ export class MapComponent implements OnInit {
                             ' in All STN Sites layer due to null lat/lng'
                     );
                 } else {
-                    //put all the event markers in the same layer group
-                    if (layerType == this.eventMarkers) {
-                        L.marker([lat, long], { icon: myIcon })
-                            .bindPopup(popupContent)
-                            .addTo(layerType);
-                    }
-                    //Make circle markers for the All STN Sites layer
-                    if (layerType == this.siteService.siteMarkers) {
-                        L.marker([lat, long], {
-                            icon: myIcon,
-                            iconSize: 32,
-                        })
-                            .bindPopup(popupContent)
-                            .addTo(layerType);
+                    //These sites are in the Atlantic Ocean or otherwise clearly out of place
+                    if (
+                        site.site_no !== 'AKALE27857' &&
+                        site.site_no !== 'AKALE27855' &&
+                        site.site_no !== 'ASTUT27853' &&
+                        site.site_no !== 'AZGRA27856'
+                    ) {
+                        //put all the event markers in the same layer group
+                        if (layerType == this.eventMarkers) {
+                            L.marker([lat, long], { icon: myIcon })
+                                .bindPopup(popupContent)
+                                .addTo(layerType);
+                        }
+                        //Make circle markers for the All STN Sites layer
+                        if (layerType == this.siteService.siteMarkers) {
+                            L.marker([lat, long], {
+                                icon: myIcon,
+                                iconSize: 32,
+                            })
+                                .bindPopup(popupContent)
+                                .addTo(layerType);
+                        }
                     }
                 }
             }
@@ -864,6 +819,50 @@ export class MapComponent implements OnInit {
                 this.mapPanelState = true;
             }
         }
+    }
+
+    eventFocus() {
+        //If there are site markers, zoom to those
+        //Otherwise, zoom back to default extent
+        if (this.map.hasLayer(this.eventMarkers)) {
+            this.map.fitBounds(this.eventMarkers.getBounds());
+        } else {
+            this.map.setView(
+                MAP_CONSTANTS.defaultCenter,
+                MAP_CONSTANTS.defaultZoom
+            );
+        }
+    }
+    // options to be displayed when selecting event filter
+    displayEvent(event: Event): string {
+        return event && event.event_name ? event.event_name : '';
+    }
+    //will return a comma separated list of selected states
+    displayEventState(state: any): string {
+        return state && state.state_name ? state.state_name : '';
+    }
+    //will return a comma separated list of selected states
+    //prints list of states next to filter instead of filling the filter rectangle
+    displayState(state: any): string {
+        let stateCount: number;
+        let stateIndex: number;
+        let currentState: string;
+        this.stateList = '';
+        if (state !== null) {
+            stateIndex = state.length;
+        }
+        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
+            currentState = state[stateCount].state_name;
+            if (stateCount === 0) {
+                this.stateList = this.stateList.concat(
+                    ' Selected States: ' + currentState
+                );
+            } else {
+                this.stateList = this.stateList.concat(', ' + currentState);
+            }
+        }
+        document.getElementById('selectedStateList').innerHTML = this.stateList;
+        return null;
     }
 
     public clearMapFilterForm(): void {
@@ -939,13 +938,22 @@ export class MapComponent implements OnInit {
             //only call mapResults if the query returns data
             if (res.length > 0) {
                 //close the filter panel
+                console.log('passing ', res);
+                this.filtersService.updateSites(res);
                 this.filtersPanelState = false;
-                this.filtersService.mapResults(
+                this.sitesDataArray = res;
+                this.sitesData = this.mapResults(
                     res,
                     this.eventIcon,
                     this.eventMarkers,
                     true
                 );
+                if (this.sitesData.getLayers().length >= 0) {
+                    this.sitesData.addTo(this.map);
+                    //When filtering sites, zoom to layer, and open map pane
+                    this.eventFocus();
+                    this.mapPanelState = true;
+                }
             } else {
                 //if nothing is returned, show a snack bar message
                 this.noDataSnackBar(
