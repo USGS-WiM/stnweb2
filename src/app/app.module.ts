@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -44,6 +45,11 @@ import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
 import { FilterResultsComponent } from './filter-results/filter-results.component';
+import { SiteDetailsComponent } from './site-details/site-details.component';
+import { ApprovalsComponent } from './approvals/approvals.component';
+import { SettingsComponent } from './settings/settings.component';
+import { BulkHwmComponent } from './bulk-hwm/bulk-hwm.component';
+import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 
 @NgModule({
     declarations: [
@@ -54,9 +60,15 @@ import { FilterResultsComponent } from './filter-results/filter-results.componen
         ConfirmComponent,
         DisplayValuePipe,
         FilterResultsComponent,
+        SiteDetailsComponent,
+        ApprovalsComponent,
+        SettingsComponent,
+        BulkHwmComponent,
+        HwmUploadComponent,
     ],
     imports: [
         BrowserModule,
+        OverlayModule,
         RouterModule,
         AppRoutingModule,
         HttpClientModule,

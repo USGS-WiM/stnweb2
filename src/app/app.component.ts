@@ -85,7 +85,7 @@ export class AppComponent implements OnInit {
         });
     }
     //toggling between buttons in the nav toolbar changes the color of the selected button
-    /* I think this is causing the Angular test to fail until we add a second button, so commenting out for now
+    // I think this is causing the Angular test to fail until we add a second button, so commenting out for now
     toggleNavButtons() {
         let btnID = document.getElementById('navBarButtons');
         let navBtn = btnID.getElementsByClassName('navBarBtn');
@@ -102,5 +102,4 @@ export class AppComponent implements OnInit {
             });
         }
     }
-    */
 }
