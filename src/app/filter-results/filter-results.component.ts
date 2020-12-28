@@ -23,7 +23,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
 @Component({
     selector: 'app-filter-results',
     templateUrl: './filter-results.component.html',
-    styleUrls: ['./filter-results.component.css'],
+    styleUrls: ['./filter-results.component.scss'],
 })
 export class FilterResultsComponent implements OnInit {
     // dummy data

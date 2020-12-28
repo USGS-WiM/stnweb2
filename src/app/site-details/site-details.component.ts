@@ -9,7 +9,7 @@ import {
 @Component({
     selector: 'app-site-details',
     templateUrl: './site-details.component.html',
-    styleUrls: ['./site-details.component.css'],
+    styleUrls: ['./site-details.component.scss'],
 })
 export class SiteDetailsComponent implements OnInit {
     constructor(private route: ActivatedRoute) {}
