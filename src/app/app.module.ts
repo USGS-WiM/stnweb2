@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -45,7 +46,15 @@ import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
 import { FiltersService } from '@services/filters.service';
 import { FilterResultsComponent } from './filter-results/filter-results.component';
+<<<<<<< HEAD
 import { FilterComponent } from './filter/filter.component';
+=======
+import { SiteDetailsComponent } from './site-details/site-details.component';
+import { ApprovalsComponent } from './approvals/approvals.component';
+import { SettingsComponent } from './settings/settings.component';
+import { BulkHwmComponent } from './bulk-hwm/bulk-hwm.component';
+import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
+>>>>>>> 096bfed78a38cbac86da2890aa2f5dd3bb7403c5
 
 @NgModule({
     declarations: [
@@ -56,10 +65,19 @@ import { FilterComponent } from './filter/filter.component';
         ConfirmComponent,
         DisplayValuePipe,
         FilterResultsComponent,
+<<<<<<< HEAD
         FilterComponent,
+=======
+        SiteDetailsComponent,
+        ApprovalsComponent,
+        SettingsComponent,
+        BulkHwmComponent,
+        HwmUploadComponent,
+>>>>>>> 096bfed78a38cbac86da2890aa2f5dd3bb7403c5
     ],
     imports: [
         BrowserModule,
+        OverlayModule,
         RouterModule,
         AppRoutingModule,
         HttpClientModule,

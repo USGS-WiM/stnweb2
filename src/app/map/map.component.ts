@@ -232,11 +232,8 @@ export class MapComponent implements OnInit {
                 'event_start_date',
                 'descend'
             );
-
-            //Get id and name of most recent event
-            this.currentEvent = this.events[0].event_id;
-            this.currentEventName = this.events[0].event_name;
-
+            //set up call to get sites for specific event
+            this.displaySelectedEvent();
             // allow user to type into the event selector to view matching events
             this.filteredEvents$ = this.mapFilterForm
                 .get('eventsControl')
@@ -253,8 +250,6 @@ export class MapComponent implements OnInit {
                             : this.events
                     )
                 );
-            //set up call to get sites for specific event
-            this.displaySelectedEvent();
         });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
@@ -362,7 +357,7 @@ export class MapComponent implements OnInit {
         });
     }
     //Temporary message pop up when user's query returns no data
-    noDataSnackBar(message: string, action: string, duration: number) {
+    filtersSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
             duration: duration,
             panelClass: ['no-data-warning'],
@@ -370,6 +365,12 @@ export class MapComponent implements OnInit {
     }
     //TODO: LOOK HERE FIRST
     displaySelectedEvent() {
+        //Get id and name of most recent event
+        if (this.events.length > 0) {
+            this.currentEvent = this.events[0].event_id;
+            this.currentEventName = this.events[0].event_name;
+        }
+
         //Clear the old event markers from the map
         if (this.eventMarkers !== undefined) {
             this.eventMarkers.removeFrom(this.map);
@@ -901,34 +902,79 @@ export class MapComponent implements OnInit {
         let RDGTrue = filterParams.RDGOnlyControl ? '1' : '';
         let opDefinedTrue = filterParams.OPDefinedControl ? '1' : '';
 
-        // format url params into single string
-        let urlParamString =
-            'Event=' +
-            eventId +
-            '&State=' +
-            stateAbbrevs +
-            '&SensorType=' +
-            sensorIds +
-            '&NetworkName=' +
-            networkIds +
-            '&OPDefined=' +
-            opDefinedTrue +
-            '&HWMOnly=' +
-            HWMTrue +
-            '&HWMSurveyed=' +
-            surveyed +
-            '&SensorOnly=' +
-            sensorTrue +
-            '&RDGOnly=' +
-            RDGTrue +
-            '&HousingTypeOne=' +
-            bracketTrue;
+        //Too few filters can lead to too many sites and a slow response time
+        //Force the user to select at least one of the following filters
+        if (
+            eventId == '' &&
+            networkIds == '' &&
+            sensorIds == '' &&
+            stateAbbrevs == ''
+        ) {
+            this.filtersSnackBar(
+                'Please select at least one Event, Network, Sensor, or State filter.',
+                'OK',
+                4500
+            );
+            //If the user has at least one Event, Network, Sensor, or State filter select, continue with http request
+        } else {
+            // format url params into single string
+            let urlParamString =
+                'Event=' +
+                eventId +
+                '&State=' +
+                stateAbbrevs +
+                '&SensorType=' +
+                sensorIds +
+                '&NetworkName=' +
+                networkIds +
+                '&OPDefined=' +
+                opDefinedTrue +
+                '&HWMOnly=' +
+                HWMTrue +
+                '&HWMSurveyed=' +
+                surveyed +
+                '&SensorOnly=' +
+                sensorTrue +
+                '&RDGOnly=' +
+                RDGTrue +
+                '&HousingTypeOne=' +
+                bracketTrue;
 
-        //Clear current markers when a new filter is submitted
-        if (this.map.hasLayer(this.eventMarkers)) {
-            this.eventMarkers.removeFrom(this.map);
-            this.eventMarkers = L.featureGroup([]);
+            //Clear current markers when a new filter is submitted
+            if (this.map.hasLayer(this.eventMarkers)) {
+                this.eventMarkers.removeFrom(this.map);
+                this.eventMarkers = L.featureGroup([]);
+            }
+            //Find sites that match the user's query
+            this.siteService
+                .getFilteredSites(urlParamString)
+                .subscribe((res) => {
+                    //set the state control back to state names instead of abbreviations
+                    this.mapFilterForm
+                        .get('stateControl')
+                        .setValue(this.selectedStates);
+                    //only call mapResults if the query returns data
+                    if (res.length > 0) {
+                        //close the filter panel
+                        this.filtersPanelState = false;
+                        this.mapResults(
+                            res,
+                            this.eventIcon,
+                            this.eventMarkers,
+                            true
+                        );
+                    } else {
+                        //if nothing is returned, show a snack bar message
+                        this.filtersSnackBar(
+                            'No results for your query. Try using fewer filters.',
+                            'OK',
+                            4500
+                        );
+                    }
+                });
+            return urlParamString;
         }
+<<<<<<< HEAD
         //Find sites that match the user's query
         this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
             //set the state control back to state names instead of abbreviations
@@ -964,5 +1010,7 @@ export class MapComponent implements OnInit {
             }
         });
         return urlParamString;
+=======
+>>>>>>> 096bfed78a38cbac86da2890aa2f5dd3bb7403c5
     }
 }
