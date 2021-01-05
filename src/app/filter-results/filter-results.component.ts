@@ -1,5 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { FiltersService } from '@services/filters.service';
 
 @Component({
@@ -8,7 +11,11 @@ import { FiltersService } from '@services/filters.service';
     styleUrls: ['./filter-results.component.scss'],
 })
 export class FilterResultsComponent implements OnInit {
-    @Input('sitesDataArray') sitesDataArray: Object;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
+
+    resultsLength = 0;
+    sortedData = [];
     currentSites;
     sitedata;
     ELEMENT_DATA: [];
@@ -32,10 +39,47 @@ export class FilterResultsComponent implements OnInit {
         );
     }
 
-    ngOnInit(): void {
-        //
-        setTimeout(() => {
-            this.dataSource = new MatTableDataSource(this.currentSites);
-        }, 500);
+    ngOnInit(): void {}
+
+    refreshDataSource() {
+        this.filtersService.selectedSites.subscribe(
+            (currentSites) => (this.currentSites = currentSites)
+        );
+        this.dataSource = new MatTableDataSource(this.currentSites);
     }
+
+    sortData(sort: Sort) {
+        const data = this.currentSites.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedData = data;
+            return;
+        }
+
+        this.sortedData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'siteId':
+                    return compare(a.site_id, b.site_id, isAsc);
+                case 'siteName':
+                    return compare(a.site_name, b.site_name, isAsc);
+                case 'state':
+                    return compare(a.state, b.state, isAsc);
+                case 'city':
+                    return compare(a.city, b.city, isAsc);
+                case 'waterbody':
+                    return compare(a.waterbody, b.waterbody, isAsc);
+                case 'permHouse':
+                    return compare(
+                        a.is_permanent_housing_installed,
+                        b.is_permanent_housing_installed,
+                        isAsc
+                    );
+                default:
+                    return 0;
+            }
+        });
+    }
+}
+function compare(a: number | string, b: number | string, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -53,6 +53,7 @@ import { EventTypeService } from '@app/services/event-type.service';
 import { EventType } from '@app/interfaces/event-type';
 import { Subject } from 'rx';
 import { canvas } from 'leaflet';
+import { FilterResultsComponent } from '@app/filter-results/filter-results.component';
 
 @Component({
     selector: 'app-map',
@@ -60,6 +61,9 @@ import { canvas } from 'leaflet';
     styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit {
+    @ViewChild(FilterResultsComponent)
+    filterResultsComponent: FilterResultsComponent;
+
     siteid: string;
     panelOpenState = false;
     errorMessage: string;
@@ -389,6 +393,10 @@ export class MapComponent implements OnInit {
                     this.eventMarkers,
                     true
                 );
+                setTimeout(() => {
+                    // setting filter-results table to default display
+                    this.filterResultsComponent.refreshDataSource();
+                }, 500);
             });
     }
 
@@ -957,12 +965,16 @@ export class MapComponent implements OnInit {
                     if (res.length > 0) {
                         //close the filter panel
                         this.filtersPanelState = false;
+                        this.filtersService.updateSites(res);
                         this.mapResults(
                             res,
                             this.eventIcon,
                             this.eventMarkers,
                             true
                         );
+
+                        // updating the filter-results table datasource with the new results
+                        this.filterResultsComponent.refreshDataSource();
                     } else {
                         //if nothing is returned, show a snack bar message
                         this.filtersSnackBar(
@@ -974,43 +986,5 @@ export class MapComponent implements OnInit {
                 });
             return urlParamString;
         }
-<<<<<<< HEAD
-        //Find sites that match the user's query
-        this.siteService.getFilteredSites(urlParamString).subscribe((res) => {
-            //set the state control back to state names instead of abbreviations
-            this.mapFilterForm
-                .get('stateControl')
-                .setValue(this.selectedStates);
-            //only call mapResults if the query returns data
-            if (res.length > 0) {
-                //close the filter panel
-                console.log('passing ', res);
-                this.filtersService.updateSites(res);
-                this.filtersPanelState = false;
-                this.sitesDataArray = res;
-                this.sitesData = this.mapResults(
-                    res,
-                    this.eventIcon,
-                    this.eventMarkers,
-                    true
-                );
-                if (this.sitesData.getLayers().length >= 0) {
-                    this.sitesData.addTo(this.map);
-                    //When filtering sites, zoom to layer, and open map pane
-                    this.eventFocus();
-                    this.mapPanelState = true;
-                }
-            } else {
-                //if nothing is returned, show a snack bar message
-                this.noDataSnackBar(
-                    'No results for your query. Try using fewer filters.',
-                    'OK',
-                    4500
-                );
-            }
-        });
-        return urlParamString;
-=======
->>>>>>> 096bfed78a38cbac86da2890aa2f5dd3bb7403c5
     }
 }

@@ -4,10 +4,16 @@
         <mat-panel-title> Results </mat-panel-title>
     </mat-expansion-panel-header>
     <div *ngIf="dataSource" class="results-table-div">
-        <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <mat-table
+            [dataSource]="dataSource"
+            class="mat-elevation-z8"
+            (matSortChange)="sortData($event)"
+        >
             <!-- site id column -->
             <ng-container matColumnDef="siteId">
-                <mat-header-cell *matHeaderCellDef> Site ID </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="siteId">
+                    Site ID
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{ element.site_id }}
                 </mat-cell>
@@ -15,7 +21,9 @@
 
             <!-- site name column -->
             <ng-container matColumnDef="siteName">
-                <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="siteName">
+                    Name
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{ element.site_name }}
                 </mat-cell>
@@ -33,7 +41,9 @@
 
             <!-- site state column -->
             <ng-container matColumnDef="state">
-                <mat-header-cell *matHeaderCellDef> State </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="state">
+                    State
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{ element.state }}
                 </mat-cell>
@@ -41,7 +51,9 @@
 
             <!-- site city column -->
             <ng-container matColumnDef="city">
-                <mat-header-cell *matHeaderCellDef> City </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="city">
+                    City
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{ element.city }}
                 </mat-cell>
@@ -65,7 +77,9 @@
 
             <!-- waterbody Column -->
             <ng-container matColumnDef="waterbody">
-                <mat-header-cell *matHeaderCellDef> Waterbody </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="waterbody">
+                    Waterbody
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{ element.waterbody }}
                 </mat-cell>
@@ -73,7 +87,10 @@
 
             <!-- waterbody Column -->
             <ng-container matColumnDef="permHouse">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header="is_permanent_housing_installed"
+                >
                     Permanent Housing?
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
