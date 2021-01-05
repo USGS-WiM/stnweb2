@@ -33,6 +33,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSortModule } from '@angular/material/sort';
 
 // import { MatAccordion } from '@angular/material/expansion';
 
@@ -100,7 +101,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         MatButtonToggleModule,
         MatRadioModule,
         MatMenuModule,
-        //MatAccordion
+        MatSortModule,
     ],
     providers: [
         CurrentUserService,

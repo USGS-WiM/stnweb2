@@ -12,9 +12,9 @@ import { FiltersService } from '@services/filters.service';
 })
 export class FilterResultsComponent implements OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-    resultsLength = 0;
+    dataSource = new MatTableDataSource([]);
     sortedData = [];
     currentSites;
     sitedata;
@@ -31,7 +31,6 @@ export class FilterResultsComponent implements OnInit {
         'waterbody',
         'permHouse',
     ];
-    dataSource;
 
     constructor(private filtersService: FiltersService) {
         this.filtersService.selectedSites.subscribe(
@@ -41,13 +40,23 @@ export class FilterResultsComponent implements OnInit {
 
     ngOnInit(): void {}
 
+    ngAfterViewInit() {}
+
     refreshDataSource() {
         this.filtersService.selectedSites.subscribe(
             (currentSites) => (this.currentSites = currentSites)
         );
-        this.dataSource = new MatTableDataSource(this.currentSites);
+        this.dataSource.data = this.currentSites;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        //this.setSortPag();
     }
 
+    setSortPag() {
+        console.log;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+    }
     sortData(sort: Sort) {
         const data = this.currentSites.slice();
         if (!sort.active || sort.direction === '') {

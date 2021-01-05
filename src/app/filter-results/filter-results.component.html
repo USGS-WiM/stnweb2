@@ -8,10 +8,11 @@
             [dataSource]="dataSource"
             class="mat-elevation-z8"
             (matSortChange)="sortData($event)"
+            matSort
         >
             <!-- site id column -->
             <ng-container matColumnDef="siteId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header="siteId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="site_id">
                     Site ID
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
@@ -21,7 +22,7 @@
 
             <!-- site name column -->
             <ng-container matColumnDef="siteName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header="siteName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="site_name">
                     Name
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
