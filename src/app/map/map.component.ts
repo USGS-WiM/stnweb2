@@ -283,6 +283,7 @@ export class MapComponent implements OnInit {
                 false
             );
         });
+        this.networks$ = this.networkNamesService.getNetworkNames();
     }
 
     // TODO: update this

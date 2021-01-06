@@ -44,8 +44,8 @@ export class SiteService {
             .pipe(
                 tap((response) => {
                     console.log(
-                        'getFilteredSites response received: ' +
-                            JSON.stringify(response)
+                        'getFilteredSites response received' //: ' +
+                        // JSON.stringify(response)
                     );
                     return response;
                 }),
