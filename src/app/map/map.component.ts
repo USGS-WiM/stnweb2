@@ -97,6 +97,7 @@ export class MapComponent implements OnInit {
     //Begin with the map and filters panels expanded
     mapPanelState: boolean = true;
     filtersPanelState: boolean = true;
+    resultsReturned: boolean = false;
 
     // below is the temp var that holds the all events list for the
     // new method of connecting events with the service. This will eventually replace
@@ -866,6 +867,7 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
+        this.resultsReturned = false;
         //set the state control to the state abbreviations
         this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
         document.getElementById('selectedStateList').innerHTML = '';
@@ -911,6 +913,7 @@ export class MapComponent implements OnInit {
             );
             //If the user has at least one Event, Network, Sensor, or State filter select, continue with http request
         } else {
+            //network ids need to be called one at a time, so if there are multiple we put them in separate http requests
             if (networkIds.length <= 1) {
                 // format url params into single string
                 let urlParamString =
@@ -935,44 +938,12 @@ export class MapComponent implements OnInit {
                     '&HousingTypeOne=' +
                     bracketTrue;
 
-                //Clear current markers when a new filter is submitted
-                if (this.map.hasLayer(this.eventMarkers)) {
-                    this.eventMarkers.removeFrom(this.map);
-                    this.eventMarkers = L.featureGroup([]);
-                }
-                //Find sites that match the user's query
-                this.siteService
-                    .getFilteredSites(urlParamString)
-                    .subscribe((res) => {
-                        //set the state control back to state names instead of abbreviations
-                        this.mapFilterForm
-                            .get('stateControl')
-                            .setValue(this.selectedStates);
-                        //only call mapResults if the query returns data
-                        if (res.length > 0) {
-                            //close the filter panel
-                            this.filtersPanelState = false;
-                            this.mapResults(
-                                res,
-                                this.eventIcon,
-                                this.eventMarkers,
-                                true
-                            );
-                        } else {
-                            //if nothing is returned, show a snack bar message
-                            this.filtersSnackBar(
-                                'No results for your query. Try using fewer filters.',
-                                'OK',
-                                4500
-                            );
-                        }
-                    });
-                return urlParamString;
+                this.getResults(urlParamString, 0, 1);
             } else {
+                //for every network id, create a separate http request
                 for (let i = 0; i < networkIds.length; i++) {
-                    console.log('i', i);
+                    //even indices are network ids, odd indices are commas
                     if (i % 2 == 0) {
-                        console.log('i is even');
                         let urlParamString =
                             'Event=' +
                             eventId +
@@ -994,42 +965,50 @@ export class MapComponent implements OnInit {
                             RDGTrue +
                             '&HousingTypeOne=' +
                             bracketTrue;
-
-                        //Clear current markers when a new filter is submitted
-                        if (this.map.hasLayer(this.eventMarkers)) {
-                            this.eventMarkers.removeFrom(this.map);
-                            this.eventMarkers = L.featureGroup([]);
-                        }
-                        //Find sites that match the user's query
-                        this.siteService
-                            .getFilteredSites(urlParamString)
-                            .subscribe((res) => {
-                                //set the state control back to state names instead of abbreviations
-                                this.mapFilterForm
-                                    .get('stateControl')
-                                    .setValue(this.selectedStates);
-                                //only call mapResults if the query returns data
-                                if (res.length > 0) {
-                                    //close the filter panel
-                                    this.filtersPanelState = false;
-                                    this.mapResults(
-                                        res,
-                                        this.eventIcon,
-                                        this.eventMarkers,
-                                        true
-                                    );
-                                } /* else {
-                                    //if nothing is returned, show a snack bar message
-                                    this.filtersSnackBar(
-                                        'No results for your query. Try using fewer filters.',
-                                        'OK',
-                                        4500
-                                    );
-                                } */
-                            });
+                        this.getResults(urlParamString, i, networkIds.length);
                     }
                 }
             }
         }
+    }
+
+    public getResults(
+        urlString: string,
+        index: number,
+        iterationLength: number
+    ) {
+        //Clear current markers when a new filter is submitted
+        if (this.map.hasLayer(this.eventMarkers)) {
+            this.eventMarkers.removeFrom(this.map);
+            this.eventMarkers = L.featureGroup([]);
+        }
+        //Find sites that match the user's query
+        this.siteService.getFilteredSites(urlString).subscribe((res) => {
+            //set the state control back to state names instead of abbreviations
+            this.mapFilterForm
+                .get('stateControl')
+                .setValue(this.selectedStates);
+            //only call mapResults if the query returns data
+            if (res.length > 0) {
+                this.resultsReturned = true;
+                //close the filter panel
+                this.filtersPanelState = false;
+                this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+            } else if (
+                //if we're on the last iteration
+                //and none of the iterations returned results (filter panel is still open)
+                //give warning that query didn't return results
+                index === iterationLength - 1 &&
+                this.filtersPanelState === true
+            ) {
+                {
+                    this.filtersSnackBar(
+                        'No results for your query. Try using fewer filters.',
+                        'OK',
+                        4500
+                    );
+                }
+            }
+        });
     }
 }
