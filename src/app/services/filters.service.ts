@@ -4,7 +4,6 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-import { SiteService } from '@services/site.service';
 
 declare let L: any;
 import 'leaflet';
@@ -13,7 +12,7 @@ import 'leaflet';
     providedIn: 'root',
 })
 export class FiltersService {
-    constructor(public siteService: SiteService) {}
+    constructor() {}
 
     private filteredSites = new BehaviorSubject<any>([]);
     selectedSites = this.filteredSites.asObservable();

@@ -49,14 +49,8 @@ export class FilterResultsComponent implements OnInit {
         this.dataSource.data = this.currentSites;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-        //this.setSortPag();
     }
 
-    setSortPag() {
-        console.log;
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-    }
     sortData(sort: Sort) {
         const data = this.currentSites.slice();
         if (!sort.active || sort.direction === '') {

@@ -64,6 +64,7 @@ export class MapComponent implements OnInit {
     @ViewChild(FilterResultsComponent)
     filterResultsComponent: FilterResultsComponent;
 
+    sites = [];
     siteid: string;
     panelOpenState = false;
     errorMessage: string;
