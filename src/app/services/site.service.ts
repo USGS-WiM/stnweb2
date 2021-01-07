@@ -56,7 +56,7 @@ export class SiteService {
     public getAllSites(): Observable<any> {
         return this.httpClient.get(APP_SETTINGS.SITES_URL + '.json').pipe(
             tap((response) => {
-                console.log('Site list response recieved ' /*+ response*/);
+                console.log('Site list response received ' /*+ response*/);
                 return response;
             }),
             catchError(this.handleError<any>('getAllSites', []))

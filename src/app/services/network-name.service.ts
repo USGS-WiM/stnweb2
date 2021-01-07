@@ -34,7 +34,9 @@ export class NetworkNameService {
     public getNetworkNames(): Observable<any> {
         return this.httpClient.get(APP_SETTINGS.NETWORK_NAMES + '.json').pipe(
             tap((response) => {
-                console.log('Network list response recieved: ' + response);
+                console.log(
+                    'Network list response received' /*:  + response */
+                );
                 return response;
             }),
             catchError(APP_UTILITIES.handleError<any>('getNetworkNames', []))
