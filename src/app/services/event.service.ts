@@ -62,9 +62,15 @@ export class EventService {
 
     // retrieve the details for a single specific event
     public filterEvents(query): Observable<Event[]> {
+        console.log('query', query);
         //TODO: parse the query into a url query string
         // 3 possible parameters: date, eventType, state
         let queryString = this.parseFilterEventsQuery(query);
+        console.log('queryString', queryString);
+        console.log(
+            'full query',
+            APP_SETTINGS.EVENTS + '/FilteredEvents.json' + queryString
+        );
         return this.httpClient
             .get(APP_SETTINGS.EVENTS + '/FilteredEvents.json' + queryString, {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,

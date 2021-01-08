@@ -251,6 +251,8 @@ export class MapComponent implements OnInit {
             this.eventStates$ = this.mapFilterForm
                 .get('eventStateControl')
                 .valueChanges.pipe(
+                    debounceTime(300),
+                    distinctUntilChanged(),
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
@@ -263,6 +265,8 @@ export class MapComponent implements OnInit {
             this.states$ = this.mapFilterForm
                 .get('stateControl')
                 .valueChanges.pipe(
+                    debounceTime(300),
+                    distinctUntilChanged(),
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
@@ -288,6 +292,23 @@ export class MapComponent implements OnInit {
     // TODO: update this
     updateEventFilter() {
         this.mapFilterForm;
+        // console.log('eventType', eventType);
+        console.log(
+            "this.mapFilterForm.get('eventTypeControl').value",
+            this.mapFilterForm.get('eventTypeControl').value
+        );
+        console.log(
+            "this.mapFilterForm.get('eventTypeControl').value.event_type_id",
+            this.mapFilterForm.get('eventTypeControl').value.event_type_id
+        );
+        console.log(
+            "this.mapFilterForm.get('eventStateControl').value",
+            this.mapFilterForm.get('eventStateControl').value
+        );
+        console.log(
+            "this.mapFilterForm.get('eventStateControl').value.state_abbrev",
+            this.mapFilterForm.get('eventStateControl').value.state_abbrev
+        );
         this.eventService
             .filterEvents({
                 eventType: this.mapFilterForm.get('eventTypeControl').value
