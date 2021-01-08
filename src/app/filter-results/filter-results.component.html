@@ -5,6 +5,7 @@
     </mat-expansion-panel-header>
     <div *ngIf="dataSource" class="results-table-div">
         <mat-table
+            id="resultsTable"
             [dataSource]="dataSource"
             class="mat-elevation-z8"
             (matSortChange)="sortData($event)"

@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { FilterResultsComponent } from './filter-results.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -22,15 +22,21 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { FilterComponent } from '@app/filter/filter.component';
+import { APP_UTILITIES } from '@app/app.utilities';
 import { SiteService } from '@app/services/site.service';
 import { FiltersService } from '@app/services/filters.service';
 import { Site } from '@app/interfaces/site';
+import { By } from '@angular/platform-browser';
+import { DataSource } from '@angular/cdk/table';
+
+export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
 
 describe('FilterResultsComponent', () => {
     let component: FilterResultsComponent;
     let fixture: ComponentFixture<FilterResultsComponent>;
-    let filtesrService: FiltersService;
+    let de: DebugElement;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -62,6 +68,7 @@ describe('FilterResultsComponent', () => {
                 MatButtonToggleModule,
                 MatRadioModule,
                 ReactiveFormsModule,
+                MatSortModule,
             ],
             providers: [SiteService, FiltersService],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -80,5 +87,58 @@ describe('FilterResultsComponent', () => {
 
     it('should call refreshDataSource', () => {
         component.refreshDataSource();
+    });
+
+    it('should initialize sort', () => {
+        fixture.detectChanges();
+        const sort = component.sort;
+        expect(sort).toBeInstanceOf(MatSort);
+    });
+
+    it('should initialize table datasource', () => {
+        fixture.detectChanges();
+        const table = component.dataSource;
+        expect(table).toBeInstanceOf(MatTableDataSource);
+    });
+
+    it('should call refreshDataSource', () => {
+        component.sortData(component.sort);
+        component.sortedData;
+    });
+
+    // TODO: Verify sort works
+    /* it('should show a sorted table', () => {
+        component.ngOnInit();
+        const compiled = fixture.debugElement.nativeElement;
+        const table = compiled.querySelector('mat-table');
+        const button = compiled.querySelectorAll(
+            'mat-table, ng-container, mat-header-cell, mat-sort-header-arrow'
+        );
+        const sortArrow = button[5].querySelector(
+            'div > .mat-sort-header-content'
+        );
+        component.dataSource.data = mockSitesList;
+        console.log(component.dataSource.data);
+        component.dataSource = new MatTableDataSource<Site>(
+            component.dataSource.data
+        );
+        component.sort = new MatSort();
+        console.log(component.dataSource.sort);
+        component.dataSource.sort = component.sort;
+        component.sort.direction = 'asc';
+        sortArrow.click();
+        console.log(button[5]);
+        fixture.detectChanges();
+    }); */
+
+    it('compare function should return 1', () => {
+        let testSortObject = { a: 5, b: 2, c: 'isAsc' };
+
+        let comparedObject = component.compare(
+            testSortObject['a'],
+            testSortObject['b'],
+            true
+        );
+        expect(comparedObject).toEqual(1);
     });
 });

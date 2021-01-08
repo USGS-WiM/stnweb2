@@ -57,22 +57,22 @@ export class FilterResultsComponent implements OnInit {
             this.sortedData = data;
             return;
         }
-
+        /* istanbul ignore next */
         this.sortedData = data.sort((a, b) => {
             const isAsc = sort.direction === 'asc';
             switch (sort.active) {
                 case 'siteId':
-                    return compare(a.site_id, b.site_id, isAsc);
+                    return this.compare(a.site_id, b.site_id, isAsc);
                 case 'siteName':
-                    return compare(a.site_name, b.site_name, isAsc);
+                    return this.compare(a.site_name, b.site_name, isAsc);
                 case 'state':
-                    return compare(a.state, b.state, isAsc);
+                    return this.compare(a.state, b.state, isAsc);
                 case 'city':
-                    return compare(a.city, b.city, isAsc);
+                    return this.compare(a.city, b.city, isAsc);
                 case 'waterbody':
-                    return compare(a.waterbody, b.waterbody, isAsc);
+                    return this.compare(a.waterbody, b.waterbody, isAsc);
                 case 'permHouse':
-                    return compare(
+                    return this.compare(
                         a.is_permanent_housing_installed,
                         b.is_permanent_housing_installed,
                         isAsc
@@ -82,7 +82,8 @@ export class FilterResultsComponent implements OnInit {
             }
         });
     }
-}
-function compare(a: number | string, b: number | string, isAsc: boolean) {
-    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    compare(a: number | string, b: number | string, isAsc: boolean) {
+        console.log((a < b ? -1 : 1) * (isAsc ? 1 : -1));
+        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    }
 }
