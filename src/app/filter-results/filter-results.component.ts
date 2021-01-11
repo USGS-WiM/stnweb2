@@ -1,24 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-
-export interface PeriodicElement {
-    name: string;
-    position: number;
-    weight: number;
-    symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-    { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-    { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-    { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-    { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-    { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-    { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-    { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-    { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-    { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-    { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-];
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
+import { FiltersService } from '@services/filters.service';
 
 @Component({
     selector: 'app-filter-results',
@@ -26,11 +11,81 @@ const ELEMENT_DATA: PeriodicElement[] = [
     styleUrls: ['./filter-results.component.scss'],
 })
 export class FilterResultsComponent implements OnInit {
-    // dummy data
-    displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-    dataSource = ELEMENT_DATA;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-    constructor() {}
+    dataSource = new MatTableDataSource([]);
+    sortedData = [];
+    currentSites;
+
+    // columns for results table
+    displayedColumns: string[] = [
+        'siteId',
+        'siteName',
+        'siteDesc',
+        'state',
+        'city',
+        'latitude',
+        'longitude',
+        'waterbody',
+        'permHouse',
+    ];
+
+    constructor(private filtersService: FiltersService) {
+        this.filtersService.selectedSites.subscribe(
+            (currentSites) => (this.currentSites = currentSites)
+        );
+    }
 
     ngOnInit(): void {}
+
+    ngAfterViewInit() {}
+
+    // called to refresh the datasource/table results
+    refreshDataSource() {
+        this.filtersService.selectedSites.subscribe(
+            (currentSites) => (this.currentSites = currentSites)
+        );
+        this.dataSource.data = this.currentSites;
+
+        // setting sort and paging
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+    }
+
+    // fired when user clicks a sortable header
+    sortData(sort: Sort) {
+        const data = this.currentSites.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'siteId':
+                    return this.compare(a.site_id, b.site_id, isAsc);
+                case 'siteName':
+                    return this.compare(a.site_name, b.site_name, isAsc);
+                case 'state':
+                    return this.compare(a.state, b.state, isAsc);
+                case 'city':
+                    return this.compare(a.city, b.city, isAsc);
+                case 'waterbody':
+                    return this.compare(a.waterbody, b.waterbody, isAsc);
+                case 'permHouse':
+                    return this.compare(
+                        a.is_permanent_housing_installed,
+                        b.is_permanent_housing_installed,
+                        isAsc
+                    );
+                default:
+                    return 0;
+            }
+        });
+    }
+    compare(a: number | string, b: number | string, isAsc: boolean) {
+        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    }
 }

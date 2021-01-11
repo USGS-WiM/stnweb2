@@ -33,6 +33,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSortModule } from '@angular/material/sort';
 
 // import { MatAccordion } from '@angular/material/expansion';
 
@@ -44,7 +45,9 @@ import { EventService } from '@services/event.service';
 import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
+import { FiltersService } from '@services/filters.service';
 import { FilterResultsComponent } from './filter-results/filter-results.component';
+import { FilterComponent } from './filter/filter.component';
 import { SiteDetailsComponent } from './site-details/site-details.component';
 import { ApprovalsComponent } from './approvals/approvals.component';
 import { SettingsComponent } from './settings/settings.component';
@@ -60,6 +63,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         ConfirmComponent,
         DisplayValuePipe,
         FilterResultsComponent,
+        FilterComponent,
         SiteDetailsComponent,
         ApprovalsComponent,
         SettingsComponent,
@@ -97,7 +101,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         MatButtonToggleModule,
         MatRadioModule,
         MatMenuModule,
-        //MatAccordion
+        MatSortModule,
     ],
     providers: [
         CurrentUserService,
@@ -105,6 +109,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         EventService,
         UserService,
         SiteService,
+        FiltersService,
         DisplayValuePipe,
         MatSnackBar,
     ],
