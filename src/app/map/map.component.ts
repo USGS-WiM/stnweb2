@@ -228,21 +228,7 @@ export class MapComponent implements OnInit {
             //set up call to get sites for specific event
             this.displaySelectedEvent();
             // allow user to type into the event selector to view matching events
-            this.filteredEvents$ = this.mapFilterForm
-                .get('eventsControl')
-                .valueChanges.pipe(
-                    debounceTime(200),
-                    distinctUntilChanged(),
-                    /* istanbul ignore else */
-                    map((searchTerm) =>
-                        searchTerm
-                            ? APP_UTILITIES.FILTER_EVENT(
-                                  searchTerm,
-                                  this.events
-                              )
-                            : this.events
-                    )
-                );
+            this.getEventList();
         });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
@@ -276,6 +262,16 @@ export class MapComponent implements OnInit {
                             : this.states
                     )
                 );
+            //on when user deletes previous state selection, clear event filter
+            //set so that if it is partially deleted (e.g. California => Calif), it won't change
+            this.mapFilterForm
+                .get('eventStateControl')
+                .valueChanges.subscribe((stateObject) => {
+                    console.log(stateObject);
+                    if (stateObject === '') {
+                        this.updateEventFilter();
+                    }
+                });
         });
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
@@ -289,26 +285,29 @@ export class MapComponent implements OnInit {
         });
     }
 
+    getEventList() {
+        //setting filteredEvents$ to null for a moment will clear the old selection list
+        //new list of options won't appear until user begins typing
+        this.filteredEvents$ = null;
+        console.log('made it to getEventList');
+        this.filteredEvents$ = this.mapFilterForm
+            .get('eventsControl')
+            .valueChanges.pipe(
+                (console.log('made it to value changes'),
+                debounceTime(200),
+                distinctUntilChanged(),
+                /* istanbul ignore else */
+                map((searchTerm) =>
+                    searchTerm
+                        ? APP_UTILITIES.FILTER_EVENT(searchTerm, this.events)
+                        : this.events
+                ))
+            );
+    }
+
     // TODO: update this
     updateEventFilter() {
         this.mapFilterForm;
-        // console.log('eventType', eventType);
-        console.log(
-            "this.mapFilterForm.get('eventTypeControl').value",
-            this.mapFilterForm.get('eventTypeControl').value
-        );
-        console.log(
-            "this.mapFilterForm.get('eventTypeControl').value.event_type_id",
-            this.mapFilterForm.get('eventTypeControl').value.event_type_id
-        );
-        console.log(
-            "this.mapFilterForm.get('eventStateControl').value",
-            this.mapFilterForm.get('eventStateControl').value
-        );
-        console.log(
-            "this.mapFilterForm.get('eventStateControl').value.state_abbrev",
-            this.mapFilterForm.get('eventStateControl').value.state_abbrev
-        );
         this.eventService
             .filterEvents({
                 eventType: this.mapFilterForm.get('eventTypeControl').value
@@ -321,9 +320,12 @@ export class MapComponent implements OnInit {
                     : null,
             })
             .subscribe((filterResponse) => {
+                console.log('filterResponse', filterResponse);
                 // update events array to the filter response
                 this.events = filterResponse;
-                // this line necessary to update the list (hack)
+                //reset filteredEvents$ so that it will update on value change
+                this.getEventList();
+                //Reset event value to null; previous selection will disappear from filter
                 this.mapFilterForm.get('eventsControl').setValue(null);
             });
 
