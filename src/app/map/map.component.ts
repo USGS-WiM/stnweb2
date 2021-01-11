@@ -784,7 +784,7 @@ export class MapComponent implements OnInit {
         return null;
     }
 
-    //sitesDataArray = the full site object to be mapped
+    //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
