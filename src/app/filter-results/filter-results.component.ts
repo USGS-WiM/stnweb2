@@ -47,6 +47,8 @@ export class FilterResultsComponent implements OnInit {
             (currentSites) => (this.currentSites = currentSites)
         );
         this.dataSource.data = this.currentSites;
+
+        // setting sort and paging
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
     }
