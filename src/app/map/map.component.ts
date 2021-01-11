@@ -298,7 +298,7 @@ export class MapComponent implements OnInit {
                     searchTerm
                         ? APP_UTILITIES.FILTER_EVENT(searchTerm, this.events)
                         : this.events
-                ))
+                )
             );
     }
 
@@ -317,7 +317,6 @@ export class MapComponent implements OnInit {
                     : null,
             })
             .subscribe((filterResponse) => {
-                console.log('filterResponse', filterResponse);
                 // update events array to the filter response
                 this.events = filterResponse;
                 //reset filteredEvents$ so that it will update on value change
@@ -792,12 +791,7 @@ export class MapComponent implements OnInit {
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
-    mapResults(
-        sites: any,
-        myIcon: any,
-        layerType: any,
-        zoomToLayer: boolean
-    ) {
+    mapResults(sites: any, myIcon: any, layerType: any, zoomToLayer: boolean) {
         // loop through results response from a search query
         if (sites.length !== undefined) {
             for (let site of sites) {
@@ -882,6 +876,23 @@ export class MapComponent implements OnInit {
     public clearMapFilterForm(): void {
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
+        //reset the event options
+        this.updateEventFilter();
+        for (let state in this.states$) {
+            console.log('state', state);
+            console.log('this.states$', this.states$);
+        }
+        this.states$ = null;
+
+        this.states$ = this.mapFilterForm.get('stateControl').valueChanges.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            map((state_name) =>
+                state_name
+                    ? APP_UTILITIES.FILTER_STATE(state_name, this.states)
+                    : this.states
+            )
+        );
     }
 
     public submitMapFilter() {

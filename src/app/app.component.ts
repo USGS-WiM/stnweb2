@@ -76,7 +76,6 @@ export class AppComponent implements OnInit {
         // remove user from local storage to log user out
         this.authenticationService.logout();
         this.openSnackBar('Successfully logged out.', 'OK', 5000);
-
         // console.log('logged out');
     }
     openSnackBar(message: string, action: string, duration: number) {
