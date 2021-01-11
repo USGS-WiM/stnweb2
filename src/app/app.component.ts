@@ -48,7 +48,7 @@ export class AppComponent implements OnInit {
         const dialogRef = this.dialog.open(LoginComponent, {});
 
         dialogRef.afterClosed().subscribe((result) => {
-            console.log('The dialog was closed');
+            //console.log('The dialog was closed');
         });
     }
 

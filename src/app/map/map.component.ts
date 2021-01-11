@@ -267,7 +267,6 @@ export class MapComponent implements OnInit {
             this.mapFilterForm
                 .get('eventStateControl')
                 .valueChanges.subscribe((stateObject) => {
-                    console.log(stateObject);
                     if (stateObject === '') {
                         this.updateEventFilter();
                     }
@@ -289,11 +288,9 @@ export class MapComponent implements OnInit {
         //setting filteredEvents$ to null for a moment will clear the old selection list
         //new list of options won't appear until user begins typing
         this.filteredEvents$ = null;
-        console.log('made it to getEventList');
         this.filteredEvents$ = this.mapFilterForm
             .get('eventsControl')
             .valueChanges.pipe(
-                (console.log('made it to value changes'),
                 debounceTime(200),
                 distinctUntilChanged(),
                 /* istanbul ignore else */
@@ -796,14 +793,14 @@ export class MapComponent implements OnInit {
     //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
     mapResults(
-        eventSites: any,
+        sites: any,
         myIcon: any,
         layerType: any,
         zoomToLayer: boolean
     ) {
         // loop through results response from a search query
-        if (eventSites.length !== undefined) {
-            for (let site of eventSites) {
+        if (sites.length !== undefined) {
+            for (let site of sites) {
                 let lat = Number(site.latitude_dd);
                 let long = Number(site.longitude_dd);
 
