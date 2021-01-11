@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -34,6 +34,7 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
+import { FiltersService } from '@services/filters.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
@@ -52,6 +53,7 @@ import { EventTypeService } from '@app/services/event-type.service';
 import { EventType } from '@app/interfaces/event-type';
 import { Subject } from 'rx';
 import { canvas } from 'leaflet';
+import { FilterResultsComponent } from '@app/filter-results/filter-results.component';
 
 @Component({
     selector: 'app-map',
@@ -59,6 +61,10 @@ import { canvas } from 'leaflet';
     styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit {
+    @ViewChild(FilterResultsComponent)
+    filterResultsComponent: FilterResultsComponent;
+
+    sites = [];
     siteid: string;
     panelOpenState = false;
     errorMessage: string;
@@ -71,7 +77,7 @@ export class MapComponent implements OnInit {
     drawnItems;
 
     // events = [];
-    sites = [];
+    sitesData = L.featureGroup([]);
     siteSelected;
     siteClicked = false;
     siteName;
@@ -80,9 +86,10 @@ export class MapComponent implements OnInit {
     allSites: Site[];
 
     public selectedEvent;
+    currentSites;
     currentEvent: number; //change to subject?
     currentEventName: string;
-    eventSites: any;
+    sitesDataArray: any;
     eventMarkers = L.featureGroup([]);
 
     mapScale;
@@ -174,6 +181,7 @@ export class MapComponent implements OnInit {
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
         public siteService: SiteService,
+        public filtersService: FiltersService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
     ) {
@@ -207,6 +215,10 @@ export class MapComponent implements OnInit {
         this.setCurrentFilter();
         // create and configure map
         this.createMap();
+
+        this.filtersService.selectedSites.subscribe(
+            (currentSites) => (this.currentSites = currentSites)
+        );
     }
 
     setCurrentFilter() {
@@ -390,17 +402,21 @@ export class MapComponent implements OnInit {
         //Clear the old markers from the layer
         this.eventMarkers = L.featureGroup([]);
         //Plot markers for selected event
-
         this.siteService
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
-                this.eventSites = results;
+                this.sitesDataArray = results;
+                this.filtersService.updateSites(results);
                 this.mapResults(
-                    this.eventSites,
+                    this.sitesDataArray,
                     this.eventIcon,
                     this.eventMarkers,
-                    false
+                    true
                 );
+                setTimeout(() => {
+                    // setting filter-results table to default display
+                    this.filterResultsComponent.refreshDataSource();
+                }, 500);
             });
     }
 
@@ -786,6 +802,7 @@ export class MapComponent implements OnInit {
         document.getElementById('selectedStateList').innerHTML = this.stateList;
         return null;
     }
+
     //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
@@ -981,12 +998,16 @@ export class MapComponent implements OnInit {
                     if (res.length > 0) {
                         //close the filter panel
                         this.filtersPanelState = false;
+                        this.filtersService.updateSites(res);
                         this.mapResults(
                             res,
                             this.eventIcon,
                             this.eventMarkers,
                             true
                         );
+
+                        // updating the filter-results table datasource with the new results
+                        this.filterResultsComponent.refreshDataSource();
                     } else {
                         //if nothing is returned, show a snack bar message
                         this.filtersSnackBar(
