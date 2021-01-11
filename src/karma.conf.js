@@ -38,10 +38,6 @@ module.exports = function (config) {
                 base: 'ChromeHeadless',
                 flags: ['--no-sandbox', '--disable-gpu'],
             },
-            ChromeDebug: {
-                base: 'Chrome',
-                flags: ['--remote-debugging-port=9333'],
-            },
         },
     });
 };

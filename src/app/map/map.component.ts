@@ -740,10 +740,55 @@ export class MapComponent implements OnInit {
         });
     }
 
+    eventFocus() {
+        //If there are site markers, zoom to those
+        //Otherwise, zoom back to default extent
+        if (this.map.hasLayer(this.eventMarkers)) {
+            this.map.fitBounds(this.eventMarkers.getBounds());
+        } else {
+            this.map.setView(
+                MAP_CONSTANTS.defaultCenter,
+                MAP_CONSTANTS.defaultZoom
+            );
+        }
+    }
+    // options to be displayed when selecting event filter
+    displayEvent(event: Event): string {
+        return event && event.event_name ? event.event_name : '';
+    }
+    //will return a comma separated list of selected states
+    displayEventState(state: any): string {
+        return state && state.state_name ? state.state_name : '';
+    }
+    //will return a comma separated list of selected states
+    //prints list of states next to filter instead of filling the filter rectangle
+    displayState(state: any): string {
+        let stateCount: number;
+        let stateIndex: number;
+        let currentState: string;
+        this.stateList = '';
+        if (state !== null) {
+            stateIndex = state.length;
+        }
+        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
+            currentState = state[stateCount].state_name;
+            if (stateCount === 0) {
+                this.stateList = this.stateList.concat(
+                    ' Selected States: ' + currentState
+                );
+            } else {
+                this.stateList = this.stateList.concat(', ' + currentState);
+            }
+        }
+        document.getElementById('selectedStateList').innerHTML = this.stateList;
+        return null;
+    }
+
     //sitesDataArray = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
+    /* istanbul ignore next */
     mapResults(
         eventSites: any,
         myIcon: any,
@@ -829,50 +874,6 @@ export class MapComponent implements OnInit {
                 this.mapPanelState = true;
             }
         }
-    }
-
-    eventFocus() {
-        //If there are site markers, zoom to those
-        //Otherwise, zoom back to default extent
-        if (this.map.hasLayer(this.eventMarkers)) {
-            this.map.fitBounds(this.eventMarkers.getBounds());
-        } else {
-            this.map.setView(
-                MAP_CONSTANTS.defaultCenter,
-                MAP_CONSTANTS.defaultZoom
-            );
-        }
-    }
-    // options to be displayed when selecting event filter
-    displayEvent(event: Event): string {
-        return event && event.event_name ? event.event_name : '';
-    }
-    //will return a comma separated list of selected states
-    displayEventState(state: any): string {
-        return state && state.state_name ? state.state_name : '';
-    }
-    //will return a comma separated list of selected states
-    //prints list of states next to filter instead of filling the filter rectangle
-    displayState(state: any): string {
-        let stateCount: number;
-        let stateIndex: number;
-        let currentState: string;
-        this.stateList = '';
-        if (state !== null) {
-            stateIndex = state.length;
-        }
-        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
-            currentState = state[stateCount].state_name;
-            if (stateCount === 0) {
-                this.stateList = this.stateList.concat(
-                    ' Selected States: ' + currentState
-                );
-            } else {
-                this.stateList = this.stateList.concat(', ' + currentState);
-            }
-        }
-        document.getElementById('selectedStateList').innerHTML = this.stateList;
-        return null;
     }
 
     public clearMapFilterForm(): void {

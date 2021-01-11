@@ -17,9 +17,8 @@ export class FilterResultsComponent implements OnInit {
     dataSource = new MatTableDataSource([]);
     sortedData = [];
     currentSites;
-    sitedata;
-    ELEMENT_DATA: [];
-    // dummy data
+
+    // columns for results table
     displayedColumns: string[] = [
         'siteId',
         'siteName',
@@ -42,6 +41,7 @@ export class FilterResultsComponent implements OnInit {
 
     ngAfterViewInit() {}
 
+    // called to refresh the datasource/table results
     refreshDataSource() {
         this.filtersService.selectedSites.subscribe(
             (currentSites) => (this.currentSites = currentSites)
@@ -51,6 +51,7 @@ export class FilterResultsComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
     }
 
+    // fired when user clicks a sortable header
     sortData(sort: Sort) {
         const data = this.currentSites.slice();
         if (!sort.active || sort.direction === '') {
@@ -83,7 +84,6 @@ export class FilterResultsComponent implements OnInit {
         });
     }
     compare(a: number | string, b: number | string, isAsc: boolean) {
-        console.log((a < b ? -1 : 1) * (isAsc ? 1 : -1));
         return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
     }
 }
