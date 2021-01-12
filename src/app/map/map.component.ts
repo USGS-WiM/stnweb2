@@ -129,6 +129,7 @@ export class MapComponent implements OnInit {
     stateList = '';
     setStateAbbrev = '';
     surveyControlSelection: boolean = true;
+    surveyControlPrevious: string = '';
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -298,38 +299,41 @@ export class MapComponent implements OnInit {
         this.mapFilterForm
             .get('surveyedControl')
             .valueChanges.subscribe((surVal) => {
-                console.log('here', surVal);
-                console.log('surVal[0]', surVal[0]);
+                //to prevent both options from being deselected,
+                //if there is only one toggled on and user toggles it off, toggle on the other one
+                //not working right now
+                if (surVal.length === 0) {
+                    //if the toggle deselected was Surveyed, select the Not Surveyed toggle
+                    if (this.surveyControlPrevious === 'surveyed') {
+                        let checkSurveyControl = document.getElementById(
+                            'notSurveyedSelect'
+                        ) as HTMLInputElement;
+                        checkSurveyControl.checked = true;
+                        //if the toggle deselected was Not Surveyed, select the Surveyed toggle
+                    } else {
+                        let checkNotSurveyedControl = document.getElementById(
+                            'surveyedSelect'
+                        ) as HTMLInputElement;
+                        checkNotSurveyedControl.checked = true;
+                    }
+                }
+                //If both are selected, set to true
+                //For now, if both are deselected, also set to true
                 if (surVal.length === 2 || surVal.length === 0) {
-                    console.log('final value is true');
-                    //this.mapFilterForm.get('surveyedControl').setValue('true');
                     this.surveyControlSelection = true;
                 } else {
+                    //if only Surveyed is selected, set to true
                     if (surVal[0] === 'true') {
-                        console.log('final value is true');
-                        this.surveyControlSelection = false;
+                        this.surveyControlSelection = true;
+                        this.surveyControlPrevious = 'surveyed';
                     }
+                    //if only Not Surveyed is selected, set to false
                     if (surVal[0] === 'false') {
-                        console.log('final value is false');
                         this.surveyControlSelection = false;
+                        this.surveyControlPrevious = 'notSurveyed';
                     }
                 }
             });
-    }
-
-    isItSurveyed() {
-        let surveyedChecked = document.getElementById(
-            'surveyedSelect'
-        ) as HTMLInputElement;
-        let notSurveyedChecked = document.getElementById(
-            'unsurveyedSelect'
-        ) as HTMLInputElement;
-        if (surveyedChecked.checked === true) {
-            console.log('surveyedChecked');
-        }
-        if (notSurveyedChecked.checked === true) {
-            console.log('not surveyed checked');
-        }
     }
 
     getEventList() {
