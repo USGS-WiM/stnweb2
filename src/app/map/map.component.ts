@@ -128,6 +128,7 @@ export class MapComponent implements OnInit {
     selectedStates: State[] = new Array<State>();
     stateList = '';
     setStateAbbrev = '';
+    stateChecked: boolean = false;
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -274,7 +275,7 @@ export class MapComponent implements OnInit {
                             : this.states
                     )
                 );
-            //on when user deletes previous state selection, clear event filter
+            //when user deletes previous event state selection, clear event filter
             //set so that if it is partially deleted (e.g. California => Calif), it won't change
             this.mapFilterForm
                 .get('eventStateControl')
@@ -891,25 +892,10 @@ export class MapComponent implements OnInit {
     }
 
     public clearMapFilterForm(): void {
-        // this works but will not fully clear mat-selects if they're open when the box is clicked
-        this.mapFilterForm.reset();
         //reset the event options
         this.updateEventFilter();
-        for (let state in this.states$) {
-            console.log('state', state);
-            console.log('this.states$', this.states$);
-        }
-        this.states$ = null;
-
-        this.states$ = this.mapFilterForm.get('stateControl').valueChanges.pipe(
-            debounceTime(300),
-            distinctUntilChanged(),
-            map((state_name) =>
-                state_name
-                    ? APP_UTILITIES.FILTER_STATE(state_name, this.states)
-                    : this.states
-            )
-        );
+        // this works but will not fully clear mat-selects if they're open when the box is clicked
+        this.mapFilterForm.reset();
     }
 
     public submitMapFilter() {
