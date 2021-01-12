@@ -872,7 +872,7 @@ export class MapComponent implements OnInit {
                         site.site_no !== 'ASTUT27853' &&
                         site.site_no !== 'AZGRA27856'
                     ) {
-                        //put all the event markers in the same layer group
+                        //put all the site markers in the same layer group
                         if (layerType == this.siteService.siteMarkers) {
                             L.marker([lat, long], { icon: myIcon })
                                 .bindPopup(popupContent)
