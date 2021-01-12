@@ -128,7 +128,6 @@ export class MapComponent implements OnInit {
     selectedStates: State[] = new Array<State>();
     stateList = '';
     setStateAbbrev = '';
-    stateChecked: boolean = false;
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -347,7 +346,6 @@ export class MapComponent implements OnInit {
     toggleStateSelection(state: State) {
         let numStates: number;
         state.selected = !state.selected;
-        console.log('1', this.selectedStates);
         document.getElementById('selectedStateList').innerHTML = '';
         this.setStateAbbrev = '';
         if (state.selected) {
@@ -358,7 +356,6 @@ export class MapComponent implements OnInit {
             );
             this.selectedStates.splice(i, 1);
         }
-        console.log('2', this.selectedStates);
         //Create a string containing the list of state abbreviations
         if (this.selectedStates !== undefined) {
             numStates = this.selectedStates.length;
