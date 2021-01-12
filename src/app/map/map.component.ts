@@ -128,6 +128,7 @@ export class MapComponent implements OnInit {
     selectedStates: State[] = new Array<State>();
     stateList = '';
     setStateAbbrev = '';
+    surveyControlSelection: boolean = true;
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -294,6 +295,41 @@ export class MapComponent implements OnInit {
                 false
             );
         });
+        this.mapFilterForm
+            .get('surveyedControl')
+            .valueChanges.subscribe((surVal) => {
+                console.log('here', surVal);
+                console.log('surVal[0]', surVal[0]);
+                if (surVal.length === 2 || surVal.length === 0) {
+                    console.log('final value is true');
+                    //this.mapFilterForm.get('surveyedControl').setValue('true');
+                    this.surveyControlSelection = true;
+                } else {
+                    if (surVal[0] === 'true') {
+                        console.log('final value is true');
+                        this.surveyControlSelection = false;
+                    }
+                    if (surVal[0] === 'false') {
+                        console.log('final value is false');
+                        this.surveyControlSelection = false;
+                    }
+                }
+            });
+    }
+
+    isItSurveyed() {
+        let surveyedChecked = document.getElementById(
+            'surveyedSelect'
+        ) as HTMLInputElement;
+        let notSurveyedChecked = document.getElementById(
+            'unsurveyedSelect'
+        ) as HTMLInputElement;
+        if (surveyedChecked.checked === true) {
+            console.log('surveyedChecked');
+        }
+        if (notSurveyedChecked.checked === true) {
+            console.log('not surveyed checked');
+        }
     }
 
     getEventList() {
@@ -919,9 +955,7 @@ export class MapComponent implements OnInit {
             ? filterParams.stateControl.toString()
             : '';
         //surveyed = true, unsurveyed = false, or leave empty
-        let surveyed = filterParams.surveyedControl
-            ? filterParams.surveyedControl
-            : '';
+        let surveyed = this.surveyControlSelection;
         let HWMTrue = filterParams.HWMOnlyControl ? '1' : '';
         let sensorTrue = filterParams.sensorOnlyControl ? '1' : '';
         //Pre-deployed bracket site is HousingTypeOne=1 in API
