@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+-   Added sites layer to layer control and legend
 -   Added Results table for sites on map with sorting and pagination
 -   Added all STN sites layer
 -   Added EventType and EventState Filters to filter the Events choice list
