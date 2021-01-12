@@ -63,8 +63,6 @@ export class SiteService {
         );
     }
 
-    // public allSiteMarkers = new L.layerGroup([]);
-
     public allSiteMarkers = new L.markerClusterGroup({
         showCoverageOnHover: false,
         maxClusterRadius: 40,
