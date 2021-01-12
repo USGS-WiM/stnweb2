@@ -41,6 +41,7 @@ import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonToggleHarness } from '@angular/material/button-toggle/testing';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -1010,6 +1011,7 @@ export class MapComponent implements OnInit {
                 this.eventMarkers.removeFrom(this.map);
                 this.eventMarkers = L.featureGroup([]);
             }
+            console.log('url', urlParamString);
             //Find sites that match the user's query
             this.siteService
                 .getFilteredSites(urlParamString)
