@@ -1,55 +1,58 @@
-<form
-    [formGroup]="loginForm"
-    (ngSubmit)="onSubmit()"
-    *ngIf="!currentUser.username"
->
-    <div class="example-container">
-        <h3>Login to the Short Term Network</h3>
-        <mat-form-field class="example-full-width">
-            <input
-                matInput
-                placeholder="Username"
-                value=""
-                formControlName="username"
-            />
-        </mat-form-field>
+<h1 mat-dialog-title><mat-icon>login</mat-icon> Login to STNWeb</h1>
+<mat-dialog-content>
+    <form
+        [formGroup]="loginForm"
+        id="loginForm"
+        (ngSubmit)="onSubmitLogin(loginForm.value)"
+    >
+        <div class="vertical-form-container">
+            <mat-form-field class="form-control">
+                <input
+                    matInput
+                    aria-label="username"
+                    placeholder="Username"
+                    formControlName="username"
+                    value=""
+                />
+                <mat-error *ngIf="loginForm.get('username').invalid">{{
+                    getErrorMessage('username')
+                }}</mat-error>
+            </mat-form-field>
 
-        <mat-form-field>
-            <input
-                matInput
-                placeholder="Password"
-                type="password"
-                formControlName="password"
-                class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
-            />
-            <mat-icon matSuffix (click)="hide = !hide">{{
-                hide ? 'visibility_off' : 'visibility'
-            }}</mat-icon>
-        </mat-form-field>
-        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-            <div *ngIf="f.password.errors.required">Password is required</div>
+            <mat-form-field class="form-control">
+                <input
+                    matInput
+                    aria-label="password"
+                    placeholder="Password"
+                    formControlName="password"
+                    required
+                    [type]="hide ? 'password' : 'text'"
+                />
+                <mat-icon matSuffix (click)="hide = !hide">{{
+                    hide ? 'visibility' : 'visibility_off'
+                }}</mat-icon>
+                <mat-error *ngIf="loginForm.get('password').invalid">{{
+                    getErrorMessage('password')
+                }}</mat-error>
+            </mat-form-field>
         </div>
+    </form>
+</mat-dialog-content>
 
-        <div id="signinButton">
-            <!-- <a class="loginorcancel" mat-raised-button color="accent">
-        Sign In
-      </a> -->
-            <button
-                class="loginorcancel"
-                mat-raised-button
-                color="accent"
-                (click)="this.loginDialogRef.close('cancel')"
-            >
-                Submit
-            </button>
-        </div>
-        <!-- <h5 style="text-align: center;">Don't have an account yet?</h5>
-  <div id="registerButton">
-      <button (click)="openRegDialog()" mat-stroked-button color="primary" style="font-weight: bold;">Register</button>
-      <a mat-raised-button color="accent" style="font-weight: bold;" routerLink="/addEvent">
-        Register
-      </a>
-    </div> -->
+<mat-dialog-actions>
+    <div class="form-buttons-flex">
+        <button mat-button (click)="this.loginDialogRef.close('cancel')">
+            <mat-icon>cancel</mat-icon>
+            Cancel
+        </button>
+        <button
+            mat-button
+            type="submit"
+            [disabled]="loginForm.invalid"
+            form="loginForm"
+        >
+            <mat-icon>login</mat-icon> Login
+        </button>
     </div>
-</form>
+    <mat-progress-bar mode="buffer" *ngIf="requestPending"></mat-progress-bar>
+</mat-dialog-actions>

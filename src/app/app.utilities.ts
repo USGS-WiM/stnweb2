@@ -1,15 +1,40 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { of, throwError } from 'rxjs';
 import { Event } from '@interfaces/event';
 import { Site } from '@interfaces/site';
 import { NetworkName } from '@interfaces/network-name';
 import { State } from '@interfaces/state';
-import { SensorType } from './interfaces/sensor-type';
+import { SensorType } from '@interfaces/sensor-type';
+import { Member } from '@interfaces/member';
 
 @Injectable()
 export class APP_UTILITIES {
-    // SORT utlity function
-    // args: sortArray<array>(array to sort), sortField<string>(field on which to sort),
-    // sortDirection<string>('ascend' or 'descend')
+    /**
+     * Handle Http operation that failed.
+     * Let the app continue.
+     * @param operation - name of the operation that failed
+     * @param result - optional value to return as the observable result
+     */
+    public static handleError<T>(operation = 'operation', result?: T) {
+        return (error: any): Observable<T> => {
+            // TODO: send the error to remote logging infrastructure
+            console.error(error); // log to console instead
+
+            // TODO: better job of transforming error for user consumption
+            // Consider creating a message service for this (https://angular.io/tutorial/toh-pt4)
+            console.log(`${operation} failed: ${error.message}`);
+
+            // Let the app keep running by returning an empty result.
+            //return of(result as T);
+            return throwError(error);
+        };
+    }
+    /**
+     * SORT utlity function
+     * args: sortArray<array>(array to sort), sortField<string>(field on which to sort),
+     * sortDirection<string>('ascend' or 'descend')
+     **/
     public static SORT(sortArray, sortField, sortDirection): any {
         if (sortDirection === 'ascend') {
             return sortArray.sort((a, b) =>
@@ -22,11 +47,40 @@ export class APP_UTILITIES {
             );
         }
     }
-    public static FILTER_EVENT(event_name: string, events: Event[]): Event[] {
-        const filterValue = event_name.toLowerCase();
-        return events.filter(
-            (event) => event.event_name.toLowerCase().indexOf(filterValue) === 0
-        );
+    public static FILTER_EVENT(event_name: any, events: Event[]): Event[] {
+        if (typeof event_name == 'string') {
+            const filterValue = event_name.toLowerCase();
+            return events.filter(
+                (event) =>
+                    event.event_name.toLowerCase().indexOf(filterValue) != -1
+            );
+        } else {
+            const filterValue = event_name.event_name.toLowerCase();
+            return events.filter(
+                (event) =>
+                    event.event_name.toLowerCase().indexOf(filterValue) != -1
+            );
+        }
+    }
+    public static FILTER_STATE(state_name: any, states: State[]): State[] {
+        //state_name turns into the full state object when a state is selected
+        //when you're typing, your text will be matched, when you select a state, the object will be matched
+        if (typeof state_name == 'string') {
+            const filterValue = state_name.toLowerCase();
+            return states.filter(
+                (state) =>
+                    state.state_name.toLowerCase().indexOf(filterValue) != -1
+            );
+        } else {
+            if (state_name[0] !== undefined) {
+                const filterValue = state_name[0].state_name.toLowerCase();
+                return states.filter(
+                    (state) =>
+                        state.state_name.toLowerCase().indexOf(filterValue) !=
+                        -1
+                );
+            }
+        }
     }
     public static ROUND(num, len): any {
         return Math.round(num * Math.pow(10, len)) / Math.pow(10, len);
@@ -74,6 +128,29 @@ export class APP_UTILITIES {
             case 0:
                 return '591,657,550';
         }
+    }
+
+    public static get DUMMY_USER(): Member {
+        return {
+            member_id: 1,
+            fname: 'Bob',
+            lname: 'Jones',
+            agency_id: 1,
+            phone: '(123) 456-7890',
+            email: 'stnadmin@usgs.gov',
+            role_id: 1,
+            username: 'user',
+            password: 'password',
+            salt: '',
+            instrument_status: [],
+            events: [],
+            peak_summary: [],
+            sites: [],
+            approvals: [],
+            data_file: [],
+            hwms: [],
+            hwms1: [],
+        };
     }
 
     public static get EVENTS_DUMMY_DATA_LIST(): Event[] {
@@ -144,6 +221,7 @@ export class APP_UTILITIES {
                 usgs_sid: '',
                 noaa_sid: '',
                 hcollect_method_id: 1,
+                member_id: null,
                 site_notes:
                     'Sensor on second piling from land on east side of fishing pier in Sebastian Inlet State Park 0.5 miles west of entrance station south of bridge.',
                 safety_notes: '',
@@ -178,6 +256,7 @@ export class APP_UTILITIES {
                 usgs_sid: '',
                 noaa_sid: '',
                 hcollect_method_id: 4,
+                member_id: null,
                 site_notes:
                     'off 520 - 520 E to Riveredge Blvd, turn right and go to Lee Wenner Park, turn left\n\nWooden pilings on T-dock left of boat launch (enter the park and bear left to boat ramp, T-dock is past the ramp',
                 safety_notes: '',
@@ -271,5 +350,9 @@ export class APP_UTILITIES {
             sensor_deployment: [],
             instruments: [],
         };
+    }
+
+    public static get FILTERED_SITES_SAMPLE_QUERY_PARAMS(): string {
+        return `Event=&State=MS&SensorType=&NetworkName=&OPDefined=&HWMOnly=&HWMSurveyed=&SensorOnly=&RDGOnly=&HousingTypeOne=1`;
     }
 }

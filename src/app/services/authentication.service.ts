@@ -2,51 +2,47 @@ import { Injectable } from '@angular/core';
 // import { Observable } from 'rxjs/Rx';
 // import 'rxjs/add/operator/map';
 // import 'rxjs/observable/of';
+import { catchError, tap } from 'rxjs/operators';
 import { APP_SETTINGS } from '../app.settings';
-import { HttpClient } from '@angular/common/http';
+import { APP_UTILITIES } from 'app/app.utilities';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Member } from '@interfaces/member';
 
 import { CurrentUserService } from '@services/current-user.service';
 import { of } from 'rxjs';
+import { Observable } from 'rx';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     user;
-
     constructor(
-        private http: HttpClient,
+        private httpClient: HttpClient,
         private currentUserService: CurrentUserService
     ) {}
-    // TODO: test this
     /* istanbul ignore next */
     login(username: string, password: string) {
-        // const options = new RequestOptions({
-        //     headers: new Headers({
-        //         Authorization: 'Basic ' + btoa(username + ':' + password),
-        //     }),
-        // });
-        const self = this;
         /* istanbul ignore next */
-        return this.http
-            .get(APP_SETTINGS.AUTH_URL, {
-                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        return this.httpClient
+            .get(APP_SETTINGS.AUTH_URL + '.json', {
+                headers: new HttpHeaders({
+                    Authorization: 'Basic ' + btoa(username + ':' + password),
+                }),
             })
-            .map((res: any) => {
-                self.user = res.json();
-                localStorage.setItem('username', username);
-                localStorage.setItem('password', password);
-                localStorage.setItem('observerID', self.user.id.toString());
-                localStorage.setItem('currentUser', JSON.stringify(self.user));
-                this.currentUserService.updateCurrentUser(self.user);
-                return res;
-            });
-        // login successful if there's a user in the response
-        /* if (res) {
-            // store user details and basic auth credentials in local storage
-            // to keep user logged in between page refreshes
-            res.authdata = window.btoa(username + ':' + password);
-            localStorage.setItem('currentUser', JSON.stringify(res));
-            console.log(res);
-          } */
+            .pipe(
+                tap((response: Member) => {
+                    this.user = response;
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('password', password);
+                    localStorage.setItem(
+                        'currentUser',
+                        JSON.stringify(response)
+                    );
+                    this.currentUserService.updateCurrentUser(response);
+                    this.currentUserService.updateLoggedInStatus(true);
+                    return response;
+                }),
+                catchError(APP_UTILITIES.handleError<any>('login', []))
+            );
     }
 
     logout() {
@@ -55,8 +51,8 @@ export class AuthenticationService {
         this.currentUserService.updateCurrentUser({ username: '' });
         localStorage.removeItem('username');
         localStorage.removeItem('password');
-        localStorage.removeItem('observerID');
         localStorage.removeItem('currentUser');
+        this.currentUserService.updateLoggedInStatus(false);
 
         return of(true);
     }

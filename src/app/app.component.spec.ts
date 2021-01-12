@@ -1,7 +1,7 @@
-import { HttpClient, HttpHandler } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
     MatDialog,
     MatDialogModule,
@@ -14,9 +14,12 @@ import { CurrentUserService } from '@services/current-user.service';
 import { AboutComponent } from '@app/about/about.component';
 import { LoginComponent } from '@app/login/login.component';
 import { FormBuilder } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 describe('AppComponent', () => {
     let component: AppComponent;
+    let fixture: ComponentFixture<AppComponent>;
     // let dialogSpy: jasmine.Spy;
     // let dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of({}), close: null });
     // dialogRefSpyObj.componentInstance = { body: '' }; // attach componentInstance to the spy object...
@@ -26,20 +29,27 @@ describe('AppComponent', () => {
             imports: [
                 RouterTestingModule,
                 MatDialogModule,
-                BrowserAnimationsModule,
+                NoopAnimationsModule,
+                HttpClientTestingModule,
             ],
             declarations: [AppComponent],
             providers: [
                 AppComponent,
-                HttpClient,
-                HttpHandler,
                 CurrentUserService,
                 FormBuilder,
+                MatSnackBar,
                 { provide: MatDialogRef, useValue: {} },
             ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         component = TestBed.inject(AppComponent);
         // dialogSpy = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue(dialogRefSpyObj);
+    });
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(AppComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
     });
 
     it('should create the app', () => {
@@ -68,9 +78,30 @@ describe('AppComponent', () => {
         component.dialog.closeAll();
     });
 
+    it(`#updateCurrentUser should be called on load`, () => {
+        spyOn(
+            component.currentUserService,
+            'updateCurrentUser'
+        ).and.callThrough();
+        component.ngOnInit();
+        expect(
+            component.currentUserService.updateCurrentUser
+        ).toHaveBeenCalled();
+    });
+
     it(`#logout should remove user data from localStorage`, () => {
         component.logout();
         expect(localStorage.getItem('username')).toBeNull();
         expect(localStorage.getItem('currentUser')).toBeNull();
     });
+
+    //can't really test this function until there are more buttons, leaving this as a placeholder
+    /*
+    it('#toggleNavButtons should change the css of the button clicked', () => {
+        //this should be updated to see if class changes when another button is added
+        //right now, as filler, just makes shows that section has the class listed
+        //let navBtnID = document.getElementById('navBarButtons');
+        component.toggleNavButtons();
+        //expect(navBtnID).toHaveClass('navBarBtn');
+    }); */
 });

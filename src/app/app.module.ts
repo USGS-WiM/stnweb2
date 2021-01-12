@@ -1,13 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { SearchDialogComponent } from './search-dialog/search-dialog.component';
+import { MapComponent } from './map/map.component';
 import { AboutComponent } from './about/about.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
@@ -32,38 +32,53 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSortModule } from '@angular/material/sort';
 
 // import { MatAccordion } from '@angular/material/expansion';
 
 import { LoginComponent } from './login/login.component';
-import { RegistrationComponent } from './registration/registration.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { CurrentUserService } from '@services/current-user.service';
 import { AuthenticationService } from '@services/authentication.service';
-import { EventsService } from '@services/events.service';
+import { EventService } from '@services/event.service';
 import { UserService } from '@services/user.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
-import { SitesService } from '@services/sites.service';
+import { SiteService } from '@services/site.service';
+import { FiltersService } from '@services/filters.service';
+import { FilterResultsComponent } from './filter-results/filter-results.component';
+import { FilterComponent } from './filter/filter.component';
+import { SiteDetailsComponent } from './site-details/site-details.component';
+import { ApprovalsComponent } from './approvals/approvals.component';
+import { SettingsComponent } from './settings/settings.component';
+import { BulkHwmComponent } from './bulk-hwm/bulk-hwm.component';
+import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         AboutComponent,
-        HomeComponent,
-        SearchDialogComponent,
+        MapComponent,
         LoginComponent,
-        RegistrationComponent,
         ConfirmComponent,
         DisplayValuePipe,
+        FilterResultsComponent,
+        FilterComponent,
+        SiteDetailsComponent,
+        ApprovalsComponent,
+        SettingsComponent,
+        BulkHwmComponent,
+        HwmUploadComponent,
     ],
     imports: [
         BrowserModule,
+        OverlayModule,
         RouterModule,
         AppRoutingModule,
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
-        BrowserAnimationsModule,
+        NoopAnimationsModule,
         ScrollingModule,
         CdkTableModule,
         CdkTreeModule,
@@ -85,23 +100,21 @@ import { SitesService } from '@services/sites.service';
         MatSelectModule,
         MatButtonToggleModule,
         MatRadioModule,
-        //MatAccordion
+        MatMenuModule,
+        MatSortModule,
     ],
     providers: [
         CurrentUserService,
         AuthenticationService,
-        EventsService,
+        EventService,
         UserService,
-        SitesService,
+        SiteService,
+        FiltersService,
         DisplayValuePipe,
         MatSnackBar,
     ],
     bootstrap: [AppComponent],
-    entryComponents: [
-        AboutComponent,
-        LoginComponent,
-        RegistrationComponent,
-        ConfirmComponent,
-    ],
+    entryComponents: [AboutComponent, LoginComponent, ConfirmComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}
