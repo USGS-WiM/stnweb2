@@ -83,6 +83,8 @@ export class SiteService {
         // spiderfyDistanceMultiplier: 2,
     });
 
+    public eventMarkers = new L.featureGroup([]);
+
     private _allSiteMarkers: Subject<any> = new Subject<any>();
     public setAllSiteMarkers(val: any) {
         this.siteMarkers = val;
