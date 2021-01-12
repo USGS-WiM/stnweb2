@@ -48,7 +48,7 @@ export class AppComponent implements OnInit {
         const dialogRef = this.dialog.open(LoginComponent, {});
 
         dialogRef.afterClosed().subscribe((result) => {
-            console.log('The dialog was closed');
+            //console.log('The dialog was closed');
         });
     }
 
@@ -76,7 +76,6 @@ export class AppComponent implements OnInit {
         // remove user from local storage to log user out
         this.authenticationService.logout();
         this.openSnackBar('Successfully logged out.', 'OK', 5000);
-
         // console.log('logged out');
     }
     openSnackBar(message: string, action: string, duration: number) {
