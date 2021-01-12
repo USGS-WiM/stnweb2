@@ -1,7 +1,4 @@
-import {
-    BrowserAnimationsModule,
-    NoopAnimationsModule,
-} from '@angular/platform-browser/animations';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
@@ -57,7 +54,6 @@ describe('MapComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [MapComponent],
             imports: [
-                BrowserAnimationsModule,
                 NoopAnimationsModule,
                 MatAutocompleteModule,
                 HttpClientTestingModule,
