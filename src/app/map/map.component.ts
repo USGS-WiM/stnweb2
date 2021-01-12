@@ -347,6 +347,7 @@ export class MapComponent implements OnInit {
     toggleStateSelection(state: State) {
         let numStates: number;
         state.selected = !state.selected;
+        console.log('1', this.selectedStates);
         document.getElementById('selectedStateList').innerHTML = '';
         this.setStateAbbrev = '';
         if (state.selected) {
@@ -357,6 +358,7 @@ export class MapComponent implements OnInit {
             );
             this.selectedStates.splice(i, 1);
         }
+        console.log('2', this.selectedStates);
         //Create a string containing the list of state abbreviations
         if (this.selectedStates !== undefined) {
             numStates = this.selectedStates.length;
@@ -894,6 +896,7 @@ export class MapComponent implements OnInit {
     public clearMapFilterForm(): void {
         //reset the event options
         this.updateEventFilter();
+        this.selectedStates = new Array<State>();
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
     }
