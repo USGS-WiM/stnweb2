@@ -223,6 +223,16 @@ describe('MapComponent', () => {
         expect(component.sites).toEqual(response);
     });
 
+    it('should call getEventSites and return list of queried sites', () => {
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getEventSites').and.returnValue(
+            of(response)
+        );
+        component.getData();
+        fixture.detectChanges();
+        // expect(component.sitesDataArray).toEqual(response);
+    });
+
     it('displayEventState returns the appropriate response', () => {
         let state = {
             counties: null,

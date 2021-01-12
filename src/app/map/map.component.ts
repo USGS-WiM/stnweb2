@@ -240,21 +240,7 @@ export class MapComponent implements OnInit {
             //set up call to get sites for specific event
             this.displaySelectedEvent();
             // allow user to type into the event selector to view matching events
-            this.filteredEvents$ = this.mapFilterForm
-                .get('eventsControl')
-                .valueChanges.pipe(
-                    debounceTime(200),
-                    distinctUntilChanged(),
-                    /* istanbul ignore else */
-                    map((searchTerm) =>
-                        searchTerm
-                            ? APP_UTILITIES.FILTER_EVENT(
-                                  searchTerm,
-                                  this.events
-                              )
-                            : this.events
-                    )
-                );
+            this.getEventList();
         });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
@@ -263,6 +249,8 @@ export class MapComponent implements OnInit {
             this.eventStates$ = this.mapFilterForm
                 .get('eventStateControl')
                 .valueChanges.pipe(
+                    debounceTime(300),
+                    distinctUntilChanged(),
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
@@ -275,6 +263,8 @@ export class MapComponent implements OnInit {
             this.states$ = this.mapFilterForm
                 .get('stateControl')
                 .valueChanges.pipe(
+                    debounceTime(300),
+                    distinctUntilChanged(),
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
@@ -284,6 +274,15 @@ export class MapComponent implements OnInit {
                             : this.states
                     )
                 );
+            //when user deletes previous event state selection, clear event filter
+            //set so that if it is partially deleted (e.g. California => Calif), it won't change
+            this.mapFilterForm
+                .get('eventStateControl')
+                .valueChanges.subscribe((stateObject) => {
+                    if (stateObject === '') {
+                        this.updateEventFilter();
+                    }
+                });
         });
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
@@ -295,6 +294,24 @@ export class MapComponent implements OnInit {
                 false
             );
         });
+    }
+
+    getEventList() {
+        //setting filteredEvents$ to null for a moment will clear the old selection list
+        //new list of options won't appear until user begins typing
+        this.filteredEvents$ = null;
+        this.filteredEvents$ = this.mapFilterForm
+            .get('eventsControl')
+            .valueChanges.pipe(
+                debounceTime(200),
+                distinctUntilChanged(),
+                /* istanbul ignore else */
+                map((searchTerm) =>
+                    searchTerm
+                        ? APP_UTILITIES.FILTER_EVENT(searchTerm, this.events)
+                        : this.events
+                )
+            );
     }
 
     // TODO: update this
@@ -314,7 +331,9 @@ export class MapComponent implements OnInit {
             .subscribe((filterResponse) => {
                 // update events array to the filter response
                 this.events = filterResponse;
-                // this line necessary to update the list (hack)
+                //reset filteredEvents$ so that it will update on value change
+                this.getEventList();
+                //Reset event value to null; previous selection will disappear from filter
                 this.mapFilterForm.get('eventsControl').setValue(null);
             });
 
@@ -789,15 +808,10 @@ export class MapComponent implements OnInit {
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
-    mapResults(
-        eventSites: any,
-        myIcon: any,
-        layerType: any,
-        zoomToLayer: boolean
-    ) {
+    mapResults(sites: any, myIcon: any, layerType: any, zoomToLayer: boolean) {
         // loop through results response from a search query
-        if (eventSites.length !== undefined) {
-            for (let site of eventSites) {
+        if (sites.length !== undefined) {
+            for (let site of sites) {
                 let lat = Number(site.latitude_dd);
                 let long = Number(site.longitude_dd);
 
@@ -877,6 +891,9 @@ export class MapComponent implements OnInit {
     }
 
     public clearMapFilterForm(): void {
+        //reset the event options
+        this.updateEventFilter();
+        this.selectedStates = new Array<State>();
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
     }

@@ -186,6 +186,7 @@
                                     formControlName="eventTypeControl"
                                     (selectionChange)="updateEventFilter()"
                                 >
+                                    <mat-option>Any</mat-option>
                                     <mat-option
                                         *ngFor="
                                             let eventType of eventTypes$ | async
