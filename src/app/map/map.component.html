@@ -351,14 +351,42 @@
                                 multiple="true"
                             >
                                 <mat-button-toggle
-                                    checked="true"
                                     id="surveyedSelect"
                                     value="true"
+                                    *ngIf="
+                                        (firstChecked === false &&
+                                            secondChecked === false) ||
+                                        secondChecked == true
+                                    "
+                                    >Surveyed</mat-button-toggle
+                                >
+                                <mat-button-toggle
+                                    id="surveyedSelect"
+                                    value="uncheckSurvey"
+                                    checked
+                                    *ngIf="
+                                        firstChecked === true &&
+                                        secondChecked === false
+                                    "
                                     >Surveyed</mat-button-toggle
                                 ><mat-button-toggle
-                                    checked="true"
+                                    id="notSurveyedSelect"
+                                    value="uncheckNoSurvey"
+                                    checked
+                                    *ngIf="
+                                        secondChecked === true &&
+                                        firstChecked === false
+                                    "
+                                    >Not Surveyed</mat-button-toggle
+                                >
+                                <mat-button-toggle
                                     id="notSurveyedSelect"
                                     value="false"
+                                    *ngIf="
+                                        (firstChecked === false &&
+                                            secondChecked === false) ||
+                                        firstChecked === true
+                                    "
                                     >Not Surveyed</mat-button-toggle
                                 >
                             </mat-button-toggle-group>

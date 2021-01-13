@@ -131,6 +131,8 @@ export class MapComponent implements OnInit {
     setStateAbbrev = '';
     surveyControlSelection: boolean = true;
     surveyControlPrevious: string = '';
+    firstChecked: boolean = false;
+    secondChecked: boolean = false;
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -218,6 +220,8 @@ export class MapComponent implements OnInit {
         this.setCurrentFilter();
         // create and configure map
         this.createMap();
+        this.firstChecked = false;
+        this.secondChecked = false;
 
         this.filtersService.selectedSites.subscribe(
             (currentSites) => (this.currentSites = currentSites)
@@ -300,40 +304,105 @@ export class MapComponent implements OnInit {
         this.mapFilterForm
             .get('surveyedControl')
             .valueChanges.subscribe((surVal) => {
+                console.log('this.firstChecked', this.firstChecked);
+                console.log('this.secondChecked', this.secondChecked);
+                console.log('surVal', surVal);
+                if (this.firstChecked === true && surVal === false) {
+                    console.log('1');
+                    this.firstChecked = false;
+                    this.secondChecked = true;
+                }
+                if (
+                    this.firstChecked === false &&
+                    this.secondChecked === false &&
+                    surVal === false
+                ) {
+                    console.log('2');
+                    this.secondChecked = true;
+                }
+                if (
+                    this.firstChecked === false &&
+                    this.secondChecked === false &&
+                    surVal === true
+                ) {
+                    console.log('3');
+                    this.firstChecked = true;
+                }
+                if (surVal === 'uncheckNoSurvey') {
+                    console.log('4');
+                    this.secondChecked = false;
+                }
+                if (surVal === 'uncheckSurvey') {
+                    console.log('5');
+                    this.firstChecked = true;
+                }
+                //if (surVal.length === 2 || surVal.length === 0) {
                 //to prevent both options from being deselected,
                 //if there is only one toggled on and user toggles it off, toggle on the other one
                 //not working right now
-                if (surVal.length === 0) {
+                /* if (surVal.length === 0) {
                     //if the toggle deselected was Surveyed, select the Not Surveyed toggle
                     if (this.surveyControlPrevious === 'surveyed') {
                         let checkSurveyControl = document.getElementById(
                             'notSurveyedSelect'
                         ) as HTMLInputElement;
+
+                        console.log(
+                            'checkSurveyControl.checked',
+                            checkSurveyControl.checked
+                        ); //= true;
                         checkSurveyControl.checked = true;
+                        console.log(
+                            'checkSurveyControl.checked',
+                            checkSurveyControl.checked
+                        );
                         //if the toggle deselected was Not Surveyed, select the Surveyed toggle
-                    } else {
+                    } //else {
                         let checkNotSurveyedControl = document.getElementById(
                             'surveyedSelect'
                         ) as HTMLInputElement;
                         checkNotSurveyedControl.checked = true;
+                        console.log(
+                            'checkSurveyControl.checked',
+                            checkNotSurveyedControl.checked
+                        ); //= true;
+                        checkNotSurveyedControl.checked = true;
+                        console.log(
+                            'checkSurveyControl.checked',
+                            checkNotSurveyedControl.checked
+                        );
                     }
-                }
+                } */
                 //If both are selected, set to true
                 //For now, if both are deselected, also set to true
-                if (surVal.length === 2 || surVal.length === 0) {
+                if (surVal.length === 0 || surVal.length === 2) {
                     this.surveyControlSelection = true;
+                    this.firstChecked = false;
+                    this.secondChecked = false;
                 } else {
                     //if only Surveyed is selected, set to true
                     if (surVal[0] === 'true') {
                         this.surveyControlSelection = true;
-                        this.surveyControlPrevious = 'surveyed';
+                        this.firstChecked = true;
+                        this.secondChecked = false;
+                        // this.surveyControlPrevious = 'surveyed';
                     }
                     //if only Not Surveyed is selected, set to false
                     if (surVal[0] === 'false') {
+                        this.secondChecked = true;
                         this.surveyControlSelection = false;
-                        this.surveyControlPrevious = 'notSurveyed';
+                        this.secondChecked = false;
+                        //this.surveyControlPrevious = 'notSurveyed';
                     }
                 }
+                if (surVal[0] === 'uncheckSurvey' && surVal[1] === 'false') {
+                    console.log('SWAP to uncheck only!');
+                }
+                if (surVal[0] === 'false' && surVal[1] === 'true') {
+                    console.log('SWAMP to survey only!');
+                }
+                console.log('after this.secondChecked', this.secondChecked);
+                console.log('after this.firstChecked', this.firstChecked);
             });
     }
 
