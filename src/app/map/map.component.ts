@@ -41,7 +41,6 @@ import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonToggleHarness } from '@angular/material/button-toggle/testing';
 
 //leaflet imports for geosearch
 import * as esri_geo from 'esri-leaflet-geocoder';
@@ -130,11 +129,6 @@ export class MapComponent implements OnInit {
     stateList = '';
     setStateAbbrev = '';
     surveyControlSelection: string = '';
-    surveyControlPrevious: string = '';
-    firstChecked: boolean = false;
-    secondChecked: boolean = false;
-    surveyOnly = false;
-    notSurveyOnly = false;
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -223,8 +217,6 @@ export class MapComponent implements OnInit {
         this.setCurrentFilter();
         // create and configure map
         this.createMap();
-        this.firstChecked = false;
-        this.secondChecked = false;
 
         this.filtersService.selectedSites.subscribe(
             (currentSites) => (this.currentSites = currentSites)
