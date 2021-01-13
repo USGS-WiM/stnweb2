@@ -129,7 +129,7 @@ export class MapComponent implements OnInit {
     selectedStates: State[] = new Array<State>();
     stateList = '';
     setStateAbbrev = '';
-    surveyControlSelection: boolean = true;
+    surveyControlSelection: string = '';
     surveyControlPrevious: string = '';
     firstChecked: boolean = false;
     secondChecked: boolean = false;
@@ -306,115 +306,34 @@ export class MapComponent implements OnInit {
         this.mapFilterForm
             .get('surveyedControl')
             .valueChanges.subscribe((surVal) => {
-                this.notSurveyOnly = false;
-                this.surveyOnly = false;
-                console.log('this.firstChecked', this.firstChecked);
-                console.log('this.secondChecked', this.secondChecked);
-                console.log('surVal', surVal);
-                if (this.firstChecked === true && surVal === false) {
-                    console.log('1');
-                    this.firstChecked = false;
-                    this.secondChecked = true;
-                }
-                if (
-                    this.firstChecked === false &&
-                    this.secondChecked === false &&
-                    surVal === false
-                ) {
-                    console.log('2');
-                    this.secondChecked = true;
-                }
-                if (
-                    this.firstChecked === false &&
-                    this.secondChecked === false &&
-                    surVal === true
-                ) {
-                    console.log('3');
-                    this.firstChecked = true;
-                }
-                if (surVal === 'uncheckNoSurvey') {
-                    console.log('4');
-                    this.secondChecked = false;
-                }
-                if (surVal === 'uncheckSurvey') {
-                    console.log('5');
-                    this.firstChecked = true;
-                }
-                //if (surVal.length === 2 || surVal.length === 0) {
-                //to prevent both options from being deselected,
-                //if there is only one toggled on and user toggles it off, toggle on the other one
-                //not working right now
-                /* if (surVal.length === 0) {
-                    //if the toggle deselected was Surveyed, select the Not Surveyed toggle
-                    if (this.surveyControlPrevious === 'surveyed') {
-                        let checkSurveyControl = document.getElementById(
-                            'notSurveyedSelect'
-                        ) as HTMLInputElement;
-
-                        console.log(
-                            'checkSurveyControl.checked',
-                            checkSurveyControl.checked
-                        ); //= true;
-                        checkSurveyControl.checked = true;
-                        console.log(
-                            'checkSurveyControl.checked',
-                            checkSurveyControl.checked
-                        );
-                        //if the toggle deselected was Not Surveyed, select the Surveyed toggle
-                    } //else {
-                        let checkNotSurveyedControl = document.getElementById(
-                            'surveyedSelect'
-                        ) as HTMLInputElement;
-                        checkNotSurveyedControl.checked = true;
-                        console.log(
-                            'checkSurveyControl.checked',
-                            checkNotSurveyedControl.checked
-                        ); //= true;
-                        checkNotSurveyedControl.checked = true;
-                        console.log(
-                            'checkSurveyControl.checked',
-                            checkNotSurveyedControl.checked
-                        );
-                    }
-                } */
-                //If both are selected, set to true
-                //For now, if both are deselected, also set to true
-                if (surVal.length === 0 || surVal.length === 2) {
-                    this.surveyControlSelection = true;
-                    this.firstChecked = false;
-                    this.secondChecked = false;
-                } else {
-                    //if only Surveyed is selected, set to true
-                    if (surVal[0] === 'true') {
-                        this.surveyControlSelection = true;
-                        this.firstChecked = true;
-                        this.secondChecked = false;
-                        // this.surveyControlPrevious = 'surveyed';
-                    }
-                    //if only Not Surveyed is selected, set to false
-                    if (surVal[0] === 'false') {
-                        this.secondChecked = true;
-                        this.surveyControlSelection = false;
-                        this.secondChecked = false;
-                        //this.surveyControlPrevious = 'notSurveyed';
-                    }
-                }
-                if (surVal[0] === 'uncheckSurvey' && surVal[1] === 'false') {
-                    console.log('SWAP to uncheck only!');
+                //if the Surveyed button was selected, and user pressed the Not Surveyed button,
+                //turn off the Surveyed button and set url survey param to false
+                if (surVal[0] === 'true' && surVal[1] === 'false') {
                     this.mapFilterForm
                         .get('surveyedControl')
                         .setValue(['false']);
-                    this.notSurveyOnly = true;
+                    this.surveyControlSelection = 'false';
                 }
+                //if the  Not Surveyed button was selected, and user pressed the Surveyed button,
+                //turn off the Not Surveyed button and set url survey param to true
                 if (surVal[0] === 'false' && surVal[1] === 'true') {
-                    console.log('SWAMP to survey only!');
                     this.mapFilterForm
                         .get('surveyedControl')
                         .setValue(['true']);
-                    this.surveyOnly = true;
+                    this.surveyControlSelection = 'true';
                 }
-                console.log('after this.secondChecked', this.secondChecked);
-                console.log('after this.firstChecked', this.firstChecked);
+                //if Not Surveyed button is selected, set url survey param to false
+                if (surVal.length === 1 && surVal[0] === 'false') {
+                    this.surveyControlSelection = 'false';
+                }
+                //if Surveyed button is selected, set url survey param to true
+                if (surVal.length === 1 && surVal[0] === 'true') {
+                    this.surveyControlSelection = 'true';
+                }
+                //if neither button is selected, set url survey param back to default
+                if (surVal.length === 0) {
+                    this.surveyControlSelection = '';
+                }
             });
     }
 
@@ -1092,7 +1011,6 @@ export class MapComponent implements OnInit {
                 this.eventMarkers.removeFrom(this.map);
                 this.eventMarkers = L.featureGroup([]);
             }
-            console.log('url', urlParamString);
             //Find sites that match the user's query
             this.siteService
                 .getFilteredSites(urlParamString)
