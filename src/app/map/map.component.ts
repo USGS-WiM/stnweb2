@@ -133,6 +133,8 @@ export class MapComponent implements OnInit {
     surveyControlPrevious: string = '';
     firstChecked: boolean = false;
     secondChecked: boolean = false;
+    surveyOnly = false;
+    notSurveyOnly = false;
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -304,6 +306,8 @@ export class MapComponent implements OnInit {
         this.mapFilterForm
             .get('surveyedControl')
             .valueChanges.subscribe((surVal) => {
+                this.notSurveyOnly = false;
+                this.surveyOnly = false;
                 console.log('this.firstChecked', this.firstChecked);
                 console.log('this.secondChecked', this.secondChecked);
                 console.log('surVal', surVal);
@@ -397,9 +401,17 @@ export class MapComponent implements OnInit {
                 }
                 if (surVal[0] === 'uncheckSurvey' && surVal[1] === 'false') {
                     console.log('SWAP to uncheck only!');
+                    this.mapFilterForm
+                        .get('surveyedControl')
+                        .setValue(['false']);
+                    this.notSurveyOnly = true;
                 }
                 if (surVal[0] === 'false' && surVal[1] === 'true') {
                     console.log('SWAMP to survey only!');
+                    this.mapFilterForm
+                        .get('surveyedControl')
+                        .setValue(['true']);
+                    this.surveyOnly = true;
                 }
                 console.log('after this.secondChecked', this.secondChecked);
                 console.log('after this.firstChecked', this.firstChecked);
