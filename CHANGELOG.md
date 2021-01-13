@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added warning message when user's query returns no data
 -   Added Login capability
 -   Added requirement for user to select at least one of Event, State, Network, or Sensor filter
+-   Added ability to deselect survey filter
 
 ### Changed
 

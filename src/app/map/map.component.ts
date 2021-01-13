@@ -295,6 +295,24 @@ export class MapComponent implements OnInit {
                 false
             );
         });
+        this.mapFilterForm
+            .get('surveyedControl')
+            .valueChanges.subscribe((surVal) => {
+                //if the Surveyed button was selected, and user pressed the Not Surveyed button,
+                //turn off the Surveyed button and set url survey param to false
+                if (surVal[0] === 'true' && surVal[1] === 'false') {
+                    this.mapFilterForm
+                        .get('surveyedControl')
+                        .setValue(['false']);
+                }
+                //if the  Not Surveyed button was selected, and user pressed the Surveyed button,
+                //turn off the Not Surveyed button and set url survey param to true
+                if (surVal[0] === 'false' && surVal[1] === 'true') {
+                    this.mapFilterForm
+                        .get('surveyedControl')
+                        .setValue(['true']);
+                }
+            });
     }
 
     getEventList() {

@@ -348,25 +348,28 @@
                             </mat-autocomplete>
 
                             <label id="selectedStateList"> </label>
-
                             <br />
                             <label
                                 class="filter-label"
-                                aria-label="Optionally select surveyed or unsurveyed HWMS"
+                                aria-label="Optionally select surveyed or not surveyed HWMS"
                                 >HWMS Surveyed:</label
                             >
-                            <mat-radio-group
-                                aria-label="Select an option"
-                                class="checkbox-section"
+                            <br />
+                            <mat-button-toggle-group
                                 formControlName="surveyedControl"
+                                multiple="true"
                             >
-                                <mat-radio-button value="true"
-                                    >Surveyed</mat-radio-button
+                                <mat-button-toggle
+                                    id="surveyedSelect"
+                                    value="true"
+                                    >Surveyed</mat-button-toggle
                                 >
-                                <mat-radio-button value="false"
-                                    >Unsurveyed</mat-radio-button
+                                <mat-button-toggle
+                                    id="notSurveyedSelect"
+                                    value="false"
+                                    >Not Surveyed</mat-button-toggle
                                 >
-                            </mat-radio-group>
+                            </mat-button-toggle-group>
                             <br />
                             <label
                                 class="filter-label"
