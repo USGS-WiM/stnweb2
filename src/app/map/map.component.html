@@ -47,6 +47,7 @@
                 id="legend"
                 class="legend"
                 *ngIf="
+                    sitesVisible ||
                     watershedsVisible ||
                     currWarningsVisible ||
                     watchWarnVisible ||
@@ -57,6 +58,16 @@
                 <mat-expansion-panel-header>
                     <mat-panel-title> Legend </mat-panel-title>
                 </mat-expansion-panel-header>
+                <div class="legend-panel-content" *ngIf="sitesVisible">
+                    <div id="sitesLegend">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20"
+                            ></div>
+                            <label>Site</label>
+                        </div>
+                    </div>
+                </div>
                 <div class="legend-panel-content" *ngIf="watershedsVisible">
                     <div id="watershedsLegend">
                         <div class="legend-icon">

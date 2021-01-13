@@ -91,7 +91,7 @@ export class MapComponent implements OnInit {
     currentEvent: number; //change to subject?
     currentEventName: string;
     sitesDataArray: any;
-    eventMarkers = L.featureGroup([]);
+    siteMarkers = L.featureGroup([]);
 
     mapScale;
     latitude;
@@ -144,6 +144,7 @@ export class MapComponent implements OnInit {
     states$: Observable<State[]>;
 
     //These variables indicate if each layer is checked
+    sitesVisible = true;
     watershedsVisible = false;
     currWarningsVisible = false;
     watchWarnVisible = false;
@@ -299,7 +300,7 @@ export class MapComponent implements OnInit {
             this.mapResults(
                 this.allSites,
                 this.siteIcon,
-                this.siteService.siteMarkers,
+                this.siteService.allSiteMarkers,
                 false
             );
         });
@@ -436,12 +437,9 @@ export class MapComponent implements OnInit {
             this.currentEventName = this.events[0].event_name;
         }
 
-        //Clear the old event markers from the map
-        if (this.eventMarkers !== undefined) {
-            this.eventMarkers.removeFrom(this.map);
-        }
         //Clear the old markers from the layer
-        this.eventMarkers = L.featureGroup([]);
+        this.siteService.siteMarkers.clearLayers();
+
         //Plot markers for selected event
         this.siteService
             .getEventSites(this.currentEvent)
@@ -451,7 +449,7 @@ export class MapComponent implements OnInit {
                 this.mapResults(
                     this.sitesDataArray,
                     this.eventIcon,
-                    this.eventMarkers,
+                    this.siteService.siteMarkers,
                     true
                 );
                 setTimeout(() => {
@@ -471,8 +469,9 @@ export class MapComponent implements OnInit {
         });
 
         this.supplementaryLayers = {
+            Sites: this.siteService.siteMarkers,
             Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
-            'All STN Sites': this.siteService.siteMarkers,
+            'All STN Sites': this.siteService.allSiteMarkers,
             'Current Warnings*':
                 MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings,
             'Watches/Warnings*':
@@ -548,6 +547,9 @@ export class MapComponent implements OnInit {
         // When layer is checked, add layer icon to legend
         /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
+            if (e.name === 'Sites') {
+                this.sitesVisible = true;
+            }
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
@@ -570,6 +572,9 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
+            if (e.name === 'Sites') {
+                this.sitesVisible = false;
+            }
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -599,10 +604,10 @@ export class MapComponent implements OnInit {
             this.currentZoom = this.map.getZoom();
             //Disable clustering for the All STN Sites layer when zoom >= 12 so we can see individual sites
             if (this.currentZoom >= 12) {
-                this.siteService.siteMarkers.disableClustering();
+                this.siteService.allSiteMarkers.disableClustering();
             }
             if (this.currentZoom < 12) {
-                this.siteService.siteMarkers.enableClustering();
+                this.siteService.allSiteMarkers.enableClustering();
             }
             //If the zoom went from 9 to 8 and the gages/watches/warnings are on,
             //that layer is checked, but it's not displayed
@@ -757,6 +762,9 @@ export class MapComponent implements OnInit {
         // When layer is checked, add layer icon to legend
         /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
+            if (e.name === 'Sites') {
+                this.sitesVisible = true;
+            }
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
@@ -779,6 +787,9 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
+            if (e.name === 'Sites') {
+                this.sitesVisible = false;
+            }
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -803,8 +814,8 @@ export class MapComponent implements OnInit {
     eventFocus() {
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
-        if (this.map.hasLayer(this.eventMarkers)) {
-            this.map.fitBounds(this.eventMarkers.getBounds());
+        if (this.map.hasLayer(this.siteService.siteMarkers)) {
+            this.map.fitBounds(this.siteService.siteMarkers.getBounds());
         } else {
             this.map.setView(
                 MAP_CONSTANTS.defaultCenter,
@@ -902,14 +913,14 @@ export class MapComponent implements OnInit {
                         site.site_no !== 'ASTUT27853' &&
                         site.site_no !== 'AZGRA27856'
                     ) {
-                        //put all the event markers in the same layer group
-                        if (layerType == this.eventMarkers) {
+                        //put all the site markers in the same layer group
+                        if (layerType == this.siteService.siteMarkers) {
                             L.marker([lat, long], { icon: myIcon })
                                 .bindPopup(popupContent)
                                 .addTo(layerType);
                         }
                         //Make circle markers for the All STN Sites layer
-                        if (layerType == this.siteService.siteMarkers) {
+                        if (layerType == this.siteService.allSiteMarkers) {
                             L.marker([lat, long], {
                                 icon: myIcon,
                                 iconSize: 32,
@@ -921,8 +932,8 @@ export class MapComponent implements OnInit {
                 }
             }
         }
-        if (layerType == this.eventMarkers) {
-            this.eventMarkers.addTo(this.map);
+        if (layerType == this.siteService.siteMarkers) {
+            this.siteService.siteMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
                 this.eventFocus();
@@ -1007,9 +1018,8 @@ export class MapComponent implements OnInit {
                 bracketTrue;
 
             //Clear current markers when a new filter is submitted
-            if (this.map.hasLayer(this.eventMarkers)) {
-                this.eventMarkers.removeFrom(this.map);
-                this.eventMarkers = L.featureGroup([]);
+            if (this.map.hasLayer(this.siteService.siteMarkers)) {
+                this.siteService.siteMarkers.clearLayers();
             }
             //Find sites that match the user's query
             this.siteService
@@ -1027,7 +1037,7 @@ export class MapComponent implements OnInit {
                         this.mapResults(
                             res,
                             this.eventIcon,
-                            this.eventMarkers,
+                            this.siteService.siteMarkers,
                             true
                         );
 
