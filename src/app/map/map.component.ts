@@ -97,6 +97,8 @@ export class MapComponent implements OnInit {
     //Begin with the map and filters panels expanded
     mapPanelState: boolean = true;
     filtersPanelState: boolean = true;
+    totalQueries: number = 0;
+    currentQuery: number = 0;
     resultsReturned: boolean = false;
 
     // below is the temp var that holds the all events list for the
@@ -277,6 +279,7 @@ export class MapComponent implements OnInit {
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
             this.allSites = results;
+            this.resultsReturned = true;
             this.mapResults(
                 this.allSites,
                 this.siteIcon,
@@ -378,6 +381,7 @@ export class MapComponent implements OnInit {
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
                 this.eventSites = results;
+                this.resultsReturned = true;
                 this.mapResults(
                     this.eventSites,
                     this.eventIcon,
@@ -780,6 +784,16 @@ export class MapComponent implements OnInit {
         layerType: any,
         zoomToLayer: boolean
     ) {
+        if (this.resultsReturned === false) {
+            if (this.currentQuery === this.totalQueries) {
+                this.filtersSnackBar(
+                    'No results for your query. Try using fewer filters.',
+                    'OK',
+                    4500
+                );
+            }
+        }
+
         // loop through results response from a search query
         if (eventSites.length !== undefined) {
             for (let site of eventSites) {
@@ -855,8 +869,10 @@ export class MapComponent implements OnInit {
             this.eventMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
-                this.eventFocus();
-                this.mapPanelState = true;
+                if (this.currentQuery === this.totalQueries) {
+                    this.eventFocus();
+                    this.mapPanelState = true;
+                }
             }
         }
     }
@@ -868,11 +884,15 @@ export class MapComponent implements OnInit {
 
     public submitMapFilter() {
         this.resultsReturned = false;
+        this.currentQuery = 0;
+        this.totalQueries = 0;
         //set the state control to the state abbreviations
         this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
         document.getElementById('selectedStateList').innerHTML = '';
 
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
+
+        let multiNetworkIds = this.mapFilterForm.get('networkControl').value;
 
         //collect and format selected Filter Form values
         let eventId = filterParams.eventsControl
@@ -914,9 +934,9 @@ export class MapComponent implements OnInit {
             //If the user has at least one Event, Network, Sensor, or State filter select, continue with http request
         } else {
             //network ids need to be called one at a time, so if there are multiple we put them in separate http requests
-            if (networkIds.length <= 1) {
+            if (multiNetworkIds.length <= 1) {
                 // format url params into single string
-                let urlParamString =
+                let urlSingNetwork =
                     'Event=' +
                     eventId +
                     '&State=' +
@@ -938,54 +958,71 @@ export class MapComponent implements OnInit {
                     '&HousingTypeOne=' +
                     bracketTrue;
 
-                this.getResults(urlParamString, 0, 1);
+                this.getResults(urlSingNetwork);
             } else {
                 let uniqueSites = [];
                 let siteIDs = [];
+                this.totalQueries = multiNetworkIds.length;
                 //for every network id, create a separate http request
-                for (let i = 0; i < networkIds.length; i++) {
-                    if (i % 2 == 0) {
-                        let urlParamString = 'NetworkName=' + networkIds[i];
-                        this.siteService
-                            .getFilteredSites(urlParamString)
-                            .subscribe((res) => {
-                                for (let i = 0; i < res.length; i++) {
-                                    let tempSiteID = res[i].site_id;
-
-                                    if (!siteIDs.includes(tempSiteID)) {
-                                        siteIDs.push(tempSiteID);
-                                        uniqueSites.push(res[i]);
+                for (let i = 0; i < multiNetworkIds.length; i++) {
+                    console.log('multiNetworkIds[i]', multiNetworkIds[i]);
+                    let urlMultiNetwork =
+                        'Event=' +
+                        eventId +
+                        '&State=' +
+                        stateAbbrevs +
+                        '&SensorType=' +
+                        sensorIds +
+                        '&NetworkName=' +
+                        multiNetworkIds[i] +
+                        '&OPDefined=' +
+                        opDefinedTrue +
+                        '&HWMOnly=' +
+                        HWMTrue +
+                        '&HWMSurveyed=' +
+                        surveyed +
+                        '&SensorOnly=' +
+                        sensorTrue +
+                        '&RDGOnly=' +
+                        RDGTrue +
+                        '&HousingTypeOne=' +
+                        bracketTrue;
+                    this.siteService
+                        .getFilteredSites(urlMultiNetwork)
+                        .subscribe((res) => {
+                            for (let i = 0; i < res.length; i++) {
+                                let tempSiteID = res[i].site_id;
+                                if (!siteIDs.includes(tempSiteID)) {
+                                    siteIDs.push(tempSiteID);
+                                    uniqueSites.push(res[i]);
+                                }
+                            }
+                            if (uniqueSites.length > 0) {
+                                if (this.resultsReturned === false) {
+                                    //Clear current markers when a new filter is submitted
+                                    if (this.map.hasLayer(this.eventMarkers)) {
+                                        this.eventMarkers.removeFrom(this.map);
+                                        this.eventMarkers = L.featureGroup([]);
                                     }
                                 }
-                            });
-                    }
+                                //close the filter panel
+                                this.filtersPanelState = false;
+                                this.resultsReturned = true;
+                            }
+                            this.currentQuery += 1;
+                            this.mapResults(
+                                uniqueSites,
+                                this.eventIcon,
+                                this.eventMarkers,
+                                true
+                            );
+                        });
                 }
-
-                setTimeout(() => {
-                    console.log('uniqueSites', uniqueSites);
-                    this.mapResults(
-                        uniqueSites,
-                        this.eventIcon,
-                        this.siteService.siteMarkers,
-                        true
-                    );
-                }, 100000);
-
-                //this.getResults()
             }
         }
     }
 
-    public getResults(
-        urlString: string,
-        index: number,
-        iterationLength: number
-    ) {
-        //Clear current markers when a new filter is submitted
-        if (this.map.hasLayer(this.eventMarkers)) {
-            this.eventMarkers.removeFrom(this.map);
-            this.eventMarkers = L.featureGroup([]);
-        }
+    public getResults(urlString: string) {
         //Find sites that match the user's query
         this.siteService.getFilteredSites(urlString).subscribe((res) => {
             //set the state control back to state names instead of abbreviations
@@ -995,24 +1032,15 @@ export class MapComponent implements OnInit {
             //only call mapResults if the query returns data
             if (res.length > 0) {
                 this.resultsReturned = true;
+                //Clear current markers when a new filter is submitted
+                if (this.map.hasLayer(this.eventMarkers)) {
+                    this.eventMarkers.removeFrom(this.map);
+                    this.eventMarkers = L.featureGroup([]);
+                }
                 //close the filter panel
                 this.filtersPanelState = false;
-                this.mapResults(res, this.eventIcon, this.eventMarkers, true);
-            } else if (
-                //if we're on the last iteration
-                //and none of the iterations returned results (filter panel is still open)
-                //give warning that query didn't return results
-                index === iterationLength - 1 &&
-                this.filtersPanelState === true
-            ) {
-                {
-                    this.filtersSnackBar(
-                        'No results for your query. Try using fewer filters.',
-                        'OK',
-                        4500
-                    );
-                }
             }
+            this.mapResults(res, this.eventIcon, this.eventMarkers, true);
         });
     }
 }
