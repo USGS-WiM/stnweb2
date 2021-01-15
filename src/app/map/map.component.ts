@@ -955,6 +955,7 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
+        //each time filter is clicked, reset status of results
         this.resultsReturned = false;
         this.currentQuery = 0;
         this.totalQueries = 0;
