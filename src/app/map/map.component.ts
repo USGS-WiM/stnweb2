@@ -894,7 +894,6 @@ export class MapComponent implements OnInit {
                         site.Events.toString() +
                         '<br/>';
                 }
-
                 /* istanbul ignore next */
                 if (isNaN(lat) || isNaN(long)) {
                     console.log(
