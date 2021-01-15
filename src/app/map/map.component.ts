@@ -940,34 +940,38 @@ export class MapComponent implements OnInit {
 
                 this.getResults(urlParamString, 0, 1);
             } else {
+                let uniqueSites = [];
+                let siteIDs = [];
                 //for every network id, create a separate http request
                 for (let i = 0; i < networkIds.length; i++) {
-                    //even indices are network ids, odd indices are commas
                     if (i % 2 == 0) {
-                        let urlParamString =
-                            'Event=' +
-                            eventId +
-                            '&State=' +
-                            stateAbbrevs +
-                            '&SensorType=' +
-                            sensorIds +
-                            '&NetworkName=' +
-                            networkIds[i] +
-                            '&OPDefined=' +
-                            opDefinedTrue +
-                            '&HWMOnly=' +
-                            HWMTrue +
-                            '&HWMSurveyed=' +
-                            surveyed +
-                            '&SensorOnly=' +
-                            sensorTrue +
-                            '&RDGOnly=' +
-                            RDGTrue +
-                            '&HousingTypeOne=' +
-                            bracketTrue;
-                        this.getResults(urlParamString, i, networkIds.length);
+                        let urlParamString = 'NetworkName=' + networkIds[i];
+                        this.siteService
+                            .getFilteredSites(urlParamString)
+                            .subscribe((res) => {
+                                for (let i = 0; i < res.length; i++) {
+                                    let tempSiteID = res[i].site_id;
+
+                                    if (!siteIDs.includes(tempSiteID)) {
+                                        siteIDs.push(tempSiteID);
+                                        uniqueSites.push(res[i]);
+                                    }
+                                }
+                            });
                     }
                 }
+
+                setTimeout(() => {
+                    console.log('uniqueSites', uniqueSites);
+                    this.mapResults(
+                        uniqueSites,
+                        this.eventIcon,
+                        this.siteService.siteMarkers,
+                        true
+                    );
+                }, 100000);
+
+                //this.getResults()
             }
         }
     }
