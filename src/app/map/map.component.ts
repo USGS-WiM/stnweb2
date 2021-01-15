@@ -105,6 +105,13 @@ export class MapComponent implements OnInit {
     mapPanelState: boolean = true;
     filtersPanelState: boolean = true;
 
+    //when filtering by multiple networks,
+    //we use these to track if there are any sites returned after the final query
+    totalQueries: number = 0;
+    currentQuery: number = 0;
+    //changes to true on load and when a filter returns results
+    resultsReturned: boolean = false;
+
     // below is the temp var that holds the all events list for the
     // new method of connecting events with the service. This will eventually replace
     // 'events' once refactored.
@@ -288,6 +295,7 @@ export class MapComponent implements OnInit {
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
             this.allSites = results;
+            this.resultsReturned = true;
             this.mapResults(
                 this.allSites,
                 this.siteIcon,
@@ -421,6 +429,7 @@ export class MapComponent implements OnInit {
         this.siteService
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
+                this.resultsReturned = true;
                 this.sitesDataArray = results;
                 this.filtersService.updateSites(results);
                 this.mapResults(
@@ -838,6 +847,17 @@ export class MapComponent implements OnInit {
     //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
     mapResults(sites: any, myIcon: any, layerType: any, zoomToLayer: boolean) {
+        //if it is on the final query (relevant for multiple network requests),
+        //and there have not been any results returned, show no results message
+        if (this.resultsReturned === false) {
+            if (this.currentQuery === this.totalQueries) {
+                this.filtersSnackBar(
+                    'No results for your query. Try using fewer filters.',
+                    'OK',
+                    4500
+                );
+            }
+        }
         // loop through results response from a search query
         if (sites.length !== undefined) {
             for (let site of sites) {
@@ -874,7 +894,6 @@ export class MapComponent implements OnInit {
                         site.Events.toString() +
                         '<br/>';
                 }
-
                 /* istanbul ignore next */
                 if (isNaN(lat) || isNaN(long)) {
                     console.log(
@@ -913,8 +932,15 @@ export class MapComponent implements OnInit {
             this.siteService.siteMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
-                this.eventFocus();
-                this.mapPanelState = true;
+                //if there are multiple queries, wait until the last one to zoom to the layer
+                if (this.currentQuery === this.totalQueries) {
+                    this.eventFocus();
+                    this.mapPanelState = true;
+                    //set the state control back to state names instead of abbreviations
+                    this.mapFilterForm
+                        .get('stateControl')
+                        .setValue(this.selectedStates);
+                }
             }
         }
     }
@@ -928,11 +954,18 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
+        //each time filter is clicked, reset status of results
+        this.resultsReturned = false;
+        this.currentQuery = 0;
+        this.totalQueries = 0;
         //set the state control to the state abbreviations
         this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
         document.getElementById('selectedStateList').innerHTML = '';
 
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
+
+        //if multiple networks are selected, we need to keep the network ids in an array
+        let multiNetworkIds = this.mapFilterForm.get('networkControl').value;
 
         //collect and format selected Filter Form values
         let eventId = filterParams.eventsControl
@@ -973,65 +1006,141 @@ export class MapComponent implements OnInit {
             );
             //If the user has at least one Event, Network, Sensor, or State filter select, continue with http request
         } else {
-            // format url params into single string
-            let urlParamString =
-                'Event=' +
-                eventId +
-                '&State=' +
-                stateAbbrevs +
-                '&SensorType=' +
-                sensorIds +
-                '&NetworkName=' +
-                networkIds +
-                '&OPDefined=' +
-                opDefinedTrue +
-                '&HWMOnly=' +
-                HWMTrue +
-                '&HWMSurveyed=' +
-                surveyed +
-                '&SensorOnly=' +
-                sensorTrue +
-                '&RDGOnly=' +
-                RDGTrue +
-                '&HousingTypeOne=' +
-                bracketTrue;
-
-            //Clear current markers when a new filter is submitted
-            if (this.map.hasLayer(this.siteService.siteMarkers)) {
-                this.siteService.siteMarkers.clearLayers();
-            }
-            //Find sites that match the user's query
-            this.siteService
-                .getFilteredSites(urlParamString)
-                .subscribe((res) => {
-                    //set the state control back to state names instead of abbreviations
-                    this.mapFilterForm
-                        .get('stateControl')
-                        .setValue(this.selectedStates);
-                    //only call mapResults if the query returns data
-                    if (res.length > 0) {
-                        //close the filter panel
-                        this.filtersPanelState = false;
-                        this.filtersService.updateSites(res);
-                        this.mapResults(
-                            res,
-                            this.eventIcon,
-                            this.siteService.siteMarkers,
-                            true
-                        );
-
-                        // updating the filter-results table datasource with the new results
-                        this.filterResultsComponent.refreshDataSource();
-                    } else {
-                        //if nothing is returned, show a snack bar message
-                        this.filtersSnackBar(
-                            'No results for your query. Try using fewer filters.',
-                            'OK',
-                            4500
-                        );
+            //network ids need to be called one at a time, so if there are multiple we put them in separate http requests
+            if (multiNetworkIds.length <= 1) {
+                // format url params into single string
+                let urlParamString =
+                    'Event=' +
+                    eventId +
+                    '&State=' +
+                    stateAbbrevs +
+                    '&SensorType=' +
+                    sensorIds +
+                    '&NetworkName=' +
+                    networkIds +
+                    '&OPDefined=' +
+                    opDefinedTrue +
+                    '&HWMOnly=' +
+                    HWMTrue +
+                    '&HWMSurveyed=' +
+                    surveyed +
+                    '&SensorOnly=' +
+                    sensorTrue +
+                    '&RDGOnly=' +
+                    RDGTrue +
+                    '&HousingTypeOne=' +
+                    bracketTrue;
+                this.getResults(urlParamString);
+            } else {
+                //User could potentially crash the app by choosing too many networks, thereby returning too many results
+                //if > 5 networks are selected, prevent query from running and show warning
+                if (multiNetworkIds.length > 5) {
+                    this.filtersSnackBar(
+                        'Please limit your selection to 5 networks.',
+                        'OK',
+                        4500
+                    );
+                } else {
+                    //to be populated with each unique site object
+                    let uniqueSites = [];
+                    //to keep a running list of all site ids
+                    let siteIDs = [];
+                    this.totalQueries = multiNetworkIds.length;
+                    //for every network id, create a separate http request
+                    for (let i = 0; i < multiNetworkIds.length; i++) {
+                        let urlParamString =
+                            'Event=' +
+                            eventId +
+                            '&State=' +
+                            stateAbbrevs +
+                            '&SensorType=' +
+                            sensorIds +
+                            '&NetworkName=' +
+                            multiNetworkIds[i] +
+                            '&OPDefined=' +
+                            opDefinedTrue +
+                            '&HWMOnly=' +
+                            HWMTrue +
+                            '&HWMSurveyed=' +
+                            surveyed +
+                            '&SensorOnly=' +
+                            sensorTrue +
+                            '&RDGOnly=' +
+                            RDGTrue +
+                            '&HousingTypeOne=' +
+                            bracketTrue;
+                        this.siteService
+                            .getFilteredSites(urlParamString)
+                            .subscribe((res) => {
+                                //filter out sites that have already been plotted
+                                for (let i = 0; i < res.length; i++) {
+                                    //get current site id
+                                    let tempSiteID = res[i].site_id;
+                                    //if the current site id isn't in our list of all sites,
+                                    //add that site object to uniqueSites
+                                    if (!siteIDs.includes(tempSiteID)) {
+                                        siteIDs.push(tempSiteID);
+                                        uniqueSites.push(res[i]);
+                                    }
+                                }
+                                if (uniqueSites.length > 0) {
+                                    // updating the filter-results table datasource with the new results
+                                    this.filterResultsComponent.refreshDataSource();
+                                    if (this.resultsReturned === false) {
+                                        //Clear current markers when a new filter is submitted
+                                        if (
+                                            this.map.hasLayer(
+                                                this.siteService.siteMarkers
+                                            )
+                                        ) {
+                                            this.siteService.siteMarkers.removeFrom(
+                                                this.map
+                                            );
+                                            this.siteService.siteMarkers = L.featureGroup(
+                                                []
+                                            );
+                                        }
+                                    }
+                                    //close the filter panel
+                                    this.filtersPanelState = false;
+                                    this.resultsReturned = true;
+                                }
+                                this.currentQuery += 1;
+                                this.mapResults(
+                                    uniqueSites,
+                                    this.eventIcon,
+                                    this.siteService.siteMarkers,
+                                    true
+                                );
+                            });
                     }
-                });
-            return urlParamString;
+                }
+            }
         }
+    }
+
+    public getResults(urlString: string) {
+        //Find sites that match the user's query
+        this.siteService.getFilteredSites(urlString).subscribe((res) => {
+            //only call mapResults if the query returns data
+            if (res.length > 0) {
+                // updating the filter-results table datasource with the new results
+                this.filterResultsComponent.refreshDataSource();
+                this.resultsReturned = true;
+                //Clear current markers when a new filter is submitted
+                if (this.map.hasLayer(this.siteService.siteMarkers)) {
+                    this.siteService.siteMarkers.removeFrom(this.map);
+                    this.siteService.siteMarkers = L.featureGroup([]);
+                }
+                //close the filter panel
+                this.filtersPanelState = false;
+            }
+            this.mapResults(
+                res,
+                this.eventIcon,
+                this.siteService.siteMarkers,
+                true
+            );
+        });
     }
 }
