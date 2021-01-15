@@ -104,8 +104,12 @@ export class MapComponent implements OnInit {
     //Begin with the map and filters panels expanded
     mapPanelState: boolean = true;
     filtersPanelState: boolean = true;
+
+    //when filtering by multiple networks,
+    //we use these to track if there are any sites returned after the final query
     totalQueries: number = 0;
     currentQuery: number = 0;
+    //changes to true on load and when a filter returns results
     resultsReturned: boolean = false;
 
     // below is the temp var that holds the all events list for the
@@ -844,6 +848,8 @@ export class MapComponent implements OnInit {
     //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
     mapResults(sites: any, myIcon: any, layerType: any, zoomToLayer: boolean) {
+        //if it is on the final query (relevant for multiple network requests),
+        //and there have not been any results returned, show no results message
         if (this.resultsReturned === false) {
             if (this.currentQuery === this.totalQueries) {
                 this.filtersSnackBar(
@@ -928,9 +934,14 @@ export class MapComponent implements OnInit {
             this.siteService.siteMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
+                //if there are multiple queries, wait until the last one to zoom to the layer
                 if (this.currentQuery === this.totalQueries) {
                     this.eventFocus();
                     this.mapPanelState = true;
+                    //set the state control back to state names instead of abbreviations
+                    this.mapFilterForm
+                        .get('stateControl')
+                        .setValue(this.selectedStates);
                 }
             }
         }
@@ -954,6 +965,7 @@ export class MapComponent implements OnInit {
 
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
+        //if multiple networks are selected, we need to keep the network ids in an array
         let multiNetworkIds = this.mapFilterForm.get('networkControl').value;
 
         //collect and format selected Filter Form values
@@ -1019,10 +1031,11 @@ export class MapComponent implements OnInit {
                     RDGTrue +
                     '&HousingTypeOne=' +
                     bracketTrue;
-
                 this.getResults(urlSingNetwork);
             } else {
+                //to be populated with each unique site object
                 let uniqueSites = [];
+                //to keep a running list of all site ids
                 let siteIDs = [];
                 this.totalQueries = multiNetworkIds.length;
                 //for every network id, create a separate http request
@@ -1051,8 +1064,12 @@ export class MapComponent implements OnInit {
                     this.siteService
                         .getFilteredSites(urlMultiNetwork)
                         .subscribe((res) => {
+                            //filter out sites that have already been plotted
                             for (let i = 0; i < res.length; i++) {
+                                //get current site id
                                 let tempSiteID = res[i].site_id;
+                                //if the current site id isn't in our list of all sites,
+                                //add that site object to uniqueSites
                                 if (!siteIDs.includes(tempSiteID)) {
                                     siteIDs.push(tempSiteID);
                                     uniqueSites.push(res[i]);
@@ -1096,10 +1113,6 @@ export class MapComponent implements OnInit {
     public getResults(urlString: string) {
         //Find sites that match the user's query
         this.siteService.getFilteredSites(urlString).subscribe((res) => {
-            //set the state control back to state names instead of abbreviations
-            this.mapFilterForm
-                .get('stateControl')
-                .setValue(this.selectedStates);
             //only call mapResults if the query returns data
             if (res.length > 0) {
                 // updating the filter-results table datasource with the new results
