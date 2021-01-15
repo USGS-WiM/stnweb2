@@ -1009,7 +1009,7 @@ export class MapComponent implements OnInit {
             //network ids need to be called one at a time, so if there are multiple we put them in separate http requests
             if (multiNetworkIds.length <= 1) {
                 // format url params into single string
-                let urlSingNetwork =
+                let urlParamString =
                     'Event=' +
                     eventId +
                     '&State=' +
@@ -1030,7 +1030,7 @@ export class MapComponent implements OnInit {
                     RDGTrue +
                     '&HousingTypeOne=' +
                     bracketTrue;
-                this.getResults(urlSingNetwork);
+                this.getResults(urlParamString);
             } else {
                 //User could potentially crash the app by choosing too many networks, thereby returning too many results
                 //if > 5 networks are selected, prevent query from running and show warning
@@ -1048,7 +1048,7 @@ export class MapComponent implements OnInit {
                     this.totalQueries = multiNetworkIds.length;
                     //for every network id, create a separate http request
                     for (let i = 0; i < multiNetworkIds.length; i++) {
-                        let urlMultiNetwork =
+                        let urlParamString =
                             'Event=' +
                             eventId +
                             '&State=' +
@@ -1070,7 +1070,7 @@ export class MapComponent implements OnInit {
                             '&HousingTypeOne=' +
                             bracketTrue;
                         this.siteService
-                            .getFilteredSites(urlMultiNetwork)
+                            .getFilteredSites(urlParamString)
                             .subscribe((res) => {
                                 //filter out sites that have already been plotted
                                 for (let i = 0; i < res.length; i++) {
