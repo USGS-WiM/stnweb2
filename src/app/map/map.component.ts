@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -34,6 +34,7 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
+import { FiltersService } from '@services/filters.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
@@ -52,6 +53,7 @@ import { EventTypeService } from '@app/services/event-type.service';
 import { EventType } from '@app/interfaces/event-type';
 import { Subject } from 'rx';
 import { canvas } from 'leaflet';
+import { FilterResultsComponent } from '@app/filter-results/filter-results.component';
 
 @Component({
     selector: 'app-map',
@@ -59,6 +61,10 @@ import { canvas } from 'leaflet';
     styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit {
+    @ViewChild(FilterResultsComponent)
+    filterResultsComponent: FilterResultsComponent;
+
+    sites = [];
     siteid: string;
     panelOpenState = false;
     errorMessage: string;
@@ -71,7 +77,7 @@ export class MapComponent implements OnInit {
     drawnItems;
 
     // events = [];
-    sites = [];
+    sitesData = L.featureGroup([]);
     siteSelected;
     siteClicked = false;
     siteName;
@@ -80,10 +86,11 @@ export class MapComponent implements OnInit {
     allSites: Site[];
 
     public selectedEvent;
+    currentSites;
     currentEvent: number; //change to subject?
     currentEventName: string;
-    eventSites: any;
-    eventMarkers = L.featureGroup([]);
+    sitesDataArray: any;
+    siteMarkers = L.featureGroup([]);
 
     mapScale;
     latitude;
@@ -133,6 +140,7 @@ export class MapComponent implements OnInit {
     states$: Observable<State[]>;
 
     //These variables indicate if each layer is checked
+    sitesVisible = true;
     watershedsVisible = false;
     currWarningsVisible = false;
     watchWarnVisible = false;
@@ -177,6 +185,7 @@ export class MapComponent implements OnInit {
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
         public siteService: SiteService,
+        public filtersService: FiltersService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
     ) {
@@ -210,6 +219,10 @@ export class MapComponent implements OnInit {
         this.setCurrentFilter();
         // create and configure map
         this.createMap();
+
+        this.filtersService.selectedSites.subscribe(
+            (currentSites) => (this.currentSites = currentSites)
+        );
     }
 
     setCurrentFilter() {
@@ -231,21 +244,7 @@ export class MapComponent implements OnInit {
             //set up call to get sites for specific event
             this.displaySelectedEvent();
             // allow user to type into the event selector to view matching events
-            this.filteredEvents$ = this.mapFilterForm
-                .get('eventsControl')
-                .valueChanges.pipe(
-                    debounceTime(200),
-                    distinctUntilChanged(),
-                    /* istanbul ignore else */
-                    map((searchTerm) =>
-                        searchTerm
-                            ? APP_UTILITIES.FILTER_EVENT(
-                                  searchTerm,
-                                  this.events
-                              )
-                            : this.events
-                    )
-                );
+            this.getEventList();
         });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
@@ -254,6 +253,8 @@ export class MapComponent implements OnInit {
             this.eventStates$ = this.mapFilterForm
                 .get('eventStateControl')
                 .valueChanges.pipe(
+                    debounceTime(300),
+                    distinctUntilChanged(),
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
@@ -266,6 +267,8 @@ export class MapComponent implements OnInit {
             this.states$ = this.mapFilterForm
                 .get('stateControl')
                 .valueChanges.pipe(
+                    debounceTime(300),
+                    distinctUntilChanged(),
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
@@ -275,6 +278,15 @@ export class MapComponent implements OnInit {
                             : this.states
                     )
                 );
+            //when user deletes previous event state selection, clear event filter
+            //set so that if it is partially deleted (e.g. California => Calif), it won't change
+            this.mapFilterForm
+                .get('eventStateControl')
+                .valueChanges.subscribe((stateObject) => {
+                    if (stateObject === '') {
+                        this.updateEventFilter();
+                    }
+                });
         });
         //Add all the STN sites to a layer when the map loads
         this.siteService.getAllSites().subscribe((results) => {
@@ -283,11 +295,47 @@ export class MapComponent implements OnInit {
             this.mapResults(
                 this.allSites,
                 this.siteIcon,
-                this.siteService.siteMarkers,
+                this.siteService.allSiteMarkers,
                 false
             );
         });
         this.networks$ = this.networkNamesService.getNetworkNames();
+        this.mapFilterForm
+            .get('surveyedControl')
+            .valueChanges.subscribe((surVal) => {
+                //if the Surveyed button was selected, and user pressed the Not Surveyed button,
+                //turn off the Surveyed button and set url survey param to false
+                if (surVal[0] === 'true' && surVal[1] === 'false') {
+                    this.mapFilterForm
+                        .get('surveyedControl')
+                        .setValue(['false']);
+                }
+                //if the  Not Surveyed button was selected, and user pressed the Surveyed button,
+                //turn off the Not Surveyed button and set url survey param to true
+                if (surVal[0] === 'false' && surVal[1] === 'true') {
+                    this.mapFilterForm
+                        .get('surveyedControl')
+                        .setValue(['true']);
+                }
+            });
+    }
+
+    getEventList() {
+        //setting filteredEvents$ to null for a moment will clear the old selection list
+        //new list of options won't appear until user begins typing
+        this.filteredEvents$ = null;
+        this.filteredEvents$ = this.mapFilterForm
+            .get('eventsControl')
+            .valueChanges.pipe(
+                debounceTime(200),
+                distinctUntilChanged(),
+                /* istanbul ignore else */
+                map((searchTerm) =>
+                    searchTerm
+                        ? APP_UTILITIES.FILTER_EVENT(searchTerm, this.events)
+                        : this.events
+                )
+            );
     }
 
     // TODO: update this
@@ -307,7 +355,9 @@ export class MapComponent implements OnInit {
             .subscribe((filterResponse) => {
                 // update events array to the filter response
                 this.events = filterResponse;
-                // this line necessary to update the list (hack)
+                //reset filteredEvents$ so that it will update on value change
+                this.getEventList();
+                //Reset event value to null; previous selection will disappear from filter
                 this.mapFilterForm.get('eventsControl').setValue(null);
             });
 
@@ -369,25 +419,26 @@ export class MapComponent implements OnInit {
             this.currentEventName = this.events[0].event_name;
         }
 
-        //Clear the old event markers from the map
-        if (this.eventMarkers !== undefined) {
-            this.eventMarkers.removeFrom(this.map);
-        }
         //Clear the old markers from the layer
-        this.eventMarkers = L.featureGroup([]);
-        //Plot markers for selected event
+        this.siteService.siteMarkers.clearLayers();
 
+        //Plot markers for selected event
         this.siteService
             .getEventSites(this.currentEvent)
             .subscribe((results) => {
-                this.eventSites = results;
                 this.resultsReturned = true;
+                this.sitesDataArray = results;
+                this.filtersService.updateSites(results);
                 this.mapResults(
-                    this.eventSites,
+                    this.sitesDataArray,
                     this.eventIcon,
-                    this.eventMarkers,
-                    false
+                    this.siteService.siteMarkers,
+                    true
                 );
+                setTimeout(() => {
+                    // setting filter-results table to default display
+                    this.filterResultsComponent.refreshDataSource();
+                }, 500);
             });
     }
 
@@ -401,8 +452,9 @@ export class MapComponent implements OnInit {
         });
 
         this.supplementaryLayers = {
+            Sites: this.siteService.siteMarkers,
             Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
-            'All STN Sites': this.siteService.siteMarkers,
+            'All STN Sites': this.siteService.allSiteMarkers,
             'Current Warnings*':
                 MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings,
             'Watches/Warnings*':
@@ -478,6 +530,9 @@ export class MapComponent implements OnInit {
         // When layer is checked, add layer icon to legend
         /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
+            if (e.name === 'Sites') {
+                this.sitesVisible = true;
+            }
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
@@ -500,6 +555,9 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
+            if (e.name === 'Sites') {
+                this.sitesVisible = false;
+            }
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -529,10 +587,10 @@ export class MapComponent implements OnInit {
             this.currentZoom = this.map.getZoom();
             //Disable clustering for the All STN Sites layer when zoom >= 12 so we can see individual sites
             if (this.currentZoom >= 12) {
-                this.siteService.siteMarkers.disableClustering();
+                this.siteService.allSiteMarkers.disableClustering();
             }
             if (this.currentZoom < 12) {
-                this.siteService.siteMarkers.enableClustering();
+                this.siteService.allSiteMarkers.enableClustering();
             }
             //If the zoom went from 9 to 8 and the gages/watches/warnings are on,
             //that layer is checked, but it's not displayed
@@ -687,6 +745,9 @@ export class MapComponent implements OnInit {
         // When layer is checked, add layer icon to legend
         /* istanbul ignore next */
         this.map.on('overlayadd', (e) => {
+            if (e.name === 'Sites') {
+                this.sitesVisible = true;
+            }
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = true;
             }
@@ -709,6 +770,9 @@ export class MapComponent implements OnInit {
         // When layer is unchecked, remove layer icon from legend
         /* istanbul ignore next */
         this.map.on('overlayremove', (e) => {
+            if (e.name === 'Sites') {
+                this.sitesVisible = false;
+            }
             if (e.name === 'Watersheds') {
                 this.watershedsVisible = false;
             }
@@ -733,8 +797,8 @@ export class MapComponent implements OnInit {
     eventFocus() {
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
-        if (this.map.hasLayer(this.eventMarkers)) {
-            this.map.fitBounds(this.eventMarkers.getBounds());
+        if (this.map.hasLayer(this.siteService.siteMarkers)) {
+            this.map.fitBounds(this.siteService.siteMarkers.getBounds());
         } else {
             this.map.setView(
                 MAP_CONSTANTS.defaultCenter,
@@ -773,17 +837,13 @@ export class MapComponent implements OnInit {
         document.getElementById('selectedStateList').innerHTML = this.stateList;
         return null;
     }
+
     //eventSites = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
     /* istanbul ignore next */
-    mapResults(
-        eventSites: any,
-        myIcon: any,
-        layerType: any,
-        zoomToLayer: boolean
-    ) {
+    mapResults(sites: any, myIcon: any, layerType: any, zoomToLayer: boolean) {
         if (this.resultsReturned === false) {
             if (this.currentQuery === this.totalQueries) {
                 this.filtersSnackBar(
@@ -793,10 +853,9 @@ export class MapComponent implements OnInit {
                 );
             }
         }
-
         // loop through results response from a search query
-        if (eventSites.length !== undefined) {
-            for (let site of eventSites) {
+        if (sites.length !== undefined) {
+            for (let site of sites) {
                 let lat = Number(site.latitude_dd);
                 let long = Number(site.longitude_dd);
 
@@ -846,14 +905,14 @@ export class MapComponent implements OnInit {
                         site.site_no !== 'ASTUT27853' &&
                         site.site_no !== 'AZGRA27856'
                     ) {
-                        //put all the event markers in the same layer group
-                        if (layerType == this.eventMarkers) {
+                        //put all the site markers in the same layer group
+                        if (layerType == this.siteService.siteMarkers) {
                             L.marker([lat, long], { icon: myIcon })
                                 .bindPopup(popupContent)
                                 .addTo(layerType);
                         }
                         //Make circle markers for the All STN Sites layer
-                        if (layerType == this.siteService.siteMarkers) {
+                        if (layerType == this.siteService.allSiteMarkers) {
                             L.marker([lat, long], {
                                 icon: myIcon,
                                 iconSize: 32,
@@ -865,8 +924,8 @@ export class MapComponent implements OnInit {
                 }
             }
         }
-        if (layerType == this.eventMarkers) {
-            this.eventMarkers.addTo(this.map);
+        if (layerType == this.siteService.siteMarkers) {
+            this.siteService.siteMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
             if (zoomToLayer == true) {
                 if (this.currentQuery === this.totalQueries) {
@@ -878,6 +937,9 @@ export class MapComponent implements OnInit {
     }
 
     public clearMapFilterForm(): void {
+        //reset the event options
+        this.updateEventFilter();
+        this.selectedStates = new Array<State>();
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
     }
@@ -997,11 +1059,21 @@ export class MapComponent implements OnInit {
                                 }
                             }
                             if (uniqueSites.length > 0) {
+                                // updating the filter-results table datasource with the new results
+                                this.filterResultsComponent.refreshDataSource();
                                 if (this.resultsReturned === false) {
                                     //Clear current markers when a new filter is submitted
-                                    if (this.map.hasLayer(this.eventMarkers)) {
-                                        this.eventMarkers.removeFrom(this.map);
-                                        this.eventMarkers = L.featureGroup([]);
+                                    if (
+                                        this.map.hasLayer(
+                                            this.siteService.siteMarkers
+                                        )
+                                    ) {
+                                        this.siteService.siteMarkers.removeFrom(
+                                            this.map
+                                        );
+                                        this.siteService.siteMarkers = L.featureGroup(
+                                            []
+                                        );
                                     }
                                 }
                                 //close the filter panel
@@ -1012,7 +1084,7 @@ export class MapComponent implements OnInit {
                             this.mapResults(
                                 uniqueSites,
                                 this.eventIcon,
-                                this.eventMarkers,
+                                this.siteService.siteMarkers,
                                 true
                             );
                         });
@@ -1030,16 +1102,23 @@ export class MapComponent implements OnInit {
                 .setValue(this.selectedStates);
             //only call mapResults if the query returns data
             if (res.length > 0) {
+                // updating the filter-results table datasource with the new results
+                this.filterResultsComponent.refreshDataSource();
                 this.resultsReturned = true;
                 //Clear current markers when a new filter is submitted
-                if (this.map.hasLayer(this.eventMarkers)) {
-                    this.eventMarkers.removeFrom(this.map);
-                    this.eventMarkers = L.featureGroup([]);
+                if (this.map.hasLayer(this.siteService.siteMarkers)) {
+                    this.siteService.siteMarkers.removeFrom(this.map);
+                    this.siteService.siteMarkers = L.featureGroup([]);
                 }
                 //close the filter panel
                 this.filtersPanelState = false;
             }
-            this.mapResults(res, this.eventIcon, this.eventMarkers, true);
+            this.mapResults(
+                res,
+                this.eventIcon,
+                this.siteService.siteMarkers,
+                true
+            );
         });
     }
 }

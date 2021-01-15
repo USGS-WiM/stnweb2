@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+-
+
+### Changed
+
+-
+
+### Fixed
+
+-
+
+## [v0.4.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.4.0) - 2020-01-12
+
+### Added
+
+-   Added sites layer to layer control and legend
+-   Added Results table for sites on map with sorting and pagination
 -   Added all STN sites layer
 -   Added EventType and EventState Filters to filter the Events choice list
 -   Added site filter options for: HWMs Surveyed, HWM Only, Sensor Only, Surveyed RP Only, Pre-Deployed Bracket, RDG Only, Has OP Defined
@@ -16,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added warning message when user's query returns no data
 -   Added Login capability
 -   Added requirement for user to select at least one of Event, State, Network, or Sensor filter
+-   Added ability to deselect survey filter
 
 ### Changed
 
@@ -28,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 -   Networks filter works
+-   Fixed event filter auto-update
 
 ## [v0.3.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.3.0) - 2020-12-08
 

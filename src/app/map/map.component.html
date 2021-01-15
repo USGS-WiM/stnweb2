@@ -47,6 +47,7 @@
                 id="legend"
                 class="legend"
                 *ngIf="
+                    sitesVisible ||
                     watershedsVisible ||
                     currWarningsVisible ||
                     watchWarnVisible ||
@@ -57,6 +58,16 @@
                 <mat-expansion-panel-header>
                     <mat-panel-title> Legend </mat-panel-title>
                 </mat-expansion-panel-header>
+                <div class="legend-panel-content" *ngIf="sitesVisible">
+                    <div id="sitesLegend">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20"
+                            ></div>
+                            <label>Site</label>
+                        </div>
+                    </div>
+                </div>
                 <div class="legend-panel-content" *ngIf="watershedsVisible">
                     <div id="watershedsLegend">
                         <div class="legend-icon">
@@ -186,6 +197,7 @@
                                     formControlName="eventTypeControl"
                                     (selectionChange)="updateEventFilter()"
                                 >
+                                    <mat-option>Any</mat-option>
                                     <mat-option
                                         *ngFor="
                                             let eventType of eventTypes$ | async
@@ -336,25 +348,28 @@
                             </mat-autocomplete>
 
                             <label id="selectedStateList"> </label>
-
                             <br />
                             <label
                                 class="filter-label"
-                                aria-label="Optionally select surveyed or unsurveyed HWMS"
+                                aria-label="Optionally select surveyed or not surveyed HWMS"
                                 >HWMS Surveyed:</label
                             >
-                            <mat-radio-group
-                                aria-label="Select an option"
-                                class="checkbox-section"
+                            <br />
+                            <mat-button-toggle-group
                                 formControlName="surveyedControl"
+                                multiple="true"
                             >
-                                <mat-radio-button value="true"
-                                    >Surveyed</mat-radio-button
+                                <mat-button-toggle
+                                    id="surveyedSelect"
+                                    value="true"
+                                    >Surveyed</mat-button-toggle
                                 >
-                                <mat-radio-button value="false"
-                                    >Unsurveyed</mat-radio-button
+                                <mat-button-toggle
+                                    id="notSurveyedSelect"
+                                    value="false"
+                                    >Not Surveyed</mat-button-toggle
                                 >
-                            </mat-radio-group>
+                            </mat-button-toggle-group>
                             <br />
                             <label
                                 class="filter-label"

@@ -1,4 +1,4 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentUserService } from '@services/current-user.service';
@@ -54,7 +54,7 @@ describe('MapComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [MapComponent],
             imports: [
-                BrowserAnimationsModule,
+                NoopAnimationsModule,
                 MatAutocompleteModule,
                 HttpClientTestingModule,
                 FormsModule,
@@ -221,6 +221,16 @@ describe('MapComponent', () => {
         component.submitMapFilter();
         fixture.detectChanges();
         expect(component.sites).toEqual(response);
+    });
+
+    it('should call getEventSites and return list of queried sites', () => {
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getEventSites').and.returnValue(
+            of(response)
+        );
+        component.getData();
+        fixture.detectChanges();
+        // expect(component.sitesDataArray).toEqual(response);
     });
 
     it('displayEventState returns the appropriate response', () => {

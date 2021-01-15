@@ -63,9 +63,7 @@ export class SiteService {
         );
     }
 
-    // public siteMarkers = new L.layerGroup([]);
-
-    public siteMarkers = new L.markerClusterGroup({
+    public allSiteMarkers = new L.markerClusterGroup({
         showCoverageOnHover: false,
         maxClusterRadius: 40,
         iconCreateFunction: function (cluster) {
@@ -83,13 +81,15 @@ export class SiteService {
         // spiderfyDistanceMultiplier: 2,
     });
 
-    private _allSiteMarkers: Subject<any> = new Subject<any>();
-    public setAllSiteMarkers(val: any) {
-        this.siteMarkers = val;
-        this._allSiteMarkers.next(val);
+    public siteMarkers = new L.featureGroup([]);
+
+    private _allallSiteMarkers: Subject<any> = new Subject<any>();
+    public setAllallSiteMarkers(val: any) {
+        this.allSiteMarkers = val;
+        this._allallSiteMarkers.next(val);
     }
     public allSiteMarker(): Observable<any> {
-        return this._allSiteMarkers.asObservable();
+        return this._allallSiteMarkers.asObservable();
     }
 
     /**
