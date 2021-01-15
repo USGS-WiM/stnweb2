@@ -965,7 +965,6 @@ export class MapComponent implements OnInit {
                 this.totalQueries = multiNetworkIds.length;
                 //for every network id, create a separate http request
                 for (let i = 0; i < multiNetworkIds.length; i++) {
-                    console.log('multiNetworkIds[i]', multiNetworkIds[i]);
                     let urlMultiNetwork =
                         'Event=' +
                         eventId +
