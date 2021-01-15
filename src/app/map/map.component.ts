@@ -303,7 +303,6 @@ export class MapComponent implements OnInit {
                 false
             );
         });
-        this.networks$ = this.networkNamesService.getNetworkNames();
         this.mapFilterForm
             .get('surveyedControl')
             .valueChanges.subscribe((surVal) => {
@@ -1033,78 +1032,88 @@ export class MapComponent implements OnInit {
                     bracketTrue;
                 this.getResults(urlSingNetwork);
             } else {
-                //to be populated with each unique site object
-                let uniqueSites = [];
-                //to keep a running list of all site ids
-                let siteIDs = [];
-                this.totalQueries = multiNetworkIds.length;
-                //for every network id, create a separate http request
-                for (let i = 0; i < multiNetworkIds.length; i++) {
-                    let urlMultiNetwork =
-                        'Event=' +
-                        eventId +
-                        '&State=' +
-                        stateAbbrevs +
-                        '&SensorType=' +
-                        sensorIds +
-                        '&NetworkName=' +
-                        multiNetworkIds[i] +
-                        '&OPDefined=' +
-                        opDefinedTrue +
-                        '&HWMOnly=' +
-                        HWMTrue +
-                        '&HWMSurveyed=' +
-                        surveyed +
-                        '&SensorOnly=' +
-                        sensorTrue +
-                        '&RDGOnly=' +
-                        RDGTrue +
-                        '&HousingTypeOne=' +
-                        bracketTrue;
-                    this.siteService
-                        .getFilteredSites(urlMultiNetwork)
-                        .subscribe((res) => {
-                            //filter out sites that have already been plotted
-                            for (let i = 0; i < res.length; i++) {
-                                //get current site id
-                                let tempSiteID = res[i].site_id;
-                                //if the current site id isn't in our list of all sites,
-                                //add that site object to uniqueSites
-                                if (!siteIDs.includes(tempSiteID)) {
-                                    siteIDs.push(tempSiteID);
-                                    uniqueSites.push(res[i]);
-                                }
-                            }
-                            if (uniqueSites.length > 0) {
-                                // updating the filter-results table datasource with the new results
-                                this.filterResultsComponent.refreshDataSource();
-                                if (this.resultsReturned === false) {
-                                    //Clear current markers when a new filter is submitted
-                                    if (
-                                        this.map.hasLayer(
-                                            this.siteService.siteMarkers
-                                        )
-                                    ) {
-                                        this.siteService.siteMarkers.removeFrom(
-                                            this.map
-                                        );
-                                        this.siteService.siteMarkers = L.featureGroup(
-                                            []
-                                        );
+                //User could potentially crash the app by choosing too many networks, thereby returning too many results
+                //if > 5 networks are selected, prevent query from running and show warning
+                if (multiNetworkIds.length > 5) {
+                    this.filtersSnackBar(
+                        'Please limit your selection to 5 networks.',
+                        'OK',
+                        4500
+                    );
+                } else {
+                    //to be populated with each unique site object
+                    let uniqueSites = [];
+                    //to keep a running list of all site ids
+                    let siteIDs = [];
+                    this.totalQueries = multiNetworkIds.length;
+                    //for every network id, create a separate http request
+                    for (let i = 0; i < multiNetworkIds.length; i++) {
+                        let urlMultiNetwork =
+                            'Event=' +
+                            eventId +
+                            '&State=' +
+                            stateAbbrevs +
+                            '&SensorType=' +
+                            sensorIds +
+                            '&NetworkName=' +
+                            multiNetworkIds[i] +
+                            '&OPDefined=' +
+                            opDefinedTrue +
+                            '&HWMOnly=' +
+                            HWMTrue +
+                            '&HWMSurveyed=' +
+                            surveyed +
+                            '&SensorOnly=' +
+                            sensorTrue +
+                            '&RDGOnly=' +
+                            RDGTrue +
+                            '&HousingTypeOne=' +
+                            bracketTrue;
+                        this.siteService
+                            .getFilteredSites(urlMultiNetwork)
+                            .subscribe((res) => {
+                                //filter out sites that have already been plotted
+                                for (let i = 0; i < res.length; i++) {
+                                    //get current site id
+                                    let tempSiteID = res[i].site_id;
+                                    //if the current site id isn't in our list of all sites,
+                                    //add that site object to uniqueSites
+                                    if (!siteIDs.includes(tempSiteID)) {
+                                        siteIDs.push(tempSiteID);
+                                        uniqueSites.push(res[i]);
                                     }
                                 }
-                                //close the filter panel
-                                this.filtersPanelState = false;
-                                this.resultsReturned = true;
-                            }
-                            this.currentQuery += 1;
-                            this.mapResults(
-                                uniqueSites,
-                                this.eventIcon,
-                                this.siteService.siteMarkers,
-                                true
-                            );
-                        });
+                                if (uniqueSites.length > 0) {
+                                    // updating the filter-results table datasource with the new results
+                                    this.filterResultsComponent.refreshDataSource();
+                                    if (this.resultsReturned === false) {
+                                        //Clear current markers when a new filter is submitted
+                                        if (
+                                            this.map.hasLayer(
+                                                this.siteService.siteMarkers
+                                            )
+                                        ) {
+                                            this.siteService.siteMarkers.removeFrom(
+                                                this.map
+                                            );
+                                            this.siteService.siteMarkers = L.featureGroup(
+                                                []
+                                            );
+                                        }
+                                    }
+                                    //close the filter panel
+                                    this.filtersPanelState = false;
+                                    this.resultsReturned = true;
+                                }
+                                this.currentQuery += 1;
+                                this.mapResults(
+                                    uniqueSites,
+                                    this.eventIcon,
+                                    this.siteService.siteMarkers,
+                                    true
+                                );
+                            });
+                    }
                 }
             }
         }

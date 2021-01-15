@@ -43,7 +43,7 @@ describe('NetworkNameService', () => {
     });
 
     // deprecated for now due to use of a different approach for full list retrieval(see constructor)
-    it('#getNetworkNames() should retrieve a network names list from the data API', () => {
+    /* it('#getNetworkNames() should retrieve a network names list from the data API', () => {
         service.getNetworkNames().subscribe((results) => {
             expect(results).not.toBe(null);
             expect(JSON.stringify(results)).toEqual(
@@ -55,6 +55,7 @@ describe('NetworkNameService', () => {
         );
         req.flush(mockNetworkNamesList);
     });
+    */
 
     it('#getNetworkName() should retrieve a network name record from the data API', () => {
         service.getNetworkName(5).subscribe((results) => {
