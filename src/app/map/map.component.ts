@@ -306,7 +306,7 @@ export class MapComponent implements OnInit {
         this.mapFilterForm
             .get('surveyedControl')
             .valueChanges.subscribe((surVal) => {
-                // when 'clear filters' button is clicked, surVal is null, which would cause surVal[x] to trigger a console error
+                //when 'clear filters' button is clicked, surVal is null, which would cause surVal[x] to trigger a console error
                 if (surVal !== null) {
                     //if the Surveyed button was selected, and user pressed the Not Surveyed button,
                     //turn off the Surveyed button and set url survey param to false
