@@ -306,19 +306,22 @@ export class MapComponent implements OnInit {
         this.mapFilterForm
             .get('surveyedControl')
             .valueChanges.subscribe((surVal) => {
-                //if the Surveyed button was selected, and user pressed the Not Surveyed button,
-                //turn off the Surveyed button and set url survey param to false
-                if (surVal[0] === 'true' && surVal[1] === 'false') {
-                    this.mapFilterForm
-                        .get('surveyedControl')
-                        .setValue(['false']);
-                }
-                //if the  Not Surveyed button was selected, and user pressed the Surveyed button,
-                //turn off the Not Surveyed button and set url survey param to true
-                if (surVal[0] === 'false' && surVal[1] === 'true') {
-                    this.mapFilterForm
-                        .get('surveyedControl')
-                        .setValue(['true']);
+                //when 'clear filters' button is clicked, surVal is null, which would cause surVal[x] to trigger a console error
+                if (surVal !== null) {
+                    //if the Surveyed button was selected, and user pressed the Not Surveyed button,
+                    //turn off the Surveyed button and set url survey param to false
+                    if (surVal[0] === 'true' && surVal[1] === 'false') {
+                        this.mapFilterForm
+                            .get('surveyedControl')
+                            .setValue(['false']);
+                    }
+                    //if the  Not Surveyed button was selected, and user pressed the Surveyed button,
+                    //turn off the Not Surveyed button and set url survey param to true
+                    if (surVal[0] === 'false' && surVal[1] === 'true') {
+                        this.mapFilterForm
+                            .get('surveyedControl')
+                            .setValue(['true']);
+                    }
                 }
             });
     }
@@ -966,6 +969,11 @@ export class MapComponent implements OnInit {
 
         //if multiple networks are selected, we need to keep the network ids in an array
         let multiNetworkIds = this.mapFilterForm.get('networkControl').value;
+
+        //prevents multiNetworkIds.length from erroring out
+        if (multiNetworkIds == null) {
+            multiNetworkIds = [];
+        }
 
         //collect and format selected Filter Form values
         let eventId = filterParams.eventsControl
