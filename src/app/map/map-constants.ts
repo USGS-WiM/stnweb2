@@ -49,7 +49,7 @@ export class MAP_CONSTANTS {
                     style: function () {
                         return { color: 'red', weight: 2 };
                     },
-                    minZoom: 9,
+                    // minZoom: 9,
                 }),
                 watchesWarnings: esri.featureLayer({
                     url:
@@ -57,12 +57,12 @@ export class MAP_CONSTANTS {
                     style: function () {
                         return { color: 'orange', weight: 2 };
                     },
-                    minZoom: 9,
+                    //  minZoom: 9,
                 }),
                 AHPSGages: esri.featureLayer({
                     url:
                         'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer/0',
-                    minZoom: 9,
+                    // minZoom: 9,
                     onEachFeature: function (feature, layer) {
                         if (feature.properties.status == 'major') {
                             layer.setIcon(

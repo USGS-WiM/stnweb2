@@ -177,6 +177,69 @@ export class MapComponent implements OnInit {
         iconSize: 32,
     });
 
+    HUC = esri.dynamicMapLayer({
+        url: 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
+        opacity: 0.7,
+    });
+    warnings = esri.featureLayer({
+        url:
+            'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/0',
+        style: function () {
+            return { color: 'red', weight: 2 };
+        },
+        minZoom: 9,
+    });
+    watchesWarnings = esri.featureLayer({
+        url:
+            'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/1',
+        style: function () {
+            return { color: 'orange', weight: 2 };
+        },
+        minZoom: 9,
+    });
+    AHPSGages = esri.featureLayer({
+        url:
+            'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer/0',
+        minZoom: 9,
+        onEachFeature: function (feature, layer) {
+            if (feature.properties.status == 'major') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon majorFlood' }));
+            } else if (feature.properties.status == 'moderate') {
+                layer.setIcon(
+                    L.divIcon({
+                        className: 'gageIcon moderateFlood',
+                    })
+                );
+            } else if (feature.properties.status == 'minor') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon minorFlood' }));
+            } else if (feature.properties.status == 'action') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon nearFlood' }));
+            } else if (feature.properties.status == 'no_flooding') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon noFlood' }));
+            } else if (feature.properties.status == 'not_defined') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon floodND' }));
+            } else if (feature.properties.status == 'low_threshold') {
+                layer.setIcon(
+                    L.divIcon({
+                        className: 'gageIcon belowThreshold',
+                    })
+                );
+            } else if (feature.properties.status == 'obs_not_current') {
+                layer.setIcon(
+                    L.divIcon({
+                        className: 'gageIcon obsNotCurrent',
+                    })
+                );
+            } else if (feature.properties.status == 'out_of_service') {
+                layer.setIcon(
+                    L.divIcon({
+                        className: 'gageIcon outOfService',
+                    })
+                );
+            }
+        },
+    });
+
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
     //      2) setup a better way to store the state of the data - NgRx.This ought to replace storing it in an object local to this component,
     //       but this local store ok for the short term. The data table should be independent of that data store solution.
@@ -598,14 +661,12 @@ export class MapComponent implements OnInit {
     createLayerControl() {
         this.supplementaryLayers = {
             Sites: this.siteService.siteMarkers,
-            Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
+            Watersheds: this.HUC,
             'All STN Sites': this.siteService.allSiteMarkers,
-            'Current Warnings*':
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings,
-            'Watches/Warnings*':
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings,
-            "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>":
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages,
+            'Current Warnings*': this.warnings,
+            'Watches/Warnings*': this.watchesWarnings,
+            "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
+                .AHPSGages,
         };
 
         this.layerToggles = L.control.layers(
@@ -962,6 +1023,7 @@ export class MapComponent implements OnInit {
                 this.createLayerControl();
                 this.createSearchControl();
                 this.createDrawControls();
+                this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
                 /*
                 console.log(
                     'this.supplementaryLayers',
@@ -969,14 +1031,17 @@ export class MapComponent implements OnInit {
                 );
                 */
 
+                /*
                 if (this.watershedsVisible) {
                     MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC.addTo(
                         this.map
                     );
                 }
+                
                 if (this.allSitesVisible) {
                     this.siteService.allSiteMarkers.addTo(this.map);
                 }
+                
                 if (this.currWarningsVisible) {
                     MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings.addTo(
                         this.map
@@ -992,6 +1057,7 @@ export class MapComponent implements OnInit {
                         this.map
                     );
                 }
+                */
 
                 if (zoomToLayer == true) {
                     this.eventFocus();
@@ -1169,26 +1235,6 @@ export class MapComponent implements OnInit {
                                         this.siteService.siteMarkers = L.featureGroup(
                                             []
                                         );
-                                        // if (this.watershedsVisible === true) {
-
-                                        MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC.removeFrom(
-                                            this.map
-                                        );
-                                        this.watershedsVisible = false;
-                                        this.siteService.allSiteMarkers.removeFrom(
-                                            this.map
-                                        );
-                                        MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings.removeFrom(
-                                            this.map
-                                        );
-                                        MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings.removeFrom(
-                                            this.map
-                                        );
-                                        MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages.removeFrom(
-                                            this.map
-                                        );
-
-                                        //  }
                                     }
                                     //close the filter panel
                                     this.filtersPanelState = false;
@@ -1223,7 +1269,9 @@ export class MapComponent implements OnInit {
                 //Clear current markers when a new filter is submitted
                 this.siteService.siteMarkers.removeFrom(this.map);
                 this.siteService.siteMarkers = L.featureGroup([]);
+
                 // if (this.watershedsVisible === true) {
+                /*
                 MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC.removeFrom(
                     this.map
                 );
@@ -1237,6 +1285,7 @@ export class MapComponent implements OnInit {
                 MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages.removeFrom(
                     this.map
                 );
+                */
                 // }
 
                 //close the filter panel
