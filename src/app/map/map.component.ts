@@ -177,6 +177,7 @@ export class MapComponent implements OnInit {
         iconSize: 32,
     });
 
+    //supplementary layers
     HUC = esri.dynamicMapLayer({
         url: 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
         opacity: 0.7,
