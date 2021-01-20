@@ -1168,7 +1168,6 @@ export class MapComponent implements OnInit {
                 this.resultsReturned = true;
                 //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
                 if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
-                    console.log("sites layer wasn't on");
                     this.siteService.siteMarkers.addTo(this.map);
                 }
                 //Clear current markers when a new filter is submitted
