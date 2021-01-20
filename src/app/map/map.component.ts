@@ -155,6 +155,9 @@ export class MapComponent implements OnInit {
     currentZoom: number;
     previousZoom: number;
 
+    layerToggles;
+    searchControl;
+
     //for all map layers that aren't basemaps
     supplementaryLayers;
 
@@ -246,7 +249,7 @@ export class MapComponent implements OnInit {
                 'descend'
             );
             //set up call to get sites for specific event
-            this.displaySelectedEvent();
+            this.displayMostRecentEvent();
             // allow user to type into the event selector to view matching events
             this.getEventList();
         });
@@ -418,7 +421,7 @@ export class MapComponent implements OnInit {
         });
     }
     //TODO: LOOK HERE FIRST
-    displaySelectedEvent() {
+    displayMostRecentEvent() {
         //Get id and name of most recent event
         if (this.events.length > 0) {
             this.currentEvent = this.events[0].event_id;
@@ -448,15 +451,7 @@ export class MapComponent implements OnInit {
             });
     }
 
-    createMap() {
-        // instantiate leaflet map, with initial center, zoom level, and basemap
-        this.map = new L.Map('map', {
-            center: MAP_CONSTANTS.defaultCenter,
-            zoom: MAP_CONSTANTS.defaultZoom,
-            layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
-            renderer: L.canvas(),
-        });
-
+    createLayerControl() {
         this.supplementaryLayers = {
             Sites: this.siteService.siteMarkers,
             Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
@@ -469,11 +464,44 @@ export class MapComponent implements OnInit {
                 MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages,
         };
 
-        L.control
-            .layers(MAP_CONSTANTS.baseMaps, this.supplementaryLayers, {
+        this.layerToggles = L.control.layers(
+            MAP_CONSTANTS.baseMaps,
+            this.supplementaryLayers,
+            {
                 position: 'topleft',
-            })
-            .addTo(this.map);
+            }
+        );
+        this.layerToggles.addTo(this.map);
+    }
+
+    createSearchControl() {
+        this.searchControl = new esri_geo.geosearch().addTo(this.map);
+
+        //This layer will contain the location markers
+        const results = new L.LayerGroup().addTo(this.map);
+
+        //Clear the previous search marker and add a marker at the new location
+        /* istanbul ignore next */
+        this.searchControl.on('results', function (data) {
+            results.clearLayers();
+            for (let i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+            }
+        });
+    }
+
+    createMap() {
+        // instantiate leaflet map, with initial center, zoom level, and basemap
+        this.map = new L.Map('map', {
+            center: MAP_CONSTANTS.defaultCenter,
+            zoom: MAP_CONSTANTS.defaultZoom,
+            layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
+            renderer: L.canvas(),
+        });
+
+        this.createLayerControl();
+
+        //create lat/lng/zoom icon
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
 
         // begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
@@ -519,19 +547,7 @@ export class MapComponent implements OnInit {
         });
         // end latLngScale utility logic/////////
 
-        const searchControl = new esri_geo.geosearch().addTo(this.map);
-
-        //This layer will contain the location markers
-        const results = new L.LayerGroup().addTo(this.map);
-
-        //Clear the previous search marker and add a marker at the new location
-        /* istanbul ignore next */
-        searchControl.on('results', function (data) {
-            results.clearLayers();
-            for (let i = data.results.length - 1; i >= 0; i--) {
-                results.addLayer(L.marker(data.results[i].latlng));
-            }
-        });
+        this.createSearchControl();
 
         // When layer is checked, add layer icon to legend
         /* istanbul ignore next */
@@ -844,7 +860,7 @@ export class MapComponent implements OnInit {
         return null;
     }
 
-    //eventSites = the full site object to be mapped
+    //sites = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
@@ -937,6 +953,14 @@ export class MapComponent implements OnInit {
             if (zoomToLayer == true) {
                 //if there are multiple queries, wait until the last one to zoom to the layer
                 if (this.currentQuery === this.totalQueries) {
+                    //refresh layer control to connect it with new sites
+                    this.map.removeControl(this.layerToggles);
+                    //draw controls need to be removed and re-added after the layer control so they appear in the correct position
+                    this.map.removeControl(this.drawControl);
+                    this.map.removeControl(this.searchControl);
+                    this.createLayerControl();
+                    this.createSearchControl();
+                    this.createDrawControls();
                     this.eventFocus();
                     this.mapPanelState = true;
                     //set the state control back to state names instead of abbreviations
