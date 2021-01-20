@@ -866,8 +866,6 @@ export class MapComponent implements OnInit {
             for (let site of sites) {
                 let lat = Number(site.latitude_dd);
                 let long = Number(site.longitude_dd);
-                console.log('site ', site);
-                console.log('site.Events', site.Events);
                 let popupContent =
                     '<h3>' +
                     '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
