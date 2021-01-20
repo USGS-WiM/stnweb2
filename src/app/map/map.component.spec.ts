@@ -334,9 +334,7 @@ describe('MapComponent', () => {
         component.mapFilterForm.get('sensorOnlyControl').setValue('1');
         component.mapFilterForm.get('HWMOnlyControl').setValue('1');
         component.mapFilterForm.get('bracketSiteOnlyControl').setValue('1');
-
         component.mapFilterForm.get('RDGOnlyControl').setValue('1');
-
         component.mapFilterForm.get('OPDefinedControl').setValue('1');
         component.mapFilterForm.get('eventsControl').setValue(291);
         component.mapFilterForm.get('sensorTypeControl').setValue('Webcam');
