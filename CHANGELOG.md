@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Fixed event filter auto-update
 -   Fixed networks filter
+-   Fixed Sites layer in layer control
 
 ## [v0.3.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.3.0) - 2020-12-08
 

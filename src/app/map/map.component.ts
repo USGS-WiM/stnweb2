@@ -451,45 +451,6 @@ export class MapComponent implements OnInit {
             });
     }
 
-    createLayerControl() {
-        this.supplementaryLayers = {
-            Sites: this.siteService.siteMarkers,
-            Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
-            'All STN Sites': this.siteService.allSiteMarkers,
-            'Current Warnings*':
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings,
-            'Watches/Warnings*':
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings,
-            "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>":
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages,
-        };
-
-        this.layerToggles = L.control.layers(
-            MAP_CONSTANTS.baseMaps,
-            this.supplementaryLayers,
-            {
-                position: 'topleft',
-            }
-        );
-        this.layerToggles.addTo(this.map);
-    }
-
-    createSearchControl() {
-        this.searchControl = new esri_geo.geosearch().addTo(this.map);
-
-        //This layer will contain the location markers
-        const results = new L.LayerGroup().addTo(this.map);
-
-        //Clear the previous search marker and add a marker at the new location
-        /* istanbul ignore next */
-        this.searchControl.on('results', function (data) {
-            results.clearLayers();
-            for (let i = data.results.length - 1; i >= 0; i--) {
-                results.addLayer(L.marker(data.results[i].latlng));
-            }
-        });
-    }
-
     createMap() {
         // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('map', {
@@ -634,55 +595,44 @@ export class MapComponent implements OnInit {
         this.createDrawControls();
     }
 
-    // For drawn items: generate popup content based on layer type
-    // Returns HTML string, or null if unknown object
-    getDrawnItemPopupContent(layer) {
-        if (layer instanceof L.Polygon) {
-            /* istanbul ignore next */
-            const latlngs = layer._defaultShape
-                    ? layer._defaultShape()
-                    : layer.getLatLngs(),
-                area = L.GeometryUtil.geodesicArea(latlngs);
-            return 'Area: ' + L.GeometryUtil.readableArea(area);
-            // Polyline - distance
-        } else if (layer instanceof L.Polyline) {
-            /* istanbul ignore next */
-            const latlngs = layer._defaultShape
-                ? layer._defaultShape()
-                : layer.getLatLngs();
-            let distance = 0;
-            if (latlngs.length < 2) {
-                return 'Distance: N/A';
-            } else {
-                for (let i = 0; i < latlngs.length - 1; i++) {
-                    distance += latlngs[i].distanceTo(latlngs[i + 1]);
-                }
-                distance = distance * 0.000621371;
-                return 'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi';
+    createLayerControl() {
+        this.supplementaryLayers = {
+            Sites: this.siteService.siteMarkers,
+            Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
+            'All STN Sites': this.siteService.allSiteMarkers,
+            'Current Warnings*':
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings,
+            'Watches/Warnings*':
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings,
+            "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>":
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages,
+        };
+
+        this.layerToggles = L.control.layers(
+            MAP_CONSTANTS.baseMaps,
+            this.supplementaryLayers,
+            {
+                position: 'topleft',
             }
-        } else {
-            return null;
-        }
+        );
+        this.layerToggles.addTo(this.map);
     }
 
-    // createDrawnItem(event) {
-    //     const layer = event.layer;
-    //     const content = this.getDrawnItemPopupContent(layer);
-    //     if (content !== null) {
-    //         layer.bindPopup(content);
-    //     }
-    //     this.drawnItems.addLayer(layer);
-    // }
+    createSearchControl() {
+        this.searchControl = new esri_geo.geosearch().addTo(this.map);
 
-    // editDrawnItem(event) {
-    //     const layers = event.layers;
-    //     layers.eachLayer(function (layer) {
-    //         const content = this.getDrawnItemPopupContent(layer);
-    //         if (content !== null) {
-    //             layer.setPopupContent(content);
-    //         }
-    //     });
-    // }
+        //This layer will contain the location markers
+        const results = new L.LayerGroup().addTo(this.map);
+
+        //Clear the previous search marker and add a marker at the new location
+        /* istanbul ignore next */
+        this.searchControl.on('results', function (data) {
+            results.clearLayers();
+            for (let i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+            }
+        });
+    }
 
     createDrawControls() {
         this.drawnItems = L.featureGroup().addTo(this.map);
@@ -815,6 +765,56 @@ export class MapComponent implements OnInit {
             }
         });
     }
+
+    // For drawn items: generate popup content based on layer type
+    // Returns HTML string, or null if unknown object
+    getDrawnItemPopupContent(layer) {
+        if (layer instanceof L.Polygon) {
+            /* istanbul ignore next */
+            const latlngs = layer._defaultShape
+                    ? layer._defaultShape()
+                    : layer.getLatLngs(),
+                area = L.GeometryUtil.geodesicArea(latlngs);
+            return 'Area: ' + L.GeometryUtil.readableArea(area);
+            // Polyline - distance
+        } else if (layer instanceof L.Polyline) {
+            /* istanbul ignore next */
+            const latlngs = layer._defaultShape
+                ? layer._defaultShape()
+                : layer.getLatLngs();
+            let distance = 0;
+            if (latlngs.length < 2) {
+                return 'Distance: N/A';
+            } else {
+                for (let i = 0; i < latlngs.length - 1; i++) {
+                    distance += latlngs[i].distanceTo(latlngs[i + 1]);
+                }
+                distance = distance * 0.000621371;
+                return 'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi';
+            }
+        } else {
+            return null;
+        }
+    }
+
+    // createDrawnItem(event) {
+    //     const layer = event.layer;
+    //     const content = this.getDrawnItemPopupContent(layer);
+    //     if (content !== null) {
+    //         layer.bindPopup(content);
+    //     }
+    //     this.drawnItems.addLayer(layer);
+    // }
+
+    // editDrawnItem(event) {
+    //     const layers = event.layers;
+    //     layers.eachLayer(function (layer) {
+    //         const content = this.getDrawnItemPopupContent(layer);
+    //         if (content !== null) {
+    //             layer.setPopupContent(content);
+    //         }
+    //     });
+    // }
 
     eventFocus() {
         //If there are site markers, zoom to those
@@ -950,17 +950,20 @@ export class MapComponent implements OnInit {
         if (layerType == this.siteService.siteMarkers) {
             this.siteService.siteMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
-            if (zoomToLayer == true) {
-                //if there are multiple queries, wait until the last one to zoom to the layer
-                if (this.currentQuery === this.totalQueries) {
-                    //refresh layer control to connect it with new sites
-                    this.map.removeControl(this.layerToggles);
-                    //draw controls need to be removed and re-added after the layer control so they appear in the correct position
-                    this.map.removeControl(this.drawControl);
-                    this.map.removeControl(this.searchControl);
-                    this.createLayerControl();
-                    this.createSearchControl();
-                    this.createDrawControls();
+
+            //if there are multiple queries, wait until the last one to zoom to the layer
+            if (this.currentQuery === this.totalQueries) {
+                this.sitesVisible = true;
+                //refresh layer control to connect it with new sites
+                this.map.removeControl(this.layerToggles);
+                //draw & search controls need to be removed and re-added after the layer control so they appear in the correct position
+                this.map.removeControl(this.drawControl);
+                this.map.removeControl(this.searchControl);
+                this.createLayerControl();
+                this.createSearchControl();
+                this.createDrawControls();
+
+                if (zoomToLayer == true) {
                     this.eventFocus();
                     this.mapPanelState = true;
                     //set the state control back to state names instead of abbreviations
