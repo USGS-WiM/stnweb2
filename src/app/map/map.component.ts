@@ -962,6 +962,36 @@ export class MapComponent implements OnInit {
                 this.createLayerControl();
                 this.createSearchControl();
                 this.createDrawControls();
+                /*
+                console.log(
+                    'this.supplementaryLayers',
+                    this.supplementaryLayers
+                );
+                */
+
+                if (this.watershedsVisible) {
+                    MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC.addTo(
+                        this.map
+                    );
+                }
+                if (this.allSitesVisible) {
+                    this.siteService.allSiteMarkers.addTo(this.map);
+                }
+                if (this.currWarningsVisible) {
+                    MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings.addTo(
+                        this.map
+                    );
+                }
+                if (this.watchWarnVisible) {
+                    MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings.addTo(
+                        this.map
+                    );
+                }
+                if (this.ahpsGagesVisible) {
+                    MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages.addTo(
+                        this.map
+                    );
+                }
 
                 if (zoomToLayer == true) {
                     this.eventFocus();
@@ -1139,6 +1169,26 @@ export class MapComponent implements OnInit {
                                         this.siteService.siteMarkers = L.featureGroup(
                                             []
                                         );
+                                        // if (this.watershedsVisible === true) {
+
+                                        MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC.removeFrom(
+                                            this.map
+                                        );
+                                        this.watershedsVisible = false;
+                                        this.siteService.allSiteMarkers.removeFrom(
+                                            this.map
+                                        );
+                                        MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings.removeFrom(
+                                            this.map
+                                        );
+                                        MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings.removeFrom(
+                                            this.map
+                                        );
+                                        MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages.removeFrom(
+                                            this.map
+                                        );
+
+                                        //  }
                                     }
                                     //close the filter panel
                                     this.filtersPanelState = false;
@@ -1173,6 +1223,21 @@ export class MapComponent implements OnInit {
                 //Clear current markers when a new filter is submitted
                 this.siteService.siteMarkers.removeFrom(this.map);
                 this.siteService.siteMarkers = L.featureGroup([]);
+                // if (this.watershedsVisible === true) {
+                MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC.removeFrom(
+                    this.map
+                );
+                this.siteService.allSiteMarkers.removeFrom(this.map);
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings.removeFrom(
+                    this.map
+                );
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings.removeFrom(
+                    this.map
+                );
+                MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages.removeFrom(
+                    this.map
+                );
+                // }
 
                 //close the filter panel
                 this.filtersPanelState = false;
