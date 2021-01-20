@@ -893,10 +893,12 @@ export class MapComponent implements OnInit {
                           'No<br/>');
 
                 if (site.Events) {
-                    popupContent +=
-                        '<span class="popupLabel"><b>Event(s)</b>:</span> ' +
-                        site.Events.join(', ') +
-                        '<br/>';
+                    if (site.Events.length > 0) {
+                        popupContent +=
+                            '<span class="popupLabel"><b>Event(s)</b>:</span> ' +
+                            site.Events.join(', ') +
+                            '<br/>';
+                    }
                 }
                 /* istanbul ignore next */
                 if (isNaN(lat) || isNaN(long)) {
