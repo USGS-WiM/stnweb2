@@ -866,7 +866,8 @@ export class MapComponent implements OnInit {
             for (let site of sites) {
                 let lat = Number(site.latitude_dd);
                 let long = Number(site.longitude_dd);
-
+                console.log('site ', site);
+                console.log('site.Events', site.Events);
                 let popupContent =
                     '<h3>' +
                     '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
@@ -894,7 +895,7 @@ export class MapComponent implements OnInit {
                 if (site.Events) {
                     popupContent +=
                         '<span class="popupLabel"><b>Event(s)</b>:</span> ' +
-                        site.Events.toString() +
+                        site.Events.join(', ') +
                         '<br/>';
                 }
                 /* istanbul ignore next */
