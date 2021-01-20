@@ -1122,19 +1122,23 @@ export class MapComponent implements OnInit {
                                     // updating the filter-results table datasource with the new results
                                     this.filterResultsComponent.refreshDataSource();
                                     if (this.resultsReturned === false) {
-                                        //Clear current markers when a new filter is submitted
+                                        //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
                                         if (
                                             this.map.hasLayer(
                                                 this.siteService.siteMarkers
-                                            )
+                                            ) === false
                                         ) {
-                                            this.siteService.siteMarkers.removeFrom(
+                                            this.siteService.siteMarkers.addTo(
                                                 this.map
                                             );
-                                            this.siteService.siteMarkers = L.featureGroup(
-                                                []
-                                            );
                                         }
+                                        //Clear current markers when a new filter is submitted
+                                        this.siteService.siteMarkers.removeFrom(
+                                            this.map
+                                        );
+                                        this.siteService.siteMarkers = L.featureGroup(
+                                            []
+                                        );
                                     }
                                     //close the filter panel
                                     this.filtersPanelState = false;
@@ -1162,11 +1166,15 @@ export class MapComponent implements OnInit {
                 // updating the filter-results table datasource with the new results
                 this.filterResultsComponent.refreshDataSource();
                 this.resultsReturned = true;
-                //Clear current markers when a new filter is submitted
-                if (this.map.hasLayer(this.siteService.siteMarkers)) {
-                    this.siteService.siteMarkers.removeFrom(this.map);
-                    this.siteService.siteMarkers = L.featureGroup([]);
+                //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
+                if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
+                    console.log("sites layer wasn't on");
+                    this.siteService.siteMarkers.addTo(this.map);
                 }
+                //Clear current markers when a new filter is submitted
+                this.siteService.siteMarkers.removeFrom(this.map);
+                this.siteService.siteMarkers = L.featureGroup([]);
+
                 //close the filter panel
                 this.filtersPanelState = false;
             }
