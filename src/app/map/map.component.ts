@@ -661,8 +661,6 @@ export class MapComponent implements OnInit {
         this.createDrawControls();
     }
 
-<<<<<<< HEAD
-=======
     createLayerControl() {
         this.supplementaryLayers = {
             Sites: this.siteService.siteMarkers,
@@ -700,7 +698,6 @@ export class MapComponent implements OnInit {
         });
     }
 
->>>>>>> 25dac82dafc4b968bddbc0572e1a0f50992d5a43
     createDrawControls() {
         const drawnItems = L.featureGroup().addTo(this.map);
 
