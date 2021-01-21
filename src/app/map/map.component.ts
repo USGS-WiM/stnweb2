@@ -37,6 +37,7 @@ import { SiteService } from '@services/site.service';
 import { FiltersService } from '@services/filters.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
+import { Subscription } from 'rxjs';
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
 import { MatInputModule } from '@angular/material/input';
@@ -104,6 +105,8 @@ export class MapComponent implements OnInit {
     //Begin with the map and filters panels expanded
     mapPanelState: boolean = true;
     filtersPanelState: boolean = true;
+    resultsPanelState: boolean;
+    resultsPanelSubscription: Subscription;
 
     //when filtering by multiple networks,
     //we use these to track if there are any sites returned after the final query
@@ -1207,6 +1210,13 @@ export class MapComponent implements OnInit {
                                     //close the filter panel
                                     this.filtersPanelState = false;
                                     this.resultsReturned = true;
+                                    this.filtersService.changeResultsPanelState(
+                                        true
+                                    );
+                                    this.resultsPanelSubscription = this.filtersService.resultsPanelOpen.subscribe(
+                                        (state) =>
+                                            (this.resultsPanelState = state)
+                                    );
                                 }
                                 this.currentQuery += 1;
                                 this.mapResults(
@@ -1240,6 +1250,10 @@ export class MapComponent implements OnInit {
 
                 //close the filter panel
                 this.filtersPanelState = false;
+                this.filtersService.changeResultsPanelState(true);
+                this.resultsPanelSubscription = this.filtersService.resultsPanelOpen.subscribe(
+                    (state) => (this.resultsPanelState = state)
+                );
             }
             this.mapResults(
                 res,

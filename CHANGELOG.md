@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Removed extra navbar buttons, changed style of Map button
 -   Skips out of place sites
 -   Changed popup and table formatting
+-   Results panel opens when filter is submitted
 
 ### Fixed
 
