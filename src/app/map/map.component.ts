@@ -850,7 +850,6 @@ export class MapComponent implements OnInit {
             for (let site of sites) {
                 let lat = Number(site.latitude_dd);
                 let long = Number(site.longitude_dd);
-
                 let popupContent =
                     '<h3>' +
                     '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
@@ -876,10 +875,12 @@ export class MapComponent implements OnInit {
                           'No<br/>');
 
                 if (site.Events) {
-                    popupContent +=
-                        '<span class="popupLabel"><b>Event(s)</b>:</span> ' +
-                        site.Events.toString() +
-                        '<br/>';
+                    if (site.Events.length > 0) {
+                        popupContent +=
+                            '<span class="popupLabel"><b>Event(s)</b>:</span> ' +
+                            site.Events.join(', ') +
+                            '<br/>';
+                    }
                 }
                 /* istanbul ignore next */
                 if (isNaN(lat) || isNaN(long)) {
