@@ -268,7 +268,7 @@ describe('MapComponent', () => {
         component.updateEventFilter();
     });
 
-    it('#eventFocus sets map to event focused view', () => {
+    it('#eventFocus sets map to event focused view ', () => {
         // first set the view to somehting not default to test that the update works
         let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
         component.map.setView(notDefaultCenter, 9);
