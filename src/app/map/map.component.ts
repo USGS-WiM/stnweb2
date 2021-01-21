@@ -155,6 +155,9 @@ export class MapComponent implements OnInit {
     currentZoom: number;
     previousZoom: number;
 
+    layerToggles;
+    searchControl;
+
     //for all map layers that aren't basemaps
     supplementaryLayers;
 
@@ -172,6 +175,70 @@ export class MapComponent implements OnInit {
     siteIcon = L.divIcon({
         className: ' allSiteIcon ',
         iconSize: 32,
+    });
+
+    //supplementary layers
+    HUC = esri.dynamicMapLayer({
+        url: 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
+        opacity: 0.7,
+    });
+    warnings = esri.featureLayer({
+        url:
+            'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/0',
+        style: function () {
+            return { color: 'red', weight: 2 };
+        },
+        minZoom: 9,
+    });
+    watchesWarnings = esri.featureLayer({
+        url:
+            'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/1',
+        style: function () {
+            return { color: 'orange', weight: 2 };
+        },
+        minZoom: 9,
+    });
+    AHPSGages = esri.featureLayer({
+        url:
+            'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Observations/ahps_riv_gauges/MapServer/0',
+        minZoom: 9,
+        onEachFeature: function (feature, layer) {
+            if (feature.properties.status == 'major') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon majorFlood' }));
+            } else if (feature.properties.status == 'moderate') {
+                layer.setIcon(
+                    L.divIcon({
+                        className: 'gageIcon moderateFlood',
+                    })
+                );
+            } else if (feature.properties.status == 'minor') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon minorFlood' }));
+            } else if (feature.properties.status == 'action') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon nearFlood' }));
+            } else if (feature.properties.status == 'no_flooding') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon noFlood' }));
+            } else if (feature.properties.status == 'not_defined') {
+                layer.setIcon(L.divIcon({ className: 'gageIcon floodND' }));
+            } else if (feature.properties.status == 'low_threshold') {
+                layer.setIcon(
+                    L.divIcon({
+                        className: 'gageIcon belowThreshold',
+                    })
+                );
+            } else if (feature.properties.status == 'obs_not_current') {
+                layer.setIcon(
+                    L.divIcon({
+                        className: 'gageIcon obsNotCurrent',
+                    })
+                );
+            } else if (feature.properties.status == 'out_of_service') {
+                layer.setIcon(
+                    L.divIcon({
+                        className: 'gageIcon outOfService',
+                    })
+                );
+            }
+        },
     });
 
     // TODO:1) populate table of events using pagination. consider the difference between the map and the table.
@@ -246,7 +313,7 @@ export class MapComponent implements OnInit {
                 'descend'
             );
             //set up call to get sites for specific event
-            this.displaySelectedEvent();
+            this.displayMostRecentEvent();
             // allow user to type into the event selector to view matching events
             this.getEventList();
         });
@@ -418,7 +485,7 @@ export class MapComponent implements OnInit {
         });
     }
     //TODO: LOOK HERE FIRST
-    displaySelectedEvent() {
+    displayMostRecentEvent() {
         //Get id and name of most recent event
         if (this.events.length > 0) {
             this.currentEvent = this.events[0].event_id;
@@ -457,23 +524,9 @@ export class MapComponent implements OnInit {
             renderer: L.canvas(),
         });
 
-        this.supplementaryLayers = {
-            Sites: this.siteService.siteMarkers,
-            Watersheds: MAP_CONSTANTS.mapLayers.esriDynamicLayers.HUC,
-            'All STN Sites': this.siteService.allSiteMarkers,
-            'Current Warnings*':
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.currentWarnings,
-            'Watches/Warnings*':
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.watchesWarnings,
-            "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>":
-                MAP_CONSTANTS.mapLayers.esriFeatureLayers.AHPSGages,
-        };
+        this.createLayerControl();
 
-        L.control
-            .layers(MAP_CONSTANTS.baseMaps, this.supplementaryLayers, {
-                position: 'topleft',
-            })
-            .addTo(this.map);
+        //create lat/lng/zoom icon
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
 
         // begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
@@ -519,19 +572,7 @@ export class MapComponent implements OnInit {
         });
         // end latLngScale utility logic/////////
 
-        const searchControl = new esri_geo.geosearch().addTo(this.map);
-
-        //This layer will contain the location markers
-        const results = new L.LayerGroup().addTo(this.map);
-
-        //Clear the previous search marker and add a marker at the new location
-        /* istanbul ignore next */
-        searchControl.on('results', function (data) {
-            results.clearLayers();
-            for (let i = data.results.length - 1; i >= 0; i--) {
-                results.addLayer(L.marker(data.results[i].latlng));
-            }
-        });
+        this.createSearchControl();
 
         // When layer is checked, add layer icon to legend
         /* istanbul ignore next */
@@ -618,55 +659,42 @@ export class MapComponent implements OnInit {
         this.createDrawControls();
     }
 
-    // For drawn items: generate popup content based on layer type
-    // Returns HTML string, or null if unknown object
-    getDrawnItemPopupContent(layer) {
-        if (layer instanceof L.Polygon) {
-            /* istanbul ignore next */
-            const latlngs = layer._defaultShape
-                    ? layer._defaultShape()
-                    : layer.getLatLngs(),
-                area = L.GeometryUtil.geodesicArea(latlngs);
-            return 'Area: ' + L.GeometryUtil.readableArea(area);
-            // Polyline - distance
-        } else if (layer instanceof L.Polyline) {
-            /* istanbul ignore next */
-            const latlngs = layer._defaultShape
-                ? layer._defaultShape()
-                : layer.getLatLngs();
-            let distance = 0;
-            if (latlngs.length < 2) {
-                return 'Distance: N/A';
-            } else {
-                for (let i = 0; i < latlngs.length - 1; i++) {
-                    distance += latlngs[i].distanceTo(latlngs[i + 1]);
-                }
-                distance = distance * 0.000621371;
-                return 'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi';
+    createLayerControl() {
+        this.supplementaryLayers = {
+            Sites: this.siteService.siteMarkers,
+            Watersheds: this.HUC,
+            'All STN Sites': this.siteService.allSiteMarkers,
+            'Current Warnings*': this.warnings,
+            'Watches/Warnings*': this.watchesWarnings,
+            "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
+                .AHPSGages,
+        };
+
+        this.layerToggles = L.control.layers(
+            MAP_CONSTANTS.baseMaps,
+            this.supplementaryLayers,
+            {
+                position: 'topleft',
             }
-        } else {
-            return null;
-        }
+        );
+        this.layerToggles.addTo(this.map);
     }
 
-    // createDrawnItem(event) {
-    //     const layer = event.layer;
-    //     const content = this.getDrawnItemPopupContent(layer);
-    //     if (content !== null) {
-    //         layer.bindPopup(content);
-    //     }
-    //     this.drawnItems.addLayer(layer);
-    // }
+    createSearchControl() {
+        this.searchControl = new esri_geo.geosearch().addTo(this.map);
 
-    // editDrawnItem(event) {
-    //     const layers = event.layers;
-    //     layers.eachLayer(function (layer) {
-    //         const content = this.getDrawnItemPopupContent(layer);
-    //         if (content !== null) {
-    //             layer.setPopupContent(content);
-    //         }
-    //     });
-    // }
+        //This layer will contain the location markers
+        const results = new L.LayerGroup().addTo(this.map);
+
+        //Clear the previous search marker and add a marker at the new location
+        /* istanbul ignore next */
+        this.searchControl.on('results', function (data) {
+            results.clearLayers();
+            for (let i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+            }
+        });
+    }
 
     createDrawControls() {
         this.drawnItems = L.featureGroup().addTo(this.map);
@@ -800,6 +828,56 @@ export class MapComponent implements OnInit {
         });
     }
 
+    // For drawn items: generate popup content based on layer type
+    // Returns HTML string, or null if unknown object
+    getDrawnItemPopupContent(layer) {
+        if (layer instanceof L.Polygon) {
+            /* istanbul ignore next */
+            const latlngs = layer._defaultShape
+                    ? layer._defaultShape()
+                    : layer.getLatLngs(),
+                area = L.GeometryUtil.geodesicArea(latlngs);
+            return 'Area: ' + L.GeometryUtil.readableArea(area);
+            // Polyline - distance
+        } else if (layer instanceof L.Polyline) {
+            /* istanbul ignore next */
+            const latlngs = layer._defaultShape
+                ? layer._defaultShape()
+                : layer.getLatLngs();
+            let distance = 0;
+            if (latlngs.length < 2) {
+                return 'Distance: N/A';
+            } else {
+                for (let i = 0; i < latlngs.length - 1; i++) {
+                    distance += latlngs[i].distanceTo(latlngs[i + 1]);
+                }
+                distance = distance * 0.000621371;
+                return 'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi';
+            }
+        } else {
+            return null;
+        }
+    }
+
+    // createDrawnItem(event) {
+    //     const layer = event.layer;
+    //     const content = this.getDrawnItemPopupContent(layer);
+    //     if (content !== null) {
+    //         layer.bindPopup(content);
+    //     }
+    //     this.drawnItems.addLayer(layer);
+    // }
+
+    // editDrawnItem(event) {
+    //     const layers = event.layers;
+    //     layers.eachLayer(function (layer) {
+    //         const content = this.getDrawnItemPopupContent(layer);
+    //         if (content !== null) {
+    //             layer.setPopupContent(content);
+    //         }
+    //     });
+    // }
+
     eventFocus() {
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
@@ -844,7 +922,7 @@ export class MapComponent implements OnInit {
         return null;
     }
 
-    //eventSites = the full site object to be mapped
+    //sites = the full site object to be mapped
     //myIcon = what the marker will look like
     //layerType = empty leaflet layer type
     //zoomToLayer = if true, will zoom to layer
@@ -935,9 +1013,21 @@ export class MapComponent implements OnInit {
         if (layerType == this.siteService.siteMarkers) {
             this.siteService.siteMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
-            if (zoomToLayer == true) {
-                //if there are multiple queries, wait until the last one to zoom to the layer
-                if (this.currentQuery === this.totalQueries) {
+
+            //if there are multiple queries, wait until the last one to zoom to the layer
+            if (this.currentQuery === this.totalQueries) {
+                this.sitesVisible = true;
+                //refresh layer control to connect it with new sites
+                this.map.removeControl(this.layerToggles);
+                //draw & search controls need to be removed and re-added after the layer control so they appear in the correct position
+                this.map.removeControl(this.drawControl);
+                this.map.removeControl(this.searchControl);
+                this.createLayerControl();
+                this.createSearchControl();
+                this.createDrawControls();
+                this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
+
+                if (zoomToLayer == true) {
                     this.eventFocus();
                     this.mapPanelState = true;
                     //set the state control back to state names instead of abbreviations
@@ -1096,19 +1186,23 @@ export class MapComponent implements OnInit {
                                     // updating the filter-results table datasource with the new results
                                     this.filterResultsComponent.refreshDataSource();
                                     if (this.resultsReturned === false) {
-                                        //Clear current markers when a new filter is submitted
+                                        //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
                                         if (
                                             this.map.hasLayer(
                                                 this.siteService.siteMarkers
-                                            )
+                                            ) === false
                                         ) {
-                                            this.siteService.siteMarkers.removeFrom(
+                                            this.siteService.siteMarkers.addTo(
                                                 this.map
                                             );
-                                            this.siteService.siteMarkers = L.featureGroup(
-                                                []
-                                            );
                                         }
+                                        //Clear current markers when a new filter is submitted
+                                        this.siteService.siteMarkers.removeFrom(
+                                            this.map
+                                        );
+                                        this.siteService.siteMarkers = L.featureGroup(
+                                            []
+                                        );
                                     }
                                     //close the filter panel
                                     this.filtersPanelState = false;
@@ -1136,11 +1230,14 @@ export class MapComponent implements OnInit {
                 // updating the filter-results table datasource with the new results
                 this.filterResultsComponent.refreshDataSource();
                 this.resultsReturned = true;
-                //Clear current markers when a new filter is submitted
-                if (this.map.hasLayer(this.siteService.siteMarkers)) {
-                    this.siteService.siteMarkers.removeFrom(this.map);
-                    this.siteService.siteMarkers = L.featureGroup([]);
+                //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
+                if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
+                    this.siteService.siteMarkers.addTo(this.map);
                 }
+                //Clear current markers when a new filter is submitted
+                this.siteService.siteMarkers.removeFrom(this.map);
+                this.siteService.siteMarkers = L.featureGroup([]);
+
                 //close the filter panel
                 this.filtersPanelState = false;
             }
