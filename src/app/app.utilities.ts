@@ -76,8 +76,7 @@ export class APP_UTILITIES {
                 const filterValue = state_name[0].state_name.toLowerCase();
                 return states.filter(
                     (state) =>
-                        state.state_name.toLowerCase().indexOf(filterValue) !=
-                        -1
+                        state.state_name.toLowerCase().indexOf(filterValue) != 0
                 );
             }
         }

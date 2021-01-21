@@ -301,13 +301,13 @@ describe('MapComponent', () => {
         component.mapFilterForm.get('stateControl').setValue('NC');
         component.mapFilterForm.get('networkControl').setValue([1, 2, 3]);
         component.mapFilterForm.get('sensorOnlyControl').setValue('1');
+        component.mapFilterForm.get('HWMOnlyControl').setValue('1');
+        component.mapFilterForm.get('bracketSiteOnlyControl').setValue('1');
+        component.mapFilterForm.get('RDGOnlyControl').setValue('1');
+        component.mapFilterForm.get('OPDefinedControl').setValue('1');
         component.mapFilterForm.get('eventsControl').setValue(291);
-        component.mapFilterForm.get('sensorTypeControl').setValue('');
+        component.mapFilterForm.get('sensorTypeControl').setValue('Webcam');
         component.mapFilterForm.value.surveyedControl = 'Surveyed';
-        component.mapFilterForm.value.HWMOnlyControl = '1';
-        component.mapFilterForm.value.bracketSiteOnlyControl = '1';
-        component.mapFilterForm.value.RDGOnlyControl = '1';
-        component.mapFilterForm.value.OPDefinedControl = '1';
         component.submitMapFilter();
         expect(component.mapFilterForm).toBeTruthy;
         expect(component.mapFilterForm.value.eventsControl).toEqual(291);
