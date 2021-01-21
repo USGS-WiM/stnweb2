@@ -524,6 +524,7 @@ export class MapComponent implements OnInit {
             renderer: L.canvas(),
         });
 
+        this.createDrawControls();
         this.createLayerControl();
 
         //create lat/lng/zoom icon
@@ -656,7 +657,6 @@ export class MapComponent implements OnInit {
                 }
             }
         });
-        this.createDrawControls();
     }
 
     createLayerControl() {
@@ -701,7 +701,7 @@ export class MapComponent implements OnInit {
 
         //User can select from drawing a line or polygon; other options are disabled
         //Measurements are in miles
-        const drawControl = new L.Control.Draw({
+        this.drawControl = new L.Control.Draw({
             edit: {
                 featureGroup: drawnItems,
                 poly: {
@@ -726,7 +726,7 @@ export class MapComponent implements OnInit {
         });
 
         //Add the buttons to the map
-        this.map.addControl(drawControl);
+        this.map.addControl(this.drawControl);
 
         // Truncate value based on number of decimals
         const _round = function (num, len) {
@@ -1035,7 +1035,7 @@ export class MapComponent implements OnInit {
                     RDGTrue +
                     '&HousingTypeOne=' +
                     bracketTrue;
-                this.getResults(urlParamString);
+                this.getFilterResults(urlParamString);
             } else {
                 //User could potentially crash the app by choosing too many networks, thereby returning too many results
                 //if > 5 networks are selected, prevent query from running and show warning
@@ -1089,30 +1089,7 @@ export class MapComponent implements OnInit {
                                     }
                                 }
                                 if (uniqueSites.length > 0) {
-                                    // updating the filter-results table datasource with the new results
-                                    this.filterResultsComponent.refreshDataSource();
-                                    if (this.resultsReturned === false) {
-                                        //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
-                                        if (
-                                            this.map.hasLayer(
-                                                this.siteService.siteMarkers
-                                            ) === false
-                                        ) {
-                                            this.siteService.siteMarkers.addTo(
-                                                this.map
-                                            );
-                                        }
-                                        //Clear current markers when a new filter is submitted
-                                        this.siteService.siteMarkers.removeFrom(
-                                            this.map
-                                        );
-                                        this.siteService.siteMarkers = L.featureGroup(
-                                            []
-                                        );
-                                    }
-                                    //close the filter panel
-                                    this.filtersPanelState = false;
-                                    this.resultsReturned = true;
+                                    this.resetPreviousOutput();
                                 }
                                 this.currentQuery += 1;
                                 this.mapResults(
@@ -1128,24 +1105,12 @@ export class MapComponent implements OnInit {
         }
     }
 
-    public getResults(urlString: string) {
+    public getFilterResults(urlString: string) {
         //Find sites that match the user's query
         this.siteService.getFilteredSites(urlString).subscribe((res) => {
             //only call mapResults if the query returns data
             if (res.length > 0) {
-                // updating the filter-results table datasource with the new results
-                this.filterResultsComponent.refreshDataSource();
-                this.resultsReturned = true;
-                //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
-                if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
-                    this.siteService.siteMarkers.addTo(this.map);
-                }
-                //Clear current markers when a new filter is submitted
-                this.siteService.siteMarkers.removeFrom(this.map);
-                this.siteService.siteMarkers = L.featureGroup([]);
-
-                //close the filter panel
-                this.filtersPanelState = false;
+                this.resetPreviousOutput();
             }
             this.mapResults(
                 res,
@@ -1154,5 +1119,22 @@ export class MapComponent implements OnInit {
                 true
             );
         });
+    }
+
+    public resetPreviousOutput() {
+        // updating the filter-results table datasource with the new results
+        this.filterResultsComponent.refreshDataSource();
+        if (this.resultsReturned === false) {
+            //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
+            if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
+                this.siteService.siteMarkers.addTo(this.map);
+            }
+            //Clear current markers when a new filter is submitted
+            this.siteService.siteMarkers.removeFrom(this.map);
+            this.siteService.siteMarkers = L.featureGroup([]);
+        }
+        //close the filter panel
+        this.filtersPanelState = false;
+        this.resultsReturned = true;
     }
 }
