@@ -78,7 +78,6 @@ export class SiteService {
                 iconSize: L.point(32, 32),
             });
         },
-        // spiderfyDistanceMultiplier: 2,
     });
 
     public siteMarkers = new L.featureGroup([]);

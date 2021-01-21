@@ -593,9 +593,11 @@ export class MapComponent implements OnInit {
             this.currentZoom = this.map.getZoom();
             //Disable clustering for the All STN Sites layer when zoom >= 12 so we can see individual sites
             if (this.currentZoom >= 12) {
+                /* istanbul ignore next */
                 this.siteService.allSiteMarkers.disableClustering();
             }
             if (this.currentZoom < 12) {
+                /* istanbul ignore next */
                 this.siteService.allSiteMarkers.enableClustering();
             }
             //If the zoom went from 9 to 8 and the gages/watches/warnings are on,
@@ -657,8 +659,9 @@ export class MapComponent implements OnInit {
 
         // Generate popup content based on layer type
         // - Returns HTML string, or null if unknown object
-        const getPopupContent = function (layer) {
+        const getDrawnItemPopupContent = function (layer) {
             if (layer instanceof L.Polygon) {
+                /* istanbul ignore next */
                 const latlngs = layer._defaultShape
                         ? layer._defaultShape()
                         : layer.getLatLngs(),
@@ -666,6 +669,7 @@ export class MapComponent implements OnInit {
                 return 'Area: ' + L.GeometryUtil.readableArea(area);
                 // Polyline - distance
             } else if (layer instanceof L.Polyline) {
+                /* istanbul ignore next */
                 const latlngs = layer._defaultShape
                     ? layer._defaultShape()
                     : layer.getLatLngs();
@@ -686,7 +690,7 @@ export class MapComponent implements OnInit {
         // Object created - bind popup to layer, add to feature group
         this.map.on(L.Draw.Event.CREATED, function (event) {
             const layer = event.layer;
-            const content = getPopupContent(layer);
+            const content = getDrawnItemPopupContent(layer);
             if (content !== null) {
                 layer.bindPopup(content);
             }
@@ -698,7 +702,7 @@ export class MapComponent implements OnInit {
             const layers = event.layers;
             // const content = null;
             layers.eachLayer(function (layer) {
-                const content = getPopupContent(layer);
+                const content = getDrawnItemPopupContent(layer);
                 if (content !== null) {
                     layer.setPopupContent(content);
                 }
