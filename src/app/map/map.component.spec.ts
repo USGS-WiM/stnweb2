@@ -268,37 +268,6 @@ describe('MapComponent', () => {
         component.updateEventFilter();
     });
 
-    it('#getDrawnItemPopupContent returns the appropriate content response', () => {
-        // component.ngOnInit();
-        // component.createMap();
-        let latlngs = [
-            [37, -109.05],
-            [41, -109.03],
-            [41, -102.05],
-            [37, -102.04],
-        ];
-        var polygon = L.polygon(latlngs, { color: 'red' }).addTo(component.map);
-        let polygonResponse = component.getDrawnItemPopupContent(polygon);
-        expect(polygonResponse).toEqual(jasmine.any(String));
-        expect(polygonResponse).toContain('Area: ');
-
-        var line = L.polyline(latlngs, { color: 'blue' }).addTo(component.map);
-        let lineResponse = component.getDrawnItemPopupContent(line);
-        expect(lineResponse).toEqual(jasmine.any(String));
-        expect(lineResponse).toContain('Distance: ');
-
-        var notLine = L.polyline([latlngs[0]], { color: 'blue' }).addTo(
-            component.map
-        );
-        let notLineResponse = component.getDrawnItemPopupContent(notLine);
-        expect(notLineResponse).toEqual(jasmine.any(String));
-        expect(notLineResponse).toContain('Distance: N/A');
-
-        let notLayer = L.popup();
-        let notLayerResponse = component.getDrawnItemPopupContent(notLayer);
-        expect(notLayerResponse).toBeNull();
-    });
-
     it('#eventFocus sets map to event focused view', () => {
         // first set the view to somehting not default to test that the update works
         let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
