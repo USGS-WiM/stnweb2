@@ -38,6 +38,7 @@ import { FiltersService } from '@services/filters.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
 import { Subscription } from 'rxjs';
+
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
 import { MatInputModule } from '@angular/material/input';
