@@ -20,6 +20,7 @@ import { AuthenticationService } from '@app/services/authentication.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CurrentUserService } from '@app/services/current-user.service';
 import { APP_SETTINGS } from '@app/app.settings';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
@@ -38,6 +39,7 @@ describe('LoginComponent', () => {
                 HttpClientTestingModule,
                 OverlayModule,
                 MatDialogModule,
+                NoopAnimationsModule,
             ],
             declarations: [LoginComponent],
             providers: [
