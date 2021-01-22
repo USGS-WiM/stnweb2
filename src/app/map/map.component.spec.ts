@@ -329,5 +329,38 @@ describe('MapComponent', () => {
         expect(formValues.OpDefinedControl).toBeFalsy();
     });
 
+    it('#getFilterResults should get filtered results', () => {
+        let urlParamString =
+            'Event=' +
+            '&State=' +
+            '&SensorType=' +
+            '&NetworkName=SWATH' +
+            '&OPDefined=' +
+            '&HWMOnly=' +
+            '&HWMSurveyed=' +
+            '&SensorOnly=' +
+            '&RDGOnly=' +
+            '&HousingTypeOne=';
+        spyOn(component.siteService, 'getFilteredSites');
+        component.getFilterResults(
+            'Event=' +
+                '&State=' +
+                '&SensorType=' +
+                '&NetworkName=SWATH' +
+                '&OPDefined=' +
+                '&HWMOnly=' +
+                '&HWMSurveyed=' +
+                '&SensorOnly=' +
+                '&RDGOnly=' +
+                '&HousingTypeOne='
+        );
+        expect(component.siteService.getFilteredSites).toHaveBeenCalled();
+    });
+
+    it('#resetPreviousOutput should clear previous output', () => {
+        component.submitMapFilter();
+        // component.resetPreviousOutput();
+    });
+
     xit('#displayState', () => {});
 });
