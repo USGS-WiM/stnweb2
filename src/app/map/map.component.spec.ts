@@ -193,6 +193,28 @@ describe('MapComponent', () => {
         expect(component.eventStates).toEqual(response);
     });
 
+    it('should set survey control to false when the surveyed button is on and the no surveyed button is clicked', () => {
+        component.getData();
+        component.mapFilterForm
+            .get('surveyedControl')
+            .setValue(['true', 'false']);
+        fixture.detectChanges();
+        expect(component.mapFilterForm.get('surveyedControl').value).toEqual([
+            'false',
+        ]);
+    });
+
+    it('should set survey control to true when the no surveyed button is on and the surveyed button is clicked', () => {
+        component.getData();
+        component.mapFilterForm
+            .get('surveyedControl')
+            .setValue(['false', 'true']);
+        fixture.detectChanges();
+        expect(component.mapFilterForm.get('surveyedControl').value).toEqual([
+            'true',
+        ]);
+    });
+
     it('should call filterEvents and return list of filtered events', () => {
         const response: Event[] = [];
         spyOn(component.eventService, 'filterEvents').and.returnValue(
@@ -211,6 +233,54 @@ describe('MapComponent', () => {
         component.getData();
         fixture.detectChanges();
         expect(component.events).toEqual(response);
+    });
+
+    it('should call getEventSites and return results', () => {
+        //pretend that Allegheny Dam release is most recent event
+        component.events = [
+            {
+                event_id: 289,
+                event_name: 'Allegheny Kinzua Dam release Spring 2019',
+                event_start_date: '2019-05-10T05:00:00',
+                event_end_date: '2019-06-10T05:00:00',
+                event_description: 'Controlled release study',
+                event_type_id: 1,
+                event_status_id: 1,
+                event_coordinator: 35,
+                instruments: [],
+                hwms: [],
+            },
+        ];
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getEventSites').and.returnValue(
+            of(response)
+        );
+        component.displayMostRecentEvent();
+        fixture.detectChanges();
+        expect(component.resultsReturned).toEqual(true);
+        expect(component.sitesDataArray).toEqual(response);
+    });
+
+    it('clustering should be disabled in all sites layer when zoomed to 12 or higher', () => {
+        component.map.zoom = 12;
+        fixture.detectChanges();
+        expect(component.siteService.allSiteMarkers.disableClustering())
+            .toBeTrue;
+    });
+
+    it('AHPS Gage, current warnings, and watches/warnings layers should be removed when map zooms out to 8', () => {
+        component.ahpsGagesVisible = true;
+        component.currWarningsVisible = true;
+        component.watchWarnVisible = true;
+        component.map.addLayer(component.AHPSGages);
+        component.map.addLayer(component.warnings);
+        component.map.addLayer(component.watchesWarnings);
+        component.previousZoom = 9;
+        component.currentZoom = 8;
+        fixture.detectChanges();
+        expect(component.map.hasLayer(component.AHPSGages)).toBeFalse;
+        expect(component.map.hasLayer(component.warnings)).toBeFalse;
+        expect(component.map.hasLayer(component.watchesWarnings)).toBeFalse;
     });
 
     it('should call getFilteredSites and return list of queried sites', () => {
@@ -330,7 +400,7 @@ describe('MapComponent', () => {
     });
 
     it('#getFilterResults should get filtered results', () => {
-        let urlParamString =
+        /* let urlParamString =
             'Event=' +
             '&State=' +
             '&SensorType=' +
@@ -341,7 +411,7 @@ describe('MapComponent', () => {
             '&SensorOnly=' +
             '&RDGOnly=' +
             '&HousingTypeOne=';
-        spyOn(component.siteService, 'getFilteredSites');
+       // spyOn(component.siteService, 'getFilteredSites');
         component.getFilterResults(
             'Event=' +
                 '&State=' +
@@ -354,12 +424,7 @@ describe('MapComponent', () => {
                 '&RDGOnly=' +
                 '&HousingTypeOne='
         );
-        expect(component.siteService.getFilteredSites).toHaveBeenCalled();
-    });
-
-    it('#resetPreviousOutput should clear previous output', () => {
-        component.submitMapFilter();
-        // component.resetPreviousOutput();
+        expect(component.siteService.getFilteredSites).toHaveBeenCalled(); */
     });
 
     xit('#displayState', () => {});

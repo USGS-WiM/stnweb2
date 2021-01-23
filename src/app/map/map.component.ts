@@ -487,6 +487,7 @@ export class MapComponent implements OnInit {
     }
     //TODO: LOOK HERE FIRST
     displayMostRecentEvent() {
+        console.log('this.events', this.events[5]);
         //Get id and name of most recent event
         if (this.events.length > 0) {
             this.currentEvent = this.events[0].event_id;
@@ -736,8 +737,10 @@ export class MapComponent implements OnInit {
 
         // Generate popup content based on layer type
         // - Returns HTML string, or null if unknown object
-        const getPopupContent = function (layer) {
+        /* istanbul ignore next */
+        function getPopupContent(layer) {
             if (layer instanceof L.Polygon) {
+                /* istanbul ignore next */
                 const latlngs = layer._defaultShape
                         ? layer._defaultShape()
                         : layer.getLatLngs(),
@@ -745,6 +748,7 @@ export class MapComponent implements OnInit {
                 return 'Area: ' + L.GeometryUtil.readableArea(area);
                 // Polyline - distance
             } else if (layer instanceof L.Polyline) {
+                /* istanbul ignore next */
                 const latlngs = layer._defaultShape
                     ? layer._defaultShape()
                     : layer.getLatLngs();
@@ -760,9 +764,10 @@ export class MapComponent implements OnInit {
                 }
             }
             return null;
-        };
+        }
 
         // Object created - bind popup to layer, add to feature group
+        /* istanbul ignore next */
         this.map.on(L.Draw.Event.CREATED, function (event) {
             const layer = event.layer;
             const content = getPopupContent(layer);
@@ -773,6 +778,7 @@ export class MapComponent implements OnInit {
         });
 
         // Object(s) edited - update popups
+        /* istanbul ignore next */
         this.map.on(L.Draw.Event.EDITED, function (event) {
             const layers = event.layers;
             // const content = null;
@@ -1123,9 +1129,9 @@ export class MapComponent implements OnInit {
     }
 
     public resetPreviousOutput() {
-        // updating the filter-results table datasource with the new results
-        this.filterResultsComponent.refreshDataSource();
         if (this.resultsReturned === false) {
+            // updating the filter-results table datasource with the new results
+            this.filterResultsComponent.refreshDataSource();
             //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
             if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
                 this.siteService.siteMarkers.addTo(this.map);
@@ -1133,9 +1139,9 @@ export class MapComponent implements OnInit {
             //Clear current markers when a new filter is submitted
             this.siteService.siteMarkers.removeFrom(this.map);
             this.siteService.siteMarkers = L.featureGroup([]);
+            //close the filter panel
+            this.filtersPanelState = false;
+            this.resultsReturned = true;
         }
-        //close the filter panel
-        this.filtersPanelState = false;
-        this.resultsReturned = true;
     }
 }
