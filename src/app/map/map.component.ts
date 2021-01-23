@@ -487,7 +487,6 @@ export class MapComponent implements OnInit {
     }
     //TODO: LOOK HERE FIRST
     displayMostRecentEvent() {
-        console.log('this.events', this.events[5]);
         //Get id and name of most recent event
         if (this.events.length > 0) {
             this.currentEvent = this.events[0].event_id;

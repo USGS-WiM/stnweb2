@@ -350,7 +350,7 @@ describe('MapComponent', () => {
         component.updateEventFilter();
     });
 
-    it('#eventFocus sets map to event focused view ', () => {
+    it('#eventFocus sets map to event focused view', () => {
         // first set the view to somehting not default to test that the update works
         let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
         component.map.setView(notDefaultCenter, 9);
@@ -409,34 +409,6 @@ describe('MapComponent', () => {
         expect(formValues.bracketSiteOnlyControl).toBeFalsy();
         expect(formValues.RDGOnlyControl).toBeFalsy();
         expect(formValues.OpDefinedControl).toBeFalsy();
-    });
-
-    it('#getFilterResults should get filtered results', () => {
-        /* let urlParamString =
-            'Event=' +
-            '&State=' +
-            '&SensorType=' +
-            '&NetworkName=SWATH' +
-            '&OPDefined=' +
-            '&HWMOnly=' +
-            '&HWMSurveyed=' +
-            '&SensorOnly=' +
-            '&RDGOnly=' +
-            '&HousingTypeOne=';
-       // spyOn(component.siteService, 'getFilteredSites');
-        component.getFilterResults(
-            'Event=' +
-                '&State=' +
-                '&SensorType=' +
-                '&NetworkName=SWATH' +
-                '&OPDefined=' +
-                '&HWMOnly=' +
-                '&HWMSurveyed=' +
-                '&SensorOnly=' +
-                '&RDGOnly=' +
-                '&HousingTypeOne='
-        );
-        expect(component.siteService.getFilteredSites).toHaveBeenCalled(); */
     });
 
     xit('#displayState', () => {});
