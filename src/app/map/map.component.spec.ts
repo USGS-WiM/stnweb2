@@ -286,7 +286,12 @@ describe('MapComponent', () => {
 
     it('there should be as many queries as there are networks', () => {
         component.mapFilterForm.get('networkControl').setValue([1, 2, 3]);
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getFilteredSites').and.returnValue(
+            of(response)
+        );
         component.submitMapFilter();
+        fixture.detectChanges();
         expect(component.totalQueries).toEqual(3);
     });
 
