@@ -2,6 +2,10 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatChipList, MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -17,6 +21,7 @@ import {
     debounceTime,
     distinctUntilChanged,
     switchMap,
+    startWith,
 } from 'rxjs/operators';
 import { APP_SETTINGS } from '../app.settings';
 import { APP_UTILITIES } from '@app/app.utilities';
@@ -63,7 +68,15 @@ import { FilterResultsComponent } from '@app/filter-results/filter-results.compo
 })
 export class MapComponent implements OnInit {
     @ViewChild(FilterResultsComponent)
+    @ViewChild('statesList')
+    statesList: MatChipList;
+
+    public removable = true;
+    public addOnBlur = true;
+    public filteredStates$: Observable<State[]>;
+
     filterResultsComponent: FilterResultsComponent;
+    readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
     sites = [];
     siteid: string;
@@ -131,7 +144,7 @@ export class MapComponent implements OnInit {
 
     //holds filter values
     events: Event[];
-    states: State[];
+    states: State[] = [];
     eventStates: State[];
     selectedStates: State[] = new Array<State>();
     stateList = '';
@@ -274,7 +287,8 @@ export class MapComponent implements OnInit {
             eventsControl: null,
             networkControl: null,
             sensorTypeControl: null,
-            stateControl: '',
+            stateControl: this.selectedStates,
+            stateInput: [null],
             surveyedControl: null,
             HWMOnlyControl: false,
             sensorOnlyControl: false,
@@ -283,6 +297,13 @@ export class MapComponent implements OnInit {
             RDGOnlyControl: false,
             OPDefinedControl: false,
         });
+
+        this.filteredStates$ = this.mapFilterForm
+            .get('stateInput')
+            .valueChanges.pipe(
+                startWith(''),
+                map((value) => this.stateFilter(value))
+            );
     }
 
     ngOnInit() {
@@ -296,6 +317,90 @@ export class MapComponent implements OnInit {
             (currentSites) => (this.currentSites = currentSites)
         );
     }
+
+    private stateFilter(value: any): State[] {
+        const filterValue =
+            value === null || value instanceof Object
+                ? ''
+                : value.toLowerCase();
+        const matches = this.states.filter((state) =>
+            state.state_name.toLowerCase().includes(filterValue)
+        );
+        const formValue = this.mapFilterForm.get('stateControl').value;
+        return formValue === null
+            ? matches
+            : matches.filter(
+                  (x) =>
+                      !formValue.find((y) => y.state_abbrev === x.state_abbrev)
+              );
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    public selectState(event: MatAutocompleteSelectedEvent): void {
+        if (!event.option) {
+            return;
+        }
+
+        const value = event.option.value;
+
+        if (
+            value &&
+            value instanceof Object &&
+            !this.selectedStates.includes(value)
+        ) {
+            this.selectedStates.push(value);
+            this.mapFilterForm
+                .get('stateControl')
+                .setValue(this.selectedStates);
+            this.mapFilterForm.get('stateInput').setValue('');
+        }
+    }
+
+    public addState(event: MatChipInputEvent): void {
+        const input = event.input;
+        const value = event.value;
+
+        if (value.trim()) {
+            const matches = this.states.filter(
+                (state) => state.state_name.toLowerCase() === value
+            );
+            const formValue = this.mapFilterForm.get('stateControl').value;
+            const matchesNotYetSelected =
+                formValue === null
+                    ? matches
+                    : matches.filter(
+                          (x) =>
+                              !formValue.find(
+                                  (y) => y.state_abbrev === x.state_abbrev
+                              )
+                      );
+            if (matchesNotYetSelected.length === 1) {
+                this.selectedStates.push(matchesNotYetSelected[0]);
+                this.mapFilterForm
+                    .get('stateControl')
+                    .setValue(this.selectedStates);
+                this.mapFilterForm.get('stateInput').setValue('');
+            }
+        }
+
+        // Reset the input value
+        if (input) {
+            input.value = '';
+        }
+    }
+
+    public remove(state: State) {
+        const index = this.selectedStates.indexOf(state);
+        if (index >= 0) {
+            this.selectedStates.splice(index, 1);
+            this.mapFilterForm
+                .get('stateControl')
+                .setValue(this.selectedStates);
+            this.mapFilterForm.get('stateInput').setValue('');
+        }
+    }
+    //////////////////////////////////////////////////////////////////
 
     setCurrentFilter() {
         this.currentFilter = localStorage.getItem('currentFilter')
