@@ -262,7 +262,7 @@ describe('MapComponent', () => {
     });
 
     it('clustering should be disabled in all sites layer when zoomed to 12 or higher', () => {
-        component.map.zoom = 12;
+        component.map.setZoom(12);
         fixture.detectChanges();
         expect(component.siteService.allSiteMarkers.disableClustering())
             .toBeTrue;
@@ -275,12 +275,19 @@ describe('MapComponent', () => {
         component.map.addLayer(component.AHPSGages);
         component.map.addLayer(component.warnings);
         component.map.addLayer(component.watchesWarnings);
-        component.previousZoom = 9;
-        component.currentZoom = 8;
+        component.map.setZoom(9);
+        component.map.setZoom(8);
+        component.map.zoom = 8;
         fixture.detectChanges();
         expect(component.map.hasLayer(component.AHPSGages)).toBeFalse;
         expect(component.map.hasLayer(component.warnings)).toBeFalse;
         expect(component.map.hasLayer(component.watchesWarnings)).toBeFalse;
+    });
+
+    it('there should be as many queries as there are networks', () => {
+        component.mapFilterForm.get('networkControl').setValue([1, 2, 3]);
+        component.submitMapFilter();
+        expect(component.totalQueries).toEqual(3);
     });
 
     it('should call getFilteredSites and return list of queried sites', () => {
