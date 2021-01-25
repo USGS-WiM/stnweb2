@@ -525,6 +525,7 @@ export class MapComponent implements OnInit {
             renderer: L.canvas(),
         });
 
+        this.createDrawControls();
         this.createLayerControl();
 
         //create lat/lng/zoom icon
@@ -657,7 +658,6 @@ export class MapComponent implements OnInit {
                 }
             }
         });
-        this.createDrawControls();
     }
 
     createLayerControl() {
@@ -698,12 +698,13 @@ export class MapComponent implements OnInit {
     }
 
     createDrawControls() {
-        this.drawnItems = L.featureGroup().addTo(this.map);
-        // User can select from drawing a line or polygon; other options are disabled
-        // Measurements are in miles
+        const drawnItems = L.featureGroup().addTo(this.map);
+
+        //User can select from drawing a line or polygon; other options are disabled
+        //Measurements are in miles
         this.drawControl = new L.Control.Draw({
             edit: {
-                featureGroup: this.drawnItems,
+                featureGroup: drawnItems,
                 poly: {
                     allowIntersection: false,
                 },
@@ -728,30 +729,41 @@ export class MapComponent implements OnInit {
         //Add the buttons to the map
         this.map.addControl(this.drawControl);
 
+        // Truncate value based on number of decimals
+        const _round = function (num, len) {
+            return Math.round(num * Math.pow(10, len)) / Math.pow(10, len);
+        };
+
         // Generate popup content based on layer type
         // - Returns HTML string, or null if unknown object
         /* istanbul ignore next */
-        const getPopupContent = (layer) => {
-            return this.getDrawnItemPopupContent(layer);
-        };
-
-        // // Object created - bind popup to layer, add to feature group
-        // const create = (event) => {
-        //     return this.createDrawnItem(event);
-        // };
-
-        // // Object(s) edited - update popups
-        // const edit = (event) => {
-        //     return this.editDrawnItem(event);
-        // };
-
-        // this.map.on(L.Draw.Event.CREATED, (event) => {
-        //     create(event);
-        // });
-
-        // this.map.on(L.Draw.Event.EDITED, (event) => {
-        //     edit(event);
-        // });
+        function getPopupContent(layer) {
+            if (layer instanceof L.Polygon) {
+                /* istanbul ignore next */
+                const latlngs = layer._defaultShape
+                        ? layer._defaultShape()
+                        : layer.getLatLngs(),
+                    area = L.GeometryUtil.geodesicArea(latlngs);
+                return 'Area: ' + L.GeometryUtil.readableArea(area);
+                // Polyline - distance
+            } else if (layer instanceof L.Polyline) {
+                /* istanbul ignore next */
+                const latlngs = layer._defaultShape
+                    ? layer._defaultShape()
+                    : layer.getLatLngs();
+                let distance = 0;
+                if (latlngs.length < 2) {
+                    return 'Distance: N/A';
+                } else {
+                    for (let i = 0; i < latlngs.length - 1; i++) {
+                        distance += latlngs[i].distanceTo(latlngs[i + 1]);
+                    }
+                    distance = distance * 0.000621371;
+                    return 'Distance: ' + _round(distance, 2) + ' mi';
+                }
+            }
+            return null;
+        }
 
         // Object created - bind popup to layer, add to feature group
         /* istanbul ignore next */
@@ -761,7 +773,7 @@ export class MapComponent implements OnInit {
             if (content !== null) {
                 layer.bindPopup(content);
             }
-            this.drawnItems.addLayer(layer);
+            drawnItems.addLayer(layer);
         });
 
         // Object(s) edited - update popups
@@ -776,108 +788,7 @@ export class MapComponent implements OnInit {
                 }
             });
         });
-
-        // When layer is checked, add layer icon to legend
-        /* istanbul ignore next */
-        this.map.on('overlayadd', (e) => {
-            if (e.name === 'Sites') {
-                this.sitesVisible = true;
-            }
-            if (e.name === 'Watersheds') {
-                this.watershedsVisible = true;
-            }
-            if (e.name === 'All STN Sites') {
-                this.allSitesVisible = true;
-            }
-            if (e.name === 'Current Warnings*') {
-                this.currWarningsVisible = true;
-            }
-            if (e.name === 'Watches/Warnings*') {
-                this.watchWarnVisible = true;
-            }
-            if (
-                e.name ===
-                "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
-            ) {
-                this.ahpsGagesVisible = true;
-            }
-        });
-        // When layer is unchecked, remove layer icon from legend
-        /* istanbul ignore next */
-        this.map.on('overlayremove', (e) => {
-            if (e.name === 'Sites') {
-                this.sitesVisible = false;
-            }
-            if (e.name === 'Watersheds') {
-                this.watershedsVisible = false;
-            }
-            if (e.name === 'All STN Sites') {
-                this.allSitesVisible = false;
-            }
-            if (e.name === 'Current Warnings*') {
-                this.currWarningsVisible = false;
-            }
-            if (e.name === 'Watches/Warnings*') {
-                this.watchWarnVisible = false;
-            }
-            if (
-                e.name ===
-                "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
-            ) {
-                this.ahpsGagesVisible = false;
-            }
-        });
     }
-
-    // For drawn items: generate popup content based on layer type
-    // Returns HTML string, or null if unknown object
-    getDrawnItemPopupContent(layer) {
-        if (layer instanceof L.Polygon) {
-            /* istanbul ignore next */
-            const latlngs = layer._defaultShape
-                    ? layer._defaultShape()
-                    : layer.getLatLngs(),
-                area = L.GeometryUtil.geodesicArea(latlngs);
-            return 'Area: ' + L.GeometryUtil.readableArea(area);
-            // Polyline - distance
-        } else if (layer instanceof L.Polyline) {
-            /* istanbul ignore next */
-            const latlngs = layer._defaultShape
-                ? layer._defaultShape()
-                : layer.getLatLngs();
-            let distance = 0;
-            if (latlngs.length < 2) {
-                return 'Distance: N/A';
-            } else {
-                for (let i = 0; i < latlngs.length - 1; i++) {
-                    distance += latlngs[i].distanceTo(latlngs[i + 1]);
-                }
-                distance = distance * 0.000621371;
-                return 'Distance: ' + APP_UTILITIES.ROUND(distance, 2) + ' mi';
-            }
-        } else {
-            return null;
-        }
-    }
-
-    // createDrawnItem(event) {
-    //     const layer = event.layer;
-    //     const content = this.getDrawnItemPopupContent(layer);
-    //     if (content !== null) {
-    //         layer.bindPopup(content);
-    //     }
-    //     this.drawnItems.addLayer(layer);
-    // }
-
-    // editDrawnItem(event) {
-    //     const layers = event.layers;
-    //     layers.eachLayer(function (layer) {
-    //         const content = this.getDrawnItemPopupContent(layer);
-    //         if (content !== null) {
-    //             layer.setPopupContent(content);
-    //         }
-    //     });
-    // }
 
     eventFocus() {
         //If there are site markers, zoom to those
@@ -1130,7 +1041,7 @@ export class MapComponent implements OnInit {
                     RDGTrue +
                     '&HousingTypeOne=' +
                     bracketTrue;
-                this.getResults(urlParamString);
+                this.getFilterResults(urlParamString);
             } else {
                 //User could potentially crash the app by choosing too many networks, thereby returning too many results
                 //if > 5 networks are selected, prevent query from running and show warning
@@ -1184,30 +1095,7 @@ export class MapComponent implements OnInit {
                                     }
                                 }
                                 if (uniqueSites.length > 0) {
-                                    // updating the filter-results table datasource with the new results
-                                    this.filterResultsComponent.refreshDataSource();
-                                    if (this.resultsReturned === false) {
-                                        //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
-                                        if (
-                                            this.map.hasLayer(
-                                                this.siteService.siteMarkers
-                                            ) === false
-                                        ) {
-                                            this.siteService.siteMarkers.addTo(
-                                                this.map
-                                            );
-                                        }
-                                        //Clear current markers when a new filter is submitted
-                                        this.siteService.siteMarkers.removeFrom(
-                                            this.map
-                                        );
-                                        this.siteService.siteMarkers = L.featureGroup(
-                                            []
-                                        );
-                                    }
-                                    //close the filter panel
-                                    this.filtersPanelState = false;
-                                    this.resultsReturned = true;
+                                    this.resetPreviousOutput();
                                 }
                                 this.currentQuery += 1;
                                 this.mapResults(
@@ -1223,24 +1111,12 @@ export class MapComponent implements OnInit {
         }
     }
 
-    public getResults(urlString: string) {
+    public getFilterResults(urlString: string) {
         //Find sites that match the user's query
         this.siteService.getFilteredSites(urlString).subscribe((res) => {
             //only call mapResults if the query returns data
             if (res.length > 0) {
-                // updating the filter-results table datasource with the new results
-                this.filterResultsComponent.refreshDataSource();
-                this.resultsReturned = true;
-                //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
-                if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
-                    this.siteService.siteMarkers.addTo(this.map);
-                }
-                //Clear current markers when a new filter is submitted
-                this.siteService.siteMarkers.removeFrom(this.map);
-                this.siteService.siteMarkers = L.featureGroup([]);
-
-                //close the filter panel
-                this.filtersPanelState = false;
+                this.resetPreviousOutput();
             }
             this.mapResults(
                 res,
@@ -1249,5 +1125,22 @@ export class MapComponent implements OnInit {
                 true
             );
         });
+    }
+
+    public resetPreviousOutput() {
+        if (this.resultsReturned === false) {
+            // updating the filter-results table datasource with the new results
+            this.filterResultsComponent.refreshDataSource();
+            //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
+            if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
+                this.siteService.siteMarkers.addTo(this.map);
+            }
+            //Clear current markers when a new filter is submitted
+            this.siteService.siteMarkers.removeFrom(this.map);
+            this.siteService.siteMarkers = L.featureGroup([]);
+            //close the filter panel
+            this.filtersPanelState = false;
+            this.resultsReturned = true;
+        }
     }
 }
