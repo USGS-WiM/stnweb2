@@ -109,13 +109,13 @@ export class SiteService {
         return this._allallSiteMarkers.asObservable();
     }
 
-    private _filteredSiteMarkers: Subject<any> = new Subject<any>();
-    public setFilteredSiteMarkers(val: any) {
+    private _manyFilteredSiteMarkers: Subject<any> = new Subject<any>();
+    public setManyFilteredSiteMarkers(val: any) {
         this.manyFilteredSitesMarkers = val;
-        this._filteredSiteMarkers.next(val);
+        this._manyFilteredSiteMarkers.next(val);
     }
-    public filteredSiteMarker(): Observable<any> {
-        return this._filteredSiteMarkers.asObservable();
+    public manyFilteredSiteMarker(): Observable<any> {
+        return this._manyFilteredSiteMarkers.asObservable();
     }
 
     /**

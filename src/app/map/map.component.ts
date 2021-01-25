@@ -146,6 +146,7 @@ export class MapComponent implements OnInit {
 
     //These variables indicate if each layer is checked
     sitesVisible = true;
+    manyFiltered = false;
     watershedsVisible = false;
     currWarningsVisible = false;
     watchWarnVisible = false;
@@ -168,7 +169,7 @@ export class MapComponent implements OnInit {
     private setDisplayedSites;
 
     //for sites displayed on map load and when running queries
-    eventIcon = L.divIcon({
+    filteredSitesIcon = L.divIcon({
         className:
             ' wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20',
     });
@@ -179,7 +180,7 @@ export class MapComponent implements OnInit {
     });
 
     manyFilteredSitesIcon = L.divIcon({
-        className: 'manyFilteredSitesMarkers',
+        className: ' manyFilteredSitesIcon ',
         iconSize: 32,
     });
 
@@ -510,7 +511,7 @@ export class MapComponent implements OnInit {
                 this.filtersService.updateSites(results);
                 this.mapResults(
                     this.sitesDataArray,
-                    this.eventIcon,
+                    this.filteredSitesIcon,
                     this.siteService.siteMarkers,
                     true
                 );
@@ -531,7 +532,7 @@ export class MapComponent implements OnInit {
         });
 
         this.createDrawControls();
-        this.createLayerControl();
+        this.createLayerControl(true);
 
         //create lat/lng/zoom icon
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
@@ -667,16 +668,29 @@ export class MapComponent implements OnInit {
         });
     }
 
-    createLayerControl() {
-        this.supplementaryLayers = {
-            Sites: this.siteService.siteMarkers,
-            Watersheds: this.HUC,
-            'All STN Sites': this.siteService.allSiteMarkers,
-            'Current Warnings*': this.warnings,
-            'Watches/Warnings*': this.watchesWarnings,
-            "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
-                .AHPSGages,
-        };
+    createLayerControl(wimPin: boolean) {
+        if (wimPin === true) {
+            this.supplementaryLayers = {
+                Sites: this.siteService.siteMarkers,
+                Watersheds: this.HUC,
+                'All STN Sites': this.siteService.allSiteMarkers,
+                'Current Warnings*': this.warnings,
+                'Watches/Warnings*': this.watchesWarnings,
+                "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
+                    .AHPSGages,
+            };
+        }
+        if (wimPin === false) {
+            this.supplementaryLayers = {
+                Sites: this.siteService.manyFilteredSitesMarkers,
+                Watersheds: this.HUC,
+                'All STN Sites': this.siteService.allSiteMarkers,
+                'Current Warnings*': this.warnings,
+                'Watches/Warnings*': this.watchesWarnings,
+                "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
+                    .AHPSGages,
+            };
+        }
 
         this.layerToggles = L.control.layers(
             MAP_CONSTANTS.baseMaps,
@@ -797,7 +811,8 @@ export class MapComponent implements OnInit {
         });
     }
 
-    eventFocus() {
+    siteFocus() {
+        console.log('hit siteFocus');
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
         if (this.map.hasLayer(this.siteService.siteMarkers)) {
@@ -895,10 +910,17 @@ export class MapComponent implements OnInit {
 
                 if (site.Events) {
                     if (site.Events.length > 0) {
-                        popupContent +=
-                            '<span class="popupLabel"><b>Event(s)</b>:</span> ' +
-                            site.Events.join(', ') +
-                            '<br/>';
+                        if (site.Events.length === 1) {
+                            popupContent +=
+                                '<span class="popupLabel"><b>Event</b>:</span> ' +
+                                site.Events.join(', ') +
+                                '<br/>';
+                        } else {
+                            popupContent +=
+                                '<span class="popupLabel"><b>Events</b>:</span> ' +
+                                site.Events.join(', ') +
+                                '<br/>';
+                        }
                     }
                 }
                 /* istanbul ignore next */
@@ -928,7 +950,6 @@ export class MapComponent implements OnInit {
                             layerType ===
                                 this.siteService.manyFilteredSitesMarkers
                         ) {
-                            console.log('popup added');
                             L.marker([lat, long], {
                                 icon: myIcon,
                                 iconSize: 32,
@@ -940,40 +961,43 @@ export class MapComponent implements OnInit {
                 }
             }
         }
-        if (layerType === this.siteService.siteMarkers) {
-            this.siteService.siteMarkers.addTo(this.map);
-        }
-        if (layerType === this.siteService.manyFilteredSitesMarkers) {
-            this.siteService.manyFilteredSitesMarkers.addTo(this.map);
-            console.log('markers added to map');
-        }
+
         if (
-            layerType == this.siteService.siteMarkers ||
+            layerType === this.siteService.siteMarkers ||
             layerType === this.siteService.manyFilteredSitesMarkers
         ) {
             //if there are multiple queries, wait until the last one to zoom to the layer
-            if (this.currentQuery === this.totalQueries) {
-                console.log('reached final query');
-                this.sitesVisible = true;
-                //refresh layer control to connect it with new sites
-                this.map.removeControl(this.layerToggles);
-                //draw & search controls need to be removed and re-added after the layer control so they appear in the correct position
-                this.map.removeControl(this.drawControl);
-                this.map.removeControl(this.searchControl);
-                this.createLayerControl();
-                this.createSearchControl();
-                this.createDrawControls();
-                this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
 
-                //When filtering sites, zoom to layer, and open map pane
-                if (zoomToLayer == true) {
-                    this.eventFocus();
-                    this.mapPanelState = true;
-                    //set the state control back to state names instead of abbreviations
-                    this.mapFilterForm
-                        .get('stateControl')
-                        .setValue(this.selectedStates);
-                }
+            if (layerType === this.siteService.siteMarkers) {
+                this.siteService.siteMarkers.addTo(this.map);
+            }
+            if (layerType === this.siteService.manyFilteredSitesMarkers) {
+                this.siteService.manyFilteredSitesMarkers.addTo(this.map);
+            }
+            this.sitesVisible = true;
+            //refresh layer control to connect it with new sites
+            this.map.removeControl(this.layerToggles);
+            //draw & search controls need to be removed and re-added after the layer control so they appear in the correct position
+            this.map.removeControl(this.drawControl);
+            this.map.removeControl(this.searchControl);
+            if (layerType === this.siteService.siteMarkers) {
+                this.createLayerControl(true);
+            }
+            if (layerType === this.siteService.manyFilteredSitesMarkers) {
+                this.createLayerControl(false);
+            }
+            this.createSearchControl();
+            this.createDrawControls();
+            this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
+
+            //When filtering sites, zoom to layer, and open map pane
+            if (zoomToLayer == true) {
+                this.siteFocus();
+                this.mapPanelState = true;
+                //set the state control back to state names instead of abbreviations
+                this.mapFilterForm
+                    .get('stateControl')
+                    .setValue(this.selectedStates);
             }
         }
     }
@@ -1068,7 +1092,13 @@ export class MapComponent implements OnInit {
                     RDGTrue +
                     '&HousingTypeOne=' +
                     bracketTrue;
-                this.getFilterResults(urlParamString);
+
+                //Find sites that match the user's query
+                this.siteService
+                    .getFilteredSites(urlParamString)
+                    .subscribe((res) => {
+                        this.getFilterResults(res);
+                    });
             } else {
                 //User could potentially crash the app by choosing too many networks, thereby returning too many results
                 //if > 5 networks are selected, prevent query from running and show warning
@@ -1121,16 +1151,10 @@ export class MapComponent implements OnInit {
                                         uniqueSites.push(res[i]);
                                     }
                                 }
-                                if (uniqueSites.length > 0) {
-                                    this.resetPreviousOutput();
-                                }
                                 this.currentQuery += 1;
-                                this.mapResults(
-                                    uniqueSites,
-                                    this.manyFilteredSitesIcon,
-                                    this.siteService.manyFilteredSitesMarkers,
-                                    true
-                                );
+                                if (this.currentQuery === this.totalQueries) {
+                                    this.getFilterResults(uniqueSites);
+                                }
                             });
                     }
                 }
@@ -1138,20 +1162,31 @@ export class MapComponent implements OnInit {
         }
     }
 
-    public getFilterResults(urlString: string) {
-        //Find sites that match the user's query
-        this.siteService.getFilteredSites(urlString).subscribe((res) => {
-            //only call mapResults if the query returns data
-            if (res.length > 0) {
-                this.resetPreviousOutput();
-            }
+    public getFilterResults(filterResponse) {
+        //only call mapResults if the query returns data
+        if (filterResponse.length > 0) {
+            this.resetPreviousOutput();
+        }
+        //if there are less than 500 sites, use the normal WIM pin
+        if (filterResponse.length < 500) {
+            this.manyFiltered = false;
             this.mapResults(
-                res,
-                this.eventIcon,
+                filterResponse,
+                this.filteredSitesIcon,
                 this.siteService.siteMarkers,
                 true
             );
-        });
+        }
+        //if there are 500 sites or more, use marker clusters
+        if (filterResponse.length >= 500) {
+            this.manyFiltered = true;
+            this.mapResults(
+                filterResponse,
+                this.manyFilteredSitesIcon,
+                this.siteService.manyFilteredSitesMarkers,
+                true
+            );
+        }
     }
 
     public resetPreviousOutput() {

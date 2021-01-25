@@ -22,7 +22,7 @@
                 <div
                     id="extentBtn"
                     class="extentBtn leaflet-bar leaflet-control leaflet-control-zoom"
-                    (click)="eventFocus()"
+                    (click)="siteFocus()"
                     aria-label="Clicking this button zooms to the extent of selected event"
                 >
                     <mat-icon aria-hidden="false" aria-label="Example home icon"
@@ -58,13 +58,23 @@
                 <mat-expansion-panel-header>
                     <mat-panel-title> Legend </mat-panel-title>
                 </mat-expansion-panel-header>
-                <div class="legend-panel-content" *ngIf="sitesVisible">
-                    <div id="sitesLegend">
-                        <div class="legend-icon">
-                            <div
-                                class="wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20"
-                            ></div>
-                            <label>Site</label>
+                <div *ngIf="sitesVisible">
+                    <div class="legend-panel-content" *ngIf="!manyFiltered">
+                        <div id="sitesLegend">
+                            <div class="legend-icon">
+                                <div
+                                    class="wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20"
+                                ></div>
+                                <label>Site</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="legend-panel-content" *ngIf="manyFiltered">
+                        <div id="sitesLegend">
+                            <div class="legend-icon allSitesLegend">
+                                <div class="manyFilteredSitesIcon"></div>
+                                <label class="allSitesLegendLabel">Site</label>
+                            </div>
                         </div>
                     </div>
                 </div>
