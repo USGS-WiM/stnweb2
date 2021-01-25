@@ -350,6 +350,20 @@ describe('MapComponent', () => {
         component.updateEventFilter();
     });
 
+    xit('#siteFocus sets map to filtered sites extent', () => {
+        //zoom to sites or default zoom
+        component.siteFocus();
+        let mapZoom = component.map.getZoom();
+        //zoom to somewhere else
+        let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
+        component.map.setView(notDefaultCenter, 3);
+        //zoom back to filtered sites
+        component.siteFocus();
+        fixture.detectChanges();
+        //map should have zoomed back to sites or default
+        expect(component.map.getZoom()).toEqual(mapZoom);
+    });
+
     it('mapFilterForm should be valid after toggleStateSelection', () => {
         let state = {
             counties: null,
