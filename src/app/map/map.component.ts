@@ -37,6 +37,7 @@ import { SiteService } from '@services/site.service';
 import { FiltersService } from '@services/filters.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
+import { Subscription } from 'rxjs';
 
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
@@ -105,6 +106,8 @@ export class MapComponent implements OnInit {
     //Begin with the map and filters panels expanded
     mapPanelState: boolean = true;
     filtersPanelState: boolean = true;
+    resultsPanelState: boolean;
+    resultsPanelSubscription: Subscription;
 
     //when filtering by multiple networks,
     //we use these to track if there are any sites returned after the final query
@@ -1175,6 +1178,11 @@ export class MapComponent implements OnInit {
         //only call mapResults if the query returns data
         if (filterResponse.length > 0) {
             this.resetPreviousOutput();
+            this.resultsReturned = true;
+            this.filtersService.changeResultsPanelState(true);
+            this.resultsPanelSubscription = this.filtersService.resultsPanelOpen.subscribe(
+                (state) => (this.resultsPanelState = state)
+            );
         }
         //if there are less than 500 sites, use the normal WIM pin
         if (filterResponse.length < 500) {
@@ -1196,47 +1204,44 @@ export class MapComponent implements OnInit {
                 true
             );
         }
+
+        // updating the filter-results table datasource with the new results
+        this.filtersService.updateSites(filterResponse);
+        this.filterResultsComponent.refreshDataSource();
     }
 
     public resetPreviousOutput() {
-        if (this.resultsReturned === false) {
-            // updating the filter-results table datasource with the new results
-            this.filterResultsComponent.refreshDataSource();
-            //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
-            if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
-                this.siteService.siteMarkers.addTo(this.map);
-            }
-            if (
-                this.map.hasLayer(this.siteService.manyFilteredSitesMarkers) ===
-                false
-            ) {
-                this.siteService.manyFilteredSitesMarkers.addTo(this.map);
-            }
-            //Clear current markers when a new filter is submitted
-            this.siteService.siteMarkers.removeFrom(this.map);
-            this.siteService.siteMarkers = L.featureGroup([]);
-            this.siteService.manyFilteredSitesMarkers.removeFrom(this.map);
-            this.siteService.manyFilteredSitesMarkers = new L.markerClusterGroup(
-                {
-                    showCoverageOnHover: false,
-                    maxClusterRadius: 40,
-                    iconCreateFunction: function (cluster) {
-                        var markers = cluster.getAllChildMarkers();
-                        var html =
-                            '<div style="text-align: center; margin-top: 7px; color: white">' +
-                            markers.length +
-                            '</div>';
-                        return L.divIcon({
-                            html: html,
-                            className: 'manyFilteredSitesIcon',
-                            iconSize: L.point(32, 32),
-                        });
-                    },
-                }
-            );
-            //close the filter panel
-            this.filtersPanelState = false;
-            this.resultsReturned = true;
+        //if the sites layer is checked off, need to re-add it to fully remove old markers before adding new ones
+        if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
+            this.siteService.siteMarkers.addTo(this.map);
         }
+        if (
+            this.map.hasLayer(this.siteService.manyFilteredSitesMarkers) ===
+            false
+        ) {
+            this.siteService.manyFilteredSitesMarkers.addTo(this.map);
+        }
+        //Clear current markers when a new filter is submitted
+        this.siteService.siteMarkers.removeFrom(this.map);
+        this.siteService.siteMarkers = L.featureGroup([]);
+        this.siteService.manyFilteredSitesMarkers.removeFrom(this.map);
+        this.siteService.manyFilteredSitesMarkers = new L.markerClusterGroup({
+            showCoverageOnHover: false,
+            maxClusterRadius: 40,
+            iconCreateFunction: function (cluster) {
+                var markers = cluster.getAllChildMarkers();
+                var html =
+                    '<div style="text-align: center; margin-top: 7px; color: white">' +
+                    markers.length +
+                    '</div>';
+                return L.divIcon({
+                    html: html,
+                    className: 'manyFilteredSitesIcon',
+                    iconSize: L.point(32, 32),
+                });
+            },
+        });
+        //close the filter panel
+        this.filtersPanelState = false;
     }
 }
