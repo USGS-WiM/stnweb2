@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Switched to marker clusters for large queries
 -   Results panel opens when filter is submitted
+-   Site markers clear when click "Clear Filters"
 
 ### Fixed
 
