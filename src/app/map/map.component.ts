@@ -1015,13 +1015,17 @@ export class MapComponent implements OnInit {
         this.selectedStates = new Array<State>();
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
+
         //remove markers and zoom to U.S.
         this.resultsReturned = false;
         this.resetPreviousOutput();
         this.siteFocus();
+
         // clear and close results table
         this.filtersService.updateSites([]);
-        this.filterResultsComponent.refreshDataSource();
+        if (this.filterResultsComponent !== undefined) {
+            this.filterResultsComponent.refreshDataSource();
+        }
         this.filtersService.changeResultsPanelState(false);
         this.resultsPanelSubscription = this.filtersService.resultsPanelOpen.subscribe(
             (state) => (this.resultsPanelState = state)
