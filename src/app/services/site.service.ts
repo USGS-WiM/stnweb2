@@ -81,6 +81,23 @@ export class SiteService {
         // spiderfyDistanceMultiplier: 2,
     });
 
+    public manyFilteredSitesMarkers = new L.markerClusterGroup({
+        showCoverageOnHover: false,
+        maxClusterRadius: 25,
+        iconCreateFunction: function (cluster) {
+            var markers = cluster.getAllChildMarkers();
+            var html =
+                '<div style="text-align: center; margin-top: 7px; color: white">' +
+                markers.length +
+                '</div>';
+            return L.divIcon({
+                html: html,
+                className: 'manyFilteredSitesIcon',
+                iconSize: L.point(32, 32),
+            });
+        },
+    });
+
     public siteMarkers = new L.featureGroup([]);
 
     private _allallSiteMarkers: Subject<any> = new Subject<any>();
@@ -90,6 +107,15 @@ export class SiteService {
     }
     public allSiteMarker(): Observable<any> {
         return this._allallSiteMarkers.asObservable();
+    }
+
+    private _manyFilteredSiteMarkers: Subject<any> = new Subject<any>();
+    public setManyFilteredSiteMarkers(val: any) {
+        this.manyFilteredSitesMarkers = val;
+        this._manyFilteredSiteMarkers.next(val);
+    }
+    public manyFilteredSiteMarker(): Observable<any> {
+        return this._manyFilteredSiteMarkers.asObservable();
     }
 
     /**
