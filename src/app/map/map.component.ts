@@ -802,6 +802,12 @@ export class MapComponent implements OnInit {
         //Otherwise, zoom back to default extent
         if (this.map.hasLayer(this.siteService.siteMarkers)) {
             this.map.fitBounds(this.siteService.siteMarkers.getBounds());
+        } else if (
+            this.map.hasLayer(this.siteService.manyFilteredSitesMarkers)
+        ) {
+            this.map.fitBounds(
+                this.siteService.manyFilteredSitesMarkers.getBounds()
+            );
         } else {
             this.map.setView(
                 MAP_CONSTANTS.defaultCenter,
@@ -911,17 +917,18 @@ export class MapComponent implements OnInit {
                         site.site_no !== 'AZGRA27856'
                     ) {
                         //put all the site markers in the same layer group
-                        if (
-                            layerType === this.siteService.siteMarkers ||
-                            layerType ===
-                                this.siteService.manyFilteredSitesMarkers
-                        ) {
+                        if (layerType === this.siteService.siteMarkers) {
                             L.marker([lat, long], { icon: myIcon })
                                 .bindPopup(popupContent)
                                 .addTo(layerType);
                         }
                         //Make circle markers for the All STN Sites layer
-                        if (layerType == this.siteService.allSiteMarkers) {
+                        if (
+                            layerType == this.siteService.allSiteMarkers ||
+                            layerType ===
+                                this.siteService.manyFilteredSitesMarkers
+                        ) {
+                            console.log('popup added');
                             L.marker([lat, long], {
                                 icon: myIcon,
                                 iconSize: 32,
@@ -933,16 +940,20 @@ export class MapComponent implements OnInit {
                 }
             }
         }
+        if (layerType === this.siteService.siteMarkers) {
+            this.siteService.siteMarkers.addTo(this.map);
+        }
+        if (layerType === this.siteService.manyFilteredSitesMarkers) {
+            this.siteService.manyFilteredSitesMarkers.addTo(this.map);
+            console.log('markers added to map');
+        }
         if (
             layerType == this.siteService.siteMarkers ||
             layerType === this.siteService.manyFilteredSitesMarkers
         ) {
-            this.siteService.siteMarkers.addTo(this.map);
-            this.siteService.manyFilteredSitesMarkers.addTo(this.map);
-            //When filtering sites, zoom to layer, and open map pane
-
             //if there are multiple queries, wait until the last one to zoom to the layer
             if (this.currentQuery === this.totalQueries) {
+                console.log('reached final query');
                 this.sitesVisible = true;
                 //refresh layer control to connect it with new sites
                 this.map.removeControl(this.layerToggles);
@@ -954,6 +965,7 @@ export class MapComponent implements OnInit {
                 this.createDrawControls();
                 this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
 
+                //When filtering sites, zoom to layer, and open map pane
                 if (zoomToLayer == true) {
                     this.eventFocus();
                     this.mapPanelState = true;
@@ -1150,9 +1162,34 @@ export class MapComponent implements OnInit {
             if (this.map.hasLayer(this.siteService.siteMarkers) === false) {
                 this.siteService.siteMarkers.addTo(this.map);
             }
+            if (
+                this.map.hasLayer(this.siteService.manyFilteredSitesMarkers) ===
+                false
+            ) {
+                this.siteService.manyFilteredSitesMarkers.addTo(this.map);
+            }
             //Clear current markers when a new filter is submitted
             this.siteService.siteMarkers.removeFrom(this.map);
             this.siteService.siteMarkers = L.featureGroup([]);
+            this.siteService.manyFilteredSitesMarkers.removeFrom(this.map);
+            this.siteService.manyFilteredSitesMarkers = new L.markerClusterGroup(
+                {
+                    showCoverageOnHover: false,
+                    maxClusterRadius: 40,
+                    iconCreateFunction: function (cluster) {
+                        var markers = cluster.getAllChildMarkers();
+                        var html =
+                            '<div style="text-align: center; margin-top: 7px; color: white">' +
+                            markers.length +
+                            '</div>';
+                        return L.divIcon({
+                            html: html,
+                            className: 'manyFilteredSitesIcon',
+                            iconSize: L.point(32, 32),
+                        });
+                    },
+                }
+            );
             //close the filter panel
             this.filtersPanelState = false;
             this.resultsReturned = true;

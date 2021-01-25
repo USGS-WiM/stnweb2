@@ -96,7 +96,6 @@ export class SiteService {
                 iconSize: L.point(32, 32),
             });
         },
-        // spiderfyDistanceMultiplier: 2,
     });
 
     public siteMarkers = new L.featureGroup([]);
@@ -108,6 +107,15 @@ export class SiteService {
     }
     public allSiteMarker(): Observable<any> {
         return this._allallSiteMarkers.asObservable();
+    }
+
+    private _filteredSiteMarkers: Subject<any> = new Subject<any>();
+    public setFilteredSiteMarkers(val: any) {
+        this.manyFilteredSitesMarkers = val;
+        this._filteredSiteMarkers.next(val);
+    }
+    public filteredSiteMarker(): Observable<any> {
+        return this._filteredSiteMarkers.asObservable();
     }
 
     /**
