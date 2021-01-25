@@ -822,7 +822,12 @@ export class MapComponent implements OnInit {
             this.map.fitBounds(
                 this.siteService.manyFilteredSitesMarkers.getBounds()
             );
-        } else {
+        } else if (
+            this.map.hasLayer(
+                this.siteService.manyFilteredSitesMarkers === false &&
+                    this.map.hasLayer(this.siteService.siteMarkers) === false
+            )
+        ) {
             this.map.setView(
                 MAP_CONSTANTS.defaultCenter,
                 MAP_CONSTANTS.defaultZoom

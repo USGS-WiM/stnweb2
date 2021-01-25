@@ -350,17 +350,6 @@ describe('MapComponent', () => {
         component.updateEventFilter();
     });
 
-    it('#siteFocus sets map to event focused view', () => {
-        // first set the view to somehting not default to test that the update works
-        let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
-        component.map.setView(notDefaultCenter, 9);
-        component.siteFocus();
-        let mapCenter = component.map.getCenter();
-        let mapZoom = component.map.getZoom();
-        expect(mapCenter).toEqual(MAP_CONSTANTS.defaultCenter);
-        expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
-    });
-
     it('mapFilterForm should be valid after toggleStateSelection', () => {
         let state = {
             counties: null,
