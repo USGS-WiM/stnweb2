@@ -1019,6 +1019,15 @@ export class MapComponent implements OnInit {
         this.resultsReturned = false;
         this.resetPreviousOutput();
         this.siteFocus();
+        // clear and close results table
+        this.filtersService.updateSites([]);
+        this.filterResultsComponent.refreshDataSource();
+        this.filtersService.changeResultsPanelState(false);
+        this.resultsPanelSubscription = this.filtersService.resultsPanelOpen.subscribe(
+            (state) => (this.resultsPanelState = state)
+        );
+        //keep filters panel open
+        this.filtersPanelState = true;
     }
 
     public submitMapFilter() {
