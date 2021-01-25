@@ -178,6 +178,11 @@ export class MapComponent implements OnInit {
         iconSize: 32,
     });
 
+    manyFilteredSitesIcon = L.divIcon({
+        className: 'manyFilteredSitesMarkers',
+        iconSize: 32,
+    });
+
     //supplementary layers
     HUC = esri.dynamicMapLayer({
         url: 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
@@ -637,9 +642,11 @@ export class MapComponent implements OnInit {
             //Disable clustering for the All STN Sites layer when zoom >= 12 so we can see individual sites
             if (this.currentZoom >= 12) {
                 this.siteService.allSiteMarkers.disableClustering();
+                this.siteService.manyFilteredSitesMarkers.disableClustering();
             }
             if (this.currentZoom < 12) {
                 this.siteService.allSiteMarkers.enableClustering();
+                this.siteService.manyFilteredSitesMarkers.enableClustering();
             }
             //If the zoom went from 9 to 8 and the gages/watches/warnings are on,
             //that layer is checked, but it's not displayed
@@ -904,7 +911,11 @@ export class MapComponent implements OnInit {
                         site.site_no !== 'AZGRA27856'
                     ) {
                         //put all the site markers in the same layer group
-                        if (layerType == this.siteService.siteMarkers) {
+                        if (
+                            layerType === this.siteService.siteMarkers ||
+                            layerType ===
+                                this.siteService.manyFilteredSitesMarkers
+                        ) {
                             L.marker([lat, long], { icon: myIcon })
                                 .bindPopup(popupContent)
                                 .addTo(layerType);
@@ -922,8 +933,12 @@ export class MapComponent implements OnInit {
                 }
             }
         }
-        if (layerType == this.siteService.siteMarkers) {
+        if (
+            layerType == this.siteService.siteMarkers ||
+            layerType === this.siteService.manyFilteredSitesMarkers
+        ) {
             this.siteService.siteMarkers.addTo(this.map);
+            this.siteService.manyFilteredSitesMarkers.addTo(this.map);
             //When filtering sites, zoom to layer, and open map pane
 
             //if there are multiple queries, wait until the last one to zoom to the layer
@@ -1100,8 +1115,8 @@ export class MapComponent implements OnInit {
                                 this.currentQuery += 1;
                                 this.mapResults(
                                     uniqueSites,
-                                    this.eventIcon,
-                                    this.siteService.siteMarkers,
+                                    this.manyFilteredSitesIcon,
+                                    this.siteService.manyFilteredSitesMarkers,
                                     true
                                 );
                             });

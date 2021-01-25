@@ -851,6 +851,21 @@
     opacity: 1;
 }
 
+.manyFilteredSitesIcon {
+    height: 32px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    width: 32px;
+    display: block;
+    overflow: hidden;
+    position: absolute;
+    margin-top: 6px;
+    background-color: #2346f6;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    opacity: 1;
+}
+
 .testcircle {
     width: 32px;
     height: 32px;
