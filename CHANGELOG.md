@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
--   Used marker clusters for filters returned at least 500 sites
+-   Switched to marker clusters for large queries
 
 ### Fixed
 

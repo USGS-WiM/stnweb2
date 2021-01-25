@@ -83,7 +83,7 @@ export class SiteService {
 
     public manyFilteredSitesMarkers = new L.markerClusterGroup({
         showCoverageOnHover: false,
-        maxClusterRadius: 40,
+        maxClusterRadius: 25,
         iconCreateFunction: function (cluster) {
             var markers = cluster.getAllChildMarkers();
             var html =

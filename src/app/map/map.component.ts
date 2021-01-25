@@ -174,7 +174,7 @@ export class MapComponent implements OnInit {
             ' wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20',
     });
     //for the All STN Sites layer
-    siteIcon = L.divIcon({
+    allSiteIcon = L.divIcon({
         className: ' allSiteIcon ',
         iconSize: 32,
     });
@@ -372,7 +372,7 @@ export class MapComponent implements OnInit {
             this.resultsReturned = true;
             this.mapResults(
                 this.allSites,
-                this.siteIcon,
+                this.allSiteIcon,
                 this.siteService.allSiteMarkers,
                 false
             );
@@ -812,7 +812,6 @@ export class MapComponent implements OnInit {
     }
 
     siteFocus() {
-        console.log('hit siteFocus');
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
         if (this.map.hasLayer(this.siteService.siteMarkers)) {
@@ -1152,6 +1151,7 @@ export class MapComponent implements OnInit {
                                     }
                                 }
                                 this.currentQuery += 1;
+                                //map results after network is complete
                                 if (this.currentQuery === this.totalQueries) {
                                     this.getFilterResults(uniqueSites);
                                 }
