@@ -812,21 +812,21 @@ export class MapComponent implements OnInit {
     }
 
     siteFocus() {
+        let siteMarkersOnMap = this.map.hasLayer(this.siteService.siteMarkers);
+        let manySiteMarkersOnMap = this.map.hasLayer(
+            this.siteService.manyFilteredSitesMarkers
+        );
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
-        if (this.map.hasLayer(this.siteService.siteMarkers)) {
+        if (siteMarkersOnMap) {
             this.map.fitBounds(this.siteService.siteMarkers.getBounds());
-        } else if (
-            this.map.hasLayer(this.siteService.manyFilteredSitesMarkers)
-        ) {
+        } else if (manySiteMarkersOnMap) {
             this.map.fitBounds(
                 this.siteService.manyFilteredSitesMarkers.getBounds()
             );
         } else if (
-            this.map.hasLayer(
-                this.siteService.manyFilteredSitesMarkers === false &&
-                    this.map.hasLayer(this.siteService.siteMarkers) === false
-            )
+            siteMarkersOnMap === false &&
+            manySiteMarkersOnMap === false
         ) {
             this.map.setView(
                 MAP_CONSTANTS.defaultCenter,
@@ -1012,6 +1012,10 @@ export class MapComponent implements OnInit {
         this.selectedStates = new Array<State>();
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
+        //remove markers and zoom to U.S.
+        this.resultsReturned = false;
+        this.resetPreviousOutput();
+        this.siteFocus();
     }
 
     public submitMapFilter() {
