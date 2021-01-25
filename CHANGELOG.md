@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 -   Switched to marker clusters for large queries
+-   Results panel opens when filter is submitted
 
 ### Fixed
 

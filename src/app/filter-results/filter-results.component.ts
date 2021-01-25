@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 import { FiltersService } from '@services/filters.service';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-filter-results',
@@ -17,6 +18,8 @@ export class FilterResultsComponent implements OnInit {
     dataSource = new MatTableDataSource([]);
     sortedData = [];
     currentSites;
+    resultsPanelOpen: boolean = true;
+    subscription: Subscription;
 
     // columns for results table
     displayedColumns: string[] = [
@@ -34,6 +37,10 @@ export class FilterResultsComponent implements OnInit {
     constructor(private filtersService: FiltersService) {
         this.filtersService.selectedSites.subscribe(
             (currentSites) => (this.currentSites = currentSites)
+        );
+
+        this.subscription = this.filtersService.resultsPanelOpen.subscribe(
+            (state) => (this.resultsPanelOpen = state)
         );
     }
 
