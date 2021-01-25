@@ -350,7 +350,7 @@ describe('MapComponent', () => {
         component.updateEventFilter();
     });
 
-    xit('#siteFocus sets map to filtered sites extent', () => {
+    it('#siteFocus sets map to filtered sites extent', () => {
         //zoom to sites or default zoom
         component.siteFocus();
         let mapZoom = component.map.getZoom();
