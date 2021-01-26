@@ -69,15 +69,15 @@ import { FilterResultsComponent } from '@app/filter-results/filter-results.compo
 })
 export class MapComponent implements OnInit {
     @ViewChild(FilterResultsComponent)
-    @ViewChild('statesList')
-    statesList: MatChipList;
-
+    filterResultsComponent: FilterResultsComponent;
     public removable = true;
     public addOnBlur = true;
     public filteredStates$: Observable<State[]>;
 
-    filterResultsComponent: FilterResultsComponent;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+
+    @ViewChild('statesList')
+    statesList: MatChipList;
 
     sites = [];
     siteid: string;
@@ -935,126 +935,127 @@ export class MapComponent implements OnInit {
                     4500
                 );
             }
-        }
-        // loop through results response from a search query
-        if (sites.length !== undefined) {
-            for (let site of sites) {
-                let lat = Number(site.latitude_dd);
-                let long = Number(site.longitude_dd);
-                let popupContent =
-                    '<h3>' +
-                    '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
-                    site.site_name +
-                    '</h3>' +
-                    '<span class="popupLabel"><b>State</b>:</span> ' +
-                    site.state +
-                    '<br/>' +
-                    '<span class="popupLabel"><b>County</b>:</span> ' +
-                    site.county +
-                    '<br/>' +
-                    '<span class="popupLabel"><b>Waterbody</b>:</span> ' +
-                    site.waterbody +
-                    '<br/>';
+        } else {
+            // loop through results response from a search query
+            if (sites.length !== undefined) {
+                for (let site of sites) {
+                    let lat = Number(site.latitude_dd);
+                    let long = Number(site.longitude_dd);
+                    let popupContent =
+                        '<h3>' +
+                        '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
+                        site.site_name +
+                        '</h3>' +
+                        '<span class="popupLabel"><b>State</b>:</span> ' +
+                        site.state +
+                        '<br/>' +
+                        '<span class="popupLabel"><b>County</b>:</span> ' +
+                        site.county +
+                        '<br/>' +
+                        '<span class="popupLabel"><b>Waterbody</b>:</span> ' +
+                        site.waterbody +
+                        '<br/>';
 
-                site.is_permanent_housing_installed
-                    ? (popupContent +=
-                          '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
-                          site.is_permanent_housing_installed +
-                          '<br/>')
-                    : (popupContent +=
-                          '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
-                          'No<br/>');
+                    site.is_permanent_housing_installed
+                        ? (popupContent +=
+                              '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
+                              site.is_permanent_housing_installed +
+                              '<br/>')
+                        : (popupContent +=
+                              '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
+                              'No<br/>');
 
-                if (site.Events) {
-                    if (site.Events.length > 0) {
-                        if (site.Events.length === 1) {
-                            popupContent +=
-                                '<span class="popupLabel"><b>Event</b>:</span> ' +
-                                site.Events.join(', ') +
-                                '<br/>';
-                        } else {
-                            popupContent +=
-                                '<span class="popupLabel"><b>Events</b>:</span> ' +
-                                site.Events.join(', ') +
-                                '<br/>';
+                    if (site.Events) {
+                        if (site.Events.length > 0) {
+                            if (site.Events.length === 1) {
+                                popupContent +=
+                                    '<span class="popupLabel"><b>Event</b>:</span> ' +
+                                    site.Events.join(', ') +
+                                    '<br/>';
+                            } else {
+                                popupContent +=
+                                    '<span class="popupLabel"><b>Events</b>:</span> ' +
+                                    site.Events.join(', ') +
+                                    '<br/>';
+                            }
                         }
                     }
-                }
-                /* istanbul ignore next */
-                if (isNaN(lat) || isNaN(long)) {
-                    console.log(
-                        'Skipped site ' +
-                            site.site_no +
-                            ' in All STN Sites layer due to null lat/lng'
-                    );
-                } else {
-                    //These sites are in the Atlantic Ocean or otherwise clearly out of place
-                    if (
-                        site.site_no !== 'AKALE27857' &&
-                        site.site_no !== 'AKALE27855' &&
-                        site.site_no !== 'ASTUT27853' &&
-                        site.site_no !== 'AZGRA27856'
-                    ) {
-                        //put all the site markers in the same layer group
-                        if (layerType === this.siteService.siteMarkers) {
-                            L.marker([lat, long], { icon: myIcon })
-                                .bindPopup(popupContent)
-                                .addTo(layerType);
-                        }
-                        //Make circle markers for the All STN Sites layer
+                    /* istanbul ignore next */
+                    if (isNaN(lat) || isNaN(long)) {
+                        console.log(
+                            'Skipped site ' +
+                                site.site_no +
+                                ' in All STN Sites layer due to null lat/lng'
+                        );
+                    } else {
+                        //These sites are in the Atlantic Ocean or otherwise clearly out of place
                         if (
-                            layerType == this.siteService.allSiteMarkers ||
-                            layerType ===
-                                this.siteService.manyFilteredSitesMarkers
+                            site.site_no !== 'AKALE27857' &&
+                            site.site_no !== 'AKALE27855' &&
+                            site.site_no !== 'ASTUT27853' &&
+                            site.site_no !== 'AZGRA27856'
                         ) {
-                            L.marker([lat, long], {
-                                icon: myIcon,
-                                iconSize: 32,
-                            })
-                                .bindPopup(popupContent)
-                                .addTo(layerType);
+                            //put all the site markers in the same layer group
+                            if (layerType === this.siteService.siteMarkers) {
+                                L.marker([lat, long], { icon: myIcon })
+                                    .bindPopup(popupContent)
+                                    .addTo(layerType);
+                            }
+                            //Make circle markers for the All STN Sites layer
+                            if (
+                                layerType == this.siteService.allSiteMarkers ||
+                                layerType ===
+                                    this.siteService.manyFilteredSitesMarkers
+                            ) {
+                                L.marker([lat, long], {
+                                    icon: myIcon,
+                                    iconSize: 32,
+                                })
+                                    .bindPopup(popupContent)
+                                    .addTo(layerType);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        if (
-            layerType === this.siteService.siteMarkers ||
-            layerType === this.siteService.manyFilteredSitesMarkers
-        ) {
-            //if there are multiple queries, wait until the last one to zoom to the layer
+            if (
+                layerType === this.siteService.siteMarkers ||
+                layerType === this.siteService.manyFilteredSitesMarkers
+            ) {
+                //if there are multiple queries, wait until the last one to zoom to the layer
 
-            if (layerType === this.siteService.siteMarkers) {
-                this.siteService.siteMarkers.addTo(this.map);
-            }
-            if (layerType === this.siteService.manyFilteredSitesMarkers) {
-                this.siteService.manyFilteredSitesMarkers.addTo(this.map);
-            }
-            this.sitesVisible = true;
-            //refresh layer control to connect it with new sites
-            this.map.removeControl(this.layerToggles);
-            //draw & search controls need to be removed and re-added after the layer control so they appear in the correct position
-            this.map.removeControl(this.drawControl);
-            this.map.removeControl(this.searchControl);
-            if (layerType === this.siteService.siteMarkers) {
-                this.createLayerControl(true);
-            }
-            if (layerType === this.siteService.manyFilteredSitesMarkers) {
-                this.createLayerControl(false);
-            }
-            this.createSearchControl();
-            this.createDrawControls();
-            this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
+                if (layerType === this.siteService.siteMarkers) {
+                    this.siteService.siteMarkers.addTo(this.map);
+                }
+                if (layerType === this.siteService.manyFilteredSitesMarkers) {
+                    this.siteService.manyFilteredSitesMarkers.addTo(this.map);
+                }
+                this.sitesVisible = true;
+                //refresh layer control to connect it with new sites
+                this.map.removeControl(this.layerToggles);
+                //draw & search controls need to be removed and re-added after the layer control so they appear in the correct position
+                this.map.removeControl(this.drawControl);
+                this.map.removeControl(this.searchControl);
+                if (layerType === this.siteService.siteMarkers) {
+                    this.createLayerControl(true);
+                }
+                if (layerType === this.siteService.manyFilteredSitesMarkers) {
+                    this.createLayerControl(false);
+                }
+                this.createSearchControl();
+                this.createDrawControls();
+                this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
 
-            //When filtering sites, zoom to layer, and open map pane
-            if (zoomToLayer == true) {
-                this.siteFocus();
-                this.mapPanelState = true;
-                //set the state control back to state names instead of abbreviations
-                this.mapFilterForm
-                    .get('stateControl')
-                    .setValue(this.selectedStates);
+                //When filtering sites, zoom to layer, and open map pane
+                if (zoomToLayer == true) {
+                    this.siteFocus();
+                    this.mapPanelState = true;
+                    //set the state control back to state names instead of abbreviations
+                    this.mapFilterForm
+                        .get('stateControl')
+                        .setValue(this.selectedStates);
+                }
             }
         }
     }
