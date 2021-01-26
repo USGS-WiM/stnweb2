@@ -558,7 +558,6 @@ export class MapComponent implements OnInit {
     toggleStateSelection(state: State) {
         let numStates: number;
         state.selected = !state.selected;
-        document.getElementById('selectedStateList').innerHTML = '';
         this.setStateAbbrev = '';
         if (state.selected) {
             this.selectedStates.push(state);
@@ -950,29 +949,6 @@ export class MapComponent implements OnInit {
     displayEventState(state: any): string {
         return state && state.state_name ? state.state_name : '';
     }
-    //will return a comma separated list of selected states
-    //prints list of states next to filter instead of filling the filter rectangle
-    displayState(state: any): string {
-        let stateCount: number;
-        let stateIndex: number;
-        let currentState: string;
-        this.stateList = '';
-        if (state !== null) {
-            stateIndex = state.length;
-        }
-        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
-            currentState = state[stateCount].state_name;
-            if (stateCount === 0) {
-                this.stateList = this.stateList.concat(
-                    ' Selected States: ' + currentState
-                );
-            } else {
-                this.stateList = this.stateList.concat(', ' + currentState);
-            }
-        }
-        document.getElementById('selectedStateList').innerHTML = this.stateList;
-        return null;
-    }
 
     //sites = the full site object to be mapped
     //myIcon = what the marker will look like
@@ -1144,9 +1120,17 @@ export class MapComponent implements OnInit {
         this.resultsReturned = false;
         this.currentQuery = 0;
         this.totalQueries = 0;
-        //set the state control to the state abbreviations
-        this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
-        document.getElementById('selectedStateList').innerHTML = '';
+
+        let numOfStates = this.mapFilterForm.get('stateControl').value.length;
+        let stateString = '';
+        for (let i = 0; i < numOfStates; i++) {
+            stateString = stateString.concat(
+                this.mapFilterForm.get('stateControl').value[i].state_abbrev +
+                    ','
+            );
+        }
+
+        console.log('stateString', stateString);
 
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
@@ -1168,9 +1152,7 @@ export class MapComponent implements OnInit {
         let sensorIds = filterParams.sensorTypeControl
             ? filterParams.sensorTypeControl.toString()
             : '';
-        let stateAbbrevs = filterParams.stateControl
-            ? filterParams.stateControl.toString()
-            : '';
+        let stateAbbrevs = stateString;
         //surveyed = true, unsurveyed = false, or leave empty
         let surveyed = filterParams.surveyedControl
             ? filterParams.surveyedControl
