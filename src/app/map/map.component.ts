@@ -150,8 +150,6 @@ export class MapComponent implements OnInit {
     states: State[] = [];
     eventStates: State[];
     selectedStates: State[] = new Array<State>();
-    stateList = '';
-    setStateAbbrev = '';
     stateString = '';
 
     eventTypes$: Observable<EventType[]>;
@@ -556,36 +554,6 @@ export class MapComponent implements OnInit {
         // });
     }
 
-    toggleStateSelection(state: State) {
-        let numStates: number;
-        state.selected = !state.selected;
-        this.setStateAbbrev = '';
-        if (state.selected) {
-            this.selectedStates.push(state);
-        } else {
-            const i = this.selectedStates.findIndex(
-                (value) => value.state_name === state.state_name
-            );
-            this.selectedStates.splice(i, 1);
-        }
-        //Create a string containing the list of state abbreviations
-        if (this.selectedStates !== undefined) {
-            numStates = this.selectedStates.length;
-            for (let numAbbrev = 0; numAbbrev < numStates; numAbbrev++) {
-                if (numAbbrev === 0) {
-                    this.setStateAbbrev = this.setStateAbbrev.concat(
-                        this.selectedStates[numAbbrev].state_abbrev
-                    );
-                } else {
-                    this.setStateAbbrev = this.setStateAbbrev.concat(
-                        ',' + this.selectedStates[numAbbrev].state_abbrev
-                    );
-                }
-            }
-        }
-        //set the value of the state control to the full object of each state so that the list of state names can be displayed
-        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
-    }
     //Temporary message pop up when user zooms out and layers are removed
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
@@ -626,7 +594,7 @@ export class MapComponent implements OnInit {
                 setTimeout(() => {
                     // setting filter-results table to default display
                     this.filterResultsComponent.refreshDataSource();
-                }, 500);
+                }, 1000);
             });
     }
 
