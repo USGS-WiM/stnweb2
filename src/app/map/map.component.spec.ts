@@ -327,18 +327,6 @@ describe('MapComponent', () => {
         expect(response).toEqual(state && state.state_name);
     });
 
-    it('displayState returns null', () => {
-        let state = {
-            counties: null,
-            selected: true,
-            state_abbrev: 'AK',
-            state_id: 2,
-            state_name: 'Alaska',
-        };
-        let displayStateResponse = component.displayState(state);
-        expect(displayStateResponse).toEqual(null);
-    });
-
     it('should call openZoomOutSnackBar', () => {
         let message = 'hello';
         let action = 'OK';
@@ -362,18 +350,6 @@ describe('MapComponent', () => {
         fixture.detectChanges();
         //map should have zoomed back to sites or default
         expect(component.map.getZoom()).toEqual(mapZoom);
-    });
-
-    it('mapFilterForm should be valid after toggleStateSelection', () => {
-        let state = {
-            counties: null,
-            selected: true,
-            state_abbrev: 'AK',
-            state_id: 2,
-            state_name: 'Alaska',
-        };
-        component.toggleStateSelection(state);
-        expect(component.mapFilterForm.valid).toBe(true);
     });
 
     it('mapFilterForm should be a valid form on submit', () => {
@@ -413,6 +389,4 @@ describe('MapComponent', () => {
         expect(formValues.RDGOnlyControl).toBeFalsy();
         expect(formValues.OpDefinedControl).toBeFalsy();
     });
-
-    xit('#displayState', () => {});
 });
