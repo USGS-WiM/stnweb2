@@ -152,6 +152,7 @@ export class MapComponent implements OnInit {
     selectedStates: State[] = new Array<State>();
     stateList = '';
     setStateAbbrev = '';
+    stateString = '';
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -1094,6 +1095,8 @@ export class MapComponent implements OnInit {
         //reset the event options
         this.updateEventFilter();
         this.selectedStates = new Array<State>();
+        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
+        this.mapFilterForm.get('stateInput').setValue([null]);
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
 
@@ -1120,17 +1123,19 @@ export class MapComponent implements OnInit {
         this.resultsReturned = false;
         this.currentQuery = 0;
         this.totalQueries = 0;
+        this.stateString = '';
 
-        let numOfStates = this.mapFilterForm.get('stateControl').value.length;
-        let stateString = '';
-        for (let i = 0; i < numOfStates; i++) {
-            stateString = stateString.concat(
-                this.mapFilterForm.get('stateControl').value[i].state_abbrev +
-                    ','
-            );
+        //Create string of state abbreviations
+        if (this.mapFilterForm.get('stateControl').value !== null) {
+            let numOfStates = this.mapFilterForm.get('stateControl').value
+                .length;
+            for (let i = 0; i < numOfStates; i++) {
+                this.stateString = this.stateString.concat(
+                    this.mapFilterForm.get('stateControl').value[i]
+                        .state_abbrev + ','
+                );
+            }
         }
-
-        console.log('stateString', stateString);
 
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
@@ -1152,7 +1157,7 @@ export class MapComponent implements OnInit {
         let sensorIds = filterParams.sensorTypeControl
             ? filterParams.sensorTypeControl.toString()
             : '';
-        let stateAbbrevs = stateString;
+        let stateAbbrevs = this.stateString;
         //surveyed = true, unsurveyed = false, or leave empty
         let surveyed = filterParams.surveyedControl
             ? filterParams.surveyedControl
