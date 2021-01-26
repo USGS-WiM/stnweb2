@@ -321,43 +321,50 @@
                                 </mat-select>
                             </mat-form-field>
 
-                            <mat-form-field appearance="fill">
-                                <mat-label for="stateList">States</mat-label>
-                                <input
-                                    matInput
-                                    type="text"
-                                    aria-label="Dropdown menu for state selection"
-                                    matInput
-                                    formControlName="stateControl"
-                                    [matAutocomplete]="stateAutocomplete"
-                                />
-                                <mat-hint
-                                    >Start typing for suggestions</mat-hint
-                                >
-                            </mat-form-field>
-                            <mat-autocomplete
-                                #stateAutocomplete="matAutocomplete"
-                                [displayWith]="displayState"
-                            >
-                                <mat-option
-                                    *ngFor="let state of states$ | async"
-                                    [value]="state.state_abbrev"
-                                >
-                                    <div>
-                                        <mat-checkbox
-                                            [checked]="state.selected"
-                                            (change)="
-                                                toggleStateSelection(state)
-                                            "
-                                            (click)="$event.stopPropagation()"
+                            <mat-form-field *ngIf="this.states.length > 0">
+                                <mat-chip-list #statesList>
+                                    <mat-chip
+                                        *ngFor="let state of selectedStates"
+                                        [removable]="removable"
+                                        (removed)="remove(state)"
+                                    >
+                                        {{ state.state_name }}
+                                        <mat-icon
+                                            matChipRemove
+                                            *ngIf="removable"
+                                            >cancel</mat-icon
                                         >
-                                            {{ state.state_name }}
-                                        </mat-checkbox>
-                                    </div>
-                                </mat-option>
-                            </mat-autocomplete>
+                                    </mat-chip>
+                                    <input
+                                        #stateInput
+                                        placeholder="Add state"
+                                        [matChipInputFor]="statesList"
+                                        [matChipInputSeparatorKeyCodes]="
+                                            separatorKeysCodes
+                                        "
+                                        [matChipInputAddOnBlur]="addOnBlur"
+                                        (matChipInputTokenEnd)="
+                                            addState($event)
+                                        "
+                                        [matAutocomplete]="statesAutocomplete"
+                                        formControlName="stateInput"
+                                    />
+                                </mat-chip-list>
+                                <mat-autocomplete
+                                    #statesAutocomplete="matAutocomplete"
+                                    (optionSelected)="selectState($event)"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let state of filteredStates$ | async
+                                        "
+                                        [value]="state"
+                                    >
+                                        {{ state.state_name }}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
 
-                            <label id="selectedStateList"> </label>
                             <br />
                             <label
                                 class="filter-label"
