@@ -4,7 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 import { FiltersService } from '@services/filters.service';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { ResultDetailsComponent } from '../result-details/result-details.component';
 
 @Component({
     selector: 'app-filter-results',
@@ -34,7 +36,10 @@ export class FilterResultsComponent implements OnInit {
         'permHouse',
     ];
 
-    constructor(private filtersService: FiltersService) {
+    constructor(
+        private filtersService: FiltersService,
+        public dialog: MatDialog
+    ) {
         this.filtersService.selectedSites.subscribe(
             (currentSites) => (this.currentSites = currentSites)
         );
@@ -47,6 +52,12 @@ export class FilterResultsComponent implements OnInit {
     ngOnInit(): void {}
 
     ngAfterViewInit() {}
+
+    getDetails(row): void {
+        const dialogRef = this.dialog.open(ResultDetailsComponent, {});
+        console.log(row);
+        dialogRef.afterClosed().subscribe((result) => {});
+    }
 
     // called to refresh the datasource/table results
     refreshDataSource() {

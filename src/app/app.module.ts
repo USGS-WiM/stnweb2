@@ -55,6 +55,7 @@ import { ApprovalsComponent } from './approvals/approvals.component';
 import { SettingsComponent } from './settings/settings.component';
 import { BulkHwmComponent } from './bulk-hwm/bulk-hwm.component';
 import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
+import { ResultDetailsComponent } from './result-details/result-details.component';
 
 @NgModule({
     declarations: [
@@ -71,6 +72,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         SettingsComponent,
         BulkHwmComponent,
         HwmUploadComponent,
+        ResultDetailsComponent,
     ],
     imports: [
         BrowserModule,
@@ -118,7 +120,12 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         MatSnackBar,
     ],
     bootstrap: [AppComponent],
-    entryComponents: [AboutComponent, LoginComponent, ConfirmComponent],
+    entryComponents: [
+        AboutComponent,
+        LoginComponent,
+        ConfirmComponent,
+        ResultDetailsComponent,
+    ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}
