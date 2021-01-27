@@ -2,6 +2,10 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatChipList, MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -17,6 +21,7 @@ import {
     debounceTime,
     distinctUntilChanged,
     switchMap,
+    startWith,
 } from 'rxjs/operators';
 import { APP_SETTINGS } from '../app.settings';
 import { APP_UTILITIES } from '@app/app.utilities';
@@ -65,6 +70,14 @@ import { FilterResultsComponent } from '@app/filter-results/filter-results.compo
 export class MapComponent implements OnInit {
     @ViewChild(FilterResultsComponent)
     filterResultsComponent: FilterResultsComponent;
+    public removable = true;
+    public addOnBlur = true;
+    public filteredStates$: Observable<State[]>;
+
+    readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+
+    @ViewChild('statesList')
+    statesList: MatChipList;
 
     sites = [];
     siteid: string;
@@ -134,11 +147,10 @@ export class MapComponent implements OnInit {
 
     //holds filter values
     events: Event[];
-    states: State[];
+    states: State[] = [];
     eventStates: State[];
     selectedStates: State[] = new Array<State>();
-    stateList = '';
-    setStateAbbrev = '';
+    stateString = '';
 
     eventTypes$: Observable<EventType[]>;
     filteredEvents$: Observable<Event[]>; //not used yet
@@ -283,7 +295,8 @@ export class MapComponent implements OnInit {
             eventsControl: null,
             networkControl: null,
             sensorTypeControl: null,
-            stateControl: '',
+            stateControl: this.selectedStates,
+            stateInput: [null],
             surveyedControl: null,
             HWMOnlyControl: false,
             sensorOnlyControl: false,
@@ -292,6 +305,13 @@ export class MapComponent implements OnInit {
             RDGOnlyControl: false,
             OPDefinedControl: false,
         });
+
+        this.filteredStates$ = this.mapFilterForm
+            .get('stateInput')
+            .valueChanges.pipe(
+                startWith(''),
+                map((value) => this.stateFilter(value))
+            );
     }
 
     ngOnInit() {
@@ -305,6 +325,88 @@ export class MapComponent implements OnInit {
             (currentSites) => (this.currentSites = currentSites)
         );
     }
+
+    public stateFilter(value: any): State[] {
+        const filterValue =
+            value === null || value instanceof Object
+                ? ''
+                : value.toLowerCase();
+        const matches = this.states.filter((state) =>
+            state.state_name.toLowerCase().includes(filterValue)
+        );
+        const formValue = this.mapFilterForm.get('stateControl').value;
+        return formValue === null
+            ? matches
+            : matches.filter(
+                  (x) =>
+                      !formValue.find((y) => y.state_abbrev === x.state_abbrev)
+              );
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    public selectState(event: MatAutocompleteSelectedEvent): void {
+        if (!event.option) {
+            return;
+        }
+        const value = event.option.value;
+        if (
+            value &&
+            value instanceof Object &&
+            !this.selectedStates.includes(value)
+        ) {
+            this.selectedStates.push(value);
+            this.mapFilterForm
+                .get('stateControl')
+                .setValue(this.selectedStates);
+            this.mapFilterForm.get('stateInput').setValue('');
+        }
+    }
+
+    public addState(event: MatChipInputEvent): void {
+        const input = event.input;
+        const value = event.value;
+
+        if (value.trim()) {
+            const matches = this.states.filter(
+                (state) => state.state_name.toLowerCase() === value
+            );
+            const formValue = this.mapFilterForm.get('stateControl').value;
+            const matchesNotYetSelected =
+                formValue === null
+                    ? matches
+                    : matches.filter(
+                          (x) =>
+                              !formValue.find(
+                                  (y) => y.state_abbrev === x.state_abbrev
+                              )
+                      );
+            if (matchesNotYetSelected.length === 1) {
+                this.selectedStates.push(matchesNotYetSelected[0]);
+                this.mapFilterForm
+                    .get('stateControl')
+                    .setValue(this.selectedStates);
+                this.mapFilterForm.get('stateInput').setValue('');
+            }
+        }
+
+        // Reset the input value
+        if (input) {
+            input.value = '';
+        }
+    }
+
+    public remove(state: State) {
+        const index = this.selectedStates.indexOf(state);
+        if (index >= 0) {
+            this.selectedStates.splice(index, 1);
+            this.mapFilterForm
+                .get('stateControl')
+                .setValue(this.selectedStates);
+            this.mapFilterForm.get('stateInput').setValue('');
+        }
+    }
+    //////////////////////////////////////////////////////////////////
 
     setCurrentFilter() {
         this.currentFilter = localStorage.getItem('currentFilter')
@@ -450,37 +552,6 @@ export class MapComponent implements OnInit {
         // });
     }
 
-    toggleStateSelection(state: State) {
-        let numStates: number;
-        state.selected = !state.selected;
-        document.getElementById('selectedStateList').innerHTML = '';
-        this.setStateAbbrev = '';
-        if (state.selected) {
-            this.selectedStates.push(state);
-        } else {
-            const i = this.selectedStates.findIndex(
-                (value) => value.state_name === state.state_name
-            );
-            this.selectedStates.splice(i, 1);
-        }
-        //Create a string containing the list of state abbreviations
-        if (this.selectedStates !== undefined) {
-            numStates = this.selectedStates.length;
-            for (let numAbbrev = 0; numAbbrev < numStates; numAbbrev++) {
-                if (numAbbrev === 0) {
-                    this.setStateAbbrev = this.setStateAbbrev.concat(
-                        this.selectedStates[numAbbrev].state_abbrev
-                    );
-                } else {
-                    this.setStateAbbrev = this.setStateAbbrev.concat(
-                        ',' + this.selectedStates[numAbbrev].state_abbrev
-                    );
-                }
-            }
-        }
-        //set the value of the state control to the full object of each state so that the list of state names can be displayed
-        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
-    }
     //Temporary message pop up when user zooms out and layers are removed
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
@@ -521,7 +592,7 @@ export class MapComponent implements OnInit {
                 setTimeout(() => {
                     // setting filter-results table to default display
                     this.filterResultsComponent.refreshDataSource();
-                }, 500);
+                }, 1000);
             });
     }
 
@@ -845,29 +916,6 @@ export class MapComponent implements OnInit {
     displayEventState(state: any): string {
         return state && state.state_name ? state.state_name : '';
     }
-    //will return a comma separated list of selected states
-    //prints list of states next to filter instead of filling the filter rectangle
-    displayState(state: any): string {
-        let stateCount: number;
-        let stateIndex: number;
-        let currentState: string;
-        this.stateList = '';
-        if (state !== null) {
-            stateIndex = state.length;
-        }
-        for (stateCount = 0; stateCount < stateIndex; stateCount++) {
-            currentState = state[stateCount].state_name;
-            if (stateCount === 0) {
-                this.stateList = this.stateList.concat(
-                    ' Selected States: ' + currentState
-                );
-            } else {
-                this.stateList = this.stateList.concat(', ' + currentState);
-            }
-        }
-        document.getElementById('selectedStateList').innerHTML = this.stateList;
-        return null;
-    }
 
     //sites = the full site object to be mapped
     //myIcon = what the marker will look like
@@ -885,126 +933,127 @@ export class MapComponent implements OnInit {
                     4500
                 );
             }
-        }
-        // loop through results response from a search query
-        if (sites.length !== undefined) {
-            for (let site of sites) {
-                let lat = Number(site.latitude_dd);
-                let long = Number(site.longitude_dd);
-                let popupContent =
-                    '<h3>' +
-                    '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
-                    site.site_name +
-                    '</h3>' +
-                    '<span class="popupLabel"><b>State</b>:</span> ' +
-                    site.state +
-                    '<br/>' +
-                    '<span class="popupLabel"><b>County</b>:</span> ' +
-                    site.county +
-                    '<br/>' +
-                    '<span class="popupLabel"><b>Waterbody</b>:</span> ' +
-                    site.waterbody +
-                    '<br/>';
+        } else {
+            // loop through results response from a search query
+            if (sites.length !== undefined) {
+                for (let site of sites) {
+                    let lat = Number(site.latitude_dd);
+                    let long = Number(site.longitude_dd);
+                    let popupContent =
+                        '<h3>' +
+                        '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
+                        site.site_name +
+                        '</h3>' +
+                        '<span class="popupLabel"><b>State</b>:</span> ' +
+                        site.state +
+                        '<br/>' +
+                        '<span class="popupLabel"><b>County</b>:</span> ' +
+                        site.county +
+                        '<br/>' +
+                        '<span class="popupLabel"><b>Waterbody</b>:</span> ' +
+                        site.waterbody +
+                        '<br/>';
 
-                site.is_permanent_housing_installed
-                    ? (popupContent +=
-                          '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
-                          site.is_permanent_housing_installed +
-                          '<br/>')
-                    : (popupContent +=
-                          '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
-                          'No<br/>');
+                    site.is_permanent_housing_installed
+                        ? (popupContent +=
+                              '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
+                              site.is_permanent_housing_installed +
+                              '<br/>')
+                        : (popupContent +=
+                              '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
+                              'No<br/>');
 
-                if (site.Events) {
-                    if (site.Events.length > 0) {
-                        if (site.Events.length === 1) {
-                            popupContent +=
-                                '<span class="popupLabel"><b>Event</b>:</span> ' +
-                                site.Events.join(', ') +
-                                '<br/>';
-                        } else {
-                            popupContent +=
-                                '<span class="popupLabel"><b>Events</b>:</span> ' +
-                                site.Events.join(', ') +
-                                '<br/>';
+                    if (site.Events) {
+                        if (site.Events.length > 0) {
+                            if (site.Events.length === 1) {
+                                popupContent +=
+                                    '<span class="popupLabel"><b>Event</b>:</span> ' +
+                                    site.Events.join(', ') +
+                                    '<br/>';
+                            } else {
+                                popupContent +=
+                                    '<span class="popupLabel"><b>Events</b>:</span> ' +
+                                    site.Events.join(', ') +
+                                    '<br/>';
+                            }
                         }
                     }
-                }
-                /* istanbul ignore next */
-                if (isNaN(lat) || isNaN(long)) {
-                    console.log(
-                        'Skipped site ' +
-                            site.site_no +
-                            ' in All STN Sites layer due to null lat/lng'
-                    );
-                } else {
-                    //These sites are in the Atlantic Ocean or otherwise clearly out of place
-                    if (
-                        site.site_no !== 'AKALE27857' &&
-                        site.site_no !== 'AKALE27855' &&
-                        site.site_no !== 'ASTUT27853' &&
-                        site.site_no !== 'AZGRA27856'
-                    ) {
-                        //put all the site markers in the same layer group
-                        if (layerType === this.siteService.siteMarkers) {
-                            L.marker([lat, long], { icon: myIcon })
-                                .bindPopup(popupContent)
-                                .addTo(layerType);
-                        }
-                        //Make circle markers for the All STN Sites layer
+                    /* istanbul ignore next */
+                    if (isNaN(lat) || isNaN(long)) {
+                        console.log(
+                            'Skipped site ' +
+                                site.site_no +
+                                ' in All STN Sites layer due to null lat/lng'
+                        );
+                    } else {
+                        //These sites are in the Atlantic Ocean or otherwise clearly out of place
                         if (
-                            layerType == this.siteService.allSiteMarkers ||
-                            layerType ===
-                                this.siteService.manyFilteredSitesMarkers
+                            site.site_no !== 'AKALE27857' &&
+                            site.site_no !== 'AKALE27855' &&
+                            site.site_no !== 'ASTUT27853' &&
+                            site.site_no !== 'AZGRA27856'
                         ) {
-                            L.marker([lat, long], {
-                                icon: myIcon,
-                                iconSize: 32,
-                            })
-                                .bindPopup(popupContent)
-                                .addTo(layerType);
+                            //put all the site markers in the same layer group
+                            if (layerType === this.siteService.siteMarkers) {
+                                L.marker([lat, long], { icon: myIcon })
+                                    .bindPopup(popupContent)
+                                    .addTo(layerType);
+                            }
+                            //Make circle markers for the All STN Sites layer
+                            if (
+                                layerType == this.siteService.allSiteMarkers ||
+                                layerType ===
+                                    this.siteService.manyFilteredSitesMarkers
+                            ) {
+                                L.marker([lat, long], {
+                                    icon: myIcon,
+                                    iconSize: 32,
+                                })
+                                    .bindPopup(popupContent)
+                                    .addTo(layerType);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        if (
-            layerType === this.siteService.siteMarkers ||
-            layerType === this.siteService.manyFilteredSitesMarkers
-        ) {
-            //if there are multiple queries, wait until the last one to zoom to the layer
+            if (
+                layerType === this.siteService.siteMarkers ||
+                layerType === this.siteService.manyFilteredSitesMarkers
+            ) {
+                //if there are multiple queries, wait until the last one to zoom to the layer
 
-            if (layerType === this.siteService.siteMarkers) {
-                this.siteService.siteMarkers.addTo(this.map);
-            }
-            if (layerType === this.siteService.manyFilteredSitesMarkers) {
-                this.siteService.manyFilteredSitesMarkers.addTo(this.map);
-            }
-            this.sitesVisible = true;
-            //refresh layer control to connect it with new sites
-            this.map.removeControl(this.layerToggles);
-            //draw & search controls need to be removed and re-added after the layer control so they appear in the correct position
-            this.map.removeControl(this.drawControl);
-            this.map.removeControl(this.searchControl);
-            if (layerType === this.siteService.siteMarkers) {
-                this.createLayerControl(true);
-            }
-            if (layerType === this.siteService.manyFilteredSitesMarkers) {
-                this.createLayerControl(false);
-            }
-            this.createSearchControl();
-            this.createDrawControls();
-            this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
+                if (layerType === this.siteService.siteMarkers) {
+                    this.siteService.siteMarkers.addTo(this.map);
+                }
+                if (layerType === this.siteService.manyFilteredSitesMarkers) {
+                    this.siteService.manyFilteredSitesMarkers.addTo(this.map);
+                }
+                this.sitesVisible = true;
+                //refresh layer control to connect it with new sites
+                this.map.removeControl(this.layerToggles);
+                //draw & search controls need to be removed and re-added after the layer control so they appear in the correct position
+                this.map.removeControl(this.drawControl);
+                this.map.removeControl(this.searchControl);
+                if (layerType === this.siteService.siteMarkers) {
+                    this.createLayerControl(true);
+                }
+                if (layerType === this.siteService.manyFilteredSitesMarkers) {
+                    this.createLayerControl(false);
+                }
+                this.createSearchControl();
+                this.createDrawControls();
+                this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
 
-            //When filtering sites, zoom to layer, and open map pane
-            if (zoomToLayer == true) {
-                this.siteFocus();
-                this.mapPanelState = true;
-                //set the state control back to state names instead of abbreviations
-                this.mapFilterForm
-                    .get('stateControl')
-                    .setValue(this.selectedStates);
+                //When filtering sites, zoom to layer, and open map pane
+                if (zoomToLayer == true) {
+                    this.siteFocus();
+                    this.mapPanelState = true;
+                    //set the state control back to state names instead of abbreviations
+                    this.mapFilterForm
+                        .get('stateControl')
+                        .setValue(this.selectedStates);
+                }
             }
         }
     }
@@ -1013,6 +1062,8 @@ export class MapComponent implements OnInit {
         //reset the event options
         this.updateEventFilter();
         this.selectedStates = new Array<State>();
+        this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
+        this.mapFilterForm.get('stateInput').setValue([null]);
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
 
@@ -1039,9 +1090,19 @@ export class MapComponent implements OnInit {
         this.resultsReturned = false;
         this.currentQuery = 0;
         this.totalQueries = 0;
-        //set the state control to the state abbreviations
-        this.mapFilterForm.get('stateControl').setValue(this.setStateAbbrev);
-        document.getElementById('selectedStateList').innerHTML = '';
+        this.stateString = '';
+
+        //Create string of state abbreviations
+        if (this.mapFilterForm.get('stateControl').value !== null) {
+            let numOfStates = this.mapFilterForm.get('stateControl').value
+                .length;
+            for (let i = 0; i < numOfStates; i++) {
+                this.stateString = this.stateString.concat(
+                    this.mapFilterForm.get('stateControl').value[i]
+                        .state_abbrev + ','
+                );
+            }
+        }
 
         let filterParams = JSON.parse(JSON.stringify(this.mapFilterForm.value));
 
@@ -1063,9 +1124,7 @@ export class MapComponent implements OnInit {
         let sensorIds = filterParams.sensorTypeControl
             ? filterParams.sensorTypeControl.toString()
             : '';
-        let stateAbbrevs = filterParams.stateControl
-            ? filterParams.stateControl.toString()
-            : '';
+        let stateAbbrevs = this.stateString;
         //surveyed = true, unsurveyed = false, or leave empty
         let surveyed = filterParams.surveyedControl
             ? filterParams.surveyedControl
