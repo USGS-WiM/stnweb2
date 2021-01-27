@@ -1076,12 +1076,6 @@ export class MapComponent implements OnInit {
                         .get('stateControl')
                         .setValue(this.selectedStates);
                 }
-            } else {
-                this.filtersSnackBar(
-                    'No results for your query. Try using fewer filters.',
-                    'OK',
-                    4500
-                );
             }
         }
     }
