@@ -199,6 +199,28 @@ export class MapComponent implements OnInit {
         iconSize: 32,
     });
 
+    //Basemaps
+    basemaps;
+
+    osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:
+            '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors.',
+    });
+
+    grayscale = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        }
+    );
+    imagery = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+            attribution:
+                'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        }
+    );
+
     //supplementary layers
     HUC = esri.dynamicMapLayer({
         url: 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
@@ -601,7 +623,7 @@ export class MapComponent implements OnInit {
         this.map = new L.Map('map', {
             center: MAP_CONSTANTS.defaultCenter,
             zoom: MAP_CONSTANTS.defaultZoom,
-            layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
+            layers: [this.osm],
             renderer: L.canvas(),
         });
 
@@ -766,8 +788,14 @@ export class MapComponent implements OnInit {
             };
         }
 
+        this.basemaps = {
+            'Open Street Maps': this.osm,
+            Grayscale: this.grayscale,
+            Imagery: this.imagery,
+        };
+
         this.layerToggles = L.control.layers(
-            MAP_CONSTANTS.baseMaps,
+            this.basemaps,
             this.supplementaryLayers,
             {
                 position: 'topleft',
