@@ -326,7 +326,7 @@ export class MapComponent implements OnInit {
         );
     }
 
-    private stateFilter(value: any): State[] {
+    public stateFilter(value: any): State[] {
         const filterValue =
             value === null || value instanceof Object
                 ? ''
@@ -349,9 +349,7 @@ export class MapComponent implements OnInit {
         if (!event.option) {
             return;
         }
-
         const value = event.option.value;
-
         if (
             value &&
             value instanceof Object &&

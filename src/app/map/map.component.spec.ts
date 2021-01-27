@@ -9,7 +9,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {
+    MatAutocompleteModule,
+    MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -388,5 +391,17 @@ describe('MapComponent', () => {
         expect(formValues.bracketSiteOnlyControl).toBeFalsy();
         expect(formValues.RDGOnlyControl).toBeFalsy();
         expect(formValues.OpDefinedControl).toBeFalsy();
+    });
+
+    it('#remove works', () => {
+        component.stateFilter('north caro');
+        let stateToRemove = {
+            state_id: 38,
+            state_name: 'North Carolina',
+            state_abbrev: 'NC',
+            counties: null,
+        };
+        component.remove(stateToRemove);
+        expect(component.mapFilterForm.get('stateControl').value).toEqual(null);
     });
 });
