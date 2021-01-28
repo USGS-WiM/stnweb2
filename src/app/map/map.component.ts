@@ -199,6 +199,28 @@ export class MapComponent implements OnInit {
         iconSize: 32,
     });
 
+    //Basemaps
+    basemaps;
+
+    osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:
+            '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors.',
+    });
+
+    grayscale = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        }
+    );
+    imagery = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+            attribution:
+                'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        }
+    );
+
     //supplementary layers
     HUC = esri.dynamicMapLayer({
         url: 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer',
@@ -601,7 +623,7 @@ export class MapComponent implements OnInit {
         this.map = new L.Map('map', {
             center: MAP_CONSTANTS.defaultCenter,
             zoom: MAP_CONSTANTS.defaultZoom,
-            layers: [MAP_CONSTANTS.mapLayers.tileLayers.osm],
+            layers: [this.osm],
             renderer: L.canvas(),
         });
 
@@ -766,8 +788,14 @@ export class MapComponent implements OnInit {
             };
         }
 
+        this.basemaps = {
+            'Open Street Maps': this.osm,
+            Grayscale: this.grayscale,
+            Imagery: this.imagery,
+        };
+
         this.layerToggles = L.control.layers(
-            MAP_CONSTANTS.baseMaps,
+            this.basemaps,
             this.supplementaryLayers,
             {
                 position: 'topleft',
@@ -987,31 +1015,25 @@ export class MapComponent implements OnInit {
                         );
                     } else {
                         //These sites are in the Atlantic Ocean or otherwise clearly out of place
+
+                        //put all the site markers in the same layer group
+                        if (layerType === this.siteService.siteMarkers) {
+                            L.marker([lat, long], { icon: myIcon })
+                                .bindPopup(popupContent)
+                                .addTo(layerType);
+                        }
+                        //Make circle markers for the All STN Sites layer
                         if (
-                            site.site_no !== 'AKALE27857' &&
-                            site.site_no !== 'AKALE27855' &&
-                            site.site_no !== 'ASTUT27853' &&
-                            site.site_no !== 'AZGRA27856'
+                            layerType == this.siteService.allSiteMarkers ||
+                            layerType ===
+                                this.siteService.manyFilteredSitesMarkers
                         ) {
-                            //put all the site markers in the same layer group
-                            if (layerType === this.siteService.siteMarkers) {
-                                L.marker([lat, long], { icon: myIcon })
-                                    .bindPopup(popupContent)
-                                    .addTo(layerType);
-                            }
-                            //Make circle markers for the All STN Sites layer
-                            if (
-                                layerType == this.siteService.allSiteMarkers ||
-                                layerType ===
-                                    this.siteService.manyFilteredSitesMarkers
-                            ) {
-                                L.marker([lat, long], {
-                                    icon: myIcon,
-                                    iconSize: 32,
-                                })
-                                    .bindPopup(popupContent)
-                                    .addTo(layerType);
-                            }
+                            L.marker([lat, long], {
+                                icon: myIcon,
+                                iconSize: 32,
+                            })
+                                .bindPopup(popupContent)
+                                .addTo(layerType);
                         }
                     }
                 }
@@ -1176,11 +1198,26 @@ export class MapComponent implements OnInit {
                     '&HousingTypeOne=' +
                     bracketTrue;
 
+                let validSites = [];
                 //Find sites that match the user's query
                 this.siteService
                     .getFilteredSites(urlParamString)
                     .subscribe((res) => {
-                        this.getFilterResults(res);
+                        for (let i = 0; i < res.length; i++) {
+                            //get current site id
+                            let tempSiteID = res[i].site_id;
+                            //skip over invalid sites
+                            if (
+                                tempSiteID !== 27857 &&
+                                tempSiteID !== 27855 &&
+                                tempSiteID !== 27853 &&
+                                tempSiteID !== 27856 &&
+                                tempSiteID !== 16052
+                            ) {
+                                validSites.push(res[i]);
+                            }
+                        }
+                        this.getFilterResults(validSites);
                     });
             } else {
                 //User could potentially crash the app by choosing too many networks, thereby returning too many results
@@ -1230,8 +1267,17 @@ export class MapComponent implements OnInit {
                                     //if the current site id isn't in our list of all sites,
                                     //add that site object to uniqueSites
                                     if (!siteIDs.includes(tempSiteID)) {
-                                        siteIDs.push(tempSiteID);
-                                        uniqueSites.push(res[i]);
+                                        //skip over invalid sites
+                                        if (
+                                            tempSiteID !== 27857 &&
+                                            tempSiteID !== 27855 &&
+                                            tempSiteID !== 27853 &&
+                                            tempSiteID !== 27856 &&
+                                            tempSiteID !== 16052
+                                        ) {
+                                            siteIDs.push(tempSiteID);
+                                            uniqueSites.push(res[i]);
+                                        }
                                     }
                                 }
                                 this.currentQuery += 1;
