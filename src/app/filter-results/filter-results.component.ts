@@ -14,6 +14,7 @@ import { ResultDetailsComponent } from '../result-details/result-details.compone
     styleUrls: ['./filter-results.component.scss'],
 })
 export class FilterResultsComponent implements OnInit {
+    @Input('mapFilterForm') mapFilterForm: Object;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
 
@@ -53,8 +54,15 @@ export class FilterResultsComponent implements OnInit {
 
     ngAfterViewInit() {}
 
-    getDetails(row): void {
-        const dialogRef = this.dialog.open(ResultDetailsComponent, {});
+    openDetailsDialog(row): void {
+        const dialogRef = this.dialog.open(ResultDetailsComponent, {
+            width: '500px',
+            data: {
+                mapFilterForm: this.mapFilterForm['controls'],
+                site_id: row['site_id'],
+                site_name: row['site_name'],
+            },
+        });
         console.log(row);
         dialogRef.afterClosed().subscribe((result) => {});
     }

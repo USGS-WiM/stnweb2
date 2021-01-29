@@ -44,7 +44,7 @@ export class APP_SETTINGS {
     }
     /* istanbul ignore next */
     public static get SITES_URL(): string {
-        return this.API_ROOT + 'sites';
+        return this.API_ROOT + 'Sites';
     }
 
     public static get AUTH_JSON_HEADERS() {

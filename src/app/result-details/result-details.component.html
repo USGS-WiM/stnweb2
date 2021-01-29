@@ -1,0 +1,84 @@
+<h2 mat-dialog-title>
+    <mat-icon>sensors</mat-icon>
+    {{ data.site_name }}
+</h2>
+<mat-dialog-content>
+    <div *ngIf="dataSource">
+        <mat-table
+            id="resultsTable"
+            [dataSource]="sensorDataSource"
+            class="mat-elevation-z8"
+            ><!-- (matSortChange)="sortData($event)"
+        matSort -->
+            <!-- site id column -->
+            <ng-container matColumnDef="DeploymentType">
+                <mat-header-cell *matHeaderCellDef>
+                    DeploymentType
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.DeploymentType }}
+                </mat-cell>
+            </ng-container>
+
+            <!-- site name column -->
+            <ng-container matColumnDef="event_id">
+                <mat-header-cell *matHeaderCellDef> event_id </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.event_id }}
+                </mat-cell>
+            </ng-container>
+
+            <!-- site description column -->
+            <ng-container matColumnDef="housingType">
+                <mat-header-cell style="margin-right: 25px" *matHeaderCellDef>
+                    housingType
+                </mat-header-cell>
+                <mat-cell style="margin-right: 25px" *matCellDef="let element">
+                    {{ element.housingType }}
+                </mat-cell>
+            </ng-container>
+
+            <!-- site state column -->
+            <ng-container matColumnDef="instrument_status">
+                <mat-header-cell *matHeaderCellDef>
+                    instrument_status
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.instrument_status }}
+                </mat-cell>
+            </ng-container>
+
+            <!-- site city column -->
+            <ng-container matColumnDef="location_description">
+                <mat-header-cell *matHeaderCellDef>
+                    location_description
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.location_description }}
+                </mat-cell>
+            </ng-container>
+            <!-- site city column -->
+            <ng-container matColumnDef="sensorType">
+                <mat-header-cell *matHeaderCellDef>
+                    sensorType
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.sensorType }}
+                </mat-cell>
+            </ng-container>
+            <mat-header-row
+                *matHeaderRowDef="displayedColumns"
+            ></mat-header-row>
+            <mat-row
+                *matRowDef="let row; columns: displayedColumns"
+                class="results-row"
+            ></mat-row>
+        </mat-table>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <div class="detail-section-buttons centered">
+        <button mat-button mat-dialog-close aria-label="Cancel">Cancel</button>
+        <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    </div>
+</mat-dialog-actions>
