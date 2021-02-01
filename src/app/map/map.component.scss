@@ -30,6 +30,7 @@ $borderRadius: 4px;
 		#map{
 			height: 18vh;
 			transition: 0.1s;
+			min-height: 140px;
 		}
 
 		.leaflet-control-zoom,
@@ -43,6 +44,10 @@ $borderRadius: 4px;
 			display: none !important;
 			visibility: hidden !important;
 			opacity: 0 !important;
+		}
+
+		.leaflet-control-layers-toggle{
+			display: none !important;
 		}
 	}
 
@@ -169,6 +174,7 @@ $borderRadius: 4px;
 #map {
 	position: relative;
 	height: 70vh;
+	min-height: 375px;
 	transition: 0.1s;
 	margin: 20px 0;
 
@@ -186,7 +192,6 @@ $borderRadius: 4px;
         color: #313b57;
         width: 164px;
         line-height: 12px;
-        border: 1px solid rgba(160, 175, 205, 0.4);
 
         b {
             color: rgb(7, 7, 7);
@@ -260,19 +265,26 @@ $borderRadius: 4px;
     position: absolute;
     padding: 4px;
     // bottom: 60px !important;
-    top: 80px;
+    top: 10px;
     //left: 15px;
     right: 10px;
     width: 200px;
     /*height:320px;*/
     z-index: 1000;
     color: black;
-    background-color: rgb(255, 255, 255);
     background-color: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
     border-radius: 4px;
     cursor: pointer;
-    opacity: 0.95;
+	opacity: 0.95;
+
+	.mat-expansion-panel-body{
+		border-color: transparent;
+	}
+}
+
+.mat-expansion-panel .mat-expansion-panel-header:not([aria-disabled='true']){
+	border-bottom: 0px solid transparent;
+	border-color: transparent !important;
 }
 
 .allSitesLegend {
@@ -294,16 +306,16 @@ $borderRadius: 4px;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding-left: 22px;
+        padding-left: 18px;
         height: 24px;
     }
 
     .wmm-pin {
         z-index: 0;
-        top: 14px;
+        top: 12px;
         left: 4px;
         position: absolute !important;
-        transform: scale(0.65);
+        transform: scale(0.8);
     }
     .wmm-square {
         position: absolute !important;
@@ -316,12 +328,11 @@ $borderRadius: 4px;
 .legend-panel-content {
     box-sizing: border-box;
     padding-left: 15px;
-    padding-top: 10px;
+    padding-bottom: 15px;
 
     .wmm-circle,
     .wmm-diamond {
         position: relative;
-        top: 2px;
         left: 6px;
     }
     .wmm-diamond {
