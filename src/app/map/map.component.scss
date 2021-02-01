@@ -23,9 +23,31 @@ $borderRadius: 4px;
     flex-wrap: nowrap;
     background-color: $white;
     box-sizing: border-box; // Left sidebar
-    min-height: 100vh;
-    min-height: calc(100vh - 80px);
-    .controlsDiv {
+
+	// Mini map - shrinks map and hides controls
+	&.mini{
+
+		#map{
+			height: 18vh;
+			transition: 0.1s;
+		}
+
+		.leaflet-control-zoom,
+		.leaflet-control,
+		.leaflet-control-container,
+		.leaflet-top .leaflet-left,
+		#latLngScale,
+		#legend,
+		.leaflet-bottom .leaflet-control-scale,
+		.leaflet-control-container{
+			display: none !important;
+			visibility: hidden !important;
+			opacity: 0 !important;
+		}
+	}
+
+
+	.controlsDiv {
         flex-grow: 1;
         max-width: 25%;
         box-sizing: border-box;
@@ -123,9 +145,33 @@ $borderRadius: 4px;
     margin: 8px 8px 8px 0;
 }
 
+
+#mapPanel{
+	width: 95%;
+	position: relative;
+	left: 2.5%;
+
+	#mapControls{
+		display: flex;
+		justify-content: center;
+		position: absolute;
+		width: 100%;
+		z-index: 1000;
+		padding-top: 8px;
+
+		button{
+			margin: 0 10px;
+			background-color: white;
+			border: 1px solid rgba(0,0,0,0.2);
+		}
+	}
+}
 #map {
-    height: 600px;
-    position: relative;
+	position: relative;
+	height: 70vh;
+	transition: 0.1s;
+	margin: 20px 0;
+
 
     #mapLocationNote {
         position: absolute;
@@ -150,14 +196,6 @@ $borderRadius: 4px;
     }
 }
 
-@media (max-height: 400px) {
-    #map {
-        display: block;
-        width: 100%;
-        height: 150px;
-        background-color: fade-out($black, 0.8);
-    }
-}
 
 .results-table-div {
     background-color: white;
@@ -382,8 +420,31 @@ $borderRadius: 4px;
     padding-left: 40px;
 }
 
+
+// ===========================
+// ===========================
+// Filters Section
+// ===========================
+// ===========================
 #filtersSection {
-    background-color: #f7f7f7;
+	background-color: #f7f7f7;
+	padding: 15px 0 25px 0;
+
+	
+	.small-card{
+		width: 95%;
+		max-width: 800px;
+		margin: 15px auto 0 auto;
+	}
+	.mat-card-content{
+		width: 95%;
+		max-width: none;
+		margin: 15px auto 0 auto;
+	}
+
+	.mat-expansion-panel{
+		margin-bottom: 15px;
+	}
 }
 
 .form-container .mat-form-field + .mat-form-field {
@@ -409,7 +470,8 @@ $borderRadius: 4px;
 .checkbox-section {
     display: flex;
     align-content: center;
-    align-items: center;
+	align-items: center;
+	flex-wrap: wrap;
     height: 60px;
 }
 
