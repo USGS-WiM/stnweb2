@@ -618,21 +618,18 @@ export class MapComponent implements OnInit {
             });
     }
 
-
-
     toggleMap() {
-		this.mapPanelMinimized = !this.mapPanelMinimized;
-		if (this.map) {
-			var map = this.map;
-			// this.streetMaps.redraw();
-			// this.map.invalidateSize();
-			// console.log("INVALIDATING")
-			setTimeout(function(){ 
-				map.invalidateSize()
-			}, 100);
-
-		}
-	}
+        this.mapPanelMinimized = !this.mapPanelMinimized;
+        if (this.map) {
+            var map = this.map;
+            // this.streetMaps.redraw();
+            // this.map.invalidateSize();
+            // console.log("INVALIDATING")
+            setTimeout(function () {
+                map.invalidateSize();
+            }, 100);
+        }
+    }
     createMap() {
         // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('map', {
@@ -1084,8 +1081,14 @@ export class MapComponent implements OnInit {
 
                 //When filtering sites, zoom to layer, and open map pane
                 if (zoomToLayer == true) {
-                    this.siteFocus();
                     this.mapPanelMinimized = false;
+                    if (this.map) {
+                        var map = this.map;
+                        setTimeout(function () {
+                            map.invalidateSize();
+                        }, 100);
+                    }
+                    this.siteFocus();
                     //set the state control back to state names instead of abbreviations
                     this.mapFilterForm
                         .get('stateControl')
