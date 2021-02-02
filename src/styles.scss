@@ -18,7 +18,8 @@ $stn-app-theme: mat-light-theme(
 
 body {
     margin: 0px !important;
-    color: black;
+	color: black;
+	overflow-x: hidden;
 }
 
 * {

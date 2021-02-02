@@ -3,21 +3,31 @@
     Main body wrapper
     Main body wrapper
   -->
-<div id="mapContainer">
+<div id="mapContainer" [class.mini]="mapPanelMinimized">
     <!-- End Main Body Wrapper-->
     <div class="resultsDiv">
         <!-- Results Loading Shade -->
         <!-- Covers map and results, not sidebar -->
         <!-- <div class="data-loading-shade">
       <mat-spinner></mat-spinner>
-    </div> -->
-        <mat-expansion-panel [(expanded)]="mapPanelState" id="mapPanel">
-            <mat-expansion-panel-header>
-                <mat-panel-title id="resultsMapHeader"> Map </mat-panel-title>
-            </mat-expansion-panel-header>
+	</div> -->
+					
+        <div id="mapPanel">
+
+			<div id="mapControls">
+				<button
+					class="navBarBtnActive"
+					mat-button
+					aria-label="Display Map View"
+					(click)="toggleMap()"
+				>
+					<span *ngIf="!mapPanelMinimized">Minimize Map</span>
+					<span *ngIf="mapPanelMinimized">Maximize Map</span>
+				</button>
+		
+			</div>
 
             <!-- Map -->
-            <div id="testmapdiv"></div>
             <div id="map">
                 <div
                     id="extentBtn"
@@ -179,22 +189,16 @@
                     </div>
                 </div>
             </mat-expansion-panel>
-        </mat-expansion-panel>
+        </div>
         <!-- Filter/Results -->
         <mat-card id="filtersSection">
-            <mat-card-title>
-                <div class="results-card-title-row">
-                    <span class="results-card-title">Map Filters</span>
-                    <span class="spacer"></span>
-                </div>
-            </mat-card-title>
             <mat-card-content>
                 <!--Filters-->
-                <mat-expansion-panel [(expanded)]="filtersPanelState">
+                <mat-expansion-panel [(expanded)]="filtersPanelState" class="small-card">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            Filters <span class="fal fa-home-alt"></span
-                        ></mat-panel-title>
+							Map Filters 
+						</mat-panel-title>
                     </mat-expansion-panel-header>
                     <div class="form-container">
                         <form class="form" [formGroup]="mapFilterForm">
