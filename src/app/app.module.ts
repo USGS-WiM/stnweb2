@@ -56,6 +56,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { BulkHwmComponent } from './bulk-hwm/bulk-hwm.component';
 import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { ResultDetailsComponent } from './result-details/result-details.component';
+import { SensorService } from './services/sensor.service';
 
 @NgModule({
     declarations: [
@@ -112,6 +113,7 @@ import { ResultDetailsComponent } from './result-details/result-details.componen
     providers: [
         CurrentUserService,
         AuthenticationService,
+        SensorService,
         EventService,
         UserService,
         SiteService,

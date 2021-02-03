@@ -56,7 +56,7 @@ export class FilterResultsComponent implements OnInit {
 
     openDetailsDialog(row): void {
         const dialogRef = this.dialog.open(ResultDetailsComponent, {
-            width: '500px',
+            width: '80%',
             data: {
                 mapFilterForm: this.mapFilterForm['controls'],
                 site_id: row['site_id'],

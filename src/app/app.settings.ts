@@ -27,7 +27,7 @@ export class APP_SETTINGS {
 
     // STN
     public static get EVENTS(): string {
-        return this.API_ROOT + 'Events';
+        return this.API_ROOT + 'Events/';
     }
     public static get EVENT_TYPES(): string {
         return this.API_ROOT + 'EventTypes';

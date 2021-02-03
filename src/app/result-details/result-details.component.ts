@@ -1,7 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    OnInit,
+} from '@angular/core';
 import { Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SensorService } from '@services/sensor.service';
+import { EventService } from '@services/event.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -11,13 +17,15 @@ import { Sort } from '@angular/material/sort';
     selector: 'app-result-details',
     templateUrl: './result-details.component.html',
     styleUrls: ['./result-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResultDetailsComponent implements OnInit {
     sensorDataSource = new MatTableDataSource([]);
     siteSensors;
+    eventNames;
 
     displayedColumns: string[] = [
-        'DeploymentType',
+        'deploymentType',
         'event_id',
         'housingType',
         'instrument_status',
@@ -27,11 +35,25 @@ export class ResultDetailsComponent implements OnInit {
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private sensorService: SensorService
+        private sensorService: SensorService,
+        private eventService: EventService,
+        private changeDetectorRefs: ChangeDetectorRef
     ) {}
 
     ngOnInit(): void {
         this.getSiteSensorData();
+
+        this.getEventNames();
+    }
+
+    getEventNames() {
+        this.eventService.getAllEvents().subscribe((result) => {
+            this.eventNames = result;
+            /* error => {
+                this.errorMessage = <any>error;
+              } */
+        });
+        console.log(this.eventNames);
     }
 
     getSiteSensorData() {
@@ -53,23 +75,12 @@ export class ResultDetailsComponent implements OnInit {
                 .subscribe((results) => {
                     console.log('NO EVENT: ', results);
                     this.siteSensors = results;
-                    setTimeout(() => {
-                        this.sensorDataSource.data = this.siteSensors;
-                    }, 1000);
+
+                    this.sensorDataSource.data = this.siteSensors;
                 });
 
             console.log(this.sensorDataSource.data);
         }
+        this.changeDetectorRefs.detectChanges();
     }
-
-    /* refreshDataSource() {
-        this.filtersService.selectedSites.subscribe(
-            (currentSites) => (this.currentSites = currentSites)
-        );
-        this.dataSource.data = this.currentSites;
-
-        // setting sort and paging
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-    } */
 }

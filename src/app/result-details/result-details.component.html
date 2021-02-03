@@ -3,77 +3,80 @@
     {{ data.site_name }}
 </h2>
 <mat-dialog-content>
-    <div *ngIf="dataSource">
-        <mat-table
-            id="resultsTable"
+    <div *ngIf="sensorDataSource">
+        <table
+            mat-table
+            id="siteInfoTable"
             [dataSource]="sensorDataSource"
             class="mat-elevation-z8"
-            ><!-- (matSortChange)="sortData($event)"
-        matSort -->
+            matSort
+        >
             <!-- site id column -->
-            <ng-container matColumnDef="DeploymentType">
-                <mat-header-cell *matHeaderCellDef>
-                    DeploymentType
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.DeploymentType }}
-                </mat-cell>
+            <ng-container matColumnDef="deploymentType">
+                <th mat-header-cell *matHeaderCellDef>deploymentType</th>
+                <td mat-cell *matCellDef="let sensor">
+                    {{ sensor.deploymentType }}
+                </td>
             </ng-container>
 
             <!-- site name column -->
             <ng-container matColumnDef="event_id">
-                <mat-header-cell *matHeaderCellDef> event_id </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.event_id }}
-                </mat-cell>
+                <th mat-header-cell *matHeaderCellDef>event_id</th>
+                <td mat-cell *matCellDef="let sensor">
+                    {{
+                        sensor.event_id
+                            | displayValue: 'event_name':this.eventNames
+                    }}
+                </td>
             </ng-container>
 
             <!-- site description column -->
             <ng-container matColumnDef="housingType">
-                <mat-header-cell style="margin-right: 25px" *matHeaderCellDef>
+                <th
+                    mat-header-cell
+                    style="margin-right: 25px"
+                    *matHeaderCellDef
+                >
                     housingType
-                </mat-header-cell>
-                <mat-cell style="margin-right: 25px" *matCellDef="let element">
-                    {{ element.housingType }}
-                </mat-cell>
+                </th>
+                <td
+                    mat-cell
+                    style="margin-right: 25px"
+                    *matCellDef="let sensor"
+                >
+                    {{ sensor.housingType }}
+                </td>
             </ng-container>
 
             <!-- site state column -->
             <ng-container matColumnDef="instrument_status">
-                <mat-header-cell *matHeaderCellDef>
-                    instrument_status
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.instrument_status }}
-                </mat-cell>
+                <th mat-header-cell *matHeaderCellDef>instrument_status</th>
+                <td mat-cell *matCellDef="let sensor">
+                    {{ sensor.instrument_status[0] }}
+                </td>
             </ng-container>
 
             <!-- site city column -->
             <ng-container matColumnDef="location_description">
-                <mat-header-cell *matHeaderCellDef>
-                    location_description
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.location_description }}
-                </mat-cell>
+                <th mat-header-cell *matHeaderCellDef>location_description</th>
+                <td mat-cell *matCellDef="let sensor">
+                    {{ sensor.location_description }}
+                </td>
             </ng-container>
             <!-- site city column -->
             <ng-container matColumnDef="sensorType">
-                <mat-header-cell *matHeaderCellDef>
-                    sensorType
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.sensorType }}
-                </mat-cell>
+                <th mat-header-cell *matHeaderCellDef>sensorType</th>
+                <td mat-cell *matCellDef="let sensor">
+                    {{ sensor.sensorType }}
+                </td>
             </ng-container>
-            <mat-header-row
-                *matHeaderRowDef="displayedColumns"
-            ></mat-header-row>
-            <mat-row
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+                mat-row
                 *matRowDef="let row; columns: displayedColumns"
                 class="results-row"
-            ></mat-row>
-        </mat-table>
+            ></tr>
+        </table>
     </div>
 </mat-dialog-content>
 <mat-dialog-actions>
