@@ -23,9 +23,36 @@ $borderRadius: 4px;
     flex-wrap: nowrap;
     background-color: $white;
     box-sizing: border-box; // Left sidebar
-    min-height: 100vh;
-    min-height: calc(100vh - 80px);
-    .controlsDiv {
+
+	// Mini map - shrinks map and hides controls
+	&.mini{
+
+		#map{
+			height: 18vh;
+			transition: 0.1s;
+			min-height: 140px;
+		}
+
+		.leaflet-control-zoom,
+		.leaflet-control,
+		.leaflet-control-container,
+		.leaflet-top .leaflet-left,
+		#latLngScale,
+		#legend,
+		.leaflet-bottom .leaflet-control-scale,
+		.leaflet-control-container{
+			display: none !important;
+			visibility: hidden !important;
+			opacity: 0 !important;
+		}
+
+		.leaflet-control-layers-toggle{
+			display: none !important;
+		}
+	}
+
+
+	.controlsDiv {
         flex-grow: 1;
         max-width: 25%;
         box-sizing: border-box;
@@ -123,9 +150,34 @@ $borderRadius: 4px;
     margin: 8px 8px 8px 0;
 }
 
+
+#mapPanel{
+	width: 95%;
+	position: relative;
+	left: 2.5%;
+
+	#mapControls{
+		display: flex;
+		justify-content: center;
+		position: absolute;
+		width: 100%;
+		z-index: 1000;
+		padding-top: 8px;
+
+		button{
+			margin: 0 10px;
+			background-color: white;
+			border: 1px solid rgba(0,0,0,0.2);
+		}
+	}
+}
 #map {
-    height: 600px;
-    position: relative;
+	position: relative;
+	height: 70vh;
+	min-height: 375px;
+	transition: 0.1s;
+	margin: 20px 0;
+
 
     #mapLocationNote {
         position: absolute;
@@ -140,7 +192,6 @@ $borderRadius: 4px;
         color: #313b57;
         width: 164px;
         line-height: 12px;
-        border: 1px solid rgba(160, 175, 205, 0.4);
 
         b {
             color: rgb(7, 7, 7);
@@ -150,14 +201,6 @@ $borderRadius: 4px;
     }
 }
 
-@media (max-height: 400px) {
-    #map {
-        display: block;
-        width: 100%;
-        height: 150px;
-        background-color: fade-out($black, 0.8);
-    }
-}
 
 .results-table-div {
     background-color: white;
@@ -222,19 +265,26 @@ $borderRadius: 4px;
     position: absolute;
     padding: 4px;
     // bottom: 60px !important;
-    top: 80px;
+    top: 10px;
     //left: 15px;
     right: 10px;
     width: 200px;
     /*height:320px;*/
     z-index: 1000;
     color: black;
-    background-color: rgb(255, 255, 255);
     background-color: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
     border-radius: 4px;
     cursor: pointer;
-    opacity: 0.95;
+	opacity: 0.95;
+
+	.mat-expansion-panel-body{
+		border-color: transparent;
+	}
+}
+
+.mat-expansion-panel .mat-expansion-panel-header:not([aria-disabled='true']){
+	border-bottom: 0px solid transparent;
+	border-color: transparent !important;
 }
 
 .allSitesLegend {
@@ -256,16 +306,16 @@ $borderRadius: 4px;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding-left: 22px;
+        padding-left: 18px;
         height: 24px;
     }
 
     .wmm-pin {
         z-index: 0;
-        top: 14px;
+        top: 12px;
         left: 4px;
         position: absolute !important;
-        transform: scale(0.65);
+        transform: scale(0.8);
     }
     .wmm-square {
         position: absolute !important;
@@ -278,12 +328,11 @@ $borderRadius: 4px;
 .legend-panel-content {
     box-sizing: border-box;
     padding-left: 15px;
-    padding-top: 10px;
+    padding-bottom: 15px;
 
     .wmm-circle,
     .wmm-diamond {
         position: relative;
-        top: 2px;
         left: 6px;
     }
     .wmm-diamond {
@@ -382,8 +431,31 @@ $borderRadius: 4px;
     padding-left: 40px;
 }
 
+
+// ===========================
+// ===========================
+// Filters Section
+// ===========================
+// ===========================
 #filtersSection {
-    background-color: #f7f7f7;
+	background-color: #f7f7f7;
+	padding: 15px 0 25px 0;
+
+	
+	.small-card{
+		width: 95%;
+		max-width: 800px;
+		margin: 15px auto 0 auto;
+	}
+	.mat-card-content{
+		width: 95%;
+		max-width: none;
+		margin: 15px auto 0 auto;
+	}
+
+	.mat-expansion-panel{
+		margin-bottom: 15px;
+	}
 }
 
 .form-container .mat-form-field + .mat-form-field {
@@ -409,7 +481,8 @@ $borderRadius: 4px;
 .checkbox-section {
     display: flex;
     align-content: center;
-    align-items: center;
+	align-items: center;
+	flex-wrap: wrap;
     height: 60px;
 }
 
