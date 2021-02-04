@@ -129,6 +129,15 @@ export class APP_UTILITIES {
         }
     }
 
+    public static FIND_OBJECT_BY_KEY(array, key, value) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i][key] === value) {
+                return array[i];
+            }
+        }
+        return null;
+    }
+
     public static get DUMMY_USER(): Member {
         return {
             member_id: 1,

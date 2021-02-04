@@ -54,6 +54,7 @@ export class FilterResultsComponent implements OnInit {
 
     ngAfterViewInit() {}
 
+    // opening result-details dialog and passing relevant data
     openDetailsDialog(row): void {
         const dialogRef = this.dialog.open(ResultDetailsComponent, {
             width: '80%',
@@ -63,7 +64,6 @@ export class FilterResultsComponent implements OnInit {
                 site_name: row['site_name'],
             },
         });
-        console.log(row);
         dialogRef.afterClosed().subscribe((result) => {});
     }
 

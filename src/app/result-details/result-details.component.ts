@@ -12,6 +12,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
+import { APP_UTILITIES } from '@app/app.utilities';
 
 @Component({
     selector: 'app-result-details',
@@ -22,15 +23,15 @@ import { Sort } from '@angular/material/sort';
 export class ResultDetailsComponent implements OnInit {
     sensorDataSource = new MatTableDataSource([]);
     siteSensors;
-    eventNames;
+    allEvents = [];
 
     displayedColumns: string[] = [
-        'deploymentType',
-        'event_id',
-        'housingType',
-        'instrument_status',
-        'location_description',
-        'sensorType',
+        'Deployment Type',
+        'Event',
+        'Housing Type',
+        'Status',
+        'Location Description',
+        'Sensor Type',
     ];
 
     constructor(
@@ -42,45 +43,81 @@ export class ResultDetailsComponent implements OnInit {
 
     ngOnInit(): void {
         this.getSiteSensorData();
-
-        this.getEventNames();
+        this.getEvents();
+        this.changeDetectorRefs.detectChanges();
     }
 
-    getEventNames() {
+    getEvents() {
         this.eventService.getAllEvents().subscribe((result) => {
-            this.eventNames = result;
+            this.allEvents = result;
             /* error => {
                 this.errorMessage = <any>error;
               } */
         });
-        console.log(this.eventNames);
     }
 
     getSiteSensorData() {
-        // Check if an event is selected and only display site sensors for that event
+        this.sensorService
+            .getSiteFullInstruments(this.data['site_id'])
+            .subscribe((results) => {
+                this.siteSensors = results;
+
+                this.createDataSource(this.siteSensors);
+            });
+    }
+
+    createDataSource(data) {
+        // setting storage for sensors and event name
+        let sensors = [];
+        let eventName;
+
+        // variable for eventID storage if an event is selected so that we are only displaying sensors for that event
+        let eventID;
+
         if (this.data['mapFilterForm']['eventsControl'].value !== null) {
-            const eventID = this.data['mapFilterForm']['eventsControl'].value
-                .event_id;
-            this.sensorService
-                .getSiteEventInstruments(this.data['site_id'], eventID)
-                .subscribe((results) => {
-                    console.log('EVENT: ', results);
-                    this.siteSensors = results;
-                });
-            this.sensorDataSource.data = this.siteSensors;
-        } else {
-            // If no event is selected then display all sensor for a site
-            this.sensorService
-                .getSiteFullInstruments(this.data['site_id'])
-                .subscribe((results) => {
-                    console.log('NO EVENT: ', results);
-                    this.siteSensors = results;
-
-                    this.sensorDataSource.data = this.siteSensors;
-                });
-
-            console.log(this.sensorDataSource.data);
+            eventID = this.data['mapFilterForm']['eventsControl'].value;
         }
+
+        // looping through each sensor and retrieving the event name using the event_id
+        for (let i = 0; i < data.length; i++) {
+            var obj = APP_UTILITIES.FIND_OBJECT_BY_KEY(
+                this.allEvents,
+                'event_id',
+                data[i]['event_id']
+            );
+
+            // showing "None Listed" if housing type is empty string
+            let hType =
+                data[i]['housingType'] !== ''
+                    ? data[i]['housingType']
+                    : 'None listed';
+
+            // showing "No status provided" if the sensor has no status
+            let status =
+                data[i]['instrument_status'].length !== 0
+                    ? data[i]['instrument_status'][0]['status']
+                    : 'No status provided';
+
+            eventName = obj['event_name'];
+            let sensorObject = {
+                deploymentType: data[i]['deploymentType'],
+                eventName: eventName,
+                housingType: hType,
+                instrument_status: status,
+                location_description: data[i]['location_description'],
+                sensorType: data[i]['sensorType'],
+            };
+
+            if (eventID !== undefined) {
+                if (eventID['event_id'] === data[i]['event_id']) {
+                    sensors.push(sensorObject);
+                }
+            } else if (eventID === undefined) {
+                sensors.push(sensorObject);
+            }
+        }
+        console.log(sensors);
+        this.sensorDataSource.data = sensors;
         this.changeDetectorRefs.detectChanges();
     }
 }
