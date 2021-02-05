@@ -5,6 +5,7 @@ import { Event } from '@interfaces/event';
 import { Site } from '@interfaces/site';
 import { NetworkName } from '@interfaces/network-name';
 import { State } from '@interfaces/state';
+import { Sitefullsensors } from '@interfaces/sitefullsensors';
 import { SensorType } from '@interfaces/sensor-type';
 import { Member } from '@interfaces/member';
 
@@ -204,6 +205,32 @@ export class APP_UTILITIES {
             event_coordinator: 36,
             instruments: [],
             hwms: [],
+        };
+    }
+
+    public static get DUMMY_SITE_FULL_SENSOR(): Sitefullsensors {
+        return {
+            sensorType: 'Pressure Transducer',
+            deploymentType: 'Water Level',
+            instCollection: 'Brackish Water',
+            housingType: 'Ruston Steel Pipe',
+            sensorBrand: 'Hobo',
+            instrument_id: 8567,
+            sensor_type_id: 1,
+            deployment_type_id: 1,
+            location_description:
+                'HOBO mounted to southeast head wall of bridge. Same location used for previous deployment',
+            serial_number: '9774314',
+            interval: 30,
+            site_id: 17783,
+            event_id: 182,
+            inst_collection_id: 2,
+            housing_type_id: 0,
+            sensor_brand_id: 5,
+            vented: 'No',
+            instrument_status: [],
+            data_files: [],
+            files: [],
         };
     }
 

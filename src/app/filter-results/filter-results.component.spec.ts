@@ -15,7 +15,8 @@ import { APP_UTILITIES } from '@app/app.utilities';
 import { SiteService } from '@app/services/site.service';
 import { FiltersService } from '@app/services/filters.service';
 import { Site } from '@app/interfaces/site';
-
+import { MatDialogRef } from '@angular/material/dialog';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
 
 describe('FilterResultsComponent', () => {
@@ -37,8 +38,12 @@ describe('FilterResultsComponent', () => {
                 MatInputModule,
                 MatSortModule,
             ],
-            providers: [SiteService, FiltersService],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA],
+            providers: [
+                SiteService,
+                FiltersService,
+                { provide: MatDialogRef, useValue: {} },
+            ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -68,7 +73,7 @@ describe('FilterResultsComponent', () => {
         expect(table).toBeInstanceOf(MatTableDataSource);
     });
 
-    it('should call refreshDataSource', () => {
+    it('should sort data', () => {
         component.sortData(component.sort);
         component.sortedData;
     });

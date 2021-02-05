@@ -74,8 +74,10 @@ export class ResultDetailsComponent implements OnInit {
         // variable for eventID storage if an event is selected so that we are only displaying sensors for that event
         let eventID;
 
-        if (this.data['mapFilterForm']['eventsControl'].value !== null) {
-            eventID = this.data['mapFilterForm']['eventsControl'].value;
+        if (this.data['mapFilterForm']['eventsControl'] !== undefined) {
+            if (this.data['mapFilterForm']['eventsControl'].value !== null) {
+                eventID = this.data['mapFilterForm']['eventsControl'].value;
+            }
         }
 
         // looping through each sensor and retrieving the event name using the event_id
