@@ -66,11 +66,8 @@ export class ResultDetailsComponent implements OnInit {
             });
     }
 
+    /* istanbul ignore next */
     createDataSource(data) {
-        // setting storage for sensors and event name
-        let sensors = [];
-        let eventName;
-
         // variable for eventID storage if an event is selected so that we are only displaying sensors for that event
         let eventID;
 
@@ -79,8 +76,19 @@ export class ResultDetailsComponent implements OnInit {
                 eventID = this.data['mapFilterForm']['eventsControl'].value;
             }
         }
-
+        let sensors = this.createSensorTableObjects(data, eventID);
         // looping through each sensor and retrieving the event name using the event_id
+
+        console.log(sensors);
+        this.sensorDataSource.data = sensors;
+        this.changeDetectorRefs.detectChanges();
+    }
+
+    /* istanbul ignore next */
+    createSensorTableObjects(data, eventID) {
+        let sensors = [];
+        // setting storage for sensors and event name
+        let eventName;
         for (let i = 0; i < data.length; i++) {
             var obj = APP_UTILITIES.FIND_OBJECT_BY_KEY(
                 this.allEvents,
@@ -110,6 +118,7 @@ export class ResultDetailsComponent implements OnInit {
                 sensorType: data[i]['sensorType'],
             };
 
+            // If an event is selected be sure to only push sensors for that event into the array
             if (eventID !== undefined) {
                 if (eventID['event_id'] === data[i]['event_id']) {
                     sensors.push(sensorObject);
@@ -118,8 +127,6 @@ export class ResultDetailsComponent implements OnInit {
                 sensors.push(sensorObject);
             }
         }
-        console.log(sensors);
-        this.sensorDataSource.data = sensors;
-        this.changeDetectorRefs.detectChanges();
+        return sensors;
     }
 }

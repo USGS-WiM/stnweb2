@@ -70,19 +70,4 @@ describe('ResultDetailsComponent', () => {
         const table = component.sensorDataSource;
         expect(table).toBeInstanceOf(MatTableDataSource);
     });
-
-    it('fdsfsdes', () => {
-        let testData = APP_UTILITIES.DUMMY_SITE_FULL_SENSOR;
-        let object = component.createDataSource(testData);
-        console.log(object);
-        /* expect(object).toEqual({
-            deploymentType: 'Water Level',
-            eventName: 'Irma September 2017',
-            housingType: 'Ruston Steel Pipe',
-            instrument_status: 'No status provided',
-            location_description:
-                'HOBO mounted to southeast head wall of bridge. Same location used for previous deployment',
-            sensorType: 'Pressure Transducer',
-        }); */
-    });
 });

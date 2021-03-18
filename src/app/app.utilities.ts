@@ -162,6 +162,14 @@ export class APP_UTILITIES {
         };
     }
 
+    public static get RESULT_DIALOG_DUMMY_DATA() {
+        return {
+            mapFilterForm: 'event',
+            site_id: 54456,
+            site_name: 'Site Name',
+        };
+    }
+
     public static get EVENTS_DUMMY_DATA_LIST(): Event[] {
         return [
             {

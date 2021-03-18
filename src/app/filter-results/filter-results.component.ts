@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 import { FiltersService } from '@services/filters.service';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ResultDetailsComponent } from '../result-details/result-details.component';
 
 @Component({
@@ -55,6 +55,7 @@ export class FilterResultsComponent implements OnInit {
     ngAfterViewInit() {}
 
     // opening result-details dialog and passing relevant data
+    /* istanbul ignore next */
     openDetailsDialog(row): void {
         const dialogRef = this.dialog.open(ResultDetailsComponent, {
             width: '80%',
