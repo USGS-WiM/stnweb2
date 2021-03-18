@@ -66,23 +66,23 @@ describe('LoginComponent', () => {
     });
 
     it(`#onSubmitLogin should log in the user`, () => {
-        let testFormValue = { username: 'user', password: 'password' };
+        let testFormValueIn = { username: 'user', password: 'password' };
         const loginResponse: Member = APP_UTILITIES.DUMMY_USER;
         spyOn(component.authenticationService, 'login').and.returnValue(
             of(loginResponse)
         );
-        component.onSubmitLogin(testFormValue);
+        component.onSubmitLogin(testFormValueIn);
         expect(component.returnedUser).toEqual(APP_UTILITIES.DUMMY_USER);
     });
 
     it(`#onSubmitLogout should log out the user`, () => {
         // first login a user so we can know that logout changes the state
-        let testFormValue = { username: 'user', password: 'password' };
+        let testFormValueOut = { username: 'user', password: 'password' };
         const loginResponse: Member = APP_UTILITIES.DUMMY_USER;
         spyOn(component.authenticationService, 'login').and.returnValue(
             of(loginResponse)
         );
-        component.onSubmitLogin(testFormValue);
+        component.onSubmitLogin(testFormValueOut);
         expect(component.returnedUser).toEqual(APP_UTILITIES.DUMMY_USER);
         spyOn(component.authenticationService, 'logout').and.returnValue(
             of(null)
