@@ -632,6 +632,7 @@ export class MapComponent implements OnInit {
             }, 100);
         }
     }
+
     createMap() {
         // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('map', {
@@ -1079,10 +1080,10 @@ export class MapComponent implements OnInit {
                 }
                 this.createSearchControl();
                 this.createDrawControls();
-                this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
 
                 //When filtering sites, zoom to layer, and open map pane
                 if (zoomToLayer == true) {
+                    this.siteFocus();
                     this.mapPanelMinimized = false;
                     if (this.map) {
                         var map = this.map;
@@ -1090,7 +1091,6 @@ export class MapComponent implements OnInit {
                             map.invalidateSize();
                         }, 100);
                     }
-                    this.siteFocus();
                     //set the state control back to state names instead of abbreviations
                     this.mapFilterForm
                         .get('stateControl')
