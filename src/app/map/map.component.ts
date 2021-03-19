@@ -1080,7 +1080,6 @@ export class MapComponent implements OnInit {
                 }
                 this.createSearchControl();
                 this.createDrawControls();
-               // this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
 
                 //When filtering sites, zoom to layer, and open map pane
                 if (zoomToLayer == true) {
