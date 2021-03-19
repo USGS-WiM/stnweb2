@@ -366,7 +366,7 @@ export class MapComponent implements OnInit {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
-
+    /* istanbul ignore next */
     public selectState(event: MatAutocompleteSelectedEvent): void {
         if (!event.option) {
             return;
@@ -384,7 +384,7 @@ export class MapComponent implements OnInit {
             this.mapFilterForm.get('stateInput').setValue('');
         }
     }
-
+    /* istanbul ignore next */
     public addState(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
@@ -418,6 +418,7 @@ export class MapComponent implements OnInit {
         }
     }
 
+    /* istanbul ignore next */
     public remove(state: State) {
         const index = this.selectedStates.indexOf(state);
         if (index >= 0) {
@@ -428,14 +429,15 @@ export class MapComponent implements OnInit {
             this.mapFilterForm.get('stateInput').setValue('');
         }
     }
-    //////////////////////////////////////////////////////////////////
 
+    /* istanbul ignore next */
     setCurrentFilter() {
         this.currentFilter = localStorage.getItem('currentFilter')
             ? JSON.parse(localStorage.getItem('currentFilter'))
             : APP_SETTINGS.DEFAULT_FILTER_QUERY;
     }
 
+    /* istanbul ignore next */
     getData() {
         //Get all events, populate the event filter, get most recent event
         this.eventService.getAllEvents().subscribe((results) => {

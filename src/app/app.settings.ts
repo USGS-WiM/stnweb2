@@ -27,7 +27,7 @@ export class APP_SETTINGS {
 
     // STN
     public static get EVENTS(): string {
-        return this.API_ROOT + 'Events';
+        return this.API_ROOT + 'Events/';
     }
     public static get EVENT_TYPES(): string {
         return this.API_ROOT + 'EventTypes';
@@ -44,7 +44,7 @@ export class APP_SETTINGS {
     }
     /* istanbul ignore next */
     public static get SITES_URL(): string {
-        return this.API_ROOT + 'sites';
+        return this.API_ROOT + 'Sites';
     }
 
     public static get AUTH_JSON_HEADERS() {

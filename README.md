@@ -41,7 +41,7 @@ ng serve
 to build a distribution folder for production:
 
 ```bash
-ng build --prod --base-href "[relative path to web server root]"
+ng build --prod --base-href --aot=false --build-optimizer=false
 ```
 
 ### Development Workflow

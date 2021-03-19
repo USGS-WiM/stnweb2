@@ -69,11 +69,9 @@ describe('EventService', () => {
 
     it('#filterEvents() should return an appropriate response of events', () => {
         let query = { eventType: 2 };
-        service.filterEvents(query).subscribe((results) => {
-            expect(results).not.toBe(null);
-            expect(JSON.stringify(results)).toEqual(
-                JSON.stringify(mockEventsList)
-            );
+        service.filterEvents(query).subscribe((r) => {
+            expect(r).not.toBe(null);
+            expect(JSON.stringify(r)).toEqual(JSON.stringify(mockEventsList));
         });
         const req = httpTestingController.expectOne(
             APP_SETTINGS.EVENTS + '/FilteredEvents.json?' + '&Type=2'

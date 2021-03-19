@@ -58,26 +58,6 @@ describe('APP_UTILITIES', () => {
         }
     }
 
-    it('#SORT should return a correctly sorted ascending array', () => {
-        let testSortArray = [
-            { id: 1, value: 5 },
-            { id: 2, value: 19 },
-            { id: 3, value: 3 },
-            { id: 4, value: 1 },
-            { id: 5, value: 789 },
-            { id: 6, value: 138 },
-        ];
-        let sortedArray = APP_UTILITIES.SORT(testSortArray, 'value', 'ascend');
-        expect(sortedArray).toEqual([
-            { id: 4, value: 1 },
-            { id: 3, value: 3 },
-            { id: 1, value: 5 },
-            { id: 2, value: 19 },
-            { id: 6, value: 138 },
-            { id: 5, value: 789 },
-        ]);
-    });
-
     it('#SORT should return a correctly sorted descending array', () => {
         let testSortArray = [
             { id: 1, value: 5 },
@@ -103,5 +83,29 @@ describe('APP_UTILITIES', () => {
             let scale = APP_UTILITIES.SCALE_LOOKUP(i);
             expect(scale).toEqual(getExpectedScale(i));
         }
+    });
+
+    it('#FIND_OBJECT_BY_KEY should return a matching object based on number', () => {
+        // array
+        let testSortArray = [
+            { id: 1, value: 5 },
+            { id: 2, value: 19 },
+            { id: 3, value: 3 },
+            { id: 4, value: 1 },
+            { id: 5, value: 789 },
+            { id: 6, value: 138 },
+        ];
+
+        // key
+        let field = 'id';
+
+        // value
+        let id = 5;
+
+        let object = APP_UTILITIES.FIND_OBJECT_BY_KEY(testSortArray, field, id);
+        expect(object).toEqual({
+            id: 5,
+            value: 789,
+        });
     });
 });
