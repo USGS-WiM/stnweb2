@@ -620,7 +620,6 @@ export class MapComponent implements OnInit {
             });
     }
 
-    /*
     toggleMap() {
         this.mapPanelMinimized = !this.mapPanelMinimized;
         if (this.map) {
@@ -633,7 +632,7 @@ export class MapComponent implements OnInit {
             }, 100);
         }
     }
-    */
+
     createMap() {
         // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('map', {
@@ -1081,7 +1080,7 @@ export class MapComponent implements OnInit {
                 }
                 this.createSearchControl();
                 this.createDrawControls();
-                this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
+               // this.map.setView(MAP_CONSTANTS.defaultCenter, 10);
 
                 //When filtering sites, zoom to layer, and open map pane
                 if (zoomToLayer == true) {
