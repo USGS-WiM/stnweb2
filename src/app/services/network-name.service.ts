@@ -31,15 +31,17 @@ export class NetworkNameService {
     }
 
     // this has been replaced with the networks$ variable
-    // public getNetworkNames(): Observable<any> {
-    //     return this.httpClient.get(APP_SETTINGS.NETWORK_NAMES + '.json').pipe(
-    //         tap((response) => {
-    //             console.log('Network list response recieved: ' + response);
-    //             return response;
-    //         }),
+    //public getNetworkNames(): Observable<any> {
+    //    return this.httpClient.get(APP_SETTINGS.NETWORK_NAMES + '.json').pipe(
+    //        tap((response) => {
+    //            console.log(
+    //                'Network list response received' /*:  + response */
+    //            );
+    //            return response;
+    //        }),
     //         catchError(APP_UTILITIES.handleError<any>('getNetworkNames', []))
-    //     );
-    // }
+    //    );
+    //}
 
     // GET ONE Network Name
     public getNetworkName(network_name_id: number): Observable<any> {

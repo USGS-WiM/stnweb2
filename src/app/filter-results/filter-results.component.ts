@@ -4,6 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 import { FiltersService } from '@services/filters.service';
+import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { ResultDetailsComponent } from '../result-details/result-details.component';
 
 @Component({
     selector: 'app-filter-results',
@@ -11,12 +14,15 @@ import { FiltersService } from '@services/filters.service';
     styleUrls: ['./filter-results.component.scss'],
 })
 export class FilterResultsComponent implements OnInit {
+    @Input('mapFilterForm') mapFilterForm: Object;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     dataSource = new MatTableDataSource([]);
     sortedData = [];
     currentSites;
+    resultsPanelOpen: boolean = true;
+    subscription: Subscription;
 
     // columns for results table
     displayedColumns: string[] = [
@@ -31,15 +37,36 @@ export class FilterResultsComponent implements OnInit {
         'permHouse',
     ];
 
-    constructor(private filtersService: FiltersService) {
+    constructor(
+        private filtersService: FiltersService,
+        public dialog: MatDialog
+    ) {
         this.filtersService.selectedSites.subscribe(
             (currentSites) => (this.currentSites = currentSites)
+        );
+
+        this.subscription = this.filtersService.resultsPanelOpen.subscribe(
+            (state) => (this.resultsPanelOpen = state)
         );
     }
 
     ngOnInit(): void {}
 
     ngAfterViewInit() {}
+
+    // opening result-details dialog and passing relevant data
+    /* istanbul ignore next */
+    openDetailsDialog(row): void {
+        const dialogRef = this.dialog.open(ResultDetailsComponent, {
+            width: '80%',
+            data: {
+                mapFilterForm: this.mapFilterForm['controls'],
+                site_id: row['site_id'],
+                site_name: row['site_name'],
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {});
+    }
 
     // called to refresh the datasource/table results
     refreshDataSource() {

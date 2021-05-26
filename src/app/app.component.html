@@ -20,17 +20,21 @@
                     <span>Short Term Network</span>
                 </a>
                 <span class="stn-subtitle">
-                    <span
-                        >Data management system for sensor deployments and data
-                        collection efforts</span
-                    >
+                    <span>
+						Data management system for
+						<br/>
+						sensor deployments and data collection efforts
+					</span>
                 </span>
             </div>
-            <span class="navbar-spacer"></span>
-            <span flex></span>
-            <span flex></span>
+
+            <span class="activeDevelopment"
+                >Pre-Alpha: Under Active Development</span
+            >
+			
+
             <div class="nav-buttons">
-                <span class="about-button-span" class="header-button-text">
+                <span class="header-button-text">
                     <button
                         mat-button
                         aria-label="About this application"
@@ -43,7 +47,7 @@
 
                 <!-- Login button, only visible when user not already logged in -->
                 <span
-                    class="login-button-span header-button-text"
+                    class="header-button-text"
                     *ngIf="!loggedIn"
                 >
                     <button
@@ -59,7 +63,6 @@
 
                 <!--User Menu, only visible when user is logged in -->
                 <span
-                    class="login-button-span"
                     *ngIf="loggedIn"
                     class="header-button-text"
                 >
@@ -107,13 +110,16 @@
           {{currentUser.last_name}}
         </span> -->
             </div>
-        </mat-toolbar-row>
+		</mat-toolbar-row>
+		
+
         <mat-toolbar-row
             class="mat-typography stns-header"
             id="stn-nav-toolbar"
             *ngIf="loggedIn"
         >
             <div id="navBarButtons" class="navBarBtn">
+				
                 <span>
                     <button
                         class="navBarBtnActive"
@@ -124,7 +130,8 @@
                     >
                         <span> Map</span>
                     </button>
-                </span>
+				</span>
+
             </div>
         </mat-toolbar-row>
     </mat-toolbar>
@@ -132,6 +139,31 @@
 <!-- </div> -->
 
 <router-outlet></router-outlet>
+
+<footer class="usgs-footer">
+    <div class="tmp-container">
+        <div class="footer-doi">
+            <a href="https://www.doi.gov/privacy">DOI Privacy Policy</a>|
+            <a href="https://www.usgs.gov/laws/policies_notices.html">Legal</a>|
+            <a href="https://www2.usgs.gov/laws/accessibility.html">Accessibility</a>|
+            <a href="https://www.usgs.gov/sitemap.html">Site Map</a>|
+            <a href="https://answers.usgs.gov/">Contact USGS</a>
+        </div>
+
+        <hr>
+
+        <div class="footer-doi">
+            <a href="https://www.doi.gov/">U.S. Department of the Interior</a>|
+            <a href="https://www.doioig.gov/">DOI Inspector General</a>|
+            <a href="https://www.whitehouse.gov/">White House</a>|
+            <a href="https://www.whitehouse.gov/omb/e-gov/">E-gov</a>|
+            <a href="https://www.whitehouse.gov/open">Open Government</a>|
+            <a href="https://www.doi.gov/pmb/eeo/no-fear-act">No Fear Act</a>|
+            <a href="https://www2.usgs.gov/foia">FOIA</a>
+        </div>
+    </div>
+    <!-- /.footer-wrap -->
+</footer>
 
 <!-- <footer id="main">
     <div>USGS</div>

@@ -13,11 +13,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
--
+-   Switched to marker clusters for large queries
+-   Results panel opens when filter is submitted
+-   Site markers clear when click "Clear Filters"
 
 ### Fixed
 
--
+-   Fixed measure tools
+-   State filter works
+-   Open Street Maps checked on when map loads
+-   Filter query returns no results when the only sites matching query are invalid
 
 ## [v0.4.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.4.0) - 2020-01-12
 
@@ -32,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added warning message when user's query returns no data
 -   Added Login capability
 -   Added requirement for user to select at least one of Event, State, Network, or Sensor filter
+-   Added ability to deselect survey filter
 
 ### Changed
 
@@ -40,10 +46,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   State filters are searchable
 -   Removed extra navbar buttons, changed style of Map button
 -   Skips out of place sites
+-   Changed popup and table formatting
 
 ### Fixed
 
 -   Fixed event filter auto-update
+-   Fixed networks filter
+-   Fixed layer control
 
 ## [v0.3.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.3.0) - 2020-12-08
 

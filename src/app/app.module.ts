@@ -15,6 +15,7 @@ import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
@@ -22,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -53,6 +55,8 @@ import { ApprovalsComponent } from './approvals/approvals.component';
 import { SettingsComponent } from './settings/settings.component';
 import { BulkHwmComponent } from './bulk-hwm/bulk-hwm.component';
 import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
+import { ResultDetailsComponent } from './result-details/result-details.component';
+import { SensorService } from './services/sensor.service';
 
 @NgModule({
     declarations: [
@@ -69,6 +73,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         SettingsComponent,
         BulkHwmComponent,
         HwmUploadComponent,
+        ResultDetailsComponent,
     ],
     imports: [
         BrowserModule,
@@ -84,6 +89,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         CdkTreeModule,
         CommonModule,
         MatToolbarModule,
+        MatChipsModule,
         MatIconModule,
         MatExpansionModule,
         MatCardModule,
@@ -91,6 +97,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         MatPaginatorModule,
         MatButtonModule,
         MatAutocompleteModule,
+        MatOptionModule,
         MatSnackBarModule,
         MatDialogModule,
         MatTabsModule,
@@ -106,6 +113,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
     providers: [
         CurrentUserService,
         AuthenticationService,
+        SensorService,
         EventService,
         UserService,
         SiteService,
@@ -114,7 +122,12 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
         MatSnackBar,
     ],
     bootstrap: [AppComponent],
-    entryComponents: [AboutComponent, LoginComponent, ConfirmComponent],
+    entryComponents: [
+        AboutComponent,
+        LoginComponent,
+        ConfirmComponent,
+        ResultDetailsComponent,
+    ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

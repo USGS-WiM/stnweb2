@@ -20,6 +20,7 @@ import { AuthenticationService } from '@app/services/authentication.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CurrentUserService } from '@app/services/current-user.service';
 import { APP_SETTINGS } from '@app/app.settings';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
@@ -38,6 +39,7 @@ describe('LoginComponent', () => {
                 HttpClientTestingModule,
                 OverlayModule,
                 MatDialogModule,
+                NoopAnimationsModule,
             ],
             declarations: [LoginComponent],
             providers: [
@@ -64,23 +66,23 @@ describe('LoginComponent', () => {
     });
 
     it(`#onSubmitLogin should log in the user`, () => {
-        let testFormValue = { username: 'user', password: 'password' };
+        let testFormValueIn = { username: 'user', password: 'password' };
         const loginResponse: Member = APP_UTILITIES.DUMMY_USER;
         spyOn(component.authenticationService, 'login').and.returnValue(
             of(loginResponse)
         );
-        component.onSubmitLogin(testFormValue);
+        component.onSubmitLogin(testFormValueIn);
         expect(component.returnedUser).toEqual(APP_UTILITIES.DUMMY_USER);
     });
 
     it(`#onSubmitLogout should log out the user`, () => {
         // first login a user so we can know that logout changes the state
-        let testFormValue = { username: 'user', password: 'password' };
+        let testFormValueOut = { username: 'user', password: 'password' };
         const loginResponse: Member = APP_UTILITIES.DUMMY_USER;
         spyOn(component.authenticationService, 'login').and.returnValue(
             of(loginResponse)
         );
-        component.onSubmitLogin(testFormValue);
+        component.onSubmitLogin(testFormValueOut);
         expect(component.returnedUser).toEqual(APP_UTILITIES.DUMMY_USER);
         spyOn(component.authenticationService, 'logout').and.returnValue(
             of(null)

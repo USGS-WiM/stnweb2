@@ -1,5 +1,5 @@
 <!-- Results-->
-<mat-expansion-panel>
+<mat-expansion-panel [(expanded)]="resultsPanelOpen">
     <mat-expansion-panel-header>
         <mat-panel-title> Results </mat-panel-title>
     </mat-expansion-panel-header>
@@ -7,7 +7,6 @@
         <mat-table
             id="resultsTable"
             [dataSource]="dataSource"
-            class="mat-elevation-z8"
             (matSortChange)="sortData($event)"
             matSort
         >
@@ -33,10 +32,10 @@
 
             <!-- site description column -->
             <ng-container matColumnDef="siteDesc">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell style="margin-right: 25px" *matHeaderCellDef>
                     Site Description
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-cell style="margin-right: 25px" *matCellDef="let element">
                     {{ element.site_description }}
                 </mat-cell>
             </ng-container>
@@ -103,7 +102,11 @@
             <mat-header-row
                 *matHeaderRowDef="displayedColumns"
             ></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+            <mat-row
+                *matRowDef="let row; columns: displayedColumns"
+                (click)="openDetailsDialog(row)"
+                class="results-row"
+            ></mat-row>
         </mat-table>
 
         <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>

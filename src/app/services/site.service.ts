@@ -25,7 +25,7 @@ export class SiteService {
     //     return this.eventSitesSubject.asObservable();
     // }
 
-    //get sites for a selected event
+    // Event Sites
     public getEventSites(eventID: number): Observable<Site[]> {
         return this.httpClient
             .get(APP_SETTINGS.EVENTS + '/' + eventID + '/Sites.json')
@@ -37,6 +37,7 @@ export class SiteService {
             );
     }
 
+    // Filtered Sites
     public getFilteredSites(urlParams: string): Observable<Site[]> {
         console.log('URL Parameters passed: ' + urlParams);
         return this.httpClient
@@ -44,8 +45,8 @@ export class SiteService {
             .pipe(
                 tap((response) => {
                     console.log(
-                        'getFilteredSites response received: ' +
-                            JSON.stringify(response)
+                        'getFilteredSites response received' //: ' +
+                        // JSON.stringify(response)
                     );
                     return response;
                 }),
@@ -53,16 +54,20 @@ export class SiteService {
             );
     }
 
+    // All Sites
     public getAllSites(): Observable<any> {
         return this.httpClient.get(APP_SETTINGS.SITES_URL + '.json').pipe(
             tap((response) => {
-                console.log('Site list response recieved ' /*+ response*/);
+                console.log('Site list response received ' /*+ response*/);
                 return response;
             }),
             catchError(this.handleError<any>('getAllSites', []))
         );
     }
 
+    //
+
+    // Markers for All Sites Layers
     public allSiteMarkers = new L.markerClusterGroup({
         showCoverageOnHover: false,
         maxClusterRadius: 40,
@@ -81,16 +86,9 @@ export class SiteService {
         // spiderfyDistanceMultiplier: 2,
     });
 
-    public siteMarkers = new L.featureGroup([]);
+    public manyFilteredSitesMarkers = new L.markerClusterGroup([]);
 
-    private _allallSiteMarkers: Subject<any> = new Subject<any>();
-    public setAllallSiteMarkers(val: any) {
-        this.allSiteMarkers = val;
-        this._allallSiteMarkers.next(val);
-    }
-    public allSiteMarker(): Observable<any> {
-        return this._allallSiteMarkers.asObservable();
-    }
+    public siteMarkers = new L.featureGroup([]);
 
     /**
      * Handle Http operation that failed.

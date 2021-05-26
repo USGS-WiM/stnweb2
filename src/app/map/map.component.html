@@ -3,26 +3,36 @@
     Main body wrapper
     Main body wrapper
   -->
-<div id="mapContainer">
+<div id="mapContainer" [class.mini]="mapPanelMinimized">
     <!-- End Main Body Wrapper-->
     <div class="resultsDiv">
         <!-- Results Loading Shade -->
         <!-- Covers map and results, not sidebar -->
         <!-- <div class="data-loading-shade">
       <mat-spinner></mat-spinner>
-    </div> -->
-        <mat-expansion-panel [(expanded)]="mapPanelState" id="mapPanel">
-            <mat-expansion-panel-header>
-                <mat-panel-title id="resultsMapHeader"> Map </mat-panel-title>
-            </mat-expansion-panel-header>
+	</div> -->
+					
+        <div id="mapPanel">
+
+			<div id="mapControls">
+				<button
+					class="navBarBtnActive"
+					mat-button
+					aria-label="Display Map View"
+					(click)="toggleMap()"
+				>
+					<span *ngIf="!mapPanelMinimized">Minimize Map</span>
+					<span *ngIf="mapPanelMinimized">Maximize Map</span>
+				</button>
+		
+			</div>
 
             <!-- Map -->
-            <div id="testmapdiv"></div>
             <div id="map">
                 <div
                     id="extentBtn"
                     class="extentBtn leaflet-bar leaflet-control leaflet-control-zoom"
-                    (click)="eventFocus()"
+                    (click)="siteFocus()"
                     aria-label="Clicking this button zooms to the extent of selected event"
                 >
                     <mat-icon aria-hidden="false" aria-label="Example home icon"
@@ -58,13 +68,23 @@
                 <mat-expansion-panel-header>
                     <mat-panel-title> Legend </mat-panel-title>
                 </mat-expansion-panel-header>
-                <div class="legend-panel-content" *ngIf="sitesVisible">
-                    <div id="sitesLegend">
-                        <div class="legend-icon">
-                            <div
-                                class="wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20"
-                            ></div>
-                            <label>Site</label>
+                <div *ngIf="sitesVisible">
+                    <div class="legend-panel-content" *ngIf="!manyFiltered">
+                        <div id="sitesLegend">
+                            <div class="legend-icon">
+                                <div
+                                    class="wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20"
+                                ></div>
+                                <label>Site</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="legend-panel-content" *ngIf="manyFiltered">
+                        <div id="sitesLegend">
+                            <div class="legend-icon allSitesLegend">
+                                <div class="manyFilteredSitesIcon"></div>
+                                <label class="allSitesLegendLabel">Site</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,28 +189,22 @@
                     </div>
                 </div>
             </mat-expansion-panel>
-        </mat-expansion-panel>
+        </div>
         <!-- Filter/Results -->
         <mat-card id="filtersSection">
-            <mat-card-title>
-                <div class="results-card-title-row">
-                    <span class="results-card-title">Map Filters</span>
-                    <span class="spacer"></span>
-                </div>
-            </mat-card-title>
             <mat-card-content>
                 <!--Filters-->
-                <mat-expansion-panel [(expanded)]="filtersPanelState">
+                <mat-expansion-panel [(expanded)]="filtersPanelState" class="small-card">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            Filters <span class="fal fa-home-alt"></span
-                        ></mat-panel-title>
+							Map Filters 
+						</mat-panel-title>
                     </mat-expansion-panel-header>
                     <div class="form-container">
                         <form class="form" [formGroup]="mapFilterForm">
                             <mat-form-field appearance="fill">
                                 <mat-label for="eventType"
-                                    >Event Type</mat-label
+                                    >Filter Events by Type</mat-label
                                 >
                                 <mat-select
                                     id="eventTypeOptions"
@@ -210,7 +224,7 @@
 
                             <mat-form-field appearance="fill">
                                 <mat-label for="eventType"
-                                    >Event State</mat-label
+                                    >Filter Events by State</mat-label
                                 >
                                 <input
                                     matInput
@@ -272,6 +286,7 @@
                                     </mat-option>
                                 </mat-autocomplete>
                             </mat-form-field>
+                            <hr />
                             <br />
                             <mat-form-field appearance="fill">
                                 <mat-label for="networkOptions"
@@ -293,7 +308,7 @@
                             </mat-form-field>
                             <mat-form-field appearance="fill">
                                 <mat-label for="sensorTypes"
-                                    >Sensor Types</mat-label
+                                    >Sensor Type</mat-label
                                 >
                                 <mat-select
                                     id="sensorOptions"
@@ -311,62 +326,73 @@
                                 </mat-select>
                             </mat-form-field>
 
-                            <mat-form-field appearance="fill">
-                                <mat-label for="stateList">States</mat-label>
-                                <input
-                                    matInput
-                                    type="text"
-                                    aria-label="Dropdown menu for state selection"
-                                    matInput
-                                    formControlName="stateControl"
-                                    [matAutocomplete]="stateAutocomplete"
-                                />
-                                <mat-hint
-                                    >Start typing for suggestions</mat-hint
-                                >
-                            </mat-form-field>
-                            <mat-autocomplete
-                                #stateAutocomplete="matAutocomplete"
-                                [displayWith]="displayState"
-                            >
-                                <mat-option
-                                    *ngFor="let state of states$ | async"
-                                    [value]="state.state_abbrev"
-                                >
-                                    <div>
-                                        <mat-checkbox
-                                            [checked]="state.selected"
-                                            (change)="
-                                                toggleStateSelection(state)
-                                            "
-                                            (click)="$event.stopPropagation()"
+                            <mat-form-field *ngIf="this.states.length > 0">
+                                <mat-chip-list #statesList>
+                                    <mat-chip
+                                        *ngFor="let state of selectedStates"
+                                        [removable]="removable"
+                                        (removed)="remove(state)"
+                                    >
+                                        {{ state.state_name }}
+                                        <mat-icon
+                                            matChipRemove
+                                            *ngIf="removable"
+                                            >cancel</mat-icon
                                         >
-                                            {{ state.state_name }}
-                                        </mat-checkbox>
-                                    </div>
-                                </mat-option>
-                            </mat-autocomplete>
-
-                            <label id="selectedStateList"> </label>
+                                    </mat-chip>
+                                    <input
+                                        aria-label="Select states to filter sites"
+                                        #stateInput
+                                        placeholder="States"
+                                        [matChipInputFor]="statesList"
+                                        [matChipInputSeparatorKeyCodes]="
+                                            separatorKeysCodes
+                                        "
+                                        [matChipInputAddOnBlur]="addOnBlur"
+                                        (matChipInputTokenEnd)="
+                                            addState($event)
+                                        "
+                                        [matAutocomplete]="statesAutocomplete"
+                                        formControlName="stateInput"
+                                    />
+                                </mat-chip-list>
+                                <mat-autocomplete
+                                    #statesAutocomplete="matAutocomplete"
+                                    (optionSelected)="selectState($event)"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let state of filteredStates$ | async
+                                        "
+                                        [value]="state"
+                                    >
+                                        {{ state.state_name }}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
 
                             <br />
                             <label
                                 class="filter-label"
-                                aria-label="Optionally select surveyed or unsurveyed HWMS"
+                                aria-label="Optionally select surveyed or not surveyed HWMS"
                                 >HWMS Surveyed:</label
                             >
-                            <mat-radio-group
-                                aria-label="Select an option"
-                                class="checkbox-section"
+                            <br />
+                            <mat-button-toggle-group
                                 formControlName="surveyedControl"
+                                multiple="true"
                             >
-                                <mat-radio-button value="true"
-                                    >Surveyed</mat-radio-button
+                                <mat-button-toggle
+                                    id="surveyedSelect"
+                                    value="true"
+                                    >Surveyed</mat-button-toggle
                                 >
-                                <mat-radio-button value="false"
-                                    >Unsurveyed</mat-radio-button
+                                <mat-button-toggle
+                                    id="notSurveyedSelect"
+                                    value="false"
+                                    >Not Surveyed</mat-button-toggle
                                 >
-                            </mat-radio-group>
+                            </mat-button-toggle-group>
                             <br />
                             <label
                                 class="filter-label"
@@ -437,7 +463,9 @@
                         </div>
                     </div>
                 </mat-expansion-panel>
-                <app-filter-results></app-filter-results>
+                <app-filter-results
+                    [mapFilterForm]="mapFilterForm"
+                ></app-filter-results>
             </mat-card-content>
         </mat-card>
     </div>

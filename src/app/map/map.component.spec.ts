@@ -9,7 +9,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {
+    MatAutocompleteModule,
+    MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -193,6 +196,28 @@ describe('MapComponent', () => {
         expect(component.eventStates).toEqual(response);
     });
 
+    it('should set survey control to false when the surveyed button is on and the no surveyed button is clicked', () => {
+        component.getData();
+        component.mapFilterForm
+            .get('surveyedControl')
+            .setValue(['true', 'false']);
+        fixture.detectChanges();
+        expect(component.mapFilterForm.get('surveyedControl').value).toEqual([
+            'false',
+        ]);
+    });
+
+    it('should set survey control to true when the no surveyed button is on and the surveyed button is clicked', () => {
+        component.getData();
+        component.mapFilterForm
+            .get('surveyedControl')
+            .setValue(['false', 'true']);
+        fixture.detectChanges();
+        expect(component.mapFilterForm.get('surveyedControl').value).toEqual([
+            'true',
+        ]);
+    });
+
     it('should call filterEvents and return list of filtered events', () => {
         const response: Event[] = [];
         spyOn(component.eventService, 'filterEvents').and.returnValue(
@@ -211,6 +236,66 @@ describe('MapComponent', () => {
         component.getData();
         fixture.detectChanges();
         expect(component.events).toEqual(response);
+    });
+
+    it('should call getEventSites and return results', () => {
+        //pretend that Allegheny Dam release is most recent event
+        component.events = [
+            {
+                event_id: 289,
+                event_name: 'Allegheny Kinzua Dam release Spring 2019',
+                event_start_date: '2019-05-10T05:00:00',
+                event_end_date: '2019-06-10T05:00:00',
+                event_description: 'Controlled release study',
+                event_type_id: 1,
+                event_status_id: 1,
+                event_coordinator: 35,
+                instruments: [],
+                hwms: [],
+            },
+        ];
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getEventSites').and.returnValue(
+            of(response)
+        );
+        component.displayMostRecentEvent();
+        fixture.detectChanges();
+        expect(component.resultsReturned).toEqual(true);
+        expect(component.sitesDataArray).toEqual(response);
+    });
+
+    it('clustering should be disabled in all sites layer when zoomed to 12 or higher', () => {
+        component.map.setZoom(12);
+        fixture.detectChanges();
+        expect(component.siteService.allSiteMarkers.disableClustering())
+            .toBeTrue;
+    });
+
+    it('AHPS Gage, current warnings, and watches/warnings layers should be removed when map zooms out to 8', () => {
+        component.ahpsGagesVisible = true;
+        component.currWarningsVisible = true;
+        component.watchWarnVisible = true;
+        component.map.addLayer(component.AHPSGages);
+        component.map.addLayer(component.warnings);
+        component.map.addLayer(component.watchesWarnings);
+        component.map.setZoom(9);
+        component.map.setZoom(8);
+        component.map.zoom = 8;
+        fixture.detectChanges();
+        expect(component.map.hasLayer(component.AHPSGages)).toBeFalse;
+        expect(component.map.hasLayer(component.warnings)).toBeFalse;
+        expect(component.map.hasLayer(component.watchesWarnings)).toBeFalse;
+    });
+
+    it('there should be as many queries as there are networks', () => {
+        component.mapFilterForm.get('networkControl').setValue([1, 2, 3]);
+        const response: Site[] = [];
+        spyOn(component.siteService, 'getFilteredSites').and.returnValue(
+            of(response)
+        );
+        component.submitMapFilter();
+        fixture.detectChanges();
+        expect(component.totalQueries).toEqual(3);
     });
 
     it('should call getFilteredSites and return list of queried sites', () => {
@@ -245,18 +330,6 @@ describe('MapComponent', () => {
         expect(response).toEqual(state && state.state_name);
     });
 
-    it('displayState returns null', () => {
-        let state = {
-            counties: null,
-            selected: true,
-            state_abbrev: 'AK',
-            state_id: 2,
-            state_name: 'Alaska',
-        };
-        let displayStateResponse = component.displayState(state);
-        expect(displayStateResponse).toEqual(null);
-    });
-
     it('should call openZoomOutSnackBar', () => {
         let message = 'hello';
         let action = 'OK';
@@ -268,58 +341,18 @@ describe('MapComponent', () => {
         component.updateEventFilter();
     });
 
-    it('#getDrawnItemPopupContent returns the appropriate content response', () => {
-        // component.ngOnInit();
-        // component.createMap();
-        let latlngs = [
-            [37, -109.05],
-            [41, -109.03],
-            [41, -102.05],
-            [37, -102.04],
-        ];
-        var polygon = L.polygon(latlngs, { color: 'red' }).addTo(component.map);
-        let polygonResponse = component.getDrawnItemPopupContent(polygon);
-        expect(polygonResponse).toEqual(jasmine.any(String));
-        expect(polygonResponse).toContain('Area: ');
-
-        var line = L.polyline(latlngs, { color: 'blue' }).addTo(component.map);
-        let lineResponse = component.getDrawnItemPopupContent(line);
-        expect(lineResponse).toEqual(jasmine.any(String));
-        expect(lineResponse).toContain('Distance: ');
-
-        var notLine = L.polyline([latlngs[0]], { color: 'blue' }).addTo(
-            component.map
-        );
-        let notLineResponse = component.getDrawnItemPopupContent(notLine);
-        expect(notLineResponse).toEqual(jasmine.any(String));
-        expect(notLineResponse).toContain('Distance: N/A');
-
-        let notLayer = L.popup();
-        let notLayerResponse = component.getDrawnItemPopupContent(notLayer);
-        expect(notLayerResponse).toBeNull();
-    });
-
-    it('#eventFocus sets map to event focused view', () => {
-        // first set the view to somehting not default to test that the update works
-        let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
-        component.map.setView(notDefaultCenter, 9);
-        component.eventFocus();
-        let mapCenter = component.map.getCenter();
+    it('#siteFocus sets map to filtered sites extent', () => {
+        //zoom to sites or default zoom
+        component.siteFocus();
         let mapZoom = component.map.getZoom();
-        expect(mapCenter).toEqual(MAP_CONSTANTS.defaultCenter);
-        expect(mapZoom).toEqual(MAP_CONSTANTS.defaultZoom);
-    });
-
-    it('mapFilterForm should be valid after toggleStateSelection', () => {
-        let state = {
-            counties: null,
-            selected: true,
-            state_abbrev: 'AK',
-            state_id: 2,
-            state_name: 'Alaska',
-        };
-        component.toggleStateSelection(state);
-        expect(component.mapFilterForm.valid).toBe(true);
+        //zoom to somewhere else
+        let notDefaultCenter = new L.LatLng(55.8283, -125.5795);
+        component.map.setView(notDefaultCenter, 3);
+        //zoom back to filtered sites
+        component.siteFocus();
+        fixture.detectChanges();
+        //map should have zoomed back to sites or default
+        expect(component.map.getZoom()).toEqual(mapZoom);
     });
 
     it('mapFilterForm should be a valid form on submit', () => {
@@ -332,13 +365,13 @@ describe('MapComponent', () => {
         component.mapFilterForm.get('stateControl').setValue('NC');
         component.mapFilterForm.get('networkControl').setValue([1, 2, 3]);
         component.mapFilterForm.get('sensorOnlyControl').setValue('1');
+        component.mapFilterForm.get('HWMOnlyControl').setValue('1');
+        component.mapFilterForm.get('bracketSiteOnlyControl').setValue('1');
+        component.mapFilterForm.get('RDGOnlyControl').setValue('1');
+        component.mapFilterForm.get('OPDefinedControl').setValue('1');
         component.mapFilterForm.get('eventsControl').setValue(291);
-        component.mapFilterForm.get('sensorTypeControl').setValue('');
+        component.mapFilterForm.get('sensorTypeControl').setValue('Webcam');
         component.mapFilterForm.value.surveyedControl = 'Surveyed';
-        component.mapFilterForm.value.HWMOnlyControl = '1';
-        component.mapFilterForm.value.bracketSiteOnlyControl = '1';
-        component.mapFilterForm.value.RDGOnlyControl = '1';
-        component.mapFilterForm.value.OPDefinedControl = '1';
         component.submitMapFilter();
         expect(component.mapFilterForm).toBeTruthy;
         expect(component.mapFilterForm.value.eventsControl).toEqual(291);
@@ -360,5 +393,15 @@ describe('MapComponent', () => {
         expect(formValues.OpDefinedControl).toBeFalsy();
     });
 
-    xit('#displayState', () => {});
+    it('#remove works', () => {
+        component.stateFilter('north caro');
+        let stateToRemove = {
+            state_id: 38,
+            state_name: 'North Carolina',
+            state_abbrev: 'NC',
+            counties: null,
+        };
+        component.remove(stateToRemove);
+        expect(component.mapFilterForm.get('stateControl').value).toEqual(null);
+    });
 });

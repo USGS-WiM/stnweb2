@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
@@ -12,10 +12,16 @@ import 'leaflet';
     providedIn: 'root',
 })
 export class FiltersService {
+    private resultsPanelState = new BehaviorSubject(false);
+    public resultsPanelOpen = this.resultsPanelState.asObservable();
     constructor() {}
 
     private filteredSites = new BehaviorSubject<any>([]);
     selectedSites = this.filteredSites.asObservable();
+
+    changeResultsPanelState(state: boolean) {
+        this.resultsPanelState.next(state);
+    }
 
     updateSites(sites: any) {
         this.filteredSites.next(sites);
