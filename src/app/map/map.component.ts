@@ -39,6 +39,7 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
+import { NoaaService } from '@services/noaa.service';
 import { FiltersService } from '@services/filters.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
@@ -99,6 +100,9 @@ export class MapComponent implements OnInit {
 
     //for the ALl STN Sites layer
     allSites: Site[];
+
+    //NOAA layer
+    stations;
 
     public selectedEvent;
     currentSites;
@@ -167,6 +171,7 @@ export class MapComponent implements OnInit {
     watchWarnVisible = false;
     ahpsGagesVisible = false;
     allSitesVisible = false;
+    noaaTidesVisible = true;
 
     //Used for determining when to show layer visibility snack bar message
     currentZoom: number;
@@ -197,6 +202,11 @@ export class MapComponent implements OnInit {
     manyFilteredSitesIcon = L.divIcon({
         className: ' manyFilteredSitesIcon ',
         iconSize: 32,
+    });
+
+    //for NOAA station layer
+    tideIcon = L.divIcon({ 
+        className: 'wmm-diamond wmm-lime wmm-icon-triangle wmm-icon-black wmm-size-15 wmm-borderless', 
     });
 
     //Basemaps
@@ -300,6 +310,7 @@ export class MapComponent implements OnInit {
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
         public siteService: SiteService,
+        public noaaService: NoaaService,
         public filtersService: FiltersService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
@@ -504,6 +515,15 @@ export class MapComponent implements OnInit {
                 this.allSiteIcon,
                 this.siteService.allSiteMarkers,
                 false
+            );
+        });
+        //Add all the NOAA stations to a layer when the map loads
+        this.noaaService.getTides().subscribe((results) => {
+            this.stations = results;
+            this.mapNoaaResults(
+                this.stations,
+                this.tideIcon,
+                this.events[0]
             );
         });
         this.mapFilterForm
@@ -711,6 +731,9 @@ export class MapComponent implements OnInit {
             if (e.name === 'Watches/Warnings*') {
                 this.watchWarnVisible = true;
             }
+            if (e.name === 'NOAA Tides and Current Stations') {
+                this.noaaTidesVisible = true;
+            }
             if (
                 e.name ===
                 "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>"
@@ -735,6 +758,9 @@ export class MapComponent implements OnInit {
             }
             if (e.name === 'Watches/Warnings*') {
                 this.watchWarnVisible = false;
+            }
+            if (e.name === 'NOAA Tides and Current Stations') {
+                this.noaaTidesVisible = false;
             }
             if (
                 e.name ===
@@ -787,6 +813,7 @@ export class MapComponent implements OnInit {
                 'All STN Sites': this.siteService.allSiteMarkers,
                 'Current Warnings*': this.warnings,
                 'Watches/Warnings*': this.watchesWarnings,
+                'NOAA Tides and Current Stations': this.noaaService.tideMarkers,
                 "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
                     .AHPSGages,
             };
@@ -798,6 +825,7 @@ export class MapComponent implements OnInit {
                 'All STN Sites': this.siteService.allSiteMarkers,
                 'Current Warnings*': this.warnings,
                 'Watches/Warnings*': this.watchesWarnings,
+                'NOAA Tides and Current Stations': this.noaaService.tideMarkers,
                 "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
                     .AHPSGages,
             };
@@ -958,6 +986,53 @@ export class MapComponent implements OnInit {
     //will return a comma separated list of selected states
     displayEventState(state: any): string {
         return state && state.state_name ? state.state_name : '';
+    }
+
+    //get lat/lng for each NOAA station and add to tideMarkers layer group from siteService
+    mapNoaaResults(stationList: any, myIcon: any, event: any) {
+        if (stationList.count > 0 && stationList.stations !== undefined) {
+            let stations = stationList.stations
+            for (let station of stations) {
+                let lat = Number(station.lat);
+                let long = Number(station.lng);
+                let stationId = station.id;
+                let beginDate = event.event_start_date.substr(0, 10);
+                beginDate = beginDate.replace("-", "");
+                beginDate = beginDate.replace("-", "");
+                let endDate = event.event_end_date.substr(0, 10);
+                endDate = endDate.replace("-", "");
+                endDate = endDate.replace("-", "");
+                let gageUrl =
+                "https://tidesandcurrents.noaa.gov/waterlevels.html?id=" +
+                stationId +
+                "&units=standard&bdate=" +
+                beginDate +
+                "&edate=" +
+                endDate +
+                "&timezone=GMT&datum=MLLW&interval=6&action=";
+                //create popup with link to NOAA graph
+                let popupContent =
+                '<span><a target="_blank" href=' +
+                gageUrl +
+                ">Graph of Observed Water Levels at site " +
+                stationId +
+                "</a></span>";
+                if (isNaN(lat) || isNaN(long)) {
+                    console.log(
+                        'Skipped station ' +
+                        station.id +
+                        ' in NOAA Station layer due to null lat/lng'
+                );
+                } else {
+                    //These sites are in the Atlantic Ocean or otherwise clearly out of place
+                    L.marker([lat, long], { icon: myIcon })
+                        .bindPopup(popupContent)
+                        .addTo(this.noaaService.tideMarkers);
+                }
+            }
+        }else{
+            console.log("No NOAA stations returned")
+        }
     }
 
     //sites = the full site object to be mapped
@@ -1239,6 +1314,20 @@ export class MapComponent implements OnInit {
                         }
                         this.getFilterResults(validSites);
                     });
+                // Reload NOAA Tide and Current Stations if event is changed
+                this.eventService.getEvent(eventId).subscribe((result) => {
+                    // If any filters but the event change, do not reload the NOAA layer
+                    if (result.event_start_date !== undefined){
+                        this.noaaService.getTides().subscribe((results) => {
+                            this.stations = results;
+                            this.mapNoaaResults(
+                                this.stations,
+                                this.tideIcon, 
+                                result
+                            );
+                        });
+                    }
+                })
             } else {
                 //User could potentially crash the app by choosing too many networks, thereby returning too many results
                 //if > 5 networks are selected, prevent query from running and show warning
