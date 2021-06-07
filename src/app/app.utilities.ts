@@ -8,6 +8,7 @@ import { State } from '@interfaces/state';
 import { Sitefullsensors } from '@interfaces/sitefullsensors';
 import { SensorType } from '@interfaces/sensor-type';
 import { Member } from '@interfaces/member';
+import { NoaaStation } from '@interfaces/noaa-station';
 
 @Injectable()
 export class APP_UTILITIES {
@@ -397,5 +398,25 @@ export class APP_UTILITIES {
 
     public static get FILTERED_SITES_SAMPLE_QUERY_PARAMS(): string {
         return `Event=&State=MS&SensorType=&NetworkName=&OPDefined=&HWMOnly=&HWMSurveyed=&SensorOnly=&RDGOnly=&HousingTypeOne=1`;
+    }
+
+    public static get NOAA_DUMMY_DATA_LIST(): NoaaStation {
+        return {
+            forecast: false,
+            greatlakes: false,
+            id: '8665530',
+            lat: 32.780833,
+            lng: -79.923611,
+            name: "Charleston, Cooper River Entrance",
+            observedst: true,
+            portscode: 'ch',
+            shefcode: "CHTS1",
+            state: 'SC',
+            stormsurge: false,
+            tidal: true,
+            tideType: 'Mixed',
+            timezone: 'EST',
+            timezonecorr: -5,
+        };
     }
 }

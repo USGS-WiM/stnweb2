@@ -463,15 +463,6 @@ export class MapComponent implements OnInit {
             this.displayMostRecentEvent();
             // allow user to type into the event selector to view matching events
             this.getEventList();
-            //Add all the NOAA stations to a layer when the map and event list loads
-            this.noaaService.getTides().subscribe((results) => {
-                this.stations = results;
-                this.mapNoaaResults(
-                    this.stations,
-                    this.tideIcon,
-                    this.events[0]
-                );
-            });
         });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
@@ -525,6 +516,24 @@ export class MapComponent implements OnInit {
                 this.siteService.allSiteMarkers,
                 false
             );
+        });
+        //Add all the NOAA stations to a layer when the map and event list loads
+        this.eventService.getAllEvents().toPromise().then((result) => {
+            let eventResults = result;
+            //sort the events by date, most recent at the top of the list
+            eventResults = APP_UTILITIES.SORT(
+                eventResults,
+                'event_start_date',
+                'descend'
+            ); 
+            this.noaaService.getTides().subscribe((results) => {
+            this.stations = results;
+            this.mapNoaaResults(
+                this.stations,
+                this.tideIcon,
+                eventResults[0]
+            );
+            });
         });
         this.mapFilterForm
             .get('surveyedControl')
@@ -1208,6 +1217,19 @@ export class MapComponent implements OnInit {
         );
         //keep filters panel open
         this.filtersPanelState = true;
+
+        //reset NOAA popups to links for most recent two week period
+        // let endDate = new Date();
+        // let startDate = new Date();
+        // startDate.setDate(startDate.getDate() - 14);
+        // let formatEndDate = endDate.getFullYear().toString() + (endDate.getMonth() + 1).toString().padStart(2, '0') + endDate.getDate().toString().padStart(2, '0');
+        // let formatStartDate = startDate.getFullYear().toString() + (startDate.getMonth() + 1).toString().padStart(2, '0') + startDate.getDate().toString().padStart(2, '0');
+        // let event = formatStartDate + "," + formatEndDate;
+        // this.mapNoaaResults(
+        //     this.stations,
+        //     this.tideIcon,
+        //     event
+        // );
     }
 
     public submitMapFilter() {
@@ -1323,7 +1345,7 @@ export class MapComponent implements OnInit {
                         this.getFilterResults(validSites);
                     });
                 // Reload NOAA Tide and Current Stations if filters are changed
-                this.eventService.getEvent(eventId).subscribe((result) => {
+                this.eventService.getEvent(eventId).toPromise().then((result) => {
                     // If the event is changed, use event date range in popup
                     if (result.event_start_date !== undefined){
                         this.noaaService.getTides().subscribe((results) => {
@@ -1348,7 +1370,7 @@ export class MapComponent implements OnInit {
                             event
                         );
                     }
-                })
+                });
             } else {
                 //User could potentially crash the app by choosing too many networks, thereby returning too many results
                 //if > 5 networks are selected, prevent query from running and show warning

@@ -48,6 +48,7 @@ import { MAP_CONSTANTS } from './map-constants';
 import { DisplayValuePipe } from '@app/pipes/display-value.pipe';
 import { Site } from '@app/interfaces/site';
 import { State } from '@app/interfaces/state';
+import { NoaaStation } from '@app/interfaces/noaa-station';
 
 describe('MapComponent', () => {
     let component: MapComponent;
@@ -262,6 +263,30 @@ describe('MapComponent', () => {
         fixture.detectChanges();
         expect(component.resultsReturned).toEqual(true);
         expect(component.sitesDataArray).toEqual(response);
+    });
+
+    it('should call getTides on load and return list of all stations', () => {
+        const response: NoaaStation[] = [];
+        component.eventService.getAllEvents().toPromise().then(result => {
+            spyOn(component.noaaService, 'getTides').and.returnValue(
+                of(response)
+            );
+            component.getData();
+            fixture.detectChanges();
+            expect(component.stations).toEqual(response);
+        });
+    });
+
+    it('should call getTides and return list of all stations', () => {
+        const response: NoaaStation[] = [];
+        component.eventService.getAllEvents().toPromise().then(result => {
+            spyOn(component.noaaService, 'getTides').and.returnValue(
+                of(response)
+            );
+            component.submitMapFilter();
+            fixture.detectChanges();
+            expect(component.stations).toEqual(response);
+        });
     });
 
     it('clustering should be disabled in all sites layer when zoomed to 12 or higher', () => {

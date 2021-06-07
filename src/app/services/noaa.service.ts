@@ -9,7 +9,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import { EMPTY, Subject } from 'rxjs';
-import { Site } from '@interfaces/site';
 
 declare let L: any;
 import 'leaflet';
