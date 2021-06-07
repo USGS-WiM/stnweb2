@@ -109,6 +109,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="legend-panel-content" *ngIf="noaaTidesVisible">
+                    <div id="noaaTidesLegend">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-diamond wmm-lime wmm-icon-triangle wmm-icon-black wmm-size-15 wmm-borderless"
+                            ></div>
+                            <label>NOAA Tides and Current Stations</label>
+                        </div>
+                    </div>
+                </div>
                 <div class="legend-panel-content" *ngIf="currWarningsVisible">
                     <div id="currWarningLegend">
                         <div class="legend-icon">
@@ -126,16 +136,6 @@
                                 class="wmm-square wmm-icon-circle wmm-size-20 watch-icon"
                             ></div>
                             <label>Watches/Warnings</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="legend-panel-content" *ngIf="noaaTidesVisible">
-                    <div id="noaaTidesLegend">
-                        <div class="legend-icon">
-                            <div
-                                class="wmm-diamond wmm-lime wmm-icon-triangle wmm-icon-black wmm-size-15 wmm-borderless"
-                            ></div>
-                            <label>NOAA Tides and Current Stations</label>
                         </div>
                     </div>
                 </div>

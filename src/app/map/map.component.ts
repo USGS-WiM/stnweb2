@@ -171,7 +171,7 @@ export class MapComponent implements OnInit {
     watchWarnVisible = false;
     ahpsGagesVisible = false;
     allSitesVisible = false;
-    noaaTidesVisible = true;
+    noaaTidesVisible = false;
 
     //Used for determining when to show layer visibility snack bar message
     currentZoom: number;
@@ -463,6 +463,15 @@ export class MapComponent implements OnInit {
             this.displayMostRecentEvent();
             // allow user to type into the event selector to view matching events
             this.getEventList();
+            //Add all the NOAA stations to a layer when the map and event list loads
+            this.noaaService.getTides().subscribe((results) => {
+                this.stations = results;
+                this.mapNoaaResults(
+                    this.stations,
+                    this.tideIcon,
+                    this.events[0]
+                );
+            });
         });
         //Get states to fill state filters
         this.stateService.getStates().subscribe((results) => {
@@ -515,15 +524,6 @@ export class MapComponent implements OnInit {
                 this.allSiteIcon,
                 this.siteService.allSiteMarkers,
                 false
-            );
-        });
-        //Add all the NOAA stations to a layer when the map loads
-        this.noaaService.getTides().subscribe((results) => {
-            this.stations = results;
-            this.mapNoaaResults(
-                this.stations,
-                this.tideIcon,
-                this.events[0]
             );
         });
         this.mapFilterForm
@@ -725,14 +725,14 @@ export class MapComponent implements OnInit {
             if (e.name === 'All STN Sites') {
                 this.allSitesVisible = true;
             }
+            if (e.name === 'NOAA Tides and Current Stations') {
+                this.noaaTidesVisible = true;
+            }
             if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = true;
             }
             if (e.name === 'Watches/Warnings*') {
                 this.watchWarnVisible = true;
-            }
-            if (e.name === 'NOAA Tides and Current Stations') {
-                this.noaaTidesVisible = true;
             }
             if (
                 e.name ===
@@ -753,14 +753,14 @@ export class MapComponent implements OnInit {
             if (e.name === 'All STN Sites') {
                 this.allSitesVisible = false;
             }
+            if (e.name === 'NOAA Tides and Current Stations') {
+                this.noaaTidesVisible = false;
+            }
             if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = false;
             }
             if (e.name === 'Watches/Warnings*') {
                 this.watchWarnVisible = false;
-            }
-            if (e.name === 'NOAA Tides and Current Stations') {
-                this.noaaTidesVisible = false;
             }
             if (
                 e.name ===
@@ -811,9 +811,9 @@ export class MapComponent implements OnInit {
                 Sites: this.siteService.siteMarkers,
                 Watersheds: this.HUC,
                 'All STN Sites': this.siteService.allSiteMarkers,
+                'NOAA Tides and Current Stations': this.noaaService.tideMarkers,
                 'Current Warnings*': this.warnings,
                 'Watches/Warnings*': this.watchesWarnings,
-                'NOAA Tides and Current Stations': this.noaaService.tideMarkers,
                 "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
                     .AHPSGages,
             };
@@ -823,9 +823,9 @@ export class MapComponent implements OnInit {
                 Sites: this.siteService.manyFilteredSitesMarkers,
                 Watersheds: this.HUC,
                 'All STN Sites': this.siteService.allSiteMarkers,
+                'NOAA Tides and Current Stations': this.noaaService.tideMarkers,
                 'Current Warnings*': this.warnings,
                 'Watches/Warnings*': this.watchesWarnings,
-                'NOAA Tides and Current Stations': this.noaaService.tideMarkers,
                 "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
                     .AHPSGages,
             };
@@ -996,12 +996,20 @@ export class MapComponent implements OnInit {
                 let lat = Number(station.lat);
                 let long = Number(station.lng);
                 let stationId = station.id;
-                let beginDate = event.event_start_date.substr(0, 10);
-                beginDate = beginDate.replace("-", "");
-                beginDate = beginDate.replace("-", "");
-                let endDate = event.event_end_date.substr(0, 10);
-                endDate = endDate.replace("-", "");
-                endDate = endDate.replace("-", "");
+                let beginDate;
+                let endDate;
+                // If any filters but event are used, event will be a string instead of an object
+                if (typeof(event) == 'string'){
+                    beginDate = event.split(",")[0];
+                    endDate = event.split(",")[1]
+                }else{
+                    beginDate = event.event_start_date.substr(0, 10);
+                    beginDate = beginDate.replace("-", "");
+                    beginDate = beginDate.replace("-", "");
+                    endDate = event.event_end_date.substr(0, 10);
+                    endDate = endDate.replace("-", "");
+                    endDate = endDate.replace("-", "");
+                }
                 let gageUrl =
                 "https://tidesandcurrents.noaa.gov/waterlevels.html?id=" +
                 stationId +
@@ -1314,9 +1322,9 @@ export class MapComponent implements OnInit {
                         }
                         this.getFilterResults(validSites);
                     });
-                // Reload NOAA Tide and Current Stations if event is changed
+                // Reload NOAA Tide and Current Stations if filters are changed
                 this.eventService.getEvent(eventId).subscribe((result) => {
-                    // If any filters but the event change, do not reload the NOAA layer
+                    // If the event is changed, use event date range in popup
                     if (result.event_start_date !== undefined){
                         this.noaaService.getTides().subscribe((results) => {
                             this.stations = results;
@@ -1326,6 +1334,19 @@ export class MapComponent implements OnInit {
                                 result
                             );
                         });
+                    } else{
+                        // Use the previous 2 weeks as date range for link in NOAA layer popup if any filters but event are changed
+                        let endDate = new Date();
+                        let startDate = new Date();
+                        startDate.setDate(startDate.getDate() - 14);
+                        let formatEndDate = endDate.getFullYear().toString() + (endDate.getMonth() + 1).toString().padStart(2, '0') + endDate.getDate().toString().padStart(2, '0');
+                        let formatStartDate = startDate.getFullYear().toString() + (startDate.getMonth() + 1).toString().padStart(2, '0') + startDate.getDate().toString().padStart(2, '0');
+                        let event = formatStartDate + "," + formatEndDate;
+                        this.mapNoaaResults(
+                            this.stations,
+                            this.tideIcon, 
+                            event
+                        );
                     }
                 })
             } else {
