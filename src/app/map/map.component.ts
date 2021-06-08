@@ -102,7 +102,7 @@ export class MapComponent implements OnInit {
     allSites: Site[];
 
     //NOAA layer
-    stations;
+    stations = [];
 
     public selectedEvent;
     currentSites;
@@ -1219,17 +1219,17 @@ export class MapComponent implements OnInit {
         this.filtersPanelState = true;
 
         //reset NOAA popups to links for most recent two week period
-        // let endDate = new Date();
-        // let startDate = new Date();
-        // startDate.setDate(startDate.getDate() - 14);
-        // let formatEndDate = endDate.getFullYear().toString() + (endDate.getMonth() + 1).toString().padStart(2, '0') + endDate.getDate().toString().padStart(2, '0');
-        // let formatStartDate = startDate.getFullYear().toString() + (startDate.getMonth() + 1).toString().padStart(2, '0') + startDate.getDate().toString().padStart(2, '0');
-        // let event = formatStartDate + "," + formatEndDate;
-        // this.mapNoaaResults(
-        //     this.stations,
-        //     this.tideIcon,
-        //     event
-        // );
+        let endDate = new Date();
+        let startDate = new Date();
+        startDate.setDate(startDate.getDate() - 14);
+        let formatEndDate = endDate.getFullYear().toString() + (endDate.getMonth() + 1).toString().padStart(2, '0') + endDate.getDate().toString().padStart(2, '0');
+        let formatStartDate = startDate.getFullYear().toString() + (startDate.getMonth() + 1).toString().padStart(2, '0') + startDate.getDate().toString().padStart(2, '0');
+        let event = formatStartDate + "," + formatEndDate;
+        this.mapNoaaResults(
+            this.stations,
+            this.tideIcon,
+            event
+        );
     }
 
     public submitMapFilter() {
