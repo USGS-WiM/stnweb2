@@ -1218,7 +1218,7 @@ export class MapComponent implements OnInit {
         //keep filters panel open
         this.filtersPanelState = true;
 
-        //reset NOAA popups to links for most recent two week period
+        // reset NOAA popups to links for most recent two week period
         let endDate = new Date();
         let startDate = new Date();
         startDate.setDate(startDate.getDate() - 14);
