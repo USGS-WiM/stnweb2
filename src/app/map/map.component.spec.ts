@@ -429,4 +429,9 @@ describe('MapComponent', () => {
         component.remove(stateToRemove);
         expect(component.mapFilterForm.get('stateControl').value).toEqual(null);
     });
+
+    it ('map size should change', () => {
+        component.toggleMap();
+        expect(component.map.invalidateSize()).toBeTruthy();
+    })
 });
