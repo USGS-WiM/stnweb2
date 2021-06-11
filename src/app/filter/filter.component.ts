@@ -41,7 +41,7 @@ export class FilterComponent implements OnInit {
         this.sensorTypes$ = this.sensorTypeService.sensorTypes$;
     }
 
-    ngOnInit() {}
+    ngOnInit(): void {}
 
     // Update event list when filters are changed
     onEventChange(){

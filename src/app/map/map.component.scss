@@ -140,14 +140,6 @@ $borderRadius: 4px;
     word-wrap: break-word;
 }
 
-.button-row {
-    display: flex;
-    justify-content: center;
-}
-.mat-button-base {
-    margin: 8px 8px 8px 0;
-}
-
 #mapPanel {
     width: 70%;
     position: relative;
@@ -425,14 +417,6 @@ $borderRadius: 4px;
     }
 }
 
-.form-container .mat-form-field + .mat-form-field {
-    margin-left: 8px;
-}
-
-.form-container .mat-form-field {
-    width: 220px;
-}
-
 .form-container form {
     margin-bottom: 20px;
 }
@@ -445,26 +429,12 @@ $borderRadius: 4px;
     margin: 0 12px;
 }
 
-.checkbox-section {
-    display: flex;
-    align-content: left;
-    align-items: left;
-    flex-wrap: wrap;
-    // height: 60px;
-    flex-direction: column;
-}
-
 .checkbox-margin {
     margin: 0 10px;
 }
 
 .boxes {
     display: block;
-}
-
-.filter-label {
-    font-weight: bold;
-    padding: 10px;
 }
 
 .huc-icon:after {
