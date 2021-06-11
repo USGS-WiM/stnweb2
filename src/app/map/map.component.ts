@@ -39,6 +39,7 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { DisplayValuePipe } from '@pipes/display-value.pipe';
 import { SiteService } from '@services/site.service';
+import { NoaaService } from '@services/noaa.service';
 import { FiltersService } from '@services/filters.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
@@ -99,6 +100,9 @@ export class MapComponent implements OnInit {
 
     //for the ALl STN Sites layer
     allSites: Site[];
+
+    //NOAA layer
+    stations = [];
 
     public selectedEvent;
     currentSites;
@@ -173,6 +177,7 @@ export class MapComponent implements OnInit {
     watchWarnVisible = false;
     ahpsGagesVisible = false;
     allSitesVisible = false;
+    noaaTidesVisible = false;
 
     //Used for determining when to show layer visibility snack bar message
     currentZoom: number;
@@ -203,6 +208,11 @@ export class MapComponent implements OnInit {
     manyFilteredSitesIcon = L.divIcon({
         className: ' manyFilteredSitesIcon ',
         iconSize: 32,
+    });
+
+    //for NOAA station layer
+    tideIcon = L.divIcon({ 
+        className: 'wmm-diamond wmm-lime wmm-icon-triangle wmm-icon-black wmm-size-15 wmm-borderless', 
     });
 
     //Basemaps
@@ -306,6 +316,7 @@ export class MapComponent implements OnInit {
         private sensorTypesService: SensorTypeService,
         public currentUserService: CurrentUserService,
         public siteService: SiteService,
+        public noaaService: NoaaService,
         public filtersService: FiltersService,
         private displayValuePipe: DisplayValuePipe,
         public snackBar: MatSnackBar
@@ -512,6 +523,24 @@ export class MapComponent implements OnInit {
                 false
             );
         });
+        //Add all the NOAA stations to a layer when the map and event list loads
+        this.eventService.getAllEvents().toPromise().then((result) => {
+            let eventResults = result;
+            //sort the events by date, most recent at the top of the list
+            eventResults = APP_UTILITIES.SORT(
+                eventResults,
+                'event_start_date',
+                'descend'
+            ); 
+            this.noaaService.getTides().subscribe((results) => {
+            this.stations = results;
+            this.mapNoaaResults(
+                this.stations,
+                this.tideIcon,
+                eventResults[0]
+            );
+            });
+        });
         this.mapFilterForm
             .get('surveyedControl')
             .valueChanges.subscribe((surVal) => {
@@ -711,6 +740,9 @@ export class MapComponent implements OnInit {
             if (e.name === 'All STN Sites') {
                 this.allSitesVisible = true;
             }
+            if (e.name === 'NOAA Tides and Current Stations') {
+                this.noaaTidesVisible = true;
+            }
             if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = true;
             }
@@ -735,6 +767,9 @@ export class MapComponent implements OnInit {
             }
             if (e.name === 'All STN Sites') {
                 this.allSitesVisible = false;
+            }
+            if (e.name === 'NOAA Tides and Current Stations') {
+                this.noaaTidesVisible = false;
             }
             if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = false;
@@ -791,6 +826,7 @@ export class MapComponent implements OnInit {
                 Sites: this.siteService.siteMarkers,
                 Watersheds: this.HUC,
                 'All STN Sites': this.siteService.allSiteMarkers,
+                'NOAA Tides and Current Stations': this.noaaService.tideMarkers,
                 'Current Warnings*': this.warnings,
                 'Watches/Warnings*': this.watchesWarnings,
                 "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
@@ -802,6 +838,7 @@ export class MapComponent implements OnInit {
                 Sites: this.siteService.manyFilteredSitesMarkers,
                 Watersheds: this.HUC,
                 'All STN Sites': this.siteService.allSiteMarkers,
+                'NOAA Tides and Current Stations': this.noaaService.tideMarkers,
                 'Current Warnings*': this.warnings,
                 'Watches/Warnings*': this.watchesWarnings,
                 "<span>AHPS Gages*</span> <br> <div class='leaflet-control-layers-separator'></div><span style='color: gray; text-align: center;'>*Zoom to level 9 to enable</span>": this
@@ -955,6 +992,61 @@ export class MapComponent implements OnInit {
                 MAP_CONSTANTS.defaultCenter,
                 MAP_CONSTANTS.defaultZoom
             );
+        }
+    }
+
+    //get lat/lng for each NOAA station and add to tideMarkers layer group from siteService
+    mapNoaaResults(stationList: any, myIcon: any, event: any) {
+        if (stationList.count > 0 && stationList.stations !== undefined) {
+            let stations = stationList.stations
+            for (let station of stations) {
+                let lat = Number(station.lat);
+                let long = Number(station.lng);
+                let stationId = station.id;
+                let beginDate;
+                let endDate;
+                // If any filters but event are used, event will be a string instead of an object
+                if (typeof(event) == 'string'){
+                    beginDate = event.split(",")[0];
+                    endDate = event.split(",")[1]
+                }else{
+                    beginDate = event.event_start_date.substr(0, 10);
+                    beginDate = beginDate.replace("-", "");
+                    beginDate = beginDate.replace("-", "");
+                    endDate = event.event_end_date.substr(0, 10);
+                    endDate = endDate.replace("-", "");
+                    endDate = endDate.replace("-", "");
+                }
+                let gageUrl =
+                "https://tidesandcurrents.noaa.gov/waterlevels.html?id=" +
+                stationId +
+                "&units=standard&bdate=" +
+                beginDate +
+                "&edate=" +
+                endDate +
+                "&timezone=GMT&datum=MLLW&interval=6&action=";
+                //create popup with link to NOAA graph
+                let popupContent =
+                '<span><a target="_blank" href=' +
+                gageUrl +
+                ">Graph of Observed Water Levels at site " +
+                stationId +
+                "</a></span>";
+                if (isNaN(lat) || isNaN(long)) {
+                    console.log(
+                        'Skipped station ' +
+                        station.id +
+                        ' in NOAA Station layer due to null lat/lng'
+                );
+                } else {
+                    //These sites are in the Atlantic Ocean or otherwise clearly out of place
+                    L.marker([lat, long], { icon: myIcon })
+                        .bindPopup(popupContent)
+                        .addTo(this.noaaService.tideMarkers);
+                }
+            }
+        }else{
+            console.log("No NOAA stations returned")
         }
     }
 
@@ -1123,6 +1215,19 @@ export class MapComponent implements OnInit {
         );
         //keep filters panel open
         this.filtersPanelState = true;
+
+        // reset NOAA popups to links for most recent two week period
+        let endDate = new Date();
+        let startDate = new Date();
+        startDate.setDate(startDate.getDate() - 14);
+        let formatEndDate = endDate.getFullYear().toString() + (endDate.getMonth() + 1).toString().padStart(2, '0') + endDate.getDate().toString().padStart(2, '0');
+        let formatStartDate = startDate.getFullYear().toString() + (startDate.getMonth() + 1).toString().padStart(2, '0') + startDate.getDate().toString().padStart(2, '0');
+        let event = formatStartDate + "," + formatEndDate;
+        this.mapNoaaResults(
+            this.stations,
+            this.tideIcon,
+            event
+        );
     }
 
     public submitMapFilter() {
@@ -1237,6 +1342,33 @@ export class MapComponent implements OnInit {
                         }
                         this.getFilterResults(validSites);
                     });
+                // Reload NOAA Tide and Current Stations if filters are changed
+                this.eventService.getEvent(eventId).toPromise().then((result) => {
+                    // If the event is changed, use event date range in popup
+                    if (result.event_start_date !== undefined){
+                        this.noaaService.getTides().subscribe((results) => {
+                            this.stations = results;
+                            this.mapNoaaResults(
+                                this.stations,
+                                this.tideIcon, 
+                                result
+                            );
+                        });
+                    } else{
+                        // Use the previous 2 weeks as date range for link in NOAA layer popup if any filters but event are changed
+                        let endDate = new Date();
+                        let startDate = new Date();
+                        startDate.setDate(startDate.getDate() - 14);
+                        let formatEndDate = endDate.getFullYear().toString() + (endDate.getMonth() + 1).toString().padStart(2, '0') + endDate.getDate().toString().padStart(2, '0');
+                        let formatStartDate = startDate.getFullYear().toString() + (startDate.getMonth() + 1).toString().padStart(2, '0') + startDate.getDate().toString().padStart(2, '0');
+                        let event = formatStartDate + "," + formatEndDate;
+                        this.mapNoaaResults(
+                            this.stations,
+                            this.tideIcon, 
+                            event
+                        );
+                    }
+                });
             } else {
                 //User could potentially crash the app by choosing too many networks, thereby returning too many results
                 //if > 5 networks are selected, prevent query from running and show warning
