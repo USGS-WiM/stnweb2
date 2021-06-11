@@ -119,6 +119,12 @@ export class MapComponent implements OnInit {
     //Begin with the map and filters panels expanded
     mapPanelMinimized: boolean = false;
     filtersPanelState: boolean = true;
+    eventPanelState: boolean = false;
+    networksPanelState: boolean = false;
+    sensorPanelState: boolean = false;
+    statesPanelState: boolean = false;
+    hmwPanelState: boolean = false;
+    additionalFiltersPanelState: boolean = false;
     resultsPanelState: boolean;
     resultsPanelSubscription: Subscription;
 
@@ -950,14 +956,6 @@ export class MapComponent implements OnInit {
                 MAP_CONSTANTS.defaultZoom
             );
         }
-    }
-    // options to be displayed when selecting event filter
-    displayEvent(event: Event): string {
-        return event && event.event_name ? event.event_name : '';
-    }
-    //will return a comma separated list of selected states
-    displayEventState(state: any): string {
-        return state && state.state_name ? state.state_name : '';
     }
 
     //sites = the full site object to be mapped

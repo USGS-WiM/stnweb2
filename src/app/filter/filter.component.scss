@@ -101,9 +101,10 @@ $borderRadius: 4px;
 
 .checkbox-section {
     display: flex;
-    align-content: center;
-    align-items: center;
-    height: 60px;
+    align-content: left;
+    align-items: left;
+    // height: 60px;
+    flex-direction: column;
 }
 
 .checkbox-margin {
