@@ -9,15 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
--
+-   Added map filter button on mobile.  Map filters open to replace the map and filter results.
 
 ### Changed
 
--
+-   Map filters placed in sidebar component
 
 ### Fixed
 
--
+-   Width of map container on mobile fits to screen size
 
 ## [v0.5.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.5.0) - 2021-06-10
 
