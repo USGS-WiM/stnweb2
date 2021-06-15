@@ -407,9 +407,10 @@ describe('MapComponent', () => {
         expect(component.map.invalidateSize()).toBeTruthy();
     })
 
-    it ('isMobile should be checked on window resize', () => {
-        component.onResize();
-        expect(component.isMobile).toBeFalsy();
+    it ('onResize should be called on window resize', () => {
+        let resizeSpy = spyOn(component, 'onResize');
+        window.dispatchEvent(new Event('resize'));
+        expect(resizeSpy).toHaveBeenCalled();
     });
 
     it ('isClicked should change value', () => {
