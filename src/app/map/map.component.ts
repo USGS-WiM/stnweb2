@@ -88,6 +88,10 @@ export class MapComponent implements OnInit {
     icon;
     isloggedIn = APP_SETTINGS.IS_LOGGEDIN;
     currentFilter;
+    isClicked = false;
+    isMobile = window.matchMedia('(max-width: 875px)').matches;
+    isSubmitted = false;
+    firstLoaded = true;
 
     drawControl;
     drawnItems;
@@ -123,12 +127,6 @@ export class MapComponent implements OnInit {
     //Begin with the map and filters panels expanded
     mapPanelMinimized: boolean = false;
     filtersPanelState: boolean = true;
-    eventPanelState: boolean = false;
-    networksPanelState: boolean = false;
-    sensorPanelState: boolean = false;
-    statesPanelState: boolean = false;
-    hmwPanelState: boolean = false;
-    additionalFiltersPanelState: boolean = false;
     resultsPanelState: boolean;
     resultsPanelSubscription: Subscription;
 
@@ -1442,6 +1440,16 @@ export class MapComponent implements OnInit {
         }
     }
 
+    openMapFilters(){
+        // Viewing on mobile, change boolean value to hide or display map filters, map panel, and filter results
+        this.isClicked = !this.isClicked;
+    }
+
+    onResize(){
+        // Check screen size on window resize event
+        this.isMobile = window.matchMedia('(max-width: 875px)').matches;
+    }
+
     public getFilterResults(filterResponse) {
         //only call mapResults if the query returns data
         if (filterResponse.length > 0) {
@@ -1511,5 +1519,10 @@ export class MapComponent implements OnInit {
         });
         //close the filter panel
         this.filtersPanelState = false;
+
+        //close map filters on mobile when submitted
+        this.isSubmitted = true;
+        this.firstLoaded = false;
+        this.isClicked = false;
     }
 }

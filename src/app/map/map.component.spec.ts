@@ -406,4 +406,14 @@ describe('MapComponent', () => {
         component.toggleMap();
         expect(component.map.invalidateSize()).toBeTruthy();
     })
+
+    it ('isMobile should be checked on window resize', () => {
+        component.onResize();
+        expect(component.isMobile).toBeFalsy();
+    });
+
+    it ('isClicked should change value', () => {
+        component.openMapFilters();
+        expect(component.isClicked).toBeTruthy();
+    });
 });

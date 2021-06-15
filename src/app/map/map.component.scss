@@ -417,6 +417,11 @@ $borderRadius: 4px;
     }
 }
 
+// Map filters
+#mobile-filter-button{
+    display: none;
+}
+
 .form-container form {
     margin-bottom: 20px;
 }
@@ -460,4 +465,59 @@ $borderRadius: 4px;
     background-color: rgba(255, 166, 0, 0.801);
     color: white;
     margin-bottom: 300px;
+}
+
+//Mobile screen sizes
+@media screen and (max-width: 768px){
+    #map{
+        margin: 20px 0;
+    }
+    #mapPanel {
+        width: 95%;
+        float: none;
+        left: 2.5%;
+    }
+    #filtersSection{
+        .mat-card-content {
+            width: 95%;
+            max-width: none;
+            height: auto;
+        }
+    }
+    #mobile-filter-button{
+        display: flex;
+        justify-content: center;
+        margin: 15px auto 0 auto;
+    }
+
+    #mobile-filter-window{
+        background-color: #f7f7f7;
+        padding: 15px 0 25px 0;
+        float: none;
+        width: 95%;
+    
+        .small-card {
+            width: 95%;
+            max-width: 800px;
+            margin: 15px auto 0 auto;
+        }
+        .mat-card-content {
+            width: 95%;
+            max-width: 95%;
+            margin: 15px;
+            height: auto;
+        }
+    
+        .mat-expansion-panel {
+            margin-bottom: 15px;
+        }
+    }
+
+    // Make sure min width is less than screen size
+    #mapContainer{
+        .resultsDiv{
+            width: 100%;
+            min-width: 100px;
+        }
+    }
 }

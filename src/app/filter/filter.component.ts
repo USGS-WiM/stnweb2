@@ -33,6 +33,13 @@ export class FilterComponent implements OnInit {
     networks$: Observable<NetworkName[]>;
     sensorTypes$: Observable<SensorType[]>;
 
+    eventPanelState: boolean = false;
+    networksPanelState: boolean = false;
+    sensorPanelState: boolean = false;
+    statesPanelState: boolean = false;
+    hmwPanelState: boolean = false;
+    additionalFiltersPanelState: boolean = false;
+
     constructor(
         private networkNameService: NetworkNameService,
         private sensorTypeService: SensorTypeService,
@@ -51,6 +58,14 @@ export class FilterComponent implements OnInit {
     // Call parent function when Submit is clicked
     onSubmit(){
         this.submitMapFilter.emit();
+
+        // Close map filters when submitted
+        this.eventPanelState = false;
+        this.networksPanelState = false;
+        this.sensorPanelState = false;
+        this.statesPanelState = false;
+        this.hmwPanelState = false;
+        this.additionalFiltersPanelState = false;
     }
 
     // Call parent function when Clear Filters is clicked

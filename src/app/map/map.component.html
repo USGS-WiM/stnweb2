@@ -11,8 +11,20 @@
         <!-- <div class="data-loading-shade">
       <mat-spinner></mat-spinner>
 	</div> -->
+
+        <div id="mobile-filter-button">
+            <button
+            mat-raised-button
+            color="accent"
+            type="submit"
+            aria-label="Map Filters"
+            (click)="openMapFilters()"
+            >
+                <mat-icon>filter_alt</mat-icon>&nbsp;Map Filters
+            </button>
+        </div>
 					
-        <div id="mapPanel">
+        <div id="mapPanel" [ngStyle]="{'display': isClicked? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}">
 
 			<div id="mapControls">
 				<button
@@ -201,10 +213,11 @@
                 </div>
             </mat-expansion-panel>
         </div>
+
         <!-- Filter/Results -->
         <mat-card id="filtersSection">
-            <mat-card-content>
-                <app-filter 
+            <mat-card-content (window:resize)="onResize()" [ngStyle]="{'display': !isMobile ? 'block' : (isClicked ? 'block' : (firstLoaded ? 'none' : (!isSubmitted ? 'block' : 'none' )))}" >
+                <app-filter
                     [mapFilterForm]="mapFilterForm"
                     [states]="states"
                     [filteredEvents$]="filteredEvents$"
@@ -222,7 +235,7 @@
                     (getEventList)="getEventList()"
                 ></app-filter>
             </mat-card-content>
-            <app-filter-results
+            <app-filter-results [ngStyle]="{'display': isClicked ? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}"
                     [mapFilterForm]="mapFilterForm"
             ></app-filter-results>
         </mat-card>
