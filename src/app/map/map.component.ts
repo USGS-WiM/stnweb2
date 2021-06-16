@@ -71,7 +71,7 @@ import { FilterResultsComponent } from '@app/filter-results/filter-results.compo
 export class MapComponent implements OnInit {
     @ViewChild(FilterResultsComponent)
     filterResultsComponent: FilterResultsComponent;
-    public removable = true;
+    // public removable = true;
     public addOnBlur = true;
     public filteredStates$: Observable<State[]>;
 

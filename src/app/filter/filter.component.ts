@@ -33,6 +33,8 @@ export class FilterComponent implements OnInit {
     networks$: Observable<NetworkName[]>;
     sensorTypes$: Observable<SensorType[]>;
 
+    public removable = true;
+
     eventPanelState: boolean = false;
     networksPanelState: boolean = false;
     sensorPanelState: boolean = false;
