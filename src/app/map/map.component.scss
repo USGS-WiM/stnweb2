@@ -145,6 +145,7 @@ $borderRadius: 4px;
     position: relative;
     // left: 2.5%;
     float: right;
+    z-index: 999;
 
     #mapControls {
         display: flex;
