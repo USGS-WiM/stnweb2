@@ -71,7 +71,7 @@ import { FilterResultsComponent } from '@app/filter-results/filter-results.compo
 export class MapComponent implements OnInit {
     @ViewChild(FilterResultsComponent)
     filterResultsComponent: FilterResultsComponent;
-    public removable = true;
+
     public addOnBlur = true;
     public filteredStates$: Observable<State[]>;
 
@@ -88,6 +88,10 @@ export class MapComponent implements OnInit {
     icon;
     isloggedIn = APP_SETTINGS.IS_LOGGEDIN;
     currentFilter;
+    isClicked = false;
+    isMobile = window.matchMedia('(max-width: 875px)').matches;
+    isSubmitted = false;
+    firstLoaded = true;
 
     drawControl;
     drawnItems;
@@ -376,7 +380,7 @@ export class MapComponent implements OnInit {
               );
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
     /* istanbul ignore next */
     public selectState(event: MatAutocompleteSelectedEvent): void {
         if (!event.option) {
@@ -644,7 +648,9 @@ export class MapComponent implements OnInit {
                 );
                 setTimeout(() => {
                     // setting filter-results table to default display
-                    this.filterResultsComponent.refreshDataSource();
+                    if (this.filterResultsComponent !== undefined){
+                        this.filterResultsComponent.refreshDataSource();
+                    }
                 }, 1000);
             });
     }
@@ -973,11 +979,17 @@ export class MapComponent implements OnInit {
         //If there are site markers, zoom to those
         //Otherwise, zoom back to default extent
         if (siteMarkersOnMap) {
-            this.map.fitBounds(this.siteService.siteMarkers.getBounds());
+            // Check if bounds are valid to avoid fitBounds error in getEventSites unit test
+            if (this.siteService.siteMarkers.getBounds().isValid()){
+                this.map.fitBounds(this.siteService.siteMarkers.getBounds());
+            }
         } else if (manySiteMarkersOnMap) {
-            this.map.fitBounds(
-                this.siteService.manyFilteredSitesMarkers.getBounds()
-            );
+            // Check if bounds are valid to avoid fitBounds error in getEventSites unit test
+            if (this.siteService.manyFilteredSitesMarkers.getBounds().isValid()){
+                this.map.fitBounds(
+                    this.siteService.manyFilteredSitesMarkers.getBounds()
+                );
+            }
         } else if (
             siteMarkersOnMap === false &&
             manySiteMarkersOnMap === false
@@ -987,14 +999,6 @@ export class MapComponent implements OnInit {
                 MAP_CONSTANTS.defaultZoom
             );
         }
-    }
-    // options to be displayed when selecting event filter
-    displayEvent(event: Event): string {
-        return event && event.event_name ? event.event_name : '';
-    }
-    //will return a comma separated list of selected states
-    displayEventState(state: any): string {
-        return state && state.state_name ? state.state_name : '';
     }
 
     //get lat/lng for each NOAA station and add to tideMarkers layer group from siteService
@@ -1444,6 +1448,16 @@ export class MapComponent implements OnInit {
         }
     }
 
+    openMapFilters(){
+        // Viewing on mobile, change boolean value to hide or display map filters, map panel, and filter results
+        this.isClicked = !this.isClicked;
+    }
+
+    onResize(){
+        // Check screen size on window resize event
+        this.isMobile = window.matchMedia('(max-width: 875px)').matches;
+    }
+
     public getFilterResults(filterResponse) {
         //only call mapResults if the query returns data
         if (filterResponse.length > 0) {
@@ -1477,7 +1491,9 @@ export class MapComponent implements OnInit {
 
         // updating the filter-results table datasource with the new results
         this.filtersService.updateSites(filterResponse);
-        this.filterResultsComponent.refreshDataSource();
+        if (this.filterResultsComponent !== undefined){
+            this.filterResultsComponent.refreshDataSource();
+        }
     }
 
     public resetPreviousOutput() {
@@ -1513,5 +1529,10 @@ export class MapComponent implements OnInit {
         });
         //close the filter panel
         this.filtersPanelState = false;
+
+        //close map filters on mobile when submitted
+        this.isSubmitted = true;
+        this.firstLoaded = false;
+        this.isClicked = false;
     }
 }

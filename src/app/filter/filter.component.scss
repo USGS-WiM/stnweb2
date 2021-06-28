@@ -13,33 +13,6 @@ $borderRadius: 4px;
 
 // Structure.scss
 // Scaffolding and flex styles for basic structure of page
-* {
-    font-family: 'Roboto', sans-serif;
-}
-
-.help-text {
-    font-size: 1.2em;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.mat-row,
-.mat-header-row {
-    display: flex;
-    // max-width: 60%;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    align-items: center;
-    min-height: 48px;
-    padding: 0 24px;
-}
-
-.mat-cell,
-.mat-header-cell {
-    flex: 1;
-    overflow: hidden;
-    word-wrap: break-word;
-}
 
 .button-row {
     display: flex;
@@ -47,36 +20,6 @@ $borderRadius: 4px;
 }
 .mat-button-base {
     margin: 8px 8px 8px 0;
-}
-
-.active,
-.accordion:hover {
-    background-color: #ccc;
-}
-
-/* Style the accordion panel. Note: hidden by default */
-
-.panel {
-    padding: 0 18px;
-    background-color: white;
-    display: none;
-    overflow: hidden;
-}
-
-.accordion {
-    background-color: #eee;
-    color: #444;
-    cursor: pointer;
-    padding: 18px;
-    width: 100%;
-    text-align: left;
-    border: none;
-    outline: none;
-    transition: 0.4s;
-}
-
-#filtersSection {
-    background-color: #f7f7f7;
 }
 
 .form-container .mat-form-field + .mat-form-field {
@@ -87,55 +30,15 @@ $borderRadius: 4px;
     width: 220px;
 }
 
-.form-container form {
-    margin-bottom: 20px;
-}
-
-.form-container form > * {
-    margin: 10px 0;
-}
-
-.form-container .mat-radio-button {
-    margin: 0 12px;
-}
-
 .checkbox-section {
     display: flex;
-    align-content: center;
-    align-items: center;
-    height: 60px;
-}
-
-.checkbox-margin {
-    margin: 0 10px;
-}
-
-.boxes {
-    display: block;
+    align-content: left;
+    align-items: left;
+    // height: 60px;
+    flex-direction: column;
 }
 
 .filter-label {
     font-weight: bold;
     padding: 10px;
-}
-
-.warn-icon:after {
-    border: 3px solid red;
-    background-color: rgba(255, 0, 0, 0.25);
-}
-.watch-icon:after {
-    border: 3px solid orange;
-    background-color: rgba(255, 165, 0, 0.25);
-}
-.AHPSGageLabel {
-    font-size: small;
-    margin-left: 20px;
-}
-.AHPSGageHeader {
-    margin-left: 20px;
-}
-::ng-deep .mat-snack-bar-container.no-data-warning {
-    background-color: rgba(255, 166, 0, 0.801);
-    color: white;
-    margin-bottom: 300px;
 }

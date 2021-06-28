@@ -140,18 +140,12 @@ $borderRadius: 4px;
     word-wrap: break-word;
 }
 
-.button-row {
-    display: flex;
-    justify-content: center;
-}
-.mat-button-base {
-    margin: 8px 8px 8px 0;
-}
-
 #mapPanel {
-    width: 95%;
+    width: 70%;
     position: relative;
-    left: 2.5%;
+    // left: 2.5%;
+    float: right;
+    z-index: 999;
 
     #mapControls {
         display: flex;
@@ -162,7 +156,7 @@ $borderRadius: 4px;
         padding-top: 8px;
 
         button {
-            margin: 0 10px;
+            margin: 20px 10px;
             background-color: white;
             border: 1px solid rgba(0, 0, 0, 0.2);
         }
@@ -173,7 +167,7 @@ $borderRadius: 4px;
     height: 70vh;
     min-height: 375px;
     transition: 0.1s;
-    margin: 20px 0;
+    margin: 20px 15px 15px 15px;
 
     #mapLocationNote {
         position: absolute;
@@ -232,9 +226,9 @@ $borderRadius: 4px;
     position: absolute;
     padding: 4px;
     // bottom: 60px !important;
-    top: 10px;
+    top: 25px;
     //left: 15px;
-    right: 10px;
+    right: 20px;
     width: 200px;
     /*height:320px;*/
     z-index: 1000;
@@ -413,9 +407,10 @@ $borderRadius: 4px;
         margin: 15px auto 0 auto;
     }
     .mat-card-content {
-        width: 95%;
-        max-width: none;
-        margin: 15px auto 0 auto;
+        width: 28%;
+        max-width: 28%;
+        margin: 15px;
+        height: 70vh;
     }
 
     .mat-expansion-panel {
@@ -423,12 +418,9 @@ $borderRadius: 4px;
     }
 }
 
-.form-container .mat-form-field + .mat-form-field {
-    margin-left: 8px;
-}
-
-.form-container .mat-form-field {
-    width: 220px;
+// Map filters
+#mobile-filter-button{
+    display: none;
 }
 
 .form-container form {
@@ -443,25 +435,12 @@ $borderRadius: 4px;
     margin: 0 12px;
 }
 
-.checkbox-section {
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    height: 60px;
-}
-
 .checkbox-margin {
     margin: 0 10px;
 }
 
 .boxes {
     display: block;
-}
-
-.filter-label {
-    font-weight: bold;
-    padding: 10px;
 }
 
 .huc-icon:after {
@@ -487,4 +466,59 @@ $borderRadius: 4px;
     background-color: rgba(255, 166, 0, 0.801);
     color: white;
     margin-bottom: 300px;
+}
+
+//Mobile screen sizes
+@media screen and (max-width: 875px){
+    #map{
+        margin: 20px 0;
+    }
+    #mapPanel {
+        width: 95%;
+        float: none;
+        left: 2.5%;
+    }
+    #filtersSection{
+        .mat-card-content {
+            width: 95%;
+            max-width: none;
+            height: auto;
+        }
+    }
+    #mobile-filter-button{
+        display: flex;
+        justify-content: center;
+        margin: 10px auto 10px auto;
+    }
+
+    #mobile-filter-window{
+        background-color: #f7f7f7;
+        padding: 15px 0 25px 0;
+        float: none;
+        width: 95%;
+    
+        .small-card {
+            width: 95%;
+            max-width: 800px;
+            margin: 15px auto 0 auto;
+        }
+        .mat-card-content {
+            width: 95%;
+            max-width: 95%;
+            margin: 15px;
+            height: auto;
+        }
+    
+        .mat-expansion-panel {
+            margin-bottom: 15px;
+        }
+    }
+
+    // Make sure min width is less than screen size
+    #mapContainer{
+        .resultsDiv{
+            width: 100%;
+            min-width: 100px;
+        }
+    }
 }

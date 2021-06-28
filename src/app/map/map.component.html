@@ -11,8 +11,20 @@
         <!-- <div class="data-loading-shade">
       <mat-spinner></mat-spinner>
 	</div> -->
+
+        <div id="mobile-filter-button">
+            <button
+            mat-raised-button
+            color="accent"
+            type="submit"
+            aria-label="Map Filters"
+            (click)="openMapFilters()"
+            >
+                <mat-icon>filter_alt</mat-icon>&nbsp;Map Filters
+            </button>
+        </div>
 					
-        <div id="mapPanel">
+        <div id="mapPanel" [ngStyle]="{'display': isClicked? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}">
 
 			<div id="mapControls">
 				<button
@@ -201,283 +213,31 @@
                 </div>
             </mat-expansion-panel>
         </div>
+
         <!-- Filter/Results -->
         <mat-card id="filtersSection">
-            <mat-card-content>
-                <!--Filters-->
-                <mat-expansion-panel [(expanded)]="filtersPanelState" class="small-card">
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>
-							Map Filters 
-						</mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <div class="form-container">
-                        <form class="form" [formGroup]="mapFilterForm">
-                            <mat-form-field appearance="fill">
-                                <mat-label for="eventType"
-                                    >Filter Events by Type</mat-label
-                                >
-                                <mat-select
-                                    id="eventTypeOptions"
-                                    formControlName="eventTypeControl"
-                                    (selectionChange)="updateEventFilter()"
-                                >
-                                    <mat-option>Any</mat-option>
-                                    <mat-option
-                                        *ngFor="
-                                            let eventType of eventTypes$ | async
-                                        "
-                                        [value]="eventType"
-                                        >{{ eventType.type }}</mat-option
-                                    >
-                                </mat-select>
-                            </mat-form-field>
-
-                            <mat-form-field appearance="fill">
-                                <mat-label for="eventType"
-                                    >Filter Events by State</mat-label
-                                >
-                                <input
-                                    matInput
-                                    id="eventStateOptions"
-                                    type="text"
-                                    aria-label="Dropdown menu for state selection"
-                                    matInput
-                                    formControlName="eventStateControl"
-                                    [matAutocomplete]="eventStateAutocomplete"
-                                />
-                                <mat-hint
-                                    >Start typing for suggestions</mat-hint
-                                >
-                                <mat-autocomplete
-                                    #eventStateAutocomplete="matAutocomplete"
-                                    [displayWith]="displayEventState"
-                                >
-                                    <mat-option
-                                        *ngFor="
-                                            let eventState of eventStates$
-                                                | async
-                                        "
-                                        (click)="updateEventFilter()"
-                                        [value]="eventState"
-                                        >{{ eventState.state_name }}</mat-option
-                                    >
-                                </mat-autocomplete>
-                            </mat-form-field>
-
-                            <br />
-
-                            <mat-form-field class="eventSelect">
-                                <mat-label for="eventSelection"
-                                    >Event</mat-label
-                                >
-                                <input
-                                    matInput
-                                    id="eventSelection"
-                                    type="text"
-                                    aria-label="Dropdown menu for storm event selection"
-                                    matInput
-                                    formControlName="eventsControl"
-                                    [matAutocomplete]="eventAutocomplete"
-                                />
-                                <mat-hint
-                                    >Start typing for suggestions</mat-hint
-                                >
-                                <mat-autocomplete
-                                    #eventAutocomplete="matAutocomplete"
-                                    [displayWith]="displayEvent"
-                                >
-                                    <mat-option
-                                        *ngFor="
-                                            let event of filteredEvents$ | async
-                                        "
-                                        [value]="event"
-                                    >
-                                        {{ event.event_name }}
-                                    </mat-option>
-                                </mat-autocomplete>
-                            </mat-form-field>
-                            <hr />
-                            <br />
-                            <mat-form-field appearance="fill">
-                                <mat-label for="networkOptions"
-                                    >Networks</mat-label
-                                >
-                                <mat-select
-                                    id="networkOptions"
-                                    formControlName="networkControl"
-                                    multiple
-                                >
-                                    <mat-option
-                                        *ngFor="
-                                            let network of networks$ | async
-                                        "
-                                        [value]="network.network_name_id"
-                                        >{{ network.name }}</mat-option
-                                    >
-                                </mat-select>
-                            </mat-form-field>
-                            <mat-form-field appearance="fill">
-                                <mat-label for="sensorTypes"
-                                    >Sensor Type</mat-label
-                                >
-                                <mat-select
-                                    id="sensorOptions"
-                                    formControlName="sensorTypeControl"
-                                >
-                                    <mat-option>Any</mat-option>
-                                    <mat-option
-                                        *ngFor="
-                                            let sensorType of sensorTypes$
-                                                | async
-                                        "
-                                        [value]="sensorType.sensor_type_id"
-                                        >{{ sensorType.sensor }}</mat-option
-                                    >
-                                </mat-select>
-                            </mat-form-field>
-
-                            <mat-form-field *ngIf="this.states.length > 0">
-                                <mat-chip-list #statesList>
-                                    <mat-chip
-                                        *ngFor="let state of selectedStates"
-                                        [removable]="removable"
-                                        (removed)="remove(state)"
-                                    >
-                                        {{ state.state_name }}
-                                        <mat-icon
-                                            matChipRemove
-                                            *ngIf="removable"
-                                            >cancel</mat-icon
-                                        >
-                                    </mat-chip>
-                                    <input
-                                        aria-label="Select states to filter sites"
-                                        #stateInput
-                                        placeholder="States"
-                                        [matChipInputFor]="statesList"
-                                        [matChipInputSeparatorKeyCodes]="
-                                            separatorKeysCodes
-                                        "
-                                        [matChipInputAddOnBlur]="addOnBlur"
-                                        (matChipInputTokenEnd)="
-                                            addState($event)
-                                        "
-                                        [matAutocomplete]="statesAutocomplete"
-                                        formControlName="stateInput"
-                                    />
-                                </mat-chip-list>
-                                <mat-autocomplete
-                                    #statesAutocomplete="matAutocomplete"
-                                    (optionSelected)="selectState($event)"
-                                >
-                                    <mat-option
-                                        *ngFor="
-                                            let state of filteredStates$ | async
-                                        "
-                                        [value]="state"
-                                    >
-                                        {{ state.state_name }}
-                                    </mat-option>
-                                </mat-autocomplete>
-                            </mat-form-field>
-
-                            <br />
-                            <label
-                                class="filter-label"
-                                aria-label="Optionally select surveyed or not surveyed HWMS"
-                                >HWMS Surveyed:</label
-                            >
-                            <br />
-                            <mat-button-toggle-group
-                                formControlName="surveyedControl"
-                                multiple="true"
-                            >
-                                <mat-button-toggle
-                                    id="surveyedSelect"
-                                    value="true"
-                                    >Surveyed</mat-button-toggle
-                                >
-                                <mat-button-toggle
-                                    id="notSurveyedSelect"
-                                    value="false"
-                                    >Not Surveyed</mat-button-toggle
-                                >
-                            </mat-button-toggle-group>
-                            <br />
-                            <label
-                                class="filter-label"
-                                aria-label="Optionally select additional site filters"
-                                >Additional Site Filters:</label
-                            >
-                            <section class="checkbox-section">
-                                <mat-checkbox
-                                    aria-checked="false"
-                                    class="checkbox-margin"
-                                    formControlName="HWMOnlyControl"
-                                    >HWM Only Sites</mat-checkbox
-                                >
-                                <mat-checkbox
-                                    aria-checked="false"
-                                    class="checkbox-margin"
-                                    formControlName="sensorOnlyControl"
-                                    >Sensor Only Sites</mat-checkbox
-                                >
-                                <mat-checkbox
-                                    aria-checked="false"
-                                    class="checkbox-margin"
-                                    formControlName="surveyedOnlyControl"
-                                    >Surveyed RP Only Sites</mat-checkbox
-                                >
-                                <mat-checkbox
-                                    aria-checked="false"
-                                    class="checkbox-margin"
-                                    formControlName="bracketSiteOnlyControl"
-                                    >Pre-Deployed Bracket Sites
-                                    Only</mat-checkbox
-                                >
-                                <mat-checkbox
-                                    aria-checked="false"
-                                    class="checkbox-margin"
-                                    formControlName="RDGOnlyControl"
-                                    >RDG Only Sites</mat-checkbox
-                                >
-                                <mat-checkbox
-                                    aria-checked="false"
-                                    class="checkbox-margin"
-                                    formControlName="OPDefinedControl"
-                                    >Has OP Defined</mat-checkbox
-                                >
-                            </section>
-                        </form>
-                        <div class="button-row">
-                            <button
-                                mat-raised-button
-                                color="accent"
-                                type="submit"
-                                aria-label="Filter Sites"
-                                (click)="submitMapFilter()"
-                            >
-                                <mat-icon>filter_alt</mat-icon>&nbsp;Filter
-                                Sites
-                            </button>
-                            <button
-                                mat-raised-button
-                                color="warn"
-                                type="reset"
-                                aria-label="Clear filters"
-                                (click)="clearMapFilterForm()"
-                            >
-                                <mat-icon>clear_all</mat-icon>&nbsp;Clear
-                                Filters
-                            </button>
-                        </div>
-                    </div>
-                </mat-expansion-panel>
-                <app-filter-results
+            <mat-card-content (window:resize)="onResize()" [ngStyle]="{'display': !isMobile ? 'block' : (isClicked ? 'block' : (firstLoaded ? 'none' : (!isSubmitted ? 'block' : 'none' )))}" >
+                <app-filter
                     [mapFilterForm]="mapFilterForm"
-                ></app-filter-results>
+                    [states]="states"
+                    [filteredEvents$]="filteredEvents$"
+                    [filteredStates$]="filteredStates$"
+                    [selectedStates]="selectedStates"
+                    [eventStates$]="eventStates$"
+                    [eventTypes$]="eventTypes$"
+                    (updateEventFilter)="updateEventFilter()"
+                    (submitMapFilter)="submitMapFilter()"
+                    (clearMapFilterForm)="clearMapFilterForm()"
+                    (selectState)="selectState($event)"
+                    (remove)="remove($event)"
+                    (addState)="addState($event)"
+                    (displayMostRecentEvent)="displayMostRecentEvent()"
+                    (getEventList)="getEventList()"
+                ></app-filter>
             </mat-card-content>
+            <app-filter-results [ngStyle]="{'display': isClicked ? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}"
+                    [mapFilterForm]="mapFilterForm"
+            ></app-filter-results>
         </mat-card>
     </div>
 </div>

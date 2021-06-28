@@ -124,22 +124,6 @@ describe('MapComponent', () => {
         expect(roundedNumber).toBe(1.65);
     });
 
-    it('#display event returns the event name', () => {
-        const event: Event = {
-            event_id: 24,
-            event_name: 'Sandy',
-            event_start_date: '2012-10-21T04:00:00',
-            event_end_date: '2012-10-30T04:00:00',
-            event_description: '',
-            event_type_id: 2,
-            event_status_id: 2,
-            event_coordinator: 36,
-            instruments: [],
-            hwms: [],
-        };
-        expect(component.displayEvent(event)).toBe('Sandy');
-    });
-
     it('APP_UTILITIES.FILTER_EVENT returns an array of matching events value given a partial name string input', () => {
         const response = APP_UTILITIES.FILTER_EVENT(
             'ilma',
@@ -343,18 +327,6 @@ describe('MapComponent', () => {
         // expect(component.sitesDataArray).toEqual(response);
     });
 
-    it('displayEventState returns the appropriate response', () => {
-        let state = {
-            counties: null,
-            selected: true,
-            state_abbrev: 'AK',
-            state_id: 2,
-            state_name: 'Alaska',
-        };
-        let response = component.displayEventState(state);
-        expect(response).toEqual(state && state.state_name);
-    });
-
     it('should call openZoomOutSnackBar', () => {
         let message = 'hello';
         let action = 'OK';
@@ -434,4 +406,15 @@ describe('MapComponent', () => {
         component.toggleMap();
         expect(component.map.invalidateSize()).toBeTruthy();
     })
+
+    it ('onResize should be called on window resize', () => {
+        let resizeSpy = spyOn(component, 'onResize');
+        window.dispatchEvent(new Event('resize'));
+        expect(resizeSpy).toHaveBeenCalled();
+    });
+
+    it ('isClicked should change value', () => {
+        component.openMapFilters();
+        expect(component.isClicked).toBeTruthy();
+    });
 });
