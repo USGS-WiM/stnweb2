@@ -379,6 +379,8 @@ describe('MapComponent', () => {
     it('#clearMapFilterForm resets the filter form', () => {
         component.clearMapFilterForm();
         let formValues = component.mapFilterForm.value;
+        expect(formValues.eventTypeControl).toBeFalsy();
+        expect(formValues.eventStateControl).toBeFalsy();
         expect(formValues.eventsControl).toBeFalsy();
         expect(formValues.networkControl).toBeFalsy();
         expect(formValues.sensorControl).toBeFalsy();
