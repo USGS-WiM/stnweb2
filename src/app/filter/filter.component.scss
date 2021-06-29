@@ -14,14 +14,6 @@ $borderRadius: 4px;
 // Structure.scss
 // Scaffolding and flex styles for basic structure of page
 
-.button-row {
-    display: flex;
-    justify-content: center;
-}
-.mat-button-base {
-    margin: 8px 8px 8px 0;
-}
-
 .form-container .mat-form-field + .mat-form-field {
     margin-left: 8px;
 }

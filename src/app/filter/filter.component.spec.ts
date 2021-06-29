@@ -8,11 +8,6 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { FilterComponent } from './filter.component';
 import { Event } from '@interfaces/event';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('FilterComponent', () => {
   let component: FilterComponent;
@@ -25,11 +20,6 @@ describe('FilterComponent', () => {
         HttpClientTestingModule,
         HttpClientTestingModule,
         MatAutocompleteModule,
-        MatOptionModule,
-        MatSelectModule,
-        MatFormFieldModule,
-        MatInputModule,
-        NoopAnimationsModule,
     ], schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
@@ -71,28 +61,6 @@ describe('FilterComponent', () => {
         hwms: [],
     };
     expect(component.displayEvent(event)).toBe('Sandy');
-  });
-
-  it("should emit on submit", () => {
-    spyOn(component.submitMapFilter, 'emit');
-
-    component.onSubmit();
-    fixture.detectChanges();
-    expect(component.submitMapFilter.emit).toHaveBeenCalled();
-  });
-
-  it("should emit on clear", () => {
-    spyOn(component.clearMapFilterForm, 'emit');
-
-    component.onClear();
-    fixture.detectChanges();
-    expect(component.clearMapFilterForm.emit).toHaveBeenCalled();
-  });
-
-  it("should remove active styling on previously selected event types", () => {
-    component.onClear();
-    fixture.detectChanges();
-    expect(component.eventTypeOptions.options.forEach((option) => option.active)).toBeFalsy();
   });
 
   it("should emit on event filter change", () => {

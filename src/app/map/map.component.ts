@@ -62,6 +62,8 @@ import { EventType } from '@app/interfaces/event-type';
 import { Subject } from 'rx';
 import { canvas } from 'leaflet';
 import { FilterResultsComponent } from '@app/filter-results/filter-results.component';
+import { FilterComponent } from '@app/filter/filter.component';
+import { MatOption } from '@angular/material/core';
 
 @Component({
     selector: 'app-map',
@@ -71,6 +73,9 @@ import { FilterResultsComponent } from '@app/filter-results/filter-results.compo
 export class MapComponent implements OnInit {
     @ViewChild(FilterResultsComponent)
     filterResultsComponent: FilterResultsComponent;
+
+    @ViewChild(FilterComponent)
+    filterComponent: FilterComponent;
 
     public addOnBlur = true;
     public filteredStates$: Observable<State[]>;
@@ -1197,6 +1202,10 @@ export class MapComponent implements OnInit {
     }
 
     public clearMapFilterForm(): void {
+        // remove active styling on previous selected options
+        if (this.filterComponent !== undefined) {
+            this.filterComponent.eventTypeOptions.options.forEach((option: MatOption) => option.setInactiveStyles());
+        }
         this.selectedStates = new Array<State>();
         this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
         this.mapFilterForm.get('stateInput').setValue([null]);
@@ -1241,6 +1250,17 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
+
+        // Close map filters when submitted
+        if (this.filterComponent !== undefined) {
+            this.filterComponent.eventPanelState = false;
+            this.filterComponent.networksPanelState = false;
+            this.filterComponent.sensorPanelState = false;
+            this.filterComponent.statesPanelState = false;
+            this.filterComponent.hmwPanelState = false;
+            this.filterComponent.additionalFiltersPanelState = false;
+        }
+
         //each time filter is clicked, reset status of results
         this.resultsReturned = false;
         this.currentQuery = 0;
