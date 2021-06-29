@@ -7,6 +7,8 @@ import { NetworkName } from '@interfaces/network-name';
 import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { NetworkNameService } from '@app/services/network-name.service';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
 
 @Component({
     selector: 'app-filter',
@@ -14,6 +16,8 @@ import { NetworkNameService } from '@app/services/network-name.service';
     styleUrls: ['./filter.component.scss'],
 })
 export class FilterComponent implements OnInit {
+    @ViewChild('eventTypeOptions') eventTypeOptions: MatSelect;
+
     @Input('mapFilterForm') mapFilterForm: Object;
     @Input('states') states: State[] = [];
     @Input('filteredEvents$') filteredEvents$: Observable<Event[]>;
@@ -72,6 +76,9 @@ export class FilterComponent implements OnInit {
 
     // Call parent function when Clear Filters is clicked
     onClear(){
+        // remove active styling on previous selected options
+        this.eventTypeOptions.options.forEach((option: MatOption) => option.setInactiveStyles());
+        
         this.clearMapFilterForm.emit();
     }
 

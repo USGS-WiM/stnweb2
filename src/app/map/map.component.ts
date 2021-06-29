@@ -1197,11 +1197,15 @@ export class MapComponent implements OnInit {
     }
 
     public clearMapFilterForm(): void {
-        //reset the event options
-        this.updateEventFilter();
         this.selectedStates = new Array<State>();
         this.mapFilterForm.get('stateControl').setValue(this.selectedStates);
         this.mapFilterForm.get('stateInput').setValue([null]);
+        this.mapFilterForm.get('eventStateControl').setValue(null);
+        this.mapFilterForm.get('eventTypeControl').setValue(null);
+
+        //reset the event options
+        this.updateEventFilter();
+
         // this works but will not fully clear mat-selects if they're open when the box is clicked
         this.mapFilterForm.reset();
 
