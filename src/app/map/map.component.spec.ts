@@ -415,8 +415,33 @@ describe('MapComponent', () => {
         expect(resizeSpy).toHaveBeenCalled();
     });
 
+    it ('mobile minimize button should be checked on resize', () => {
+        if (component.isMobile){
+            if (component.isClicked){
+                expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
+            }else{
+                expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('flex');
+            }
+        }else{
+            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
+        }
+    });
+
     it ('isClicked should change value', () => {
         component.openMapFilters();
-        expect(component.isClicked).toBeTruthy();
+        if (component.isClicked){
+            expect(component.isClicked).toBeTruthy();
+        }else{
+            expect(component.isClicked).toBeFalsy();
+        }
+    });
+
+    it ('mobile minimize button should be hidden on Map Filters button click', () => {
+        component.openMapFilters();
+        if (component.isClicked){
+            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
+        }else{
+            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('flex');
+        }
     });
 });

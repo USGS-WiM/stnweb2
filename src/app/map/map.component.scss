@@ -433,6 +433,11 @@ $borderRadius: 4px;
     }
 }
 
+// Minimize map button for mobile screens
+#mobile-minimize-button{
+    display: none;
+}
+
 // Map filters
 #mobile-filter-button{
     display: none;
@@ -527,6 +532,21 @@ $borderRadius: 4px;
         .mat-expansion-panel {
             margin-bottom: 15px;
         }
+    }
+
+    #mobile-minimize-button{
+        display: flex;
+        justify-content: center;
+
+        button {
+            margin: 5px 5px;
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    #mapControls{
+        display: none !important;
     }
 
     // Make sure min width is less than screen size
