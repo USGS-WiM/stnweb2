@@ -217,23 +217,47 @@
         <!-- Filter/Results -->
         <mat-card id="filtersSection">
             <mat-card-content (window:resize)="onResize()" [ngStyle]="{'display': !isMobile ? 'block' : (isClicked ? 'block' : (firstLoaded ? 'none' : (!isSubmitted ? 'block' : 'none' )))}" >
-                <app-filter
-                    [mapFilterForm]="mapFilterForm"
-                    [states]="states"
-                    [filteredEvents$]="filteredEvents$"
-                    [filteredStates$]="filteredStates$"
-                    [selectedStates]="selectedStates"
-                    [eventStates$]="eventStates$"
-                    [eventTypes$]="eventTypes$"
-                    (updateEventFilter)="updateEventFilter()"
-                    (submitMapFilter)="submitMapFilter()"
-                    (clearMapFilterForm)="clearMapFilterForm()"
-                    (selectState)="selectState($event)"
-                    (remove)="remove($event)"
-                    (addState)="addState($event)"
-                    (displayMostRecentEvent)="displayMostRecentEvent()"
-                    (getEventList)="getEventList()"
-                ></app-filter>
+                <div id="mapFilters">
+                    <app-filter
+                        [mapFilterForm]="mapFilterForm"
+                        [states]="states"
+                        [filteredEvents$]="filteredEvents$"
+                        [filteredStates$]="filteredStates$"
+                        [selectedStates]="selectedStates"
+                        [eventStates$]="eventStates$"
+                        [eventTypes$]="eventTypes$"
+                        (updateEventFilter)="updateEventFilter()"
+                        (submitMapFilter)="submitMapFilter()"
+                        (clearMapFilterForm)="clearMapFilterForm()"
+                        (selectState)="selectState($event)"
+                        (remove)="remove($event)"
+                        (addState)="addState($event)"
+                        (displayMostRecentEvent)="displayMostRecentEvent()"
+                        (getEventList)="getEventList()"
+                    ></app-filter>
+                </div>
+                <div class="button-row">
+                    <button
+                        mat-raised-button
+                        color="accent"
+                        type="submit"
+                        aria-label="Filter Sites"
+                        (click)="submitMapFilter()"
+                    >
+                        <mat-icon>filter_alt</mat-icon>&nbsp;Filter
+                        Sites
+                    </button>
+                    <button
+                        mat-raised-button
+                        color="warn"
+                        type="reset"
+                        aria-label="Clear filters"
+                        (click)="clearMapFilterForm()"
+                    >
+                        <mat-icon>clear_all</mat-icon>&nbsp;Clear
+                        Filters
+                    </button>
+                </div>
             </mat-card-content>
             <app-filter-results [ngStyle]="{'display': isClicked ? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}"
                     [mapFilterForm]="mapFilterForm"

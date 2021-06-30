@@ -8,7 +8,6 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { NetworkNameService } from '@app/services/network-name.service';
 import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
 
 @Component({
     selector: 'app-filter',
@@ -59,27 +58,6 @@ export class FilterComponent implements OnInit {
     // Update event list when filters are changed
     onEventChange(){
         this.updateEventFilter.emit();
-    }
-
-    // Call parent function when Submit is clicked
-    onSubmit(){
-        this.submitMapFilter.emit();
-
-        // Close map filters when submitted
-        this.eventPanelState = false;
-        this.networksPanelState = false;
-        this.sensorPanelState = false;
-        this.statesPanelState = false;
-        this.hmwPanelState = false;
-        this.additionalFiltersPanelState = false;
-    }
-
-    // Call parent function when Clear Filters is clicked
-    onClear(){
-        // remove active styling on previous selected options
-        this.eventTypeOptions.options.forEach((option: MatOption) => option.setInactiveStyles());
-        
-        this.clearMapFilterForm.emit();
     }
 
     // options to be displayed when selecting event filter

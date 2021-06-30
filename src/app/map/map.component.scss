@@ -409,12 +409,27 @@ $borderRadius: 4px;
     .mat-card-content {
         width: 28%;
         max-width: 28%;
-        margin: 15px;
+        margin-left: 15px;
         height: 70vh;
+        min-height: 375px;
+        margin-bottom: 20px;
+    }
+    #mapFilters{
+        overflow-y: auto;
+        max-height: 65vh;
     }
 
     .mat-expansion-panel {
         margin-bottom: 15px;
+    }
+
+    .button-row {
+        display: flex;
+        justify-content: center;
+    }
+
+    .mat-button-base {
+        margin: 8px 8px 8px 0;
     }
 }
 
