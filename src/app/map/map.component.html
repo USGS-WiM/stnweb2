@@ -75,6 +75,7 @@
                     watchWarnVisible ||
                     ahpsGagesVisible ||
                     noaaTidesVisible ||
+                    streamgagesVisible ||
                     allSitesVisible
                 "
             >
@@ -128,6 +129,16 @@
                                 class="wmm-diamond wmm-lime wmm-icon-triangle wmm-icon-black wmm-size-15 wmm-borderless"
                             ></div>
                             <label>NOAA Tides and Current Stations</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-panel-content" *ngIf="streamgagesVisible">
+                    <div id="streamGagesLegend">
+                        <div class="legend-icon">
+                            <div
+                                class="wmm-circle wmm-mutedblue wmm-icon-triangle wmm-icon-black wmm-size-20 wmm-borderless"
+                            ></div>
+                            <label>Real-Time Stream Gages</label>
                         </div>
                     </div>
                 </div>
