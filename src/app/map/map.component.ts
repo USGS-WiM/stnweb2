@@ -1621,11 +1621,30 @@ export class MapComponent implements OnInit {
     openMapFilters(){
         // Viewing on mobile, change boolean value to hide or display map filters, map panel, and filter results
         this.isClicked = !this.isClicked;
+
+        if (this.isClicked){
+            document.getElementById('mobile-minimize-button').style.display = 'none';
+        }else{
+            document.getElementById('mobile-minimize-button').style.display = 'flex';
+        }
     }
 
     onResize(){
         // Check screen size on window resize event
         this.isMobile = window.matchMedia('(max-width: 875px)').matches;
+        
+        // Show or hide mobile minimize map button
+        if (this.isMobile){
+            this.isClicked = this.isClicked;
+            if (this.isClicked){
+                document.getElementById('mobile-minimize-button').style.display = 'none';
+            }else{
+                document.getElementById('mobile-minimize-button').style.display = 'flex';
+            }
+        }else{
+            this.isClicked = false;
+            document.getElementById('mobile-minimize-button').style.display = 'none';
+        }
     }
 
     public getFilterResults(filterResponse) {
