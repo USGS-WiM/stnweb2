@@ -700,10 +700,6 @@ export class MapComponent implements OnInit {
         this.createDrawControls();
         this.createLayerControl(true);
 
-        // layer control checkboxes variable needed to disable and check streamgage layer
-        // let checkboxes = document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]');
-        // let streamgageBox = checkboxes[4];
-
         //create lat/lng/zoom icon
         L.control.scale({ position: 'bottomright' }).addTo(this.map);
 
@@ -719,10 +715,6 @@ export class MapComponent implements OnInit {
             const initMapCenter = this.map.getCenter();
             this.latitude = initMapCenter.lat.toFixed(4);
             this.longitude = initMapCenter.lng.toFixed(4);
-        });
-
-        this.map.on('moveend zoomend', () => {
-            this.loadStreamGages()
         });
 
         // displays map scale on scale change (i.e. zoom level)
@@ -804,7 +796,7 @@ export class MapComponent implements OnInit {
                 this.noaaTidesVisible = false;
             }
             if (e.name === 'Real-Time Stream Gages*') {
-                    this.streamgagesVisible = false;
+                this.streamgagesVisible = false;
             }
             if (e.name === 'Current Warnings*') {
                 this.currWarningsVisible = false;
@@ -824,22 +816,32 @@ export class MapComponent implements OnInit {
         this.map.on('zoomstart', () => {
             this.previousZoom = this.map.getZoom();
         });
+
         //Get the value of the current zoom
-        this.map.on('zoomend', () => {
+        this.map.on('zoomend moveend', () => {
             this.currentZoom = this.map.getZoom();
             //Hide stream gages if layer is checked and zoom < 9
             //Need to do this because minzoom cannot be set on L.FeatureGroup
             if (this.streamgagesVisible && this.currentZoom < 9){
                 if (this.map.hasLayer(this.streamgageService.streamGageMarkers)){
-                    this.streamgageService.streamGageMarkers.eachLayer(function(layer){
-                        layer.setOpacity(0);
-                    });
+                    // if zooming too fast from zoom > 9 to 8, need to wait for gages to finish loading before clearing layers
+                    setTimeout(() => {
+                        this.streamgageService.streamGageMarkers.clearLayers();
+                    }, 100)
                 }
                 document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
                 this.streamgagesVisible = true;
                 document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = true;
-
             }
+            else if (this.streamgagesVisible && this.currentZoom >= 9){
+                this.loadStreamGages();
+            }
+        });
+
+        //Get the value of the current zoom
+        this.map.on('zoomend', () => {
+            this.currentZoom = this.map.getZoom();
+
             //Disable clustering for the All STN Sites layer when zoom >= 12 so we can see individual sites
             if (this.currentZoom >= 12) {
                 this.siteService.allSiteMarkers.disableClustering();
@@ -926,6 +928,7 @@ export class MapComponent implements OnInit {
             }
         );
         this.layerToggles.addTo(this.map);
+        document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = true;
     }
 
     createSearchControl() {
