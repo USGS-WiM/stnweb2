@@ -820,6 +820,14 @@ export class MapComponent implements OnInit {
         //Get the value of the current zoom
         this.map.on('zoomend moveend', () => {
             this.currentZoom = this.map.getZoom();
+
+            //Disable checkbox on zoom < 9
+            if(this.currentZoom < 9){
+                document.querySelectorAll('.leaflet-control-layers.leaflet-control').forEach(control => {control.addEventListener('mouseover', this.disableStreamGage)});
+            }else{
+                document.querySelectorAll('.leaflet-control-layers.leaflet-control').forEach(control => {control.removeEventListener('mouseover', this.disableStreamGage)});
+            }
+
             //Hide stream gages if layer is checked and zoom < 9
             //Need to do this because minzoom cannot be set on L.FeatureGroup
             if (this.streamgagesVisible && this.currentZoom < 9){
@@ -827,14 +835,23 @@ export class MapComponent implements OnInit {
                     // if zooming too fast from zoom > 9 to 8, need to wait for gages to finish loading before clearing layers
                     setTimeout(() => {
                         this.streamgageService.streamGageMarkers.clearLayers();
-                    }, 100)
+                    }, 1500)
+                    setTimeout(() => {
+                        this.streamgageService.streamGageMarkers.clearLayers();
+                    }, 5000)
+                    setTimeout(() => {
+                        this.streamgageService.streamGageMarkers.clearLayers();
+                    }, 6000)
+                    setTimeout(() => {
+                        this.streamgageService.streamGageMarkers.clearLayers();
+                    }, 7000)
                 }
                 document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
                 this.streamgagesVisible = true;
-                document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = true;
             }
             else if (this.streamgagesVisible && this.currentZoom >= 9){
                 this.loadStreamGages();
+                document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = false;
             }
         });
 
@@ -928,6 +945,10 @@ export class MapComponent implements OnInit {
             }
         );
         this.layerToggles.addTo(this.map);
+        // document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = true;
+    }
+
+    disableStreamGage() {
         document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = true;
     }
 
@@ -1288,7 +1309,6 @@ export class MapComponent implements OnInit {
                                 .bindPopup(popupContent)
                                 .addTo(layerType);
                         }
-                        document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = true;
                     }
                 }
             }
