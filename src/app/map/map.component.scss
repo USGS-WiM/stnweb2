@@ -160,8 +160,61 @@ $borderRadius: 4px;
             background-color: white;
             border: 1px solid rgba(0, 0, 0, 0.2);
         }
+        
+        .alert {
+            margin: 20px 10px;
+        }
+        
+        .nwisAlertClass {
+            position: absolute;
+            left: 150px;
+            z-index: 3;
+            color: #333;
+            background-color: #0089e5;
+            border-color: #205493;
+            border-radius: 4px;
+            opacity: 0.75;
+            font-weight: bold;
+            display: none;
+            padding: 8px;
+        }
+        
+        .mat-spinner{
+            stroke: #333;
+            display: inline-block;
+            vertical-align: middle;
+        }
     }
 }
+
+.leaflet-popup-content{
+    .popup-title {
+        font-size: larger;
+        font-weight: bold;
+        text-align: left;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+    }
+
+    .highchart-title {
+        font-size: larger;
+        font-weight: bold;
+        text-align: left;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+    }
+
+    .nwis-link {
+        font-size: larger;
+        font-weight: bold;
+        text-align: left;
+        /*text-transform: uppercase;*/
+        /*font-family: 'Merriweather', serif;*/
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+    }
+}
+
 #map {
     position: relative;
     height: 70vh;

@@ -6,6 +6,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatChipList, MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -45,6 +47,8 @@ import { StreamgageService } from '@services/streamgage.service';
 import 'leaflet.markercluster';
 import 'leaflet.markercluster.freezable';
 import { Subscription } from 'rxjs';
+import * as Highcharts from 'highcharts';
+import exporting from 'highcharts/modules/exporting';
 
 import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 
@@ -117,6 +121,7 @@ export class MapComponent implements OnInit {
 
     //Streamgage layer
     streamGages = [];
+    singleGage = [];
 
     public selectedEvent;
     currentSites;
@@ -199,6 +204,8 @@ export class MapComponent implements OnInit {
 
     //for all map layers that aren't basemaps
     supplementaryLayers;
+
+    Highcharts: typeof Highcharts = Highcharts;
 
     public mapFilterForm: FormGroup;
 
@@ -817,8 +824,12 @@ export class MapComponent implements OnInit {
             this.previousZoom = this.map.getZoom();
         });
 
+        this.streamgageService.streamGageMarkers.on('click', (e) => {
+            this.queryStreamGageGraph(e);
+        })
+
         //Get the value of the current zoom
-        this.map.on('zoomend moveend', () => {
+        this.map.on('zoomend dragend', () => {
             this.currentZoom = this.map.getZoom();
 
             //Disable checkbox on zoom < 9
@@ -832,18 +843,27 @@ export class MapComponent implements OnInit {
             //Need to do this because minzoom cannot be set on L.FeatureGroup
             if (this.streamgagesVisible && this.currentZoom < 9){
                 if (this.map.hasLayer(this.streamgageService.streamGageMarkers)){
+                    this.streamgageService.streamGageMarkers.clearLayers();
                     // if zooming too fast from zoom > 9 to 8, need to wait for gages to finish loading before clearing layers
                     setTimeout(() => {
-                        this.streamgageService.streamGageMarkers.clearLayers();
+                        if (this.streamgagesVisible && this.currentZoom < 9){
+                            this.streamgageService.streamGageMarkers.clearLayers();
+                        }
                     }, 1500)
                     setTimeout(() => {
-                        this.streamgageService.streamGageMarkers.clearLayers();
+                        if (this.streamgagesVisible && this.currentZoom < 9){
+                            this.streamgageService.streamGageMarkers.clearLayers();
+                        }
+                    }, 3000)
+                    setTimeout(() => {
+                        if (this.streamgagesVisible && this.currentZoom < 9){
+                            this.streamgageService.streamGageMarkers.clearLayers();
+                        }
                     }, 5000)
                     setTimeout(() => {
-                        this.streamgageService.streamGageMarkers.clearLayers();
-                    }, 6000)
-                    setTimeout(() => {
-                        this.streamgageService.streamGageMarkers.clearLayers();
+                        if (this.streamgagesVisible && this.currentZoom < 9){
+                            this.streamgageService.streamGageMarkers.clearLayers();
+                        }
                     }, 7000)
                 }
                 document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
@@ -889,6 +909,10 @@ export class MapComponent implements OnInit {
     }
 
     loadStreamGages(){
+        if (document.getElementById('nwisLoadingAlert') !== null){
+            document.getElementById('nwisLoadingAlert').style.display = 'block';
+            document.getElementById('nwisLoadingAlert').style.opacity = '0.75';
+        }   
         // Must load Stream Gage layer after map is created to get bounding box and after event list loads
             if (this.streamgagesVisible && this.map.getZoom() >= 9) {
                 this.bbox = this.map.getBounds().getSouthWest().lng.toFixed(7) + ',' + this.map.getBounds().getSouthWest().lat.toFixed(7) + ',' + this.map.getBounds().getNorthEast().lng.toFixed(7) + ',' + this.map.getBounds().getNorthEast().lat.toFixed(7);
@@ -896,9 +920,7 @@ export class MapComponent implements OnInit {
                     this.streamGages = results;
                     this.mapStreamGageResults(
                         this.streamGages,
-                        this.streamGageIcon,
-                        this.submittedEvent
-                    );
+                        this.streamGageIcon                    );
                 });
             }
     }
@@ -945,7 +967,6 @@ export class MapComponent implements OnInit {
             }
         );
         this.layerToggles.addTo(this.map);
-        // document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = true;
     }
 
     disableStreamGage() {
@@ -1147,8 +1168,7 @@ export class MapComponent implements OnInit {
     }
 
     //queryNWISGraph, USGSrtGages
-    mapStreamGageResults(gageList: any, myIcon: any, event: any){
-        this.streamgageService.streamGageMarkers.clearLayers()
+    mapStreamGageResults(gageList: any, myIcon: any){
         let NWISmarkers = {};
         const domParser = new DOMParser();
         const xmlElement = domParser.parseFromString(gageList, 'text/xml');
@@ -1158,65 +1178,153 @@ export class MapComponent implements OnInit {
             let lng = parseFloat(streamGageList[i].getAttribute('lng'))
             let siteID = streamGageList[i].getAttribute('sno')
             let siteName = streamGageList[i].getAttribute('sna')
-            NWISmarkers[siteID] = L.marker([lat, lng], { icon: myIcon });
+            NWISmarkers[siteID] = L.marker([lat, lng], { icon: myIcon })
+                .addTo(this.streamgageService.streamGageMarkers);
                 NWISmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
                 NWISmarkers[siteID].data.parameters = {};
-
-            let beginDate;
-            let endDate;
-            let parameterCodeList = "00065,63160,72279";
-            let timeQueryRange = "";
-            // If any filters but event are used, event will be a string instead of an object
-            if (typeof(event) == 'string' || (event.event_end_date.toString() == "" && event.event_start_date.toString() == "")){
-                timeQueryRange = "&period=P7D";
-            }else if (event.event_end_date.toString() == ""){
-                let newDate = new Date();
-                endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
-            }else{
-                beginDate = event.event_start_date.substr(0, 10);
-                endDate = event.event_end_date.substr(0, 10);
-                timeQueryRange =
-                    "&startDT=" +
-                    beginDate +
-                    "&endDT=" +
-                    endDate;
-            }
-            let popupContent =
-                    '<label class="popup-title">NWIS Site ' +
-            siteID +
-            "</br>" +
-            siteName;
-            // { minWidth: 350 }
-            this.streamgageService.getSingleGage(siteID, timeQueryRange).subscribe((results) => {
-                if (results == undefined){
-                    console.log("No NWIS data available for this time period");
-                    popupContent +=
-                    '</span></label></br><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
-                    siteID +
-                    '"><b>Site ' +
-                    siteID +
-                    ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>'
-                }else{
-                    popupContent +=
-                    '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
-                    siteID +
-                    '"><b>Site ' +
-                    siteID +
-                    ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a>';
-                }
-                if (isNaN(lat) || isNaN(lng)) {
-                    console.log(
-                        'Skipped station ' +
-                        siteID +
-                        ' in Real-Time Stream Gage layer due to null lat/lng')
-                } else {
-                    //These sites are in the Atlantic Ocean or otherwise clearly out of place
-                    L.marker([lat, lng], { icon: myIcon })
-                        .bindPopup(popupContent)
-                        .addTo(this.streamgageService.streamGageMarkers);
-                }
-            });
         }
+        //Fade out loading alert
+        let opacity = 0.75;
+        if(document.getElementById('nwisLoadingAlert') !== null){
+            setInterval(function(){
+                if (opacity > 0){
+                    opacity -= 0.05;
+                    let opacityValue = String(opacity);
+                    if(document.getElementById('nwisLoadingAlert') !== null){
+                        document.getElementById('nwisLoadingAlert').style.opacity = opacityValue;
+                    }
+    
+                }else{
+                    if(document.getElementById('nwisLoadingAlert') !== null){
+                        document.getElementById('nwisLoadingAlert').style.opacity = "0"
+                        document.getElementById('nwisLoadingAlert').style.display = 'none';
+                    }
+                }
+            }, 50)
+        }
+    }
+
+    //Get single streamgage on map click, bind to popup, and create graph
+    queryStreamGageGraph(e){
+        console.log(e)
+        e.layer.closePopup();
+        //Clear out graph div from previous popup if it exists
+        if (document.getElementById('graphDiv') != null){
+            document.getElementById('graphDiv').remove();
+        }
+        let siteID = e.layer.data.siteCode;
+        let siteName = e.layer.data.siteName;
+        let timeQueryRange = "";
+        let beginDate;
+        let endDate;
+        // If any filters but event are used, event will be a string instead of an object
+        if (typeof(this.submittedEvent) == 'string' || this.submittedEvent.event_end_date.toString() == "" || (this.submittedEvent.event_end_date.toString() == "" && this.submittedEvent.event_start_date.toString() == "")){
+            timeQueryRange = "&period=P7D";
+        }else if (this.submittedEvent.event_end_date.toString() == ""){
+            let newDate = new Date();
+            endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
+        }else{
+            beginDate = this.submittedEvent.event_start_date.substr(0, 10);
+            endDate = this.submittedEvent.event_end_date.substr(0, 10);
+            timeQueryRange =
+                "&startDT=" +
+                beginDate +
+                "&endDT=" +
+                endDate;
+        }
+        let popupContent;
+        this.streamgageService.getSingleGage(siteID, timeQueryRange).subscribe((results) => {
+            this.singleGage = results;
+            //Create div to hold chart
+            let graphContainer;
+            if (document.getElementById('graphDiv') == null){
+                graphContainer = document.createElement('div');
+                graphContainer.id = 'graphDiv';
+                graphContainer.style.width = '100%';
+                graphContainer.style.height = '200px';
+                document.body.appendChild(graphContainer);
+            }else{
+                graphContainer = document.getElementById('graphDiv');
+            }
+            if (results.data == undefined || results.data[0].time_series_data.length == 0){
+                console.log("No NWIS data available for this time period");
+                popupContent =
+                '<label class="popup-title">NWIS Site ' + siteID + "</br>" + siteName + '</span></label></br><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
+                siteID +
+                '"><b>Site ' +
+                siteID +
+                ' on NWISWeb <span class="material-icons" style="vertical-align: middle;">link</span></b></a><div id="noDataMessage" style="width:100%;display:block;"><b><span>NWIS water level data not available to graph</span></b></div>', { minWidth: 350 };
+                e.layer
+                    .bindPopup(popupContent)
+                    .openPopup()
+            }else{
+                let chartOptions = Highcharts.setOptions({
+                    title: {
+                    text:
+                        "NWIS Site " +
+                        siteID +
+                        "<br> " +
+                        siteName,
+                    align: "left",
+                    style: {
+                        color: "rgba(0,0,0,0.6)",
+                        fontSize: "small",
+                        fontWeight: "bold",
+                        fontFamily: "Open Sans, sans-serif",
+                    },
+                    },
+                    exporting: {
+                        enabled: true,
+                        filename: "FEV_NWIS_Site" + siteID,
+                    },
+                    credits: {
+                    enabled: false,
+                    },
+                    xAxis: {
+                    type: "datetime",
+                    labels: {
+                        formatter: function () {
+                        let num = Number(this.value);
+                        return Highcharts.dateFormat("%d %b %y", num);
+                        },
+                        align: "center",
+                    },
+                    },
+                    yAxis: {
+                    title: { text: "Gage Height, feet" },
+                    },
+                    series: [
+                    {
+                        showInLegend: false,
+                        type: "line",
+                        data: results.data[0].time_series_data,
+                        tooltip: {
+                        pointFormat: "Gage height: {point.y} feet",
+                        },
+                    },
+                    ],
+                });
+                exporting(Highcharts);
+                //Convert HTML element to string to add into graphContainer div
+                let graphHTML = document.getElementById('graphDiv').outerHTML;
+
+                popupContent =
+                '<div id="graphContainer" style="width:100%; height:200px; display:block;">' + graphHTML + '</div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
+                siteID +
+                '"><b>Site ' +
+                siteID +
+                ' on NWISWeb <span class="material-icons" style="vertical-align: middle;">link</span></b></a>', { minWidth: 350 };
+
+                e.layer
+                    .bindPopup(popupContent)
+                    .openPopup()
+                //Create chart and render to graphDiv
+                new Highcharts.Chart('graphDiv', chartOptions)
+                if(document.getElementById('graphContainer') !== null){
+                    document.getElementById('graphContainer').style.display = 'block';
+                }
+            }
+        });
     }
 
     //sites = the full site object to be mapped
@@ -1400,6 +1508,7 @@ export class MapComponent implements OnInit {
         let formatEndDate = endDate.getFullYear().toString() + (endDate.getMonth() + 1).toString().padStart(2, '0') + endDate.getDate().toString().padStart(2, '0');
         let formatStartDate = startDate.getFullYear().toString() + (startDate.getMonth() + 1).toString().padStart(2, '0') + startDate.getDate().toString().padStart(2, '0');
         let event = formatStartDate + "," + formatEndDate;
+        this.submittedEvent = event;
         this.mapNoaaResults(
             this.stations,
             this.tideIcon,
@@ -1407,8 +1516,7 @@ export class MapComponent implements OnInit {
         );
         this.mapStreamGageResults(
             this.streamGages,
-            this.streamGageIcon,
-            event
+            this.streamGageIcon
         );
     }
 
@@ -1429,8 +1537,6 @@ export class MapComponent implements OnInit {
         this.currentQuery = 0;
         this.totalQueries = 0;
         this.stateString = '';
-
-        this.loadStreamGages();
 
         //Create string of state abbreviations
         if (this.mapFilterForm.get('stateControl').value !== null) {
@@ -1550,7 +1656,6 @@ export class MapComponent implements OnInit {
                                 result
                             );
                         });
-                        this.loadStreamGages();
                     } else{
                         // Use the previous 2 weeks as date range for link in NOAA layer popup if any filters but event are changed
                         let endDate = new Date();
@@ -1565,7 +1670,6 @@ export class MapComponent implements OnInit {
                             this.tideIcon, 
                             event
                         );
-                        this.loadStreamGages();
                     }
                 });
             } else {
@@ -1748,3 +1852,4 @@ export class MapComponent implements OnInit {
         this.isClicked = false;
     }
 }
+

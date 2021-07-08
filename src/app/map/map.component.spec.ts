@@ -273,6 +273,63 @@ describe('MapComponent', () => {
         expect(component.stations).toEqual(response);
     });
 
+    it('should call getStreamGages and return list of all gages', () => {
+        const response = [];
+        const bbox = "-90.8074951,29.5113300,-88.6047363,31.1187944";
+        component.streamgageService.getStreamGages(bbox);
+        spyOn(component.streamgageService, 'getStreamGages').and.returnValue(
+            of(response)
+        );
+        component.loadStreamGages();
+        fixture.detectChanges();
+        expect(component.streamGages).toEqual(response);
+    });
+
+    it('loadStreamGages should call mapStreamGageResults', () => {
+        component.loadStreamGages();
+        fixture.detectChanges();
+        expect(component.mapStreamGageResults).toHaveBeenCalled;
+    });
+
+    it('should call getSingleGage and return stream gage', () => {
+        const response = [];
+        const siteCode = "07381355";
+        const timeQueryRange = "&startDT=2020-10-06&endDT=2020-10-13";
+        component.streamgageService.getSingleGage(siteCode, timeQueryRange);
+        spyOn(component.streamgageService, 'getSingleGage').and.returnValue(
+            of(response)
+        );
+        fixture.detectChanges();
+        expect(component.singleGage).toEqual(response);
+    });
+
+    // it ('should call queryStreamGageGraph', () => {
+    //     const e: Object = {};
+    //     component.queryStreamGageGraph(e);
+    //     fixture.detectChanges();
+    //     expect(component.queryStreamGageGraph(e)).toHaveBeenCalled;
+    // });
+
+    it('stream gage button should be enabled when zoomed to 9 or higher', () => {
+        component.map.setZoom(10);
+        fixture.detectChanges();
+        expect(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled)
+            .toBeFalse;
+        expect(component.loadStreamGages()).toHaveBeenCalled;
+        component.map.setZoom(8);
+        fixture.detectChanges();
+        expect(component.disableStreamGage()).toHaveBeenCalled;
+    });
+
+    it('stream gage button should be disabled when zoomed to lower than 9', () => {
+        component.map.setZoom(8);
+        fixture.detectChanges();
+        expect(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled)
+            .toBeTrue;
+        expect(component.streamgageService.streamGageMarkers.clearLayers()).toHaveBeenCalled;
+        expect(component.streamgagesVisible).toBeTrue;
+    });
+
     it('clustering should be disabled in all sites layer when zoomed to 12 or higher', () => {
         component.map.setZoom(12);
         fixture.detectChanges();
@@ -280,13 +337,15 @@ describe('MapComponent', () => {
             .toBeTrue;
     });
 
-    it('AHPS Gage, current warnings, and watches/warnings layers should be removed when map zooms out to 8', () => {
+    it('AHPS Gage, current warnings, streamgages, and watches/warnings layers should be removed when map zooms out to 8', () => {
         component.ahpsGagesVisible = true;
         component.currWarningsVisible = true;
         component.watchWarnVisible = true;
+        component.streamgagesVisible = true;
         component.map.addLayer(component.AHPSGages);
         component.map.addLayer(component.warnings);
         component.map.addLayer(component.watchesWarnings);
+        component.map.addLayer(component.streamgageService.streamGageMarkers);
         component.map.setZoom(9);
         component.map.setZoom(8);
         component.map.zoom = 8;
@@ -294,6 +353,7 @@ describe('MapComponent', () => {
         expect(component.map.hasLayer(component.AHPSGages)).toBeFalse;
         expect(component.map.hasLayer(component.warnings)).toBeFalse;
         expect(component.map.hasLayer(component.watchesWarnings)).toBeFalse;
+        expect(component.map.hasLayer(component.watchesWarnings)).toBeTrue;
     });
 
     it('there should be as many queries as there are networks', () => {

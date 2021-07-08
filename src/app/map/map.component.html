@@ -40,6 +40,9 @@
         <div id="mapPanel" [ngStyle]="{'display': isClicked? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}">
 
 			<div id="mapControls">
+                <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><mat-spinner [diameter]="20" class="mat-spinner"></mat-spinner>
+                    <span> Loading Layers...</span></div>
+                    
 				<button
 					class="navBarBtnActive"
 					mat-button
