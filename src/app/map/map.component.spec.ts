@@ -333,16 +333,18 @@ describe('MapComponent', () => {
 
     it('layers should be cleared when zoomed to 8 or lower', () => {
         component.map.setZoom(8);
+        fixture.detectChanges();
         expect(component.streamgageService.streamGageMarkers.getLayers()).toEqual([]);
     });
 
-    it('stream gage button should be disabled when zoomed to lower than 9', () => {
+    it('stream gage button should be disabled but checked and layers cleared when zoomed to lower than 9', () => {
         component.map.setZoom(8);
         component.streamgagesVisible = true;
         fixture.detectChanges();
         expect(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled)
             .toBeTrue;
         expect(component.streamgagesVisible).toBeTrue;
+        expect(component.streamgageService.streamGageMarkers.getLayers()).toEqual([]);
     });
 
     it('clustering should be disabled in all sites layer when zoomed to 12 or higher', () => {
@@ -354,6 +356,7 @@ describe('MapComponent', () => {
 
     it("disableStreamGage should be disable checkbox", () => {
         component.disableStreamGage();
+        fixture.detectChanges();
         expect(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled)
             .toBeTrue;
     });
@@ -370,6 +373,9 @@ describe('MapComponent', () => {
         fixture.detectChanges();
         expect(singleGageSpy).toHaveBeenCalled();
         component.submittedEvent = "2020 Hurricane Delta"
+        let graphDiv = document.createElement("div");
+        graphDiv.id = "graphDiv";
+        document.body.appendChild(graphDiv);
         component.queryStreamGageGraph(e);
         fixture.detectChanges();
     });

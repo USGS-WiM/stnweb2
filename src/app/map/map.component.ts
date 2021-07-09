@@ -866,7 +866,7 @@ export class MapComponent implements OnInit {
                         }
                     }, 7000)
                 }
-                if(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== null){
+                if(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== undefined){
                     document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
                 }
                 this.streamgagesVisible = true;
@@ -1258,9 +1258,11 @@ export class MapComponent implements OnInit {
                 '"><b>Site ' +
                 siteID +
                 ' on NWISWeb <span class="material-icons" style="vertical-align: middle;">link</span></b></a><div id="noDataMessage" style="width:100%;display:block;"><b><span>NWIS water level data not available to graph</span></b></div>', { minWidth: 350 };
-                e.layer
-                    .bindPopup(popupContent)
-                    .openPopup()
+                if(e.layer !== undefined){
+                    e.layer
+                        .bindPopup(popupContent)
+                        .openPopup()
+                }
             }else{
                 let chartOptions = Highcharts.setOptions({
                     title: {
