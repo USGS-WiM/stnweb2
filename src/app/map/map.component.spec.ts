@@ -289,7 +289,7 @@ describe('MapComponent', () => {
         expect(mapStreamGageSpy).toHaveBeenCalledWith(component.streamGages, component.streamGageIcon);
     });
 
-    it('loadStreamGages should not call mapStreamGageResuts is layer is not visible or zoom < 9', () => {
+    it('loadStreamGages should not call mapStreamGageResuts if layer is not visible or zoom < 9', () => {
         let spyOnQueryMethod = spyOn(component, 'mapStreamGageResults').and.callThrough();
         let streamgageServiceSpy = spyOn(component.streamgageService, 'getStreamGages');
         component.streamgagesVisible = false;
@@ -378,6 +378,7 @@ describe('MapComponent', () => {
         document.body.appendChild(graphDiv);
         component.queryStreamGageGraph(e);
         fixture.detectChanges();
+        expect(singleGageSpy).toHaveBeenCalled();
     });
 
     it('AHPS Gage, current warnings, streamgages, and watches/warnings layers should be removed when map zooms out to 8', () => {

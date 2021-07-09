@@ -859,11 +859,6 @@ export class MapComponent implements OnInit {
                         if (this.streamgagesVisible && this.currentZoom < 9){
                             this.streamgageService.streamGageMarkers.clearLayers();
                         }
-                    }, 5000)
-                    setTimeout(() => {
-                        if (this.streamgagesVisible && this.currentZoom < 9){
-                            this.streamgageService.streamGageMarkers.clearLayers();
-                        }
                     }, 7000)
                 }
                 if(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== undefined){
