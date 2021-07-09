@@ -513,30 +513,38 @@ describe('MapComponent', () => {
     })
 
     it ('onResize should be called on window resize', () => {
-        let resizeSpy = spyOn(component, 'onResize');
+        component.isClicked = true;
+        let resizeSpy = spyOn(component, 'onResize').and.callThrough();
         window.dispatchEvent(new Event('resize'));
+        fixture.detectChanges();
         expect(resizeSpy).toHaveBeenCalled();
+        if (component.isMobile){
+            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
+        }else{
+            expect(component.isClicked).toBeFalse;
+            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
+        }
     });
 
     it ('mobile minimize button should be checked on resize', () => {
+        component.isClicked = false;
         if (component.isMobile){
-            if (component.isClicked){
-                expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
-            }else{
-                expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('flex');
-            }
+            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('flex');
         }else{
             expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
         }
     });
 
-    it ('isClicked should change value', () => {
+    it ('isClicked should change value to true', () => {
+        component.isClicked = false;
         component.openMapFilters();
-        if (component.isClicked){
-            expect(component.isClicked).toBeTruthy();
-        }else{
-            expect(component.isClicked).toBeFalsy();
-        }
+        expect(component.isClicked).toBeTruthy();
+    });
+
+    it ('isClicked should change value to false', () => {
+        component.isClicked = true;
+        component.openMapFilters();
+        expect(component.isClicked).toBeFalsy();
     });
 
     it ('mobile minimize button should be hidden on Map Filters button click', () => {
