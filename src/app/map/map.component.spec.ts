@@ -275,20 +275,30 @@ describe('MapComponent', () => {
 
     it('should call getStreamGages and return list of all gages', () => {
         const response = [];
-        const bbox = "-90.8074951,29.5113300,-88.6047363,31.1187944";
-        component.streamgageService.getStreamGages(bbox);
-        spyOn(component.streamgageService, 'getStreamGages').and.returnValue(
+        let mapStreamGageSpy = spyOn(component, 'mapStreamGageResults');
+        let streamgageServiceSpy = spyOn(component.streamgageService, 'getStreamGages').and.returnValue(
             of(response)
         );
+        component.streamgagesVisible = true;
+        component.map.setZoom(10);
         component.loadStreamGages();
         fixture.detectChanges();
         expect(component.streamGages).toEqual(response);
+        expect(component.bbox).not.toBeUndefined();
+        expect(streamgageServiceSpy).toHaveBeenCalledWith(component.bbox);
+        expect(mapStreamGageSpy).toHaveBeenCalledWith(component.streamGages, component.streamGageIcon);
     });
 
-    it('loadStreamGages should call mapStreamGageResults', () => {
+    it('loadStreamGages should not call mapStreamGageResuts is layer is not visible or zoom < 9', () => {
+        let spyOnQueryMethod = spyOn(component, 'mapStreamGageResults').and.callThrough();
+        let streamgageServiceSpy = spyOn(component.streamgageService, 'getStreamGages');
+        component.streamgagesVisible = false;
+        component.map.setZoom(8);
         component.loadStreamGages();
         fixture.detectChanges();
-        expect(component.mapStreamGageResults).toHaveBeenCalled;
+        expect(streamgageServiceSpy).not.toHaveBeenCalledWith(component.bbox);
+        expect(spyOnQueryMethod).not.toHaveBeenCalledWith(component.streamGages, component.streamGageIcon);
+        expect(component.bbox).toBeUndefined();
     });
 
     it('should call getSingleGage and return stream gage', () => {
@@ -299,34 +309,39 @@ describe('MapComponent', () => {
         spyOn(component.streamgageService, 'getSingleGage').and.returnValue(
             of(response)
         );
+        spyOn(component, 'queryStreamGageGraph').and.callThrough();
         fixture.detectChanges();
         expect(component.singleGage).toEqual(response);
     });
 
-    // it ('should call queryStreamGageGraph', () => {
-    //     const e: Object = {};
-    //     component.queryStreamGageGraph(e);
-    //     fixture.detectChanges();
-    //     expect(component.queryStreamGageGraph(e)).toHaveBeenCalled;
-    // });
+    it('should call queryStreamGageGraph on marker click', () => {
+        let spyOnQueryMethod = spyOn(component, 'queryStreamGageGraph');
+        let marker = Array.from(document.getElementsByClassName(component.streamgageService.streamGageMarkers));
+        marker.forEach((element) => {
+            element.dispatchEvent(new Event('click'));
+            fixture.detectChanges();
+            expect(spyOnQueryMethod).toHaveBeenCalled();
+        })
+    })
 
     it('stream gage button should be enabled when zoomed to 9 or higher', () => {
         component.map.setZoom(10);
         fixture.detectChanges();
         expect(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled)
             .toBeFalse;
-        expect(component.loadStreamGages()).toHaveBeenCalled;
+    });
+
+    it('layers should be cleared when zoomed to 8 or lower', () => {
         component.map.setZoom(8);
-        fixture.detectChanges();
-        expect(component.disableStreamGage()).toHaveBeenCalled;
+        expect(component.streamgageService.streamGageMarkers.getLayers()).toEqual([]);
     });
 
     it('stream gage button should be disabled when zoomed to lower than 9', () => {
         component.map.setZoom(8);
+        component.streamgagesVisible = true;
         fixture.detectChanges();
         expect(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled)
             .toBeTrue;
-        expect(component.streamgageService.streamGageMarkers.clearLayers()).toHaveBeenCalled;
         expect(component.streamgagesVisible).toBeTrue;
     });
 
@@ -335,6 +350,28 @@ describe('MapComponent', () => {
         fixture.detectChanges();
         expect(component.siteService.allSiteMarkers.disableClustering())
             .toBeTrue;
+    });
+
+    it("disableStreamGage should be disable checkbox", () => {
+        component.disableStreamGage();
+        expect(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled)
+            .toBeTrue;
+    });
+
+    it('queryStreamGageGraph should be called', () => {
+        const e = new L.marker([43.44, -87.75]);
+        const response = [];
+        component.submittedEvent = {
+            event_id: 305, event_name: "2020 Hurricane Delta", event_start_date: "2020-10-06T05:00:00", event_end_date: "2020-10-13T05:00:00"
+        }
+        let singleGageSpy = spyOn(component.streamgageService, 'getSingleGage').and.returnValue(
+            of(response));
+        component.queryStreamGageGraph(e);
+        fixture.detectChanges();
+        expect(singleGageSpy).toHaveBeenCalled();
+        component.submittedEvent = "2020 Hurricane Delta"
+        component.queryStreamGageGraph(e);
+        fixture.detectChanges();
     });
 
     it('AHPS Gage, current warnings, streamgages, and watches/warnings layers should be removed when map zooms out to 8', () => {

@@ -866,7 +866,9 @@ export class MapComponent implements OnInit {
                         }
                     }, 7000)
                 }
-                document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
+                if(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== null){
+                    document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
+                }
                 this.streamgagesVisible = true;
             }
             else if (this.streamgagesVisible && this.currentZoom >= 9){
@@ -1206,14 +1208,16 @@ export class MapComponent implements OnInit {
 
     //Get single streamgage on map click, bind to popup, and create graph
     queryStreamGageGraph(e){
-        console.log(e)
-        e.layer.closePopup();
         //Clear out graph div from previous popup if it exists
         if (document.getElementById('graphDiv') != null){
             document.getElementById('graphDiv').remove();
         }
-        let siteID = e.layer.data.siteCode;
-        let siteName = e.layer.data.siteName;
+        let siteID;
+        let siteName;
+        if (e.layer !== undefined){
+            siteID = e.layer.data.siteCode;
+            siteName = e.layer.data.siteName;
+        }
         let timeQueryRange = "";
         let beginDate;
         let endDate;
@@ -1246,7 +1250,7 @@ export class MapComponent implements OnInit {
             }else{
                 graphContainer = document.getElementById('graphDiv');
             }
-            if (results.data == undefined || results.data[0].time_series_data.length == 0){
+            if (results == undefined || results.data == undefined || results.data[0].time_series_data.length == 0){
                 console.log("No NWIS data available for this time period");
                 popupContent =
                 '<label class="popup-title">NWIS Site ' + siteID + "</br>" + siteName + '</span></label></br><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
