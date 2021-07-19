@@ -844,22 +844,6 @@ export class MapComponent implements OnInit {
             if (this.streamgagesVisible && this.currentZoom < 9){
                 if (this.map.hasLayer(this.streamgageService.streamGageMarkers)){
                     this.streamgageService.streamGageMarkers.clearLayers();
-                    // if zooming too fast from zoom > 9 to 8, need to wait for gages to finish loading before clearing layers
-                    setTimeout(() => {
-                        if (this.streamgagesVisible && this.currentZoom < 9){
-                            this.streamgageService.streamGageMarkers.clearLayers();
-                        }
-                    }, 1500)
-                    setTimeout(() => {
-                        if (this.streamgagesVisible && this.currentZoom < 9){
-                            this.streamgageService.streamGageMarkers.clearLayers();
-                        }
-                    }, 3000)
-                    setTimeout(() => {
-                        if (this.streamgagesVisible && this.currentZoom < 9){
-                            this.streamgageService.streamGageMarkers.clearLayers();
-                        }
-                    }, 7000)
                 }
                 if(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== undefined){
                     document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
@@ -906,6 +890,7 @@ export class MapComponent implements OnInit {
     }
 
     loadStreamGages(){
+        let currentZoomLevel = this.map.getZoom();
         if (document.getElementById('nwisLoadingAlert') !== null){
             document.getElementById('nwisLoadingAlert').style.display = 'block';
             document.getElementById('nwisLoadingAlert').style.opacity = '0.75';
@@ -915,11 +900,40 @@ export class MapComponent implements OnInit {
                 this.bbox = this.map.getBounds().getSouthWest().lng.toFixed(7) + ',' + this.map.getBounds().getSouthWest().lat.toFixed(7) + ',' + this.map.getBounds().getNorthEast().lng.toFixed(7) + ',' + this.map.getBounds().getNorthEast().lat.toFixed(7);
                 this.streamgageService.getStreamGages(this.bbox).subscribe((results) => {
                     this.streamGages = results;
+                    // Prevent markers from being added if zoom level changes
+                    if (this.map.getZoom() != currentZoomLevel){
+                        this.fadeLoadingAlert();
+                        return;
+                    }
                     this.mapStreamGageResults(
                         this.streamGages,
-                        this.streamGageIcon                    );
+                        this.streamGageIcon                    
+                    );
                 });
             }
+    }
+
+    fadeLoadingAlert(){
+        //Fade out loading alert
+        let opacity = 0.75;
+        if(document.getElementById('nwisLoadingAlert') !== null){
+            let fadeOut = setInterval(function(){
+                if (opacity > 0){
+                    opacity -= 0.05;
+                    let opacityValue = String(opacity);
+                    if(document.getElementById('nwisLoadingAlert') !== null){
+                        document.getElementById('nwisLoadingAlert').style.opacity = opacityValue;
+                    }
+    
+                }else{
+                    if(document.getElementById('nwisLoadingAlert') !== null){
+                        document.getElementById('nwisLoadingAlert').style.opacity = "0"
+                        document.getElementById('nwisLoadingAlert').style.display = 'none';
+                    }
+                    clearInterval(fadeOut);
+                }
+            }, 50)
+        }
     }
 
     createLayerControl(wimPin: boolean) {
@@ -1181,24 +1195,7 @@ export class MapComponent implements OnInit {
                 NWISmarkers[siteID].data.parameters = {};
         }
         //Fade out loading alert
-        let opacity = 0.75;
-        if(document.getElementById('nwisLoadingAlert') !== null){
-            setInterval(function(){
-                if (opacity > 0){
-                    opacity -= 0.05;
-                    let opacityValue = String(opacity);
-                    if(document.getElementById('nwisLoadingAlert') !== null){
-                        document.getElementById('nwisLoadingAlert').style.opacity = opacityValue;
-                    }
-    
-                }else{
-                    if(document.getElementById('nwisLoadingAlert') !== null){
-                        document.getElementById('nwisLoadingAlert').style.opacity = "0"
-                        document.getElementById('nwisLoadingAlert').style.display = 'none';
-                    }
-                }
-            }, 50)
-        }
+        this.fadeLoadingAlert();
     }
 
     //Get single streamgage on map click, bind to popup, and create graph
