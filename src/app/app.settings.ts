@@ -56,6 +56,12 @@ export class APP_SETTINGS {
         });
     }
 
+    public static get AUTH_XML_HEADERS() {
+        return new HttpHeaders({
+            Accept: 'text/xml',
+        });
+    }
+
     // default display query (display verison of search query above) for initial load of map page
     // public static get DEFAULT_DISPLAY_QUERY(): FilterQuery {
     //     return {

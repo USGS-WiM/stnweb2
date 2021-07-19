@@ -4,7 +4,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
@@ -37,6 +37,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 
+import { HighchartsChartModule } from 'highcharts-angular';
+
 // import { MatAccordion } from '@angular/material/expansion';
 
 import { LoginComponent } from './login/login.component';
@@ -57,6 +59,7 @@ import { BulkHwmComponent } from './bulk-hwm/bulk-hwm.component';
 import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { ResultDetailsComponent } from './result-details/result-details.component';
 import { SensorService } from './services/sensor.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
     declarations: [
@@ -109,6 +112,9 @@ import { SensorService } from './services/sensor.service';
         MatRadioModule,
         MatMenuModule,
         MatSortModule,
+        HighchartsChartModule,
+        MatProgressSpinnerModule,
+        BrowserAnimationsModule,
     ],
     providers: [
         CurrentUserService,
