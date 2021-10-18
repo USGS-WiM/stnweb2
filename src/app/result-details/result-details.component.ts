@@ -5,7 +5,7 @@ import {
     OnInit,
 } from '@angular/core';
 import { Inject } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SensorService } from '@services/sensor.service';
 import { EventService } from '@services/event.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -22,19 +22,21 @@ import { APP_UTILITIES } from '@app/app.utilities';
 })
 export class ResultDetailsComponent implements OnInit {
     sensorDataSource = new MatTableDataSource([]);
-    siteSensors;
+    siteSensors = [];
     allEvents = [];
+    sensorData = [];
 
     displayedColumns: string[] = [
-        'Deployment Type',
         'Event',
-        'Housing Type',
-        'Status',
         'Location Description',
+        'Deployment Type',
+        'Housing Type',
         'Sensor Type',
+        'Status',
     ];
 
     constructor(
+        private dialogRef: MatDialogRef<ResultDetailsComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private sensorService: SensorService,
         private eventService: EventService,
@@ -43,13 +45,13 @@ export class ResultDetailsComponent implements OnInit {
 
     ngOnInit(): void {
         this.getSiteSensorData();
-        this.getEvents();
         this.changeDetectorRefs.detectChanges();
     }
 
     getEvents() {
         this.eventService.getAllEvents().subscribe((result) => {
             this.allEvents = result;
+            this.createDataSource(this.siteSensors);
             /* error => {
                 this.errorMessage = <any>error;
               } */
@@ -61,8 +63,7 @@ export class ResultDetailsComponent implements OnInit {
             .getSiteFullInstruments(this.data['site_id'])
             .subscribe((results) => {
                 this.siteSensors = results;
-
-                this.createDataSource(this.siteSensors);
+                this.getEvents();
             });
     }
 
@@ -71,7 +72,7 @@ export class ResultDetailsComponent implements OnInit {
         // variable for eventID storage if an event is selected so that we are only displaying sensors for that event
         let eventID;
 
-        if (this.data['mapFilterForm']['eventsControl'] !== undefined) {
+        if (this.data !== undefined && this.data['mapFilterForm'] !== undefined && this.data['mapFilterForm']['eventsControl'] !== undefined) {
             if (this.data['mapFilterForm']['eventsControl'].value !== null) {
                 eventID = this.data['mapFilterForm']['eventsControl'].value;
             }
@@ -79,7 +80,6 @@ export class ResultDetailsComponent implements OnInit {
         let sensors = this.createSensorTableObjects(data, eventID);
         // looping through each sensor and retrieving the event name using the event_id
 
-        console.log(sensors);
         this.sensorDataSource.data = sensors;
         this.changeDetectorRefs.detectChanges();
     }
@@ -89,6 +89,9 @@ export class ResultDetailsComponent implements OnInit {
         let sensors = [];
         // setting storage for sensors and event name
         let eventName;
+        if(data.length !== 0){
+            this.dialogRef.updateSize("80%", "auto");
+        }
         for (let i = 0; i < data.length; i++) {
             var obj = APP_UTILITIES.FIND_OBJECT_BY_KEY(
                 this.allEvents,
@@ -127,6 +130,7 @@ export class ResultDetailsComponent implements OnInit {
                 sensors.push(sensorObject);
             }
         }
+        this.sensorData = sensors;
         return sensors;
     }
 }

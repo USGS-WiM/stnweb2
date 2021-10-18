@@ -57,8 +57,15 @@ export class FilterResultsComponent implements OnInit {
     // opening result-details dialog and passing relevant data
     /* istanbul ignore next */
     openDetailsDialog(row): void {
+        let dialogWidth;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            dialogWidth = '80%';
+        }
+        else {
+            dialogWidth = '30%';
+        }
         const dialogRef = this.dialog.open(ResultDetailsComponent, {
-            width: '80%',
+            width: dialogWidth,
             data: {
                 mapFilterForm: this.mapFilterForm['controls'],
                 site_id: row['site_id'],
