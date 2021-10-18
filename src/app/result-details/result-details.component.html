@@ -71,6 +71,7 @@
                         style="margin-right: 25px"
                         *matCellDef="let sensor"
                     >
+                        <mat-icon class="deployed-icon" *ngIf="sensor.instrument_status === 'Deployed'">check_circle</mat-icon>
                         {{ sensor.instrument_status }}
                     </td>
                 </ng-container>
