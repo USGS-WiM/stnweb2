@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Map filters placed in sidebar component
 -   Clear Filters and Filter Sites buttons moved back from filter to map component
+-   Table styling for results and result modal
 
 ### Fixed
 
@@ -23,6 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Event list is reset when "Clear Filters" is clicked and active styling for previously selected event types removed
 -   Fixed map filter overlap with results panel and footer
 -   Minimized button moved above map on mobile screen sizes
+-   Results and result modal mobile responsiveness
+-   Bug in consistently populating results table
 
 ## [v0.5.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.5.0) - 2021-06-10
 
