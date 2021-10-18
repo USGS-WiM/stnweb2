@@ -12,6 +12,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { APP_UTILITIES } from '@app/app.utilities';
 
 @Component({
@@ -24,7 +25,7 @@ export class ResultDetailsComponent implements OnInit {
     sensorDataSource = new MatTableDataSource([]);
     siteSensors = [];
     allEvents = [];
-    sensorData = [];
+    sensorData;
 
     displayedColumns: string[] = [
         'Event',
