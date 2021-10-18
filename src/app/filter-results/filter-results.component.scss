@@ -1,3 +1,86 @@
+table {
+    width: 100%;
+}
+
+.results-table-div {
+    overflow-x: auto;
+}
+
 .results-row {
     cursor: pointer;
+}
+
+.mat-column-siteId{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    align-items: normal;
+    align-self: stretch;
+}
+
+.mat-column-siteName{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    align-items: normal;
+    align-self: stretch;
+} 
+
+.mat-column-siteDesc{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    align-items: normal;
+    align-self: stretch;
+}
+
+.mat-column-state{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    align-items: normal;
+    align-self: stretch;
+}
+
+.mat-column-city{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    align-items: normal;
+    align-self: stretch;
+}
+
+.mat-column-latitude{
+    padding: 10px;
+    align-items: normal;
+    border-right: 1px solid #e0e0e0;
+    align-self: stretch;
+}
+
+.mat-column-longitude{
+    padding: 10px;
+    align-items: normal;
+    border-right: 1px solid #e0e0e0;
+    align-self: stretch;
+}
+
+.mat-column-waterbody{
+    padding: 10px;
+    align-items: normal;
+    border-right: 1px solid #e0e0e0;
+    align-self: stretch;
+}
+
+.mat-column-permHouse{
+    padding: 10px;
+    align-items: normal;
+    align-self: stretch;
+}
+
+.mat-header-cell {
+    font-weight: bold;
+    text-transform: uppercase;
+    color:rgba(0, 0, 0, 0.87);
+    font-size: 12px;
+    align-items: center;
+    background-color: #f7f7f7;
+}
+
+.mat-cell, .mat-header-cell, .mat-footer-cell {
+    overflow: auto;
 }

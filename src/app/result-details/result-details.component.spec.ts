@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SensorService } from '@services/sensor.service';
+import { EventService } from '@services/event.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -17,6 +18,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { APP_UTILITIES } from '@app/app.utilities';
 import { APP_SETTINGS } from '@app/app.settings';
+import { of } from 'rxjs';
+import { Event } from '@interfaces/event';
+import { Sitefullsensors } from '@interfaces/sitefullsensors';
 
 describe('ResultDetailsComponent', () => {
     let component: ResultDetailsComponent;
@@ -42,6 +46,7 @@ describe('ResultDetailsComponent', () => {
             ],
             providers: [
                 SensorService,
+                EventService,
                 { provide: MatDialogRef, useValue: {} },
                 { provide: MAT_DIALOG_DATA, useValue: {} },
             ],
@@ -69,5 +74,27 @@ describe('ResultDetailsComponent', () => {
         fixture.detectChanges();
         const table = component.sensorDataSource;
         expect(table).toBeInstanceOf(MatTableDataSource);
+    });
+
+    it('should call sensor service getSiteFullInstruments and return list of all sensors', async() => {
+        const response: Sitefullsensors[] = [];
+        let sensorService = TestBed.inject(SensorService);
+        spyOn(sensorService, 'getSiteFullInstruments').and.returnValue(
+            of(response)
+        );
+        component.getSiteSensorData();
+        fixture.detectChanges();
+        expect(component.siteSensors).toEqual(response);
+    });
+
+    it('should call event service getAllEvents and return list of all events', async() => {
+        const response: Event[] = [];
+        let eventService = TestBed.inject(EventService);
+        spyOn(eventService, 'getAllEvents').and.returnValue(
+            of(response)
+        );
+        component.getEvents();
+        fixture.detectChanges();
+        expect(component.allEvents).toEqual(response);
     });
 });

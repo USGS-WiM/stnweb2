@@ -3,112 +3,116 @@
     <mat-expansion-panel-header>
         <mat-panel-title> Results </mat-panel-title>
     </mat-expansion-panel-header>
-    <div *ngIf="dataSource" class="results-table-div">
-        <mat-table
-            id="resultsTable"
-            [dataSource]="dataSource"
-            (matSortChange)="sortData($event)"
-            matSort
-        >
-            <!-- site id column -->
-            <ng-container matColumnDef="siteId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header="site_id">
-                    Site ID
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.site_id }}
-                </mat-cell>
-            </ng-container>
+    <div *ngIf="dataSource">
+        <div class="results-table-div">
+            <table
+                mat-table
+                id="resultsTable"
+                [dataSource]="dataSource"
+                (matSortChange)="sortData($event)"
+                class="mat-elevation-z8"
+                matSort
+            >
+                <!-- site id column -->
+                <ng-container matColumnDef="siteId">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header="site_id">
+                        Site ID
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.site_id }}
+                    </mat-cell>
+                </ng-container>
 
-            <!-- site name column -->
-            <ng-container matColumnDef="siteName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header="site_name">
-                    Name
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.site_name }}
-                </mat-cell>
-            </ng-container>
+                <!-- site name column -->
+                <ng-container matColumnDef="siteName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header="site_name">
+                        Name
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.site_name }}
+                    </mat-cell>
+                </ng-container>
 
-            <!-- site description column -->
-            <ng-container matColumnDef="siteDesc">
-                <mat-header-cell style="margin-right: 25px" *matHeaderCellDef>
-                    Site Description
-                </mat-header-cell>
-                <mat-cell style="margin-right: 25px" *matCellDef="let element">
-                    {{ element.site_description }}
-                </mat-cell>
-            </ng-container>
+                <!-- site description column -->
+                <ng-container matColumnDef="siteDesc">
+                    <mat-header-cell *matHeaderCellDef>
+                        Site Description
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.site_description }}
+                    </mat-cell>
+                </ng-container>
 
-            <!-- site state column -->
-            <ng-container matColumnDef="state">
-                <mat-header-cell *matHeaderCellDef mat-sort-header="state">
-                    State
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.state }}
-                </mat-cell>
-            </ng-container>
+                <!-- site state column -->
+                <ng-container matColumnDef="state">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header="state">
+                        State
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.state }}
+                    </mat-cell>
+                </ng-container>
 
-            <!-- site city column -->
-            <ng-container matColumnDef="city">
-                <mat-header-cell *matHeaderCellDef mat-sort-header="city">
-                    City
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.city }}
-                </mat-cell>
-            </ng-container>
+                <!-- site city column -->
+                <ng-container matColumnDef="city">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header="city">
+                        City
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.city }}
+                    </mat-cell>
+                </ng-container>
 
-            <!-- latitude column -->
-            <ng-container matColumnDef="latitude">
-                <mat-header-cell *matHeaderCellDef> Latitude </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.latitude_dd }}
-                </mat-cell>
-            </ng-container>
+                <!-- latitude column -->
+                <ng-container matColumnDef="latitude">
+                    <mat-header-cell *matHeaderCellDef> Latitude </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.latitude_dd }}
+                    </mat-cell>
+                </ng-container>
 
-            <!-- longitude Column -->
-            <ng-container matColumnDef="longitude">
-                <mat-header-cell *matHeaderCellDef> Longitude </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.longitude_dd }}
-                </mat-cell>
-            </ng-container>
+                <!-- longitude Column -->
+                <ng-container matColumnDef="longitude">
+                    <mat-header-cell *matHeaderCellDef> Longitude </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.longitude_dd }}
+                    </mat-cell>
+                </ng-container>
 
-            <!-- waterbody Column -->
-            <ng-container matColumnDef="waterbody">
-                <mat-header-cell *matHeaderCellDef mat-sort-header="waterbody">
-                    Waterbody
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.waterbody }}
-                </mat-cell>
-            </ng-container>
+                <!-- waterbody Column -->
+                <ng-container matColumnDef="waterbody">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header="waterbody">
+                        Waterbody
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.waterbody }}
+                    </mat-cell>
+                </ng-container>
 
-            <!-- waterbody Column -->
-            <ng-container matColumnDef="permHouse">
-                <mat-header-cell
-                    *matHeaderCellDef
-                    mat-sort-header="is_permanent_housing_installed"
-                >
-                    Permanent Housing?
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.is_permanent_housing_installed }}
-                </mat-cell>
-            </ng-container>
+                <!-- waterbody Column -->
+                <ng-container matColumnDef="permHouse">
+                    <mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header="is_permanent_housing_installed"
+                    >
+                        Permanent Housing?
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.is_permanent_housing_installed }}
+                    </mat-cell>
+                </ng-container>
 
-            <mat-header-row
-                *matHeaderRowDef="displayedColumns"
-            ></mat-header-row>
-            <mat-row
-                *matRowDef="let row; columns: displayedColumns"
-                (click)="openDetailsDialog(row)"
-                class="results-row"
-            ></mat-row>
-        </mat-table>
+                <mat-header-row
+                    *matHeaderRowDef="displayedColumns"
+                ></mat-header-row>
+                <mat-row
+                    *matRowDef="let row; columns: displayedColumns"
+                    (click)="openDetailsDialog(row)"
+                    class="results-row"
+                ></mat-row>
+            </table>
+        </div>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
     </div>
 </mat-expansion-panel>

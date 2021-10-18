@@ -10,6 +10,7 @@ import { throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { Event } from '@interfaces/event';
+import { Sitefullsensors } from '@interfaces/sitefullsensors';
 import { APP_UTILITIES } from '@app/app.utilities';
 
 @Injectable({
@@ -19,7 +20,7 @@ export class SensorService {
     constructor(private httpClient: HttpClient) {}
 
     // retrieve all sensors for a single site
-    public getSiteFullInstruments(siteID): Observable<Event> {
+    public getSiteFullInstruments(siteID): Observable<Sitefullsensors[]> {
         return this.httpClient
             .get(
                 APP_SETTINGS.SITES_URL +
