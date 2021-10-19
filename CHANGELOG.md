@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Minimized button moved above map on mobile screen sizes
 -   Results and result modal mobile responsiveness
 -   Bug in consistently populating results table
+-   Streamgage markers removed from map when Clear Filters button is clicked
 
 ## [v0.5.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.5.0) - 2021-06-10
 
