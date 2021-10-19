@@ -1,84 +1,105 @@
 <h2 mat-dialog-title>
     <mat-icon>sensors</mat-icon>
     {{ data.site_name }}
+        <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <mat-dialog-content>
     <div *ngIf="sensorDataSource">
-        <table
-            mat-table
-            id="siteInfoTable"
-            [dataSource]="sensorDataSource"
-            class="mat-elevation-z8"
-            matSort
-        >
-            <!-- site id column -->
-            <ng-container matColumnDef="Deployment Type">
-                <th mat-header-cell *matHeaderCellDef>Deployment Type</th>
-                <td mat-cell *matCellDef="let sensor">
-                    {{ sensor.deploymentType }}
-                </td>
-            </ng-container>
-
-            <!-- site name column -->
-            <ng-container matColumnDef="Event">
-                <th mat-header-cell *matHeaderCellDef>Event</th>
-                <td mat-cell *matCellDef="let sensor">
-                    {{ sensor.eventName }}
-                </td>
-            </ng-container>
-
-            <!-- site description column -->
-            <ng-container matColumnDef="Housing Type">
-                <th
-                    mat-header-cell
-                    style="margin-right: 25px"
-                    *matHeaderCellDef
+        <div id="progress" *ngIf="sensorData === undefined; else displayContents">
+            <mat-spinner style="margin:0 auto;" mode="indeterminate" diameter="20"></mat-spinner>
+        </div>
+        <ng-template #displayContents>
+            <div *ngIf="sensorData.length > 0; else noSensorModal">
+                <table
+                    mat-table
+                    id="siteInfoTable"
+                    [dataSource]="sensorDataSource"
+                    class="mat-elevation-z8"
+                    matSort
                 >
-                    Housing Type
-                </th>
-                <td
-                    mat-cell
-                    style="margin-right: 25px"
-                    *matCellDef="let sensor"
-                >
-                    {{ sensor.housingType }}
-                </td>
-            </ng-container>
 
-            <!-- site state column -->
-            <ng-container matColumnDef="Status">
-                <th mat-header-cell *matHeaderCellDef>Status</th>
-                <td mat-cell *matCellDef="let sensor">
-                    {{ sensor.instrument_status }}
-                </td>
-            </ng-container>
+                    <!-- site name column -->
+                    <ng-container matColumnDef="Event">
+                        <th mat-header-cell *matHeaderCellDef>Event</th>
+                        <td mat-cell *matCellDef="let sensor">
+                            {{ sensor.eventName }}
+                        </td>
+                    </ng-container>
 
-            <!-- site city column -->
-            <ng-container matColumnDef="Location Description">
-                <th mat-header-cell *matHeaderCellDef>Location Description</th>
-                <td mat-cell *matCellDef="let sensor">
-                    {{ sensor.location_description }}
-                </td>
-            </ng-container>
-            <!-- site city column -->
-            <ng-container matColumnDef="Sensor Type">
-                <th mat-header-cell *matHeaderCellDef>Sensor Type</th>
-                <td mat-cell *matCellDef="let sensor">
-                    {{ sensor.sensorType }}
-                </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr
-                mat-row
-                *matRowDef="let row; columns: displayedColumns"
-                class="results-row"
-            ></tr>
-        </table>
+                    <!-- site city column -->
+                    <ng-container matColumnDef="Location Description">
+                        <th mat-header-cell *matHeaderCellDef>Location Description</th>
+                        <td mat-cell *matCellDef="let sensor">
+                            {{ sensor.location_description }}
+                        </td>
+                    </ng-container>
+
+                    <!-- site id column -->
+                    <ng-container matColumnDef="Deployment Type">
+                        <th mat-header-cell *matHeaderCellDef>Deployment Type</th>
+                        <td mat-cell *matCellDef="let sensor">
+                            {{ sensor.deploymentType }}
+                        </td>
+                    </ng-container>
+
+                    <!-- site description column -->
+                    <ng-container matColumnDef="Housing Type">
+                        <th
+                            mat-header-cell
+                            style="margin-right: 25px"
+                            *matHeaderCellDef
+                        >
+                            Housing Type
+                        </th>
+                        <td
+                            mat-cell
+                            style="margin-right: 25px"
+                            *matCellDef="let sensor"
+                        >
+                            {{ sensor.housingType }}
+                        </td>
+                    </ng-container>
+
+                    <!-- site city column -->
+                    <ng-container matColumnDef="Sensor Type">
+                        <th mat-header-cell *matHeaderCellDef>Sensor Type</th>
+                        <td mat-cell *matCellDef="let sensor">
+                            {{ sensor.sensorType }}
+                        </td>
+                    </ng-container>
+
+                    <!-- site state column -->
+                    <ng-container matColumnDef="Status">
+                        <th mat-header-cell *matHeaderCellDef>Status</th>
+                        <td mat-cell 
+                            style="margin-right: 25px"
+                            *matCellDef="let sensor"
+                        >
+                            <mat-icon class="deployed-icon" *ngIf="sensor.instrument_status === 'Deployed'">check_circle</mat-icon>
+                            {{ sensor.instrument_status }}
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr
+                        mat-row
+                        *matRowDef="let row; columns: displayedColumns"
+                        class="results-row"
+                    ></tr>
+                </table>
+            </div>
+            <ng-template #noSensorModal>
+                <div id="noSensorContainer">
+                    <div class="no-sensor-content"><mat-icon>report_problem</mat-icon></div>
+                    <div class="no-sensor-content"><p>No sensor data available for this site</p></div>
+                </div>
+            </ng-template>
+        </ng-template>
     </div>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions align="end">
     <div class="detail-section-buttons centered">
-        <button mat-button mat-dialog-close aria-label="Cancel">Cancel</button>
+        <button mat-button mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
         <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
     </div>
 </mat-dialog-actions>
