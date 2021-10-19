@@ -206,6 +206,7 @@ export class MapComponent implements OnInit {
     supplementaryLayers;
 
     Highcharts: typeof Highcharts = Highcharts;
+    chartOptions: Highcharts.Options = {};
 
     public mapFilterForm: FormGroup;
 
@@ -1256,7 +1257,7 @@ export class MapComponent implements OnInit {
                         .openPopup()
                 }
             }else{
-                let chartOptions = Highcharts.setOptions({
+                this.chartOptions = {
                     title: {
                     text:
                         "NWIS Site " +
@@ -1301,7 +1302,7 @@ export class MapComponent implements OnInit {
                         },
                     },
                     ],
-                });
+                };
                 exporting(Highcharts);
                 //Convert HTML element to string to add into graphContainer div
                 let graphHTML = document.getElementById('graphDiv').outerHTML;
@@ -1317,7 +1318,7 @@ export class MapComponent implements OnInit {
                     .bindPopup(popupContent)
                     .openPopup()
                 //Create chart and render to graphDiv
-                new Highcharts.Chart('graphDiv', chartOptions)
+                new Highcharts.Chart('graphDiv', this.chartOptions)
                 if(document.getElementById('graphContainer') !== null){
                     document.getElementById('graphContainer').style.display = 'block';
                 }
