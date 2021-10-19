@@ -30,7 +30,12 @@
                     <ng-container matColumnDef="Location Description">
                         <th mat-header-cell *matHeaderCellDef>Location Description</th>
                         <td mat-cell *matCellDef="let sensor">
-                            {{ sensor.location_description }}
+                            <div *ngIf="sensor.location_description === undefined; else displayLocation">
+                                N/A
+                            </div>
+                            <ng-template #displayLocation>
+                                {{ sensor.location_description }}
+                            </ng-template>
                         </td>
                     </ng-container>
 
