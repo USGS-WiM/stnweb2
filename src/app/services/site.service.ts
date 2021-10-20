@@ -65,7 +65,37 @@ export class SiteService {
         );
     }
 
-    //
+    //Get single site by ID
+    public getSingleSite(siteID: string): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSingleSite response received' //: ' +
+                        // JSON.stringify(response)
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSingleSite', []))
+            );
+    }
+
+    //Get housing for a single site
+    public getSiteHousing(siteID: string): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/siteHousings.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSiteHousing response received' //: ' +
+                        // JSON.stringify(response)
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSiteHousing', []))
+            );
+    }
 
     // Markers for All Sites Layers
     public allSiteMarkers = new L.markerClusterGroup({

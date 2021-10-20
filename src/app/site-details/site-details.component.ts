@@ -5,6 +5,7 @@ import {
     ParamMap,
     NavigationEnd,
 } from '@angular/router';
+import { SiteService } from '@services/site.service';
 
 @Component({
     selector: 'app-site-details',
@@ -12,11 +13,40 @@ import {
     styleUrls: ['./site-details.component.scss'],
 })
 export class SiteDetailsComponent implements OnInit {
-    constructor(private route: ActivatedRoute) {}
+    private siteID: string;
+    private site;
+    private siteHousing;
+
+    displayedColumns: string[] = [
+        'HousingType',
+        'HousingLength',
+        'HousingMaterial',
+        'Amount',
+        'Notes',
+    ];
+
+    constructor(
+        private route: ActivatedRoute,
+        public siteService: SiteService
+    ) {}
 
     ngOnInit(): void {
-        // this.route.paramMap.subscribe((params) => {
-        //     // request the site details here. the params var will contain the ID extracted from the URL.
-        // });
+        this.siteID = this.route.snapshot.params.id;
+        console.log(this.siteID)
+
+        this.siteService
+            .getSingleSite(this.siteID)
+            .subscribe((results) => {
+                this.site = results;
+                console.log(this.site)
+            });
+
+        // Get data for housing type table
+        this.siteService
+            .getSiteHousing(this.siteID)
+            .subscribe((results) => {
+                this.siteHousing = results;
+                console.log(this.siteHousing)
+            });
     }
 }

@@ -1,1 +1,282 @@
-<p>site-details works!</p>
+<div id="siteDetailsContainer">
+
+    <mat-accordion multi="true">
+        <!-- Site ID -->
+        <mat-expansion-panel hideToggle expanded="true">
+            <mat-expansion-panel-header class="panel-headers">
+                <mat-panel-title *ngIf="site !== undefined">
+                    Site {{site.site_no}} - For All Events
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="table-container">
+                <div class="outer-content" *ngIf="site !== undefined">
+                    <div class="cell-container">
+                        <p class="content-left">Site Description</p>
+                        <p class="content-right" *ngIf="site.site_description !== '' && site.site_description !== undefined; else nullSiteDesc">{{site.site_description}}</p>
+                        <ng-template #nullSiteDesc><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Created By</p>
+                        <p class="content-right">Created By</p>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Waterbody</p>
+                        <p class="content-right" *ngIf="site.waterbody !== '' && site.waterbody !== undefined; else nullWaterbody">{{site.waterbody}}</p>
+                        <ng-template #nullWaterbody><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Drainage Area</p>
+                        <p class="content-right" *ngIf="site.drainage_area_sqmi !== '' && site.drainage_area_sqmi !== undefined; else nullDrainage">{{site.drainage_area_sqmi}}</p>
+                        <ng-template #nullDrainage><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Station ID (USGS)</p>
+                        <p class="content-right" *ngIf="site.usgs_sid !== '' && site.usgs_sid !== undefined; else nullUSGS">{{site.usgs_sid}}</p>
+                        <ng-template #nullUSGS><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Station ID (NOAA)</p>
+                        <p class="content-right" *ngIf="site.noaa_sid !== '' && site.noaa_sid !== undefined; else nullNOAA">{{site.noaa_sid}}</p>
+                        <ng-template #nullNOAA><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Station ID (Other)</p>
+                        <p class="content-right" *ngIf="site.other_sid !== '' && site.noaa_sid !== undefined; else nullOther">{{site.other_sid}}</p>
+                        <ng-template #nullOther><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                </div>
+            </div>
+            <div id="siteIDMap">
+                Map placeholder
+            </div>
+        </mat-expansion-panel>
+        <!-- Location Information -->
+        <mat-expansion-panel hideToggle expanded="true">
+            <mat-expansion-panel-header class="panel-headers">
+                <mat-panel-title>
+                    Location Information
+                </mat-panel-title> 
+            </mat-expansion-panel-header> 
+            <div class="table-container">
+                <div class="outer-content" *ngIf="site !== undefined">
+                    <div class="cell-container">
+                        <p class="content-left">Address</p>
+                        <p class="content-right" *ngIf="site.address !== '' && site.address !== undefined; else nullAddress">{{site.address}}</p>
+                        <ng-template #nullAddress><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">City</p>
+                        <p class="content-right" *ngIf="site.city !== '' && site.city !== undefined; else nullCity">{{site.city}}</p>
+                        <ng-template #nullCity><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">State</p>
+                        <p class="content-right" *ngIf="site.state !== '' && site.state !== undefined; else nullState">{{site.state}}</p>
+                        <ng-template #nullState><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">County</p>
+                        <p class="content-right" *ngIf="site.county !== '' && site.county !== undefined; else nullCounty">{{site.county}}</p>
+                        <ng-template #nullCounty><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Zip</p>
+                        <p class="content-right" *ngIf="site.zip !== '' && site.zip !== undefined; else nullZip">{{site.zip}}</p>
+                        <ng-template #nullZip><p class="content-right">Not Specified</p></ng-template> 
+                    </div>
+                </div>
+            </div>
+            <div class="table-container">
+                <div class="outer-content" *ngIf="site !== undefined">
+                    <div class="cell-container">
+                        <p class="content-left">Latitude</p>
+                        <p class="content-right" *ngIf="site.latitude_dd !== '' && site.latitude_dd !== undefined; else nullLat">{{site.latitude_dd.toFixed(2)}}</p>
+                        <ng-template #nullLat><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Longitude</p>
+                        <p class="content-right" *ngIf="site.longitude_dd !== '' && site.longitude_dd !== undefined; else nullLon">{{site.longitude_dd.toFixed(2)}}</p>
+                        <ng-template #nullLon><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Horizontal Datum</p>
+                        <p class="content-right" *ngIf="site.hdatum_id !== '' && site.hdatum_id !== undefined; else nullHdatum">{{site.hdatum_id}}</p>
+                        <ng-template #nullHdatum><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Collection Method</p>
+                        <p class="content-right" *ngIf="site.hcollect_method_id !== '' && site.hcollect_method_id !== undefined; else nullHcollect">{{site.hcollect_method_id}}</p>
+                        <ng-template #nullHcollect><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+        <!-- Site Housing -->
+        <mat-expansion-panel hideToggle expanded="true">
+            <mat-expansion-panel-header class="panel-headers">
+                <mat-panel-title>
+                    Site Housing
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div id="tableContainer" *ngIf="site !== undefined && siteHousing !== undefined; else noTable">
+                <table *ngIf="siteHousing.length > 0; else noTable"
+                    mat-table
+                    id="siteHousingTable"
+                    [dataSource]="siteHousing"
+                    class="mat-elevation-z5"
+                    matSort
+                >
+
+                    <!-- site name column -->
+                    <ng-container matColumnDef="HousingType">
+                        <th mat-header-cell *matHeaderCellDef>Housing Type</th>
+                        <td mat-cell *matCellDef="let housing">
+                            <div *ngIf="housing.housing_type_id === '' || housing.housing_type_id === undefined; else displayHousingType">
+                                Not Specified
+                            </div>
+                            <ng-template #displayHousingType>
+                                {{ housing.housing_type_id }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- site city column -->
+                    <ng-container matColumnDef="HousingLength">
+                        <th mat-header-cell *matHeaderCellDef>Housing Length</th>
+                        <td mat-cell *matCellDef="let housing">
+                            <div *ngIf="housing.length === '' || housing.length === undefined; else displayHousingLength">
+                                Not Specified
+                            </div>
+                            <ng-template #displayHousingLength>
+                                {{ housing.length }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- site id column -->
+                    <ng-container matColumnDef="HousingMaterial">
+                        <th mat-header-cell *matHeaderCellDef>Housing Material</th>
+                        <td mat-cell *matCellDef="let housing">
+                            <div *ngIf="housing.material === '' || housing.material === undefined; else displayHousingMaterial">
+                                Not Specified
+                            </div>
+                            <ng-template #displayHousingMaterial>
+                                {{ housing.material }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- site description column -->
+                    <ng-container matColumnDef="Amount">
+                        <th
+                            mat-header-cell
+                            style="margin-right: 25px"
+                            *matHeaderCellDef
+                        >
+                            Amount
+                        </th>
+                        <td
+                            mat-cell
+                            style="margin-right: 25px"
+                            *matCellDef="let housing"
+                        >
+                            <div *ngIf="housing.amount === '' || housing.amount === undefined; else displayAmount">
+                                Not Specified
+                            </div>
+                            <ng-template #displayAmount>
+                                {{ housing.amount }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- site city column -->
+                    <ng-container matColumnDef="Notes">
+                        <th mat-header-cell *matHeaderCellDef>Notes</th>
+                        <td mat-cell *matCellDef="let housing">
+                            <div *ngIf="housing.notes === '' || housing.notes === undefined; else displayNotes">
+                                Not Specified
+                            </div>
+                            <ng-template #displayNotes>
+                                {{ housing.notes }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr
+                        mat-row
+                        *matRowDef="let row; columns: displayedColumns"
+                        class="results-row"
+                    ></tr>
+                </table>
+            </div>
+            <ng-template #noTable>
+                <p id="tableContainer">No housing type information available for this site.</p>
+            </ng-template>
+            <div class="table-container">
+                <div class="outer-content" *ngIf="site !== undefined">
+                    <div class="cell-container">
+                        <p class="content-left">Network Type</p>
+                        <p class="content-right" *ngIf="site.network_type_site.length > 0 && site.network_type_site !== undefined; else nullNetworkType">{{site.network_type_site}}</p>
+                        <ng-template #nullNetworkType><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Network</p>
+                        <p class="content-right" *ngIf="site.network_name_site.length > 0 && site.network_name_site !== undefined; else nullNetwork">{{site.network_name_site}}</p>
+                        <ng-template #nullNetwork><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Zone</p>
+                        <p class="content-right" *ngIf="site.zone !== '' && site.zone !== undefined; else nullZone">{{site.zone}}</p>
+                        <ng-template #nullZone><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Sensor Permissions</p>
+                        <p class="content-right">Sensor Permissions</p>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Permanent Housing</p>
+                        <p class="content-right" *ngIf="site.is_permanent_housing_installed !== '' && site.is_permanent_housing_installed !== undefined; else nullPermHousing">{{site.is_permanent_housing_installed}}</p>
+                        <ng-template #nullPermHousing><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                </div>
+            </div>
+            <div class="table-container">
+                <div class="outer-content" *ngIf="site !== undefined">
+                    <div class="cell-container">
+                        <p class="content-left">Land Owner Contact</p>
+                        <p class="content-right" *ngIf="site.landownercontact_id !== '' && site.landownercontact_id !== undefined; else nullLandowner">{{site.landownercontact_id}}</p>
+                        <ng-template #nullLandowner><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Safety Notes</p>
+                        <p class="content-right" *ngIf="site.safety_notes !== '' && site.safety_notes !== undefined; else nullSafetyNotes">{{site.safety_notes}}</p>
+                        <ng-template #nullSafetyNotes><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                </div> 
+            </div>
+        </mat-expansion-panel>
+        <!-- Additional Information -->
+        <mat-expansion-panel hideToggle expanded="true">
+            <mat-expansion-panel-header class="panel-headers">
+                <mat-panel-title>
+                    Additional Information
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="table-container">
+                <div class="outer-content" *ngIf="site !== undefined">
+                    <div class="cell-container">
+                        <p class="content-left">Internal Notes</p>
+                        <p class="content-right" *ngIf="site.site_notes !== '' && site.site_notes !== undefined; else nullSiteNotes">{{site.site_notes}}</p>
+                        <ng-template #nullSiteNotes><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Permission Granted</p>
+                        <p class="content-right" *ngIf="site.access_granted !== '' && site.access_granted !== undefined; else nullPermission">{{site.access_granted}}</p>
+                        <ng-template #nullPermission><p class="content-right">Not Specified</p></ng-template>
+                    </div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+</div>

@@ -8,6 +8,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {RouterModule} from '@angular/router';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -70,6 +71,7 @@ import { FilterResultsComponent } from '@app/filter-results/filter-results.compo
 import { FilterComponent } from '@app/filter/filter.component';
 import { MatOption } from '@angular/material/core';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+import { Console } from 'console';
 
 @Component({
     selector: 'app-map',
@@ -201,6 +203,8 @@ export class MapComponent implements OnInit {
 
     layerToggles;
     searchControl;
+
+    siteID;
 
     //for all map layers that aren't basemaps
     supplementaryLayers;
@@ -829,6 +833,14 @@ export class MapComponent implements OnInit {
             this.queryStreamGageGraph(e);
         })
 
+        this.siteService.siteMarkers.on('click', (e) => {
+            this.addRouterLink(e);
+        })
+
+        this.siteService.allSiteMarkers.on('click', (e) => {
+            this.addRouterLink(e);
+        })
+
         //Get the value of the current zoom
         this.map.on('zoomend dragend', () => {
             this.currentZoom = this.map.getZoom();
@@ -1349,10 +1361,8 @@ export class MapComponent implements OnInit {
                     let lat = Number(site.latitude_dd);
                     let long = Number(site.longitude_dd);
                     let popupContent =
-                        '<h3>' +
-                        '<span class="popupLabel"><b>Site Identifier</b>:</span> ' +
-                        site.site_name +
-                        '</h3>' +
+                        '<div id="routerLinkDiv"><h3><span class="popup-title">Site Identifier: </span>' + 
+                        '</h3></div>' +
                         '<span class="popupLabel"><b>State</b>:</span> ' +
                         site.state +
                         '<br/>' +
@@ -1399,9 +1409,10 @@ export class MapComponent implements OnInit {
 
                         //put all the site markers in the same layer group
                         if (layerType === this.siteService.siteMarkers) {
-                            L.marker([lat, long], { icon: myIcon })
+                            let marker = L.marker([lat, long], { icon: myIcon })
                                 .bindPopup(popupContent)
                                 .addTo(layerType);
+                            marker.data = { name: site.site_name, id: site.site_id };
                         }
                         //Make circle markers for the All STN Sites layer
                         if (
@@ -1409,12 +1420,14 @@ export class MapComponent implements OnInit {
                             layerType ===
                                 this.siteService.manyFilteredSitesMarkers
                         ) {
-                            L.marker([lat, long], {
+                            let marker = L.marker([lat, long], {
                                 icon: myIcon,
                                 iconSize: 32,
                             })
                                 .bindPopup(popupContent)
                                 .addTo(layerType);
+
+                            marker.data = { name: site.site_name, id: site.site_id };
                         }
                     }
                 }
@@ -1464,6 +1477,27 @@ export class MapComponent implements OnInit {
                 }
             }
         }
+    }
+
+    addRouterLink(e){
+        let data = e.layer.data;
+        this.siteID = data.id;
+        console.log(this.siteID)
+        let siteRouterLink;
+        let routerLinkDiv;
+
+        let origSiteRouter = document.querySelector("#siteRouterLink");
+        if (document.querySelector("#clonedSiteRouter") === null){
+            siteRouterLink = origSiteRouter.cloneNode(true) as HTMLElement;
+            siteRouterLink.id = "clonedSiteRouter";
+            routerLinkDiv = document.querySelector("#routerLinkDiv h3");
+        }else{
+            siteRouterLink = document.querySelector("#clonedSiteRouter");
+            routerLinkDiv = document.querySelectorAll("#routerLinkDiv h3")[1];
+        }
+        siteRouterLink.innerText = data.name;
+        siteRouterLink.href = "/Site/" + this.siteID + '/SiteDashboard';
+        routerLinkDiv.appendChild(siteRouterLink);
     }
 
     public clearMapFilterForm(): void {
