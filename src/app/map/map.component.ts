@@ -8,7 +8,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {RouterModule} from '@angular/router';
+import {RouterModule, Router} from '@angular/router';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -348,7 +348,8 @@ export class MapComponent implements OnInit {
         public streamgageService: StreamgageService,
         public filtersService: FiltersService,
         private displayValuePipe: DisplayValuePipe,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        private router: Router,
     ) {
         this.eventTypes$ = this.eventTypeService.eventTypes$;
 
@@ -831,14 +832,6 @@ export class MapComponent implements OnInit {
 
         this.streamgageService.streamGageMarkers.on('click', (e) => {
             this.queryStreamGageGraph(e);
-        })
-
-        this.siteService.siteMarkers.on('click', (e) => {
-            this.addRouterLink(e);
-        })
-
-        this.siteService.allSiteMarkers.on('click', (e) => {
-            this.addRouterLink(e);
         })
 
         //Get the value of the current zoom
@@ -1477,14 +1470,22 @@ export class MapComponent implements OnInit {
                 }
             }
         }
+
+        this.siteService.siteMarkers.on('click', (e) => {
+            this.addRouterLink(e);
+        })
+
+        this.siteService.allSiteMarkers.on('click', (e) => {
+            this.addRouterLink(e);
+        })
     }
 
     addRouterLink(e){
         let data = e.layer.data;
         this.siteID = data.id;
-        console.log(this.siteID)
         let siteRouterLink;
         let routerLinkDiv;
+        let self = this;
 
         let origSiteRouter = document.querySelector("#siteRouterLink");
         if (document.querySelector("#clonedSiteRouter") === null){
@@ -1496,8 +1497,10 @@ export class MapComponent implements OnInit {
             routerLinkDiv = document.querySelectorAll("#routerLinkDiv h3")[1];
         }
         siteRouterLink.innerText = data.name;
-        siteRouterLink.href = "/Site/" + this.siteID + '/SiteDashboard';
         routerLinkDiv.appendChild(siteRouterLink);
+        siteRouterLink.onclick = function(){
+            self.router.navigateByUrl('/Site/' + self.siteID + '/SiteDashboard');
+        }
     }
 
     public clearMapFilterForm(): void {
@@ -1676,6 +1679,8 @@ export class MapComponent implements OnInit {
                         }
                         this.getFilterResults(validSites);
                     });
+
+                this.siteService.setCurrentEvent(eventId);
                 // Reload NOAA Tide and Current Stations if filters are changed
                 this.eventService.getEvent(eventId).toPromise().then((result) => {
                     // If the event is changed, use event date range in popup

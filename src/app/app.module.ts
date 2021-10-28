@@ -60,6 +60,7 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { ResultDetailsComponent } from './result-details/result-details.component';
 import { SensorService } from './services/sensor.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DetailsDialogComponent } from './details-dialog/details-dialog.component';
 
 @NgModule({
     declarations: [
@@ -77,6 +78,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         BulkHwmComponent,
         HwmUploadComponent,
         ResultDetailsComponent,
+        DetailsDialogComponent,
     ],
     imports: [
         BrowserModule,

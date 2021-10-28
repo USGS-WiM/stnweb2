@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { catchError, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
@@ -18,7 +18,12 @@ import 'leaflet';
     providedIn: 'root',
 })
 export class SiteService {
-    constructor(private httpClient: HttpClient) {}
+    // public currentEvent;
+    private event = new BehaviorSubject<number>(0);
+    currentEvent = this.event.asObservable();
+
+    constructor(private httpClient: HttpClient) {
+    }
 
     //private eventSitesSubject: Subject<any>;
     // public get eventSites(): Observable<any> {
@@ -94,6 +99,377 @@ export class SiteService {
                     return response;
                 }),
                 catchError(this.handleError<any>('getSiteHousing', []))
+            );
+    }
+
+    //Get horizontal datum lookup
+    public getHDatum(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/HorizontalDatums.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHDatum response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHDatum', []))
+            );
+    }
+
+    //Get horizontal collection method lookup
+    public getHCollectionMethod(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/HorizontalMethods.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHCollectionMethod response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHCollectionMethod', []))
+            );
+    }
+
+    //Get housing type
+    public getHousingType(housing_type_id): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/HousingTypes/' + housing_type_id + '.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHousingType response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHousingType', []))
+            );
+    }
+
+    //Get network type
+    public getNetworkType(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/NetworkTypes.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getNetworkType response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getNetworkType', []))
+            );
+    }
+
+    //Get network name
+    public getNetworkName(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/NetworkNames.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getNetworkName response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getNetworkName', []))
+            );
+    }
+
+    //Get landowner contact
+    public getLandownerContact(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/LandOwner.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getLandownerContact response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getLandownerContact', []))
+            );
+    }
+
+    //Get member name
+    public getMemberName(member_id): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/Members/' + member_id + '.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getMemberName response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getMemberName', []))
+            );
+    }
+
+    //Get site events
+    public getSiteEvents(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'Events.json?Site=' + siteID, {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSiteEvents response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSiteEvents', []))
+            );
+    }
+
+    // Get sensor status types
+    public getStatusTypes(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'StatusTypes.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getStatusTypes response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getStatusTypes', []))
+            );
+    }
+
+    // Get sensor status
+    public getStatus(sensorID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/Instruments/' + sensorID + '/InstrumentStatus.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getStatus response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getStatus', []))
+            );
+    }
+
+    //Get Objective Points
+    public getObjectivePoints(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/ObjectivePoints.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getObjectivePoints response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getObjectivePoints', []))
+            );
+    }
+
+    //Get Site Sensors
+    public getSiteFullInstruments(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/SiteFullInstrumentList.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSiteFullInstruments response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSiteFullInstruments', []))
+            );
+    }
+
+    //Get Site Event Sensors
+    public getSiteEventInstruments(siteID, eventID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/Instruments.json?Event=' + eventID)
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSiteEventInstruments response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSiteEventInstruments', []))
+            );
+    }
+
+    //Get deployment types
+    public getDeploymentTypes(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/DeploymentTypes.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getDeploymentTypes response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getDeploymentTypes', []))
+            );
+    }
+
+    //Get HWMs
+    public getHWM(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/HWMs.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHWM response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHWM', []))
+            );
+    }
+
+    //Get Event HWMs
+    public getEventHWM(siteID, eventID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/EventHWMs.json?Event=' + eventID)
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getEventHWM response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getEventHWM', []))
+            );
+    }
+
+
+    //Get Site Files
+    public getSiteFiles(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/Files.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSiteFiles response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSiteFiles', []))
+            );
+    }
+
+    //Get Site Event Files
+    public getSiteEventFiles(siteID, eventID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/Files.json?Site=' + siteID + '&Event=' + eventID)
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSiteEventFiles response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSiteEventFiles', []))
+            );
+    }
+
+    //Get File Sensors
+    public getFileSensor(fileID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/Files/' + fileID + '/Instrument.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getFileSensor response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getFileSensor', []))
+            );
+    }
+
+    //Get Datum Location Files
+    // public getDatumLocFiles(datumLocID): Observable<any> {
+    //     return this.httpClient
+    //         .get(APP_SETTINGS.API_ROOT + '/ObjectivePoints/' + datumLocID + '/Files.json')
+    //         .pipe(
+    //             tap((response) => {
+    //                 console.log(
+    //                     'getDatumLocFiles response received'
+    //                 );
+    //                 return response;
+    //             }),
+    //             catchError(this.handleError<any>('getDatumLocFiles', []))
+    //         );
+    // }
+
+    //Get Sensor Files
+    // public getSensorFiles(SensorID): Observable<any> {
+    //     return this.httpClient
+    //         .get(APP_SETTINGS.API_ROOT + '/Instruments/' + SensorID + '/Files.json')
+    //         .pipe(
+    //             tap((response) => {
+    //                 console.log(
+    //                     'getSensorFiles response received'
+    //                 );
+    //                 return response;
+    //             }),
+    //             catchError(this.handleError<any>('getSensorFiles', []))
+    //         );
+    // }
+
+    //Get HWM Files
+    // public getHWMFiles(hwmID): Observable<any> {
+    //     return this.httpClient
+    //         .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Files.json')
+    //         .pipe(
+    //             tap((response) => {
+    //                 console.log(
+    //                     'getHWMFiles response received'
+    //                 );
+    //                 return response;
+    //             }),
+    //             catchError(this.handleError<any>('getHWMFiles', []))
+    //         );
+    // }
+
+    //Get Peaks
+    public getPeakSummaryView(siteID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + siteID + '/PeakSummaryView.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getPeakSummaryView response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getPeakSummaryView', []))
+            );
+    }
+
+    public setCurrentEvent(currentEvent: number) {
+        this.event.next(currentEvent);
+    }  
+    
+    //Get site events
+    public getCurrentEvent(): Observable<any> {
+        return this.currentEvent
+            .pipe(
+                tap((response) => {
+                    return response;
+                }),
+                catchError(this.handleError<any>('getCurrentEvent', []))
             );
     }
 
