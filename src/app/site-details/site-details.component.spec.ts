@@ -14,6 +14,9 @@ import { of } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { not } from '@angular/compiler/src/output/output_ast';
 
+declare let L: any;
+import 'leaflet';
+
 describe('SiteDetailsComponent', () => {
     let component: SiteDetailsComponent;
     let fixture: ComponentFixture<SiteDetailsComponent>;
@@ -120,6 +123,19 @@ describe('SiteDetailsComponent', () => {
         expect(peakSpy).toHaveBeenCalled();
     });
 
+    it('if getSingleSite response length = 0, noSiteInfo should be true', () => {
+        const response: any[] = [];
+        // Single site spy
+        spyOn(component.siteService, 'getSingleSite').and.returnValue(
+            of(response)
+        );
+
+        component.getData();
+        fixture.detectChanges();
+        expect(component.site).toEqual(undefined);
+        expect(component.noSiteInfo).toBeTrue;
+    });
+
     it('should call getHDatum and set hdatum to datum name', () => {
         const siteResponse = [{hdatum_id: 4}]
         const response: any[] = [{datum_name: "testDatum", hdatum_id: 4}];
@@ -205,10 +221,93 @@ describe('SiteDetailsComponent', () => {
         expect(component.referenceMarks.length).toEqual(3);
     });
 
+    it('should call getLandownerContact if site has landownercontact_id', () => {
+        const siteResponse = {landownercontact_id: 4};
+        const response = [{fname: "John Smith"}];
+
+        spyOn(component.siteService, 'getSingleSite').and.returnValue(
+            of(siteResponse)
+        );
+
+        let landownerSpy = spyOn(component.siteService, 'getLandownerContact').and.returnValue(
+            of(response)
+        );
+
+        component.getData();
+        fixture.detectChanges();
+        expect(landownerSpy).toHaveBeenCalled();
+        expect(component.landownerContact).toEqual("John Smith");
+    });
+
+    it('should call getMemberName if site has member_id', () => {
+        const siteResponse = {member_id: 4};
+        const response = [{fname: "John", lname: "Smith"}];
+
+        spyOn(component.siteService, 'getSingleSite').and.returnValue(
+            of(siteResponse)
+        );
+
+        let memberSpy = spyOn(component.siteService, 'getMemberName').and.returnValue(
+            of(response)
+        );
+
+        component.getData();
+        fixture.detectChanges();
+        expect(memberSpy).toHaveBeenCalled();
+        expect(component.memberName).toEqual("John Smith");
+    });
+
+    it('peaks should be populated if peak results are returned', () => {
+        const siteResponse = [{site: 4}];
+        const response = [{peak_date: "2020-09-16T16:05:04.931548"}];
+
+        spyOn(component.siteService, 'getSingleSite').and.returnValue(
+            of(siteResponse)
+        );
+
+        let peakSpy = spyOn(component.siteService, 'getPeakSummaryView').and.returnValue(
+            of(response)
+        );
+
+        component.getData();
+        fixture.detectChanges();
+        expect(peakSpy).toHaveBeenCalled();
+        expect(component.peaks.length).toEqual(1);
+        expect(component.peaks[0].peak_date).toEqual("09/16/2020");
+    });
+
+    it('siteHousing should be populated if site housing results are returned', () => {
+        const response = [{housing_type_id: 4}];
+        const housingTypeResponse = {type_name: "bracket"};
+
+        spyOn(component.siteService, 'getSiteHousing').and.returnValue(
+            of(response)
+        );
+
+        spyOn(component.siteService, 'getHousingType').and.returnValue(
+            of(housingTypeResponse)
+        );
+
+        component.getData();
+        fixture.detectChanges();
+        expect(component.siteHousing.length).toEqual(1);
+        expect(component.siteHousing[0].housingType).toEqual("bracket");
+    });
+
     it('should call services for all site info if no event selected', () => {
-        const responseSensor: any[] = [{instrument_status:[{time_stamp: "2020-09-16T16:05:04.931548", status: "deployed"}]}, {instrument_status:[{time_stamp: "2020-09-17T16:05:04.931548", status: "deployed"}]}, {instrument_status:[{time_stamp: "2020-09-16T18:05:04.931548", status: "deployed"}]}];
-        const responseHWM: any[] = [{flag_date: "2020-09-16T25:05:04.931548"}, {flag_date: "2020-09-16T16:05:04.931548"}, {flag_date: "2020-09-15T16:05:04.931548"}]
-        const responseSiteFiles: any[] = []
+        const responseSensor: any[] = [
+            {instrument_status:[{time_stamp: "2020-09-16T16:05:04.931548", status: "deployed"}]}, 
+            {instrument_status:[{time_stamp: "2020-09-17T16:05:04.931548", status: "deployed"}]}, 
+            {instrument_status:[{time_stamp: "2020-09-16T18:05:04.931548", status: "deployed"}]}
+        ];
+        const responseHWM: any[] = [
+            {flag_date: "2020-09-16T25:05:04.931548"}, 
+            {flag_date: "2020-09-16T16:05:04.931548"}, 
+            {flag_date: "2020-09-15T16:05:04.931548"}
+        ]
+        const responseSiteFiles: any[] = [
+            {file_date: "2020-09-16T16:05:04.931548"}
+        ]
         const siteResponse = [{site: 7}]
         const currentEvent = 0;
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
@@ -235,5 +334,214 @@ describe('SiteDetailsComponent', () => {
         expect(component.hwm.length).toEqual(3);
         expect(component.hwm[0].flag_date).toContain("/");
         expect(component.fileLength).toEqual(responseSiteFiles.length);
+    });
+
+    it('should call getSiteFiles and separate values into new arrays for sensor, hwm, site and rm', () => {
+
+        const responseSiteFiles: any[] = [
+            {file_date: "2020-09-16T16:05:04.931548", hwm_id: 1},
+            {file_date: "2020-09-16T16:05:04.931548", objective_point_id: 2},
+            {file_date: "2020-09-16T16:05:04.931548", instrument_id: 3},
+            {file_date: "2020-09-16T16:05:04.931548"},
+        ]
+        const siteResponse = [{site: 7}]
+        const currentEvent = 0;
+        const sensorFileResponse = 1;
+        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+            of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSingleSite').and.returnValue(
+            of(siteResponse)
+        );
+        spyOn(component.siteService, 'getFileSensor').and.returnValue(
+            of(sensorFileResponse)
+        );
+        let siteFilesSpy = spyOn(component.siteService, 'getSiteFiles').and.returnValue(
+            of(responseSiteFiles)
+        );
+        component.getData();
+        fixture.detectChanges();
+        expect(component.siteFiles.length).toEqual(1);
+        expect(component.hwmFiles.length).toEqual(1);
+        expect(component.datumLocFiles.length).toEqual(1);
+        expect(component.sensorFiles.length).toEqual(1);
+        expect(component.sensorFilesDone).toBeTrue;
+        expect(siteFilesSpy).toHaveBeenCalled();
+        expect(component.files[0].file_date).toContain("/");
+        expect(component.files[2].details).not.toEqual(undefined);
+    });
+
+    it('should call services for event site info if an event is selected', () => {
+        const responseSensor: any[] = [
+            {instrument_status:[{time_stamp: "2020-09-16T16:05:04.931548"}]}, 
+            {instrument_status:[{time_stamp: "2020-09-17T16:05:04.931548"}]}, 
+            {instrument_status:[{time_stamp: "2020-09-16T18:05:04.931548"}]}
+        ];
+        const responseHWM: any[] = [
+            {flag_date: "2020-09-16T25:05:04.931548"}, 
+            {flag_date: "2020-09-16T16:05:04.931548"}, 
+            {flag_date: "2020-09-15T16:05:04.931548"}
+        ]
+        const responseSiteFiles: any[] = [
+            {file_date: "2020-09-16T16:05:04.931548"}
+        ]
+        const siteResponse = [{site: 7}]
+        const currentEvent = 4;
+        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+            of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSingleSite').and.returnValue(
+            of(siteResponse)
+        );
+        let siteSensorSpy = spyOn(component.siteService, 'getSiteEventInstruments').and.returnValue(
+            of(responseSensor)
+        );
+        let hwmSpy = spyOn(component.siteService, 'getEventHWM').and.returnValue(
+            of(responseHWM)
+        );
+        let siteFilesSpy = spyOn(component.siteService, 'getSiteFiles').and.returnValue(
+            of(responseSiteFiles)
+        );
+
+        let siteEventFilesSpy = spyOn(component.siteService, 'getSiteEventFiles').and.returnValue(
+            of(responseSiteFiles)
+        );
+        component.getData();
+        fixture.detectChanges();
+        expect(siteSensorSpy).toHaveBeenCalled();
+        expect(component.siteFullInstruments.length).toEqual(3);
+        expect(hwmSpy).toHaveBeenCalled();
+        expect(component.hwm.length).toEqual(3);
+        expect(component.hwm[0].flag_date).toContain("/");
+        expect(siteFilesSpy).toHaveBeenCalled();
+        expect(siteEventFilesSpy).toHaveBeenCalled();
+        expect(component.fileLength).toEqual(responseSiteFiles.length);
+    });
+
+    it('should get deployment and status types if getSiteEventInstruments has length > 0', () => {
+        const responseSensor: any[] = [
+            {deployment_type_id: 4, instrument_id: 4}
+        ];
+        const deploymentResponse: any[] = [
+            {deployment_type_id: 4, method: "test"}
+        ]
+        const statusTypeResponse = [{status_type_id: 4, status: "deployed"}];
+
+        const statusResponse = {status_type_id: 4}
+        
+        const siteResponse = [{site: 7}]
+        const currentEvent = 4;
+        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+            of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSingleSite').and.returnValue(
+            of(siteResponse)
+        );
+        let siteSensorSpy = spyOn(component.siteService, 'getSiteEventInstruments').and.returnValue(
+            of(responseSensor)
+        );
+        let deploymentTypeSpy = spyOn(component.siteService, 'getDeploymentTypes').and.returnValue(
+            of(deploymentResponse)
+        );
+        let statusTypeSpy = spyOn(component.siteService, 'getStatusTypes').and.returnValue(
+            of(statusTypeResponse)
+        );
+
+        let statusSpy = spyOn(component.siteService, 'getStatus').and.returnValue(
+            of(statusResponse)
+        );
+
+        component.getData();
+        fixture.detectChanges();
+        expect(siteSensorSpy).toHaveBeenCalled();
+        expect(component.siteFullInstruments.length).toEqual(1);
+        expect(deploymentTypeSpy).toHaveBeenCalled();
+        expect(component.siteFullInstruments[0].deploymentType).toEqual("test");
+        expect(statusTypeSpy).toHaveBeenCalled();
+        expect(statusSpy).toHaveBeenCalled();
+        expect(component.siteFullInstruments[0].statusType).toEqual("deployed");
+    });
+
+    it('should call getSiteEventFiles and separate values into new arrays for sensor and hwm', () => {
+
+        const responseSiteFiles: any[] = [
+            {file_date: "2020-09-16T16:05:04.931548", hwm_id: 1},
+            {file_date: "2020-09-16T16:05:04.931548", objective_point_id: 2},
+            {file_date: "2020-09-16T16:05:04.931548", instrument_id: 3},
+            {file_date: "2020-09-16T16:05:04.931548"},
+        ]
+        const siteResponse = [{site: 7}]
+        const currentEvent = 4;
+        const sensorFileResponse = 1;
+        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+            of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSingleSite').and.returnValue(
+            of(siteResponse)
+        );
+        spyOn(component.siteService, 'getFileSensor').and.returnValue(
+            of(sensorFileResponse)
+        );
+        let siteEventFilesSpy = spyOn(component.siteService, 'getSiteEventFiles').and.returnValue(
+            of(responseSiteFiles)
+        );
+        component.getData();
+        fixture.detectChanges();
+        expect(component.hwmFiles.length).toEqual(1);
+        expect(component.sensorFiles.length).toEqual(1);
+        expect(component.sensorFilesDone).toBeTrue;
+        expect(siteEventFilesSpy).toHaveBeenCalled();
+        expect(component.files[0].file_date).toContain("/");
+        expect(component.files[2].details).not.toEqual(undefined);
+    });
+
+    it ('toggleSiteMap should change value to true', () => {
+        let mapContainer = document.createElement("div");
+        mapContainer.id = "mapContainer";
+        document.body.appendChild(mapContainer);
+        component.siteMapHidden = false;
+        component.toggleSiteMap();
+        expect(component.siteMapHidden).toBeTrue;
+        document.querySelector("#mapContainer").remove();
+    });
+
+    it ('toggleSiteMap should change value to false', () => {
+        component.map = L.map;
+        let mapContainer = document.createElement("div");
+        mapContainer.id = "mapContainer";
+        document.body.appendChild(mapContainer);
+        component.siteMapHidden = true;
+
+        let createSiteMapSpy = spyOn(component, 'createSiteMap');
+
+        component.toggleSiteMap();
+        expect(component.siteMapHidden).toBeFalse;
+        expect(createSiteMapSpy).not.toHaveBeenCalled();
+        document.querySelector("#mapContainer").remove();
+    });
+
+    it ('toggleSiteMap should call createSiteMap if map has not been initialized', () => {
+        let mapContainer = document.createElement("div");
+        mapContainer.id = "mapContainer";
+        document.body.appendChild(mapContainer);
+        component.siteMapHidden = true;
+
+        let createSiteMapSpy = spyOn(component, 'createSiteMap');
+
+        component.toggleSiteMap();
+        expect(component.siteMapHidden).toBeFalse;
+        expect(createSiteMapSpy).toHaveBeenCalled();
+        document.querySelector("#mapContainer").remove();
+    });
+
+    it ('map should be created when createSiteMap is called', () => {
+        component.site = {latitude_dd: 44.64, longitude_dd: -89.73};
+        let mapContainer = document.createElement("div");
+        mapContainer.id = "mapContainer";
+        document.body.appendChild(mapContainer);
+
+        component.createSiteMap();
+        expect(component.map).not.toBeNull;
+        document.querySelector("#mapContainer").remove();
     });
 });

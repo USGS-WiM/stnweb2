@@ -1,0 +1,79 @@
+.mat-expansion-panel-header {
+    background-color: #03274B;
+}
+
+.mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
+    color: #FFF;
+    background-color: #03274B; 
+}
+
+.mat-expansion-panel-header:hover {
+    background-color: #03274B !important;
+    color: #FFF !important;
+}
+
+.mat-expansion-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
+    color: #FFF;
+    font-weight: 500;
+}
+
+// Tables
+table {
+    width: 100%;
+}
+
+.tableContainer {
+    width: 100%;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.mat-column-FileDate{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-FileName{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-header-cell {
+    font-weight: bold;
+    text-transform: uppercase;
+    color:rgba(0, 0, 0, 0.87);
+    font-size: 12px;
+    vertical-align: middle;
+    background-color: #f7f7f7;
+}
+
+.mat-cell, .mat-header-cell, .mat-footer-cell {
+    overflow: auto;
+}
+
+.content-right {
+    display: table-cell;
+    width: 50%;
+    text-align: left;
+}
+
+.content-left {
+    display: table-cell;
+    width: 50%;
+    padding-right: 5px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.cell-container {
+    display: table-row;
+}
+
+.cell-container p{
+    padding: 5px;
+    font-size: 15px
+}

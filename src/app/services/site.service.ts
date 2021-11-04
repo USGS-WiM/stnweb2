@@ -132,6 +132,36 @@ export class SiteService {
             );
     }
 
+    //Get vertical datum by datum id
+    public getVDatum(vDatumID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/VerticalDatums/'+ vDatumID + '.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getDatum response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getVDatum', []))
+            );
+    }
+
+    //Get vertical collection method by id
+    public getVCollectionMethod(vMethodID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/VerticalMethods/' + vMethodID + '.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getVCollectionMethod response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getVCollectionMethod', []))
+            );
+    }
+
     //Get housing type
     public getHousingType(housing_type_id): Observable<any> {
         return this.httpClient
@@ -228,6 +258,40 @@ export class SiteService {
             );
     }
 
+    //Get site events
+    public getSensorEvents(sensorID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'Instruments/' + sensorID + '/Event.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSensorEvents response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSensorEvents', []))
+            );
+    }
+
+    //Get site events
+    public getHWMEvents(hwmID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'HWMs/' + hwmID + '/Event.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHWMEvents response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHWMEvents', []))
+            );
+    }
+
     // Get sensor status types
     public getStatusTypes(): Observable<any> {
         return this.httpClient
@@ -275,6 +339,51 @@ export class SiteService {
                 }),
                 catchError(this.handleError<any>('getObjectivePoints', []))
             );
+    }
+
+    // Get OP information
+    public getOPInfo(opID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'ObjectivePoints/' + opID + '.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPInfo response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPInfo', []))
+            );
+    }
+
+    //Get OP Type
+    public getOPType(opTypeID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/OPTypes/' + opTypeID + '.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPType response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPType', []))
+            );
+    }
+
+    //Get OP Quality
+    public getOPQuality(opQualityID): Observable<any> {
+    return this.httpClient
+        .get(APP_SETTINGS.API_ROOT + '/ObjectivePointQualities/' + opQualityID + '.json')
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'getOPQuality response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('getOPQuality', []))
+        );
     }
 
     //Get Site Sensors
@@ -398,50 +507,50 @@ export class SiteService {
             );
     }
 
-    //Get Datum Location Files
-    // public getDatumLocFiles(datumLocID): Observable<any> {
-    //     return this.httpClient
-    //         .get(APP_SETTINGS.API_ROOT + '/ObjectivePoints/' + datumLocID + '/Files.json')
-    //         .pipe(
-    //             tap((response) => {
-    //                 console.log(
-    //                     'getDatumLocFiles response received'
-    //                 );
-    //                 return response;
-    //             }),
-    //             catchError(this.handleError<any>('getDatumLocFiles', []))
-    //         );
-    // }
+    // Get Datum Location Files
+    public getDatumLocFiles(datumLocID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/ObjectivePoints/' + datumLocID + '/Files.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getDatumLocFiles response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getDatumLocFiles', []))
+            );
+    }
 
     //Get Sensor Files
-    // public getSensorFiles(SensorID): Observable<any> {
-    //     return this.httpClient
-    //         .get(APP_SETTINGS.API_ROOT + '/Instruments/' + SensorID + '/Files.json')
-    //         .pipe(
-    //             tap((response) => {
-    //                 console.log(
-    //                     'getSensorFiles response received'
-    //                 );
-    //                 return response;
-    //             }),
-    //             catchError(this.handleError<any>('getSensorFiles', []))
-    //         );
-    // }
+    public getSensorFiles(SensorID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/Instruments/' + SensorID + '/Files.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSensorFiles response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSensorFiles', []))
+            );
+    }
 
     //Get HWM Files
-    // public getHWMFiles(hwmID): Observable<any> {
-    //     return this.httpClient
-    //         .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Files.json')
-    //         .pipe(
-    //             tap((response) => {
-    //                 console.log(
-    //                     'getHWMFiles response received'
-    //                 );
-    //                 return response;
-    //             }),
-    //             catchError(this.handleError<any>('getHWMFiles', []))
-    //         );
-    // }
+    public getHWMFiles(hwmID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Files.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHWMFiles response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHWMFiles', []))
+            );
+    }
 
     //Get Peaks
     public getPeakSummaryView(siteID): Observable<any> {
@@ -455,6 +564,149 @@ export class SiteService {
                     return response;
                 }),
                 catchError(this.handleError<any>('getPeakSummaryView', []))
+            );
+    }
+
+    //Get OP Measurements
+    public getOPMeasurements(instrumentStatusID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/InstrumentStatus/' + instrumentStatusID + '/OPMeasurements.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPMeasurements response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPMeasurements', []))
+            );
+    }
+
+    //Get HWM Type
+    public getHWMType(hwmID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Type.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHWMType response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHWMType', []))
+            );
+    }
+
+    //Get HWM Marker
+    public getHWMMarker(hwmID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Marker.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHWMMarker response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHWMMarker', []))
+            );
+    }
+
+    //Get HWM Quality
+    public getHWMQuality(hwmID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Quality.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getHWMQuality response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getHWMQuality', []))
+            );
+    }
+
+    //Get File Type
+    public getFileType(fileTypeID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/FileTypes/' + fileTypeID + '.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getFileType response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getFileType', []))
+            );
+    }
+
+    //Get File Source
+    public getFileSource(sourceID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/Sources/' + sourceID + '/Agencies.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getFileSource response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getFileSource', []))
+            );
+    }
+
+    //Get File Source
+    public getSourceName(sourceID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/Sources/' + sourceID + '.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSourceName response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSourceName', []))
+            );
+    }
+
+    //Get Data File Approval
+    public getApproval(dataFileID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'DataFiles/' + dataFileID + '/Approval.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getSourceName response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getSourceName', []))
+            );
+    }
+
+    //Get Data File Details
+    public getDataFile(dataFileID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'DataFiles/' + dataFileID + '.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getDataFile response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getDataFile', []))
             );
     }
 

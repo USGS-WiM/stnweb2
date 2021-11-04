@@ -4,8 +4,9 @@
 }
 
 .site-title {
-    font-size: 25px;
-    margin-bottom: 10px;
+    font-size: 27px;
+    margin-bottom: 20px;
+    font-weight: bold;
 }
 
 .basic-site-info {
@@ -108,6 +109,13 @@ table {
 }
 
 .mat-column-SerialNumber{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-SensorEvent{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
@@ -248,6 +256,16 @@ table {
     width: 50%;
     padding-right: 5px;
     text-align: right;
+    font-weight: bold;
+}
+
+#landowner {
+    width: 100%;
+    display: table;
+    margin: auto;
+}
+
+#landownerTitle {
     font-weight: bold;
 }
 

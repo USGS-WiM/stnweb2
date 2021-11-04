@@ -6,7 +6,10 @@ import {
     NavigationEnd,
 } from '@angular/router';
 import { SiteService } from '@services/site.service';
-import { DetailsDialogComponent } from '@app/details-dialog/details-dialog.component';
+import { ReferenceMarkDialogComponent } from '@app/reference-mark-dialog/reference-mark-dialog.component';
+import { SensorDialogComponent } from '@app/sensor-dialog/sensor-dialog.component';
+import { HwmDialogComponent } from '@app/hwm-dialog/hwm-dialog.component';
+import { FileDetailsDialogComponent } from '@app/file-details-dialog/file-details-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 declare let L: any;
@@ -56,6 +59,7 @@ export class SiteDetailsComponent implements OnInit {
 
     displayedSensorColumns: string[] = [
         'SerialNumber',
+        'SensorEvent',
         'DeploymentType',
         'SensorStatus',
     ];
@@ -205,11 +209,11 @@ export class SiteDetailsComponent implements OnInit {
                         this.siteService
                         .getSiteFullInstruments(this.siteID)
                         .subscribe((results) => {
+                                let self = this;
                                 this.siteFullInstruments = results;
-                                console.log(this.siteFullInstruments)
+
                                 if(results.length > 0){
                                     this.siteFullInstruments.forEach(function(result){
-                                        console.log(result)
                                         let timestamp = new Date(Math.max(...result.instrument_status.map(e => new Date(e.time_stamp))));
                                         
                                         result.instrument_status.forEach(function(statusType){
@@ -218,6 +222,13 @@ export class SiteDetailsComponent implements OnInit {
                                             if (timestamp.getTime() === time.getTime()){
                                                 result.statusType = statusType.status;
                                             }
+                                        })
+                                        
+                                        // Get event name for sensor using sensor_id
+                                        self.siteService
+                                        .getSensorEvents(result.instrument_id)
+                                        .subscribe((eventResults) => {
+                                            result.eventName = eventResults.event_name;
                                         })
                                     })
                                 }
@@ -235,6 +246,13 @@ export class SiteDetailsComponent implements OnInit {
                                     flagDate = flagDate.split("-");
                                     flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
                                     hwm.flag_date = flagDate;
+
+                                    // Get event name for sensor using sensor_id
+                                    self.siteService
+                                    .getHWMEvents(hwm.hwm_id)
+                                    .subscribe((eventResults) => {
+                                        hwm.eventName = eventResults.event_name;
+                                    })
                                 })
                             }
 
@@ -285,6 +303,13 @@ export class SiteDetailsComponent implements OnInit {
                                                 result.deploymentType = type.method;
                                             }
                                         });
+
+                                        // Get event name for sensor using sensor_id
+                                        self.siteService
+                                        .getSensorEvents(result.instrument_id)
+                                        .subscribe((eventResults) => {
+                                            result.eventName = eventResults.event_name;
+                                        })
                                     });
                                 })
                                 // Status type lookup
@@ -393,9 +418,7 @@ export class SiteDetailsComponent implements OnInit {
                         this.siteService
                             .getLandownerContact(this.siteID)
                             .subscribe((results) => {
-                                if(results.length > 0){
-                                    this.landownerContact = results.fname;
-                                }
+                                this.landownerContact = results;
                             });
                     }
 
@@ -405,7 +428,7 @@ export class SiteDetailsComponent implements OnInit {
                             .getMemberName(this.site.member_id)
                             .subscribe((results) => {
                                 if(results.length > 0){
-                                    this.memberName = results.fname + " " + results.lname;
+                                    this.memberName = results[0].fname + " " + results[0].lname;
                                 }
                                 
                             });
@@ -468,21 +491,87 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
-    openDetailsDialog(row, type): void {
-        let dialogWidth;
-        if (window.matchMedia('(max-width: 768px)').matches) {
-            dialogWidth = '80%';
+    openRefMarkDetailsDialog(row): void {
+        // Format date established
+        if(row.date_established !== undefined && !row.date_established.includes("/")){
+            let estDate = row.date_established.split("T")[0];
+            estDate = estDate.split("-");
+            estDate = estDate[1] + "/" + estDate[2] + "/" + estDate[0];
+            row.date_established = estDate;
         }
-        else {
-            dialogWidth = '30%';
+
+        // Format date recovered
+        if(row.date_recovered !== undefined && !row.date_recovered.includes("/")){
+            let recoveredDate = row.date_recovered.split("T")[0];
+            recoveredDate = recoveredDate.split("-");
+            recoveredDate = recoveredDate[1] + "/" + recoveredDate[2] + "/" + recoveredDate[0];
+            row.date_recovered = recoveredDate;
         }
-        const dialogRef = this.dialog.open(DetailsDialogComponent, {
-            width: dialogWidth,
+
+        const dialogRef = this.dialog.open(ReferenceMarkDialogComponent, {
             data: {
-                row_data: row,
-                type: type
+                row_data: row
             },
         });
         dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openHWMDetailsDialog(row): void {
+        // Format surveyed date
+        if(row.survey_date !== undefined && !row.survey_date.includes("/")){
+            let surveyDate = row.survey_date.split("T")[0];
+            surveyDate = surveyDate.split("-");
+            surveyDate = surveyDate[1] + "/" + surveyDate[2] + "/" + surveyDate[0];
+            row.survey_date = surveyDate;
+        }
+
+        const dialogRef = this.dialog.open(HwmDialogComponent, {
+            data: {
+                row_data: row,
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openSensorDetailsDialog(row): void {
+        // Format dates
+        row.instrument_status.forEach(function(instrument){
+            if(instrument.time_stamp !== undefined && !instrument.time_stamp.includes("/")){
+                let timestamp = instrument.time_stamp.split("T")[0];
+                timestamp = timestamp.split("-");
+                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0];
+                instrument.time_stamp = timestamp;
+            }
+        })
+
+        const dialogRef = this.dialog.open(SensorDialogComponent, {
+            data: {
+                row_data: row
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openPeaksDetailsDialog(row): void {
+        console.log(row)
+    }
+
+    openFileDetailsDialog(row, type): void {
+        // Format photo date
+        if(row.photo_date !== undefined && !row.photo_date.includes("/")){
+            let photoDate = row.photo_date.split("T")[0];
+            photoDate = photoDate.split("-");
+            photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
+            row.photo_date = photoDate;
+        }
+
+        const dialogRef = this.dialog.open(FileDetailsDialogComponent, {
+            data: {
+                row_data: row,
+                type: type,
+                siteInfo: this.site
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {console.log(result)});
     }
 }

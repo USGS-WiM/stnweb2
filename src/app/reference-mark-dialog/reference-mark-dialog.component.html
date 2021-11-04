@@ -1,0 +1,156 @@
+<h2 mat-dialog-title>
+    Reference Mark
+    <!-- <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button> -->
+</h2>
+<mat-dialog-content *ngIf="data.row_data">
+  <!-- Reference Mark Dialog -->
+    <mat-accordion multi="true">
+        <mat-expansion-panel hideToggle expanded="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Reference Mark Information
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="table-container">
+              <div class="outer-content">
+                <div class="cell-container">
+                  <p class="content-left">Name</p>
+                  <p class="content-right" *ngIf="data.row_data.name !== undefined && data.row_data.name !== ''; else nullName">{{data.row_data.name}}</p>
+                  <ng-template #nullName><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Type</p>
+                  <p class="content-right" *ngIf="data.row_data.op_type_id !== undefined && data.row_data.op_type_id !== '' && opType !== undefined && opType !== ''; else nullOPType">{{opType}}</p>
+                  <ng-template #nullOPType><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Description</p>
+                  <p class="content-right" *ngIf="data.row_data.description !== undefined && data.row_data.description !== undefined; else nullDesc">{{data.row_data.description}}</p>
+                  <ng-template #nullDesc><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Latitude</p>
+                  <p class="content-right" *ngIf="data.row_data.latitude_dd !== undefined && data.row_data.latitude_dd !== ''; else nullLat">{{data.row_data.latitude_dd}}</p>
+                  <ng-template #nullLat><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Longitude</p>
+                  <p class="content-right" *ngIf="data.row_data.longitude_dd !== undefined && data.row_data.longitude_dd !== ''; else nullLon">{{data.row_data.longitude_dd}}</p>
+                  <ng-template #nullLon><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Horizontal Datum</p>
+                  <p class="content-right"  *ngIf="data.row_data.hdatum_id !== undefined && data.row_data.hdatum_id !== '' && hdatum !== undefined && hdatum !== ''; else nullHDatum">{{hdatum}}</p>
+                  <ng-template #nullHDatum><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Horizontal Collection Method</p>
+                  <p class="content-right"  *ngIf="data.row_data.hcollect_method_id !== undefined && data.row_data.hcollect_method_id !== '' && hmethod !== '' && hmethod !== undefined; else nullHMethod">{{hmethod}}</p>
+                  <ng-template #nullHMethod><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Elevation</p>
+                  <p class="content-right" *ngIf="data.row_data.elev_ft !== undefined || data.row_data.elev_ft !== ''; else nullElev">{{data.row_data.elev_ft}} ft</p>
+                  <ng-template #nullElev><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Vertical Datum</p>
+                  <p class="content-right"  *ngIf="data.row_data.vdatum_id !== undefined && data.row_data.vdatum_id !== '' && vdatum !== '' && vdatum !== undefined; else nullVDatum">{{vdatum}}</p>
+                  <ng-template #nullVDatum><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Vertical Collection Method</p>
+                  <p class="content-right"  *ngIf="data.row_data.vcollect_method_id !== undefined && data.row_data.vcollect_method_id !== '' && vmethod !== '' && vmethod !== undefined; else nullVMethod">{{vmethod}}</p>
+                  <ng-template #nullVMethod><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Uncertainty</p>
+                  <p class="content-right" *ngIf="data.row_data.uncertainty !== undefined && data.row_data.uncertainty !== '' && data.row_data.unquantified !== '1'">{{data.row_data.uncertainty}}</p>
+                  <p class="content-right" *ngIf="data.row_data.unquantified === '1'">Unquantified</p>
+                  <p class="content-right" *ngIf="data.row_data.uncertainty === undefined && data.row_data.uncertainty === '' || data.row_data.unquantified !== '1'">---</p>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Quality</p>
+                  <p class="content-right"  *ngIf="data.row_data.op_quality_id !== undefined && data.row_data.op_quality !== '' && opQuality !== '' && opQuality !== undefined; else nullOPQuality">{{opQuality}}</p>
+                  <ng-template #nullOPQuality><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Notes</p>
+                  <p class="content-right" *ngIf="data.row_data.op_notes !== undefined && data.row_data.op_notes !== ''; else nullNotes">{{data.row_data.op_notes}}</p>
+                  <ng-template #nullNotes><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Date Established</p>
+                  <p class="content-right" *ngIf="data.row_data.date_established !== undefined && data.row_data.date_established !== ''; else nullEstDate">{{data.row_data.date_established}}</p>
+                  <ng-template #nullEstDate><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Date Recovered</p>
+                  <p class="content-right" *ngIf="data.row_data.date_recovered !== undefined && data.row_data.date_recovered !== ''; else nullRecovDate">{{data.row_data.date_recovered}}</p>
+                  <ng-template #nullRecovDate><p class="content-right">---</p></ng-template>
+                </div>
+            </div>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel hideToggle expanded="false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Reference Mark File Information
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="tableContainer" *ngIf="datumFiles !== undefined; else noDatumFileTable">
+            <table *ngIf="datumFiles.length > 0; else noDatumFileTable"
+                mat-table
+                id="datumFilesTable"
+                [dataSource]="datumFiles"
+                class="mat-elevation-z5"
+                matSort
+            >
+                <!-- datum file date column -->
+                <ng-container matColumnDef="FileDate">
+                    <th mat-header-cell *matHeaderCellDef>File Date</th>
+                    <td mat-cell *matCellDef="let file">
+                        <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayDatumFileDate">
+                            ---
+                        </div>
+                        <ng-template #displayDatumFileDate>
+                            {{ file.file_date }}
+                        </ng-template>
+                    </td>
+                </ng-container>
+  
+                <!-- datum file name column -->
+                <ng-container matColumnDef="FileName">
+                    <th mat-header-cell *matHeaderCellDef>File Name</th>
+                    <td mat-cell *matCellDef="let file">
+                        <div *ngIf="file.name === '' || file.name === undefined; else displayDatumFileName">
+                            ---
+                        </div>
+                        <ng-template #displayDatumFileName>
+                            {{ file.name }}
+                        </ng-template>
+                    </td>
+                </ng-container>
+  
+                <tr mat-header-row *matHeaderRowDef="displayedDatumFileColumns"></tr>
+                <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedDatumFileColumns"
+                    (click)="openFileDetailsDialog(row, 'Reference Mark File')"
+                    class="results-row"
+                ></tr>
+            </table>
+        </div>
+        <ng-template #noDatumFileTable>
+            <p class="tableContainer">No Reference Mark Files listed.</p>
+        </ng-template>
+        </mat-expansion-panel>
+      </mat-accordion>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <div class="detail-section-buttons centered">
+        <button mat-button mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
+        <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    </div>
+</mat-dialog-actions>
+

@@ -1,0 +1,111 @@
+<h2 mat-dialog-title *ngIf="data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1">
+    {{data.type}}
+    <!-- <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button> -->
+</h2>
+<h2 mat-dialog-title *ngIf="data.row_data.is_nwis === 1">
+    {{data.type}} (NWIS Connection Datafile)
+    <!-- <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button> -->
+</h2>
+<mat-dialog-content>
+    <div class="table-container">
+        <div class="outer-content">
+            <div class="cell-container">
+                <p class="content-left">File Type</p>
+                <p class="content-right" *ngIf="fileType !== undefined && fileType !== ''; else nullFileType">{{fileType}}</p>
+                <ng-template #nullFileType><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="data.row_data.is_nwis === 1">
+                <p class="content-left">File URL</p>
+                <p class="content-right" *ngIf="data.row_data.name !== undefined && data.row_data.name !== ''; else nullFileURL">{{data.row_data.name}}</p>
+                <ng-template #nullFileURL><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Photo'">
+                <p class="content-left">Source Photographer</p>
+                <p class="content-right" *ngIf="sourceName !== undefined && sourceName !== ''; else nullSourceName">{{sourceName}}</p>
+                <ng-template #nullSourceName><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType !== 'Photo' && fileType !== 'Data' && (data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1)">
+                <p class="content-left">Source Name</p>
+                <p class="content-right" *ngIf="sourceName !== undefined && sourceName !== ''; else nullSourceName">{{sourceName}}</p>
+                <ng-template #nullSourceName><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType !== 'Photo' && fileType !== 'Data' && (data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1)">
+                <p class="content-left">Source Agency</p>
+                <p class="content-right" *ngIf="sourceAgency !== undefined && sourceAgency !== ''; else nullSourceAgency">{{sourceAgency}}</p>
+                <ng-template #nullSourceAgency><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Data'">
+                <p class="content-left">Data Process By</p>
+                <p class="content-right" *ngIf="processorName !== undefined && processorName !== ''; else nullProcessorName">{{processorName}}</p>
+                <ng-template #nullProcessorName><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Data'">
+                <p class="content-left">Date Collected/Processed</p>
+                <p class="content-right" *ngIf="collectDate !== undefined && collectDate !== ''; else nullCollectDate">{{collectDate}}</p>
+                <ng-template #nullCollectDate><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container"  *ngIf="fileType === 'Photo'">
+                <p class="content-left">Photo Date</p>
+                <p class="content-right" *ngIf="data.row_data.photo_date !== undefined && data.row_data.photo_date !== ''; else nullPhotoDate">{{data.row_data.photo_date}}</p>
+                <ng-template #nullPhotoDate><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Date Uploaded</p>
+                <p class="content-right" *ngIf="data.row_data.file_date !== undefined && data.row_data.file_date !== ''; else nullFileDate">{{data.row_data.file_date}}</p>
+                <ng-template #nullFileDate><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Description</p>
+                <p class="content-right" *ngIf="data.row_data.description !== undefined && data.row_data.description !== ''; else nullDesc">{{data.row_data.description}}</p>
+                <ng-template #nullDesc><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Data'">
+                <p class="content-left">Elevation</p>
+                <p class="content-right" *ngIf="elevation !== undefined && elevation !== ''; else nullElevation">{{elevation}}</p>
+                <ng-template #nullElevation><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Data' && (data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1)">
+                <p class="content-left">Approved By</p>
+                <p class="content-right" *ngIf="approvedBy !== undefined && approvedBy !== '' && approvedBy !== null; else nullApprovalBy">{{approvedBy}}</p>
+                <ng-template #nullApprovalBy><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Data' && (data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1)">
+                <p class="content-left">Approval Date</p>
+                <p class="content-right" *ngIf="approvedOn !== undefined && approvedOn !== '' && approvedOn !== null; else nullApprovalOn">{{approvedOn}}</p>
+                <ng-template #nullApprovalOn><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Photo'">
+                <p class="content-left">Photo Direction</p>
+                <p class="content-right" *ngIf="data.row_data.photo_direction !== undefined && data.row_data.photo_direction !== ''; else nullPhotoDir">{{data.row_data.photo_direction}}</p>
+                <ng-template #nullPhotoDir><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Photo'">
+                <p class="content-left">Photo Latitude (if different)</p>
+                <p class="content-right" *ngIf="data.row_data.latitude_dd !== undefined && data.row_data.latitude_dd !== ''; else nullPhotoLat">{{data.row_data.latitude_dd}}</p>
+                <ng-template #nullPhotoLat><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Photo'">
+                <p class="content-left">Photo Longitude (if different)</p>
+                <p class="content-right" *ngIf="data.row_data.longitude_dd !== undefined && data.row_data.longitude_dd !== ''; else nullPhotoLon">{{data.row_data.longitude_dd}}</p>
+                <ng-template #nullPhotoLon><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container" *ngIf="fileType === 'Photo'">
+                <p class="content-left">Preview Caption</p>
+                <p class="content-right">Photo of {{previewCaption.description}} at {{previewCaption.site_description}}, {{previewCaption.county}}, {{previewCaption.state}}, {{previewCaption.photo_date}}.  Photograph by {{previewCaption.sourceName}}, {{previewCaption.sourceAgency}}</p>
+            </div>
+            <div class="cell-container" *ngIf="data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1">
+                <p class="content-left">Associated File</p>
+                <p class="content-right" *ngIf="data.row_data.name !== undefined && data.row_data.name !== ''; else nullAssociatedFile"><a id="associatedFile" href="#" target="_blank">{{data.row_data.name}}</a></p>
+                <ng-template #nullAssociatedFile><p class="content-right">---Missing---</p></ng-template>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <div class="detail-section-buttons centered">
+        <button mat-button mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
+        <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    </div>
+</mat-dialog-actions>
+
+

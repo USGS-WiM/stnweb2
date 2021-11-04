@@ -1,0 +1,673 @@
+<h2 mat-dialog-title>
+    Sensor
+    <!-- <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button> -->
+</h2>
+<mat-dialog-content *ngIf="data.row_data">
+    <!-- Sensor Dialog -->
+    <mat-accordion multi="true">
+        <mat-expansion-panel hideToggle [expanded]="deployedExpanded">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            Deployed Sensor Information
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="table-container">
+            <div class="outer-content">
+                <div class="cell-container">
+                    <p class="content-left">Event</p>
+                    <p class="content-right" *ngIf="data.row_data.eventName !== undefined && data.row_data.eventName !== ''; else nullEvent">{{data.row_data.eventName}}</p>
+                    <ng-template #nullEvent><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Sensor Type</p>
+                    <p class="content-right" *ngIf="data.row_data.sensorType !== undefined && data.row_data.sensorType !== ''; else nullSensorType">{{data.row_data.sensorType}}</p>
+                    <ng-template #nullSensorType><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Sensor Brand</p>
+                    <p class="content-right" *ngIf="data.row_data.sensorBrand !== undefined && data.row_data.sensorBrand !== ''; else nullSensorBrand">{{data.row_data.sensorBrand}}</p>
+                    <ng-template #nullSensorBrand><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Serial Number</p>
+                    <p class="content-right" *ngIf="data.row_data.serial_number !== undefined && data.row_data.serial_number !== ''; else nullSerialNum">{{data.row_data.serial_number}}</p>
+                    <ng-template #nullSerialNum><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Housing Type</p>
+                    <p class="content-right" *ngIf="data.row_data.housingType !== undefined && data.row_data.housingType !== ''; else nullHousingType">{{data.row_data.housingType}}</p>
+                    <ng-template #nullHousingType><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Tapedowns</p>
+                    <table *ngIf="deployedTapedowns.length > 0; else noDeployedTapedowns"
+                        mat-table
+                        id="tapedownsTable"
+                        [dataSource]="deployedTapedowns"
+                        class="mat-elevation-z5"
+                        matSort
+                    >
+                        <!-- Reference Mark name column -->
+                        <ng-container matColumnDef="ReferenceMark">
+                            <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
+                                    ---
+                                </div>
+                                <ng-template #displayTapedownRMName>
+                                    {{ tapedown.rmName }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+    
+                        <!-- Elevation column -->
+                        <ng-container matColumnDef="Elevation">
+                            <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.elevation === '' || tapedown.elevation === undefined; else displayTapedownElevation">
+                                    ---
+                                </div>
+                                <ng-template #displayTapedownElevation>
+                                    {{ tapedown.elevation }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+
+                        <!-- Offset correction column -->
+                        <ng-container matColumnDef="OffsetCorrection">
+                            <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.offset_correction === '' || tapedown.offset_correction === undefined; else displayOffsetCorrection">
+                                    ---
+                                </div>
+                                <ng-template #displayOffsetCorrection>
+                                    {{ tapedown.offset_correction }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+
+                        <!-- WS column -->
+                        <ng-container matColumnDef="WaterSurface">
+                            <th mat-header-cell *matHeaderCellDef>Water Surface</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.water_surface === '' || tapedown.water_surface === undefined; else displayWS">
+                                    ---
+                                </div>
+                                <ng-template #displayWS>
+                                    {{ tapedown.water_surface }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+
+                        <!-- GS column -->
+                        <ng-container matColumnDef="GroundSurface">
+                            <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.ground_surface === '' || tapedown.ground_surface === undefined; else displayGS">
+                                    ---
+                                </div>
+                                <ng-template #displayGS>
+                                    {{ tapedown.ground_surface }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+    
+                        <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: displayedTapedownColumns"
+                            class="results-row"
+                        ></tr>
+                    </table>
+                    <ng-template #noDeployedTapedowns>
+                        <p class="content-right">None Chosen.</p>
+                    </ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Sensor Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElDeployed">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullSensorElDeployed><p class="content-right">---</p></ng-template>
+                </div>
+                <ng-template></ng-template>
+                <div class="cell-container">
+                    <p class="content-left">Water Surface Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSEDeployed">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullWSEDeployed><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Ground Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSEDeployed">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullGSEDeployed><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Vented</p>
+                    <p class="content-right" *ngIf="data.row_data.vented !== undefined && data.row_data.vented !== ''; else nullVented">{{data.row_data.vented}}</p>
+                    <ng-template #nullVented><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Deployment Type</p>
+                    <p class="content-right" *ngIf="data.row_data.deploymentType !== undefined && data.row_data.deploymentType !== ''; else nullDeploymentType">{{data.row_data.deploymentType}}</p>
+                    <ng-template #nullDeploymentType><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Location Description</p>
+                    <p class="content-right" *ngIf="data.row_data.location_description !== undefined && data.row_data.location_description !== ''; else nullLocDesc">{{data.row_data.location_description}}</p>
+                    <ng-template #nullLocDesc><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Interval</p>
+                    <p class="content-right" *ngIf="data.row_data.interval !== undefined && data.row_data.interval !== ''; else nullInterval">{{data.row_data.interval}} seconds</p>
+                    <ng-template #nullInterval><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Deploy Date</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampDeployed">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_stamp !== undefined && instrument.time_stamp !== ''">{{instrument.time_stamp}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_stamp === undefined || instrument.time_stamp === ''">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullTimestampDeployed><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Time Zone</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneDeployed">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone !== undefined && instrument.time_zone !== ''">{{instrument.time_zone}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone === undefined || instrument.time_zone === ''">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullTimezoneDeployed><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Preview Time in UTC</p>
+                    <p class="content-right"></p>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Note</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullNotesDeployed">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.notes !== undefined && instrument.notes !== ''">{{instrument.notes}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.notes === undefined || instrument.notes === ''">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullNotesDeployed><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Deploy Member</p>
+                    <div *ngFor="let item of members">
+                        <p class="content-right" *ngIf="item.status === 'Deployed' && item.name !== undefined && item.name !== ''">{{item.name}}</p>
+                        <p class="content-right" *ngIf="item.status === 'Deployed' && item.name === undefined || item.name === ''">---</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel hideToggle [expanded]="retrievedExpanded" *ngIf="data.row_data.statusType === 'Retrieved'">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                Retrieved Sensor Information
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="cell-container">
+                <div class="cell-container">
+                    <p class="content-left">Status</p>
+                    <p class="content-right" *ngIf="data.row_data.statusType !== undefined && data.row_data.statusType !== ''; else nullStatusType">{{data.row_data.statusType}}</p>
+                    <ng-template #nullStatusType><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Collection Conditions</p>
+                    <p class="content-right" *ngIf="data.row_data.instCollection !== undefined && data.row_data.instCollection !== ''; else nullInstCollection">{{data.row_data.instCollection}}</p>
+                    <ng-template #nullInstCollection><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Note</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullNoteRetrieved">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.notes !== undefined && instrument.notes !== ''">{{instrument.notes}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.notes === undefined || instrument.notes === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullNoteRetrieved><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Retrieve Date</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampRetrieved">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument !== undefined && instrument.status !== undefined && instrument.status === 'Retrieved'">{{instrument.time_stamp}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.time_stamp === undefined || instrument.time_stamp === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullTimestampRetrieved><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Time Zone</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneRetrieved">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument !== undefined && instrument.status !== undefined && instrument.status === 'Retrieved'">{{instrument.time_zone}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.time_zone === undefined || instrument.time_zone === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullTimezoneRetrieved><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Tapedowns</p>
+                    <table *ngIf="retrievedTapedowns.length > 0; else noRetrievedTapedowns"
+                        mat-table
+                        id="tapedownsTable"
+                        [dataSource]="retrievedTapedowns"
+                        class="mat-elevation-z5"
+                        matSort
+                    >
+                        <!-- Reference Mark name column -->
+                        <ng-container matColumnDef="ReferenceMark">
+                            <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
+                                    ---
+                                </div>
+                                <ng-template #displayTapedownRMName>
+                                    {{ tapedown.rmName }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+    
+                        <!-- Elevation column -->
+                        <ng-container matColumnDef="Elevation">
+                            <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.elevation === '' || tapedown.elevation === undefined; else displayTapedownElevation">
+                                    ---
+                                </div>
+                                <ng-template #displayTapedownElevation>
+                                    {{ tapedown.elevation }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+
+                        <!-- Offset correction column -->
+                        <ng-container matColumnDef="OffsetCorrection">
+                            <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.offset_correction === '' || tapedown.offset_correction === undefined; else displayOffsetCorrection">
+                                    ---
+                                </div>
+                                <ng-template #displayOffsetCorrection>
+                                    {{ tapedown.offset_correction }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+
+                        <!-- WS column -->
+                        <ng-container matColumnDef="WaterSurface">
+                            <th mat-header-cell *matHeaderCellDef>Water Surface</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.water_surface === '' || tapedown.water_surface === undefined; else displayWS">
+                                    ---
+                                </div>
+                                <ng-template #displayWS>
+                                    {{ tapedown.water_surface }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+
+                        <!-- GS column -->
+                        <ng-container matColumnDef="GroundSurface">
+                            <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
+                            <td mat-cell *matCellDef="let tapedown">
+                                <div *ngIf="tapedown.ground_surface === '' || tapedown.ground_surface === undefined; else displayGS">
+                                    ---
+                                </div>
+                                <ng-template #displayGS>
+                                    {{ tapedown.ground_surface }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+    
+                        <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: displayedTapedownColumns"
+                            class="results-row"
+                        ></tr>
+                    </table>
+                    <ng-template #noRetrievedTapedowns>
+                        <p class="content-right">None Chosen.</p>
+                    </ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Sensor Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElRetrieved">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullSensorElRetrieved><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Water Surface Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSERetrieved">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullWSERetrieved><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Ground Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSERetrieved">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullGSERetrieved><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Member</p>
+                    <div *ngFor="let item of members">
+                        <p class="content-right" *ngIf="item.status === 'Retrieved' && (item.name !== undefined && item.name !== '')">{{item.name}}</p>
+                        <p class="content-right" *ngIf="item.status === 'Retrieved' && (item.name === undefined || item.name === '')">---</p>
+                    </div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel hideToggle [expanded]="LostExpanded" *ngIf="data.row_data.statusType === 'Lost'">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                Lost Sensor Information
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="cell-container">
+                <p class="content-left">Status</p>
+                <p class="content-right" *ngIf="data.row_data.statusType !== undefined && data.row_data.statusType !== ''; else nullLostStatusType">{{data.row_data.statusType}}</p>
+                <ng-template #nullLostStatusType><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Collection Conditions</p>
+                <p class="content-right" *ngIf="data.row_data.instCollection !== undefined && data.row_data.instCollection !== ''; else nullInstCollection">{{data.row_data.instCollection}}</p>
+                <ng-template #nullInstCollection><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Note</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullNotesLost">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.notes !== undefined && instrument.notes !== '')">{{instrument.notes}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.notes === undefined || instrument.notes === '')">---</p>
+                    </div>
+                </div>
+                <ng-template #nullNotesLost><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Retrieve Date</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampLost">
+                    <div class="content-right" *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_stamp !== undefined && instrument.time_stamp !== '')">{{instrument.time_stamp}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_stamp === undefined || instrument.time_stamp === '')">---</p>
+                    </div>
+                </div>
+                <ng-template #nullTimestampLost><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Time Zone</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneLost">
+                    <div class="content-right" *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_zone !== undefined && instrument.time_zone !== '')">{{instrument.time_zone}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_zone === undefined || instrument.time_zone === '')">---</p>
+                    </div>
+                </div>
+                <ng-template #nullTimezoneLost><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Tapedowns</p>
+                <table *ngIf="lostTapedowns.length > 0; else noLostTapedowns"
+                    mat-table
+                    id="tapedownsTable"
+                    [dataSource]="lostTapedowns"
+                    class="mat-elevation-z5"
+                    matSort
+                >
+                    <!-- Reference Mark name column -->
+                    <ng-container matColumnDef="ReferenceMark">
+                        <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                        <td mat-cell *matCellDef="let tapedown">
+                            <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
+                                ---
+                            </div>
+                            <ng-template #displayTapedownRMName>
+                                {{ tapedown.rmName }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- Elevation column -->
+                    <ng-container matColumnDef="Elevation">
+                        <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                        <td mat-cell *matCellDef="let tapedown">
+                            <div *ngIf="tapedown.elevation === '' || tapedown.elevation === undefined; else displayTapedownElevation">
+                                ---
+                            </div>
+                            <ng-template #displayTapedownElevation>
+                                {{ tapedown.elevation }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- Offset correction column -->
+                    <ng-container matColumnDef="OffsetCorrection">
+                        <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
+                        <td mat-cell *matCellDef="let tapedown">
+                            <div *ngIf="tapedown.offset_correction === '' || tapedown.offset_correction === undefined; else displayOffsetCorrection">
+                                ---
+                            </div>
+                            <ng-template #displayOffsetCorrection>
+                                {{ tapedown.offset_correction }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- WS column -->
+                    <ng-container matColumnDef="WaterSurface">
+                        <th mat-header-cell *matHeaderCellDef>Water Surface</th>
+                        <td mat-cell *matCellDef="let tapedown">
+                            <div *ngIf="tapedown.water_surface === '' || tapedown.water_surface === undefined; else displayWS">
+                                ---
+                            </div>
+                            <ng-template #displayWS>
+                                {{ tapedown.water_surface }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- GS column -->
+                    <ng-container matColumnDef="GroundSurface">
+                        <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
+                        <td mat-cell *matCellDef="let tapedown">
+                            <div *ngIf="tapedown.ground_surface === '' || tapedown.ground_surface === undefined; else displayGS">
+                                ---
+                            </div>
+                            <ng-template #displayGS>
+                                {{ tapedown.ground_surface }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
+                    <tr
+                        mat-row
+                        *matRowDef="let row; columns: displayedTapedownColumns"
+                        class="results-row"
+                    ></tr>
+                </table>
+                <ng-template #noLostTapedowns>
+                    <p class="content-right">None Chosen.</p>
+                </ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Sensor Elevation</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElLost">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
+                    </div>
+                </div>
+                <ng-template #nullSensorElLost><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Water Surface Elevation</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSELost">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
+                    </div>
+                </div>
+                <ng-template #nullWSELost><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Ground Elevation</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSELost">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
+                    </div>
+                </div>
+                <ng-template #nullGSELost><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Member</p>
+                <div *ngFor="let item of members">
+                    <p class="content-right" *ngIf="item.status === 'Lost' && (item.name !== undefined && item.name !== '')">{{item.name}}</p>
+                    <p class="content-right" *ngIf="item.status === 'Lost' && (item.name === undefined || item.name === '')">---</p>
+                </div>
+            </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel hideToggle expanded="false">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                Sensor File Information
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="tableContainer">
+                <table *ngIf="sensorFiles.length > 0; else noSensorFileTable"
+                    mat-table
+                    id="sensorFilesTable"
+                    [dataSource]="sensorFiles"
+                    class="mat-elevation-z5"
+                    matSort
+                >
+                    <!-- Sensor file date column -->
+                    <ng-container matColumnDef="FileDate">
+                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                        <td mat-cell *matCellDef="let file">
+                            <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySensorFileDate">
+                                ---
+                            </div>
+                            <ng-template #displaySensorFileDate>
+                                {{ file.file_date }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- Sensor file name column -->
+                    <ng-container matColumnDef="FileName">
+                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                        <td mat-cell *matCellDef="let file">
+                            <div *ngIf="file.name === '' || file.name === undefined; else displaySensorFileName">
+                                ---
+                            </div>
+                            <ng-template #displaySensorFileName>
+                                {{ file.name }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedSensorFileColumns"></tr>
+                    <tr
+                        mat-row
+                        *matRowDef="let row; columns: displayedSensorFileColumns"
+                        class="results-row"
+                    ></tr>
+                </table>
+            </div>
+            <ng-template #noSensorFileTable>
+                <p class="tableContainer">No Sensor Files listed.</p>
+            </ng-template>
+        </mat-expansion-panel>
+        <mat-expansion-panel hideToggle expanded="false" *ngIf="data.row_data.statusType === 'Deployed'">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            NWIS Connection
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="tableContainer">
+            <table *ngIf="nwisFiles.length > 0; else noNWISFileTable"
+                mat-table
+                id="nwisFilesTable"
+                [dataSource]="nwisFiles"
+                class="mat-elevation-z5"
+                matSort
+            >
+                <!-- NWIS file date column -->
+                <ng-container matColumnDef="FileDate">
+                    <th mat-header-cell *matHeaderCellDef>File Date</th>
+                    <td mat-cell *matCellDef="let file">
+                        <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayNWISFileDate">
+                            ---
+                        </div>
+                        <ng-template #displayNWISFileDate>
+                            {{ file.file_date }}
+                        </ng-template>
+                    </td>
+                </ng-container>
+
+                <!-- NWIS file name column -->
+                <ng-container matColumnDef="FileName">
+                    <th mat-header-cell *matHeaderCellDef>File Name</th>
+                    <td mat-cell *matCellDef="let file">
+                        <div *ngIf="file.name === '' || file.name === undefined; else displayNWISFileName">
+                            ---
+                        </div>
+                        <ng-template #displayNWISFileName>
+                            {{ file.name }}
+                        </ng-template>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedNWISFileColumns"></tr>
+                <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedNWISFileColumns"
+                    class="results-row"
+                ></tr>
+            </table>
+        </div>
+        <ng-template #noNWISFileTable>
+            <p class="tableContainer">No NWIS Files listed.</p>
+        </ng-template>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <div class="detail-section-buttons centered">
+        <button mat-button mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
+        <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    </div>
+</mat-dialog-actions>

@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-import { DetailsDialogComponent } from './details-dialog.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-describe('DetailsDialogComponent', () => {
-  let component: DetailsDialogComponent;
-  let fixture: ComponentFixture<DetailsDialogComponent>;
+import { HwmDialogComponent } from './hwm-dialog.component';
+
+describe('HwmDialogComponent', () => {
+  let component: HwmDialogComponent;
+  let fixture: ComponentFixture<HwmDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DetailsDialogComponent ],
+      declarations: [ HwmDialogComponent ],
       providers: [
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: {} },
@@ -21,7 +21,7 @@ describe('DetailsDialogComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DetailsDialogComponent);
+    fixture = TestBed.createComponent(HwmDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

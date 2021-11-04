@@ -1,0 +1,203 @@
+<h2 mat-dialog-title>
+    HWM
+    <!-- <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button> -->
+</h2>
+<mat-dialog-content *ngIf="data.row_data">
+    <mat-accordion multi="true">
+        <mat-expansion-panel hideToggle expanded="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            HWM Information
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="table-container">
+            <div class="outer-content">
+                <div class="cell-container">
+                    <p class="content-left">Waterbody</p>
+                    <p class="content-right" *ngIf="data.row_data.waterbody !== undefined && data.row_data.waterbody !== ''; else nullWaterbody">{{data.row_data.waterbody}}</p>
+                    <ng-template #nullWaterbody><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Event</p>
+                    <p class="content-right" *ngIf="data.row_data.eventName !== undefined && data.row_data.eventName !== ''; else nullEvent">{{data.row_data.eventName}}</p>
+                    <ng-template #nullEvent><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">HWM Type</p>
+                    <p class="content-right" *ngIf="data.row_data.hwm_type_id !== undefined && data.row_data.hwm_type_id !== '' && hwmType !== undefined && hwmType !== ''; else nullHWMType">{{hwmType}}</p>
+                    <ng-template #nullHWMType><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Marker</p>
+                    <p class="content-right" *ngIf="data.row_data.marker_id !== undefined && data.row_data.marker_id !== '' && hwmMarker !== undefined && hwmMarker !== ''; else nullMarker">{{hwmMarker}}</p>
+                    <ng-template #nullMarker><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Label</p>
+                    <p class="content-right" *ngIf="data.row_data.hwm_label !== undefined && data.row_data.hwm_label !== ''; else nullLabel">{{data.row_data.hwm_label}}</p>
+                    <ng-template #nullLabel><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">HWM Environment</p>
+                    <p class="content-right" *ngIf="data.row_data.hwm_environment !== undefined && data.row_data.hwm_environment !== ''; else nullEnv">{{data.row_data.hwm_environment}}</p>
+                    <ng-template #nullEnv><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">HWM Uncertainty</p>
+                    <p class="content-right" *ngIf="data.row_data.hwm_uncertainty !== undefined && data.row_data.hwm_uncertainty !== ''; else nullHWMUncertainty">{{data.row_data.hwm_uncertainty}}</p>
+                    <ng-template #nullHWMUncertainty><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">HWM Quality</p>
+                    <p class="content-right" *ngIf="data.row_data.hwm_quality_id !== undefined && data.row_data.hwm_quality_id !== '' && hwmQuality !== undefined && hwmQuality !== ''; else nullQuality">{{hwmQuality}}</p>
+                    <ng-template #nullQuality><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Bank</p>
+                    <p class="content-right" *ngIf="data.row_data.bank !== undefined && data.row_data.bank !== ''; else nullBank">{{data.row_data.bank}}</p>
+                    <ng-template #nullBank><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Location Description</p>
+                    <p class="content-right" *ngIf="data.row_data.hwm_locationdescription !== undefined && data.row_data.hwm_locationdescription !== ''; else nullLocDesc">{{data.row_data.hwm_locationdescription}}</p>
+                    <ng-template #nullLocDesc><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Latitude</p>
+                    <p class="content-right" *ngIf="data.row_data.latitude_dd !== undefined && data.row_data.latitude_dd !== ''; else nullLat">{{data.row_data.latitude_dd}}</p>
+                    <ng-template #nullLat><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Longitude</p>
+                    <p class="content-right" *ngIf="data.row_data.longitude_dd !== undefined && data.row_data.longitude_dd !== ''; else nullLong">{{data.row_data.longitude_dd}}</p>
+                    <ng-template #nullLong><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Horizontal Datum</p>
+                    <p class="content-right" *ngIf="data.row_data.hdatum_id !== undefined && data.row_data.hdatum_id !== '' && hdatum !== undefined && hdatum !== ''; else nullMarker">{{hdatum}}</p>
+                    <ng-template #nullHDatum><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Horitzonal Collection Method</p>
+                    <p class="content-right" *ngIf="data.row_data.hcollect_method_id !== undefined && data.row_data.hcollect_method_id !== '' && hmethod !== undefined && hmethod !== ''; else nullHMethod">{{hmethod}}</p>
+                    <ng-template #nullHMethod><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Height Above Ground (Ft)</p>
+                    <p class="content-right" *ngIf="data.row_data.height_above_gnd !== undefined && data.row_data.height_above_gnd !== ''; else nullHeightAvGnd">{{data.row_data.height_above_gnd}}</p>
+                    <ng-template #nullHeightAvGnd><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Tranquil/Stillwater HWM</p>
+                    <p class="content-right" *ngIf="data.row_data.stillwater !== undefined && data.row_data.stillwater !== '' && stillwater !== undefined && stillwater !== ''; else nullStillwater">{{stillwater}}</p>
+                    <ng-template #nullStillwater><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Flag/Found Date</p>
+                    <p class="content-right" *ngIf="data.row_data.flag_date !== undefined && data.row_data.flag_date !== ''; else nullFlagDate">{{data.row_data.flag_date}}</p>
+                    <ng-template #nullFlagDate><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Flagging Member</p>
+                    <p class="content-right" *ngIf="data.row_data.flag_member_id !== undefined && data.row_data.flag_member_id !== '' && flagMember !== undefined && flagMember !== ''; else nullLong">{{flagMember}}</p>
+                    <ng-template #nullFlagMember><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Surveyed Date</p>
+                    <p class="content-right" *ngIf="data.row_data.survey_date !== undefined && data.row_data.survey_date !== ''; else nullSurveyDate">{{data.row_data.survey_date}}</p>
+                    <ng-template #nullSurveyDate><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Survey Member</p>
+                    <p class="content-right" *ngIf="data.row_data.survey_member_id !== undefined && data.row_data.survey_member_id !== '' && surveyMember !== undefined && surveyMember !== ''; else nullLong">{{surveyMember}}</p>
+                    <ng-template #nullSurveyMember><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Surveyed Elevation (Ft)</p>
+                    <p class="content-right" *ngIf="data.row_data.elev_ft !== undefined && data.row_data.elev_ft !== ''; else nullElev">{{data.row_data.elev_ft}} ft</p>
+                    <ng-template #nullElev><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Vertical Datum</p>
+                    <p class="content-right" *ngIf="data.row_data.vdatum_id !== undefined && data.row_data.vdatum_id !== '' && vdatum !== undefined && vdatum !== ''; else nullVDatum">{{vdatum}}</p>
+                    <ng-template #nullVDatum><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Vertical Collection Method</p>
+                    <p class="content-right" *ngIf="data.row_data.vcollect_method_id !== undefined && data.row_data.vcollect_method_id !== '' && vmethod !== undefined && vmethod !== ''; else nullVMethod">{{vmethod}}</p>
+                    <ng-template #nullVMethod><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Survey Uncertainty</p>
+                    <p class="content-right" *ngIf="data.row_data.uncertainty !== undefined && data.row_data.uncertainty !== ''; else nullUncertainty">{{data.row_data.uncertainty}}</p>
+                    <ng-template #nullUncertainty><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Notes</p>
+                    <p class="content-right" *ngIf="data.row_data.hwm_notes !== undefined && data.row_data.hwm_notes !== ''; else nullHWMNotes">{{data.row_data.hwm_notes}}</p>
+                    <ng-template #nullHWMNotes><p class="content-right">---</p></ng-template>
+                </div>
+            </div>
+        </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel hideToggle expanded="false">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            HWM File Information
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="tableContainer">
+            <table *ngIf="hwmFiles.length > 0; else noHWMFileTable"
+                mat-table
+                id="hwmFilesTable"
+                [dataSource]="hwmFiles"
+                class="mat-elevation-z5"
+                matSort
+            >
+                <!-- HWM file date column -->
+                <ng-container matColumnDef="FileDate">
+                    <th mat-header-cell *matHeaderCellDef>File Date</th>
+                    <td mat-cell *matCellDef="let file">
+                        <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayHWMFileDate">
+                            ---
+                        </div>
+                        <ng-template #displayHWMFileDate>
+                            {{ file.file_date }}
+                        </ng-template>
+                    </td>
+                </ng-container>
+
+                <!-- HWM file name column -->
+                <ng-container matColumnDef="FileName">
+                    <th mat-header-cell *matHeaderCellDef>File Name</th>
+                    <td mat-cell *matCellDef="let file">
+                        <div *ngIf="file.name === '' || file.name === undefined; else displayHWMFileName">
+                            ---
+                        </div>
+                        <ng-template #displayHWMFileName>
+                            {{ file.name }}
+                        </ng-template>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedHWMFileColumns"></tr>
+                <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedHWMFileColumns"
+                    (click)="openFileDetailsDialog(row, 'HWM File')"
+                    class="results-row"
+                ></tr>
+            </table>
+        </div>
+        <ng-template #noHWMFileTable>
+            <p class="tableContainer">No HWM Files listed.</p>
+        </ng-template>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <div class="detail-section-buttons centered">
+        <button mat-button mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
+        <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    </div>
+</mat-dialog-actions>

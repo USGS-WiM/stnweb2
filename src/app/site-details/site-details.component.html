@@ -6,7 +6,7 @@
     <ng-template #displaySiteContents>
         <div class=site-title>
             <div *ngIf="site !== undefined">
-                Site {{site.site_no}} - For {{event}}
+                Site {{site.site_no}} ({{event}})
             </div>
         </div>
         <div *ngIf="!noSiteInfo; else noSiteInfoAvailable">
@@ -218,12 +218,19 @@
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedColumns"
-                                        class="results-row"
+                                        class="results-noclick-row"
                                     ></tr>
                                 </table>
                             </div>
                             <ng-template #noTable>
-                                <p class="tableContainer">No housing type information available for this site.</p>
+                                <div class="table-container">
+                                    <div class="outer-content">
+                                        <div class="cell-container">
+                                            <p class="content-left">Housing Type Information</p>
+                                            <p class="content-right">---</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </ng-template>
                             <div class="table-container">
                                 <div class="outer-content" *ngIf="site !== undefined">
@@ -252,20 +259,70 @@
                                         <p class="content-right" *ngIf="site.is_permanent_housing_installed !== '' && site.is_permanent_housing_installed !== undefined; else nullPermHousing">{{site.is_permanent_housing_installed}}</p>
                                         <ng-template #nullPermHousing><p class="content-right">---</p></ng-template>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="table-container">
-                                <div class="outer-content" *ngIf="site !== undefined">
-                                    <div class="cell-container">
-                                        <p class="content-left">Land Owner Contact</p>
-                                        <p class="content-right" *ngIf="site.landownercontact_id !== '' && site.landownercontact_id !== undefined && landownderContact !== undefined; else nullLandowner">{{landownerContact}}</p>
-                                        <ng-template #nullLandowner><p class="content-right">---</p></ng-template>
-                                    </div>
                                     <div class="cell-container">
                                         <p class="content-left">Safety Notes</p>
                                         <p class="content-right" *ngIf="site.safety_notes !== '' && site.safety_notes !== undefined; else nullSafetyNotes">{{site.safety_notes}}</p>
                                         <ng-template #nullSafetyNotes><p class="content-right">---</p></ng-template>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <div class="outer-content" *ngIf="site !== undefined">
+                                    <mat-card class="cell-container" id="landowner">
+                                        <p id="landownerTitle">Land Owner Contact</p>
+                                        <div>
+                                            <div class="cell-container">
+                                                <p class="content-left">First Name</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.fname !== '' && landownerContact.fname !== undefined; else nullLandownerFname">{{landownerContact.fname}}</p>    
+                                                <ng-template #nullLandownerFname><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Last Name</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.lname !== '' && landownerContact.lname !== undefined; else nullLandownerLname">{{landownerContact.lname}}</p>             
+                                                <ng-template #nullLandownerLname><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Affiliation/Title</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.title !== '' && landownerContact.title !== undefined; else nullLandownerTitle">{{landownerContact.title}}</p>
+                                                <ng-template #nullLandownerTitle><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Address</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.address !== '' && landownerContact.address !== undefined; else nullLandownerAddress">{{landownerContact.address}}</p>
+                                                <ng-template #nullLandownerAddress><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">City</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.city !== '' && landownerContact.city !== undefined; else nullLandownerCity">{{landownerContact.city}}</p>
+                                                <ng-template #nullLandownerCity><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">State</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.state !== '' && landownerContact.state !== undefined; else nullLandownerState">{{landownerContact.state}}</p>
+                                                <ng-template #nullLandownerState><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Zip</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.zip !== '' && landownerContact.zip !== undefined; else nullLandownerZip">{{landownerContact.zip}}</p>
+                                                <ng-template #nullLandownerZip><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Primary Phone</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.primaryphone !== '' && landownerContact.primaryphone !== undefined; else nullLandownerPrimaryphone">{{landownerContact.primaryphone}}</p>
+                                                <ng-template #nullLandownerPrimaryphone><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Secondary Phone</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.secondaryphone !== '' && landownerContact.secondaryphone !== undefined; else nullLandownerSecondaryphone">{{landownerContact.secondaryphone}}</p>
+                                                <ng-template #nullLandownerSecondaryphone><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Email</p>
+                                                <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.email !== '' && landownerContact.email !== undefined; else nullLandownerEmail">{{landownerContact.email}}</p>
+                                                <ng-template #nullLandownerEmail><p class="content-right">---</p></ng-template>
+                                            </div>
+                                        </div>
+                                    </mat-card>
                                 </div> 
                             </div>
                         </mat-expansion-panel>
@@ -333,7 +390,7 @@
                             <tr
                                 mat-row
                                 *matRowDef="let row; columns: displayedRMColumns"
-                                (click)="openDetailsDialog(row, 'Reference Mark')"
+                                (click)="openRefMarkDetailsDialog(row)"
                                 class="results-row"
                             ></tr>
                         </table>
@@ -361,6 +418,19 @@
                                     </div>
                                     <ng-template #displaySerialNum>
                                         {{ sensor.serial_number }}
+                                    </ng-template>
+                                </td>
+                            </ng-container>
+
+                            <!-- sensor event column -->
+                            <ng-container matColumnDef="SensorEvent">
+                                <th mat-header-cell *matHeaderCellDef>Event</th>
+                                <td mat-cell *matCellDef="let sensor">
+                                    <div *ngIf="sensor.eventName === undefined || sensor.eventName === ''; else displaySensorEvent">
+                                        ---
+                                    </div>
+                                    <ng-template #displaySensorEvent>
+                                        {{ sensor.eventName }}
                                     </ng-template>
                                 </td>
                             </ng-container>
@@ -396,7 +466,7 @@
                             <tr
                                 mat-row
                                 *matRowDef="let row; columns: displayedSensorColumns"
-                                (click)="openDetailsDialog(row, 'Sensor')"
+                                (click)="openSensorDetailsDialog(row)"
                                 class="results-row"
                             ></tr>
                         </table>
@@ -471,7 +541,7 @@
                             <tr
                                 mat-row
                                 *matRowDef="let row; columns: displayedHWMColumns"
-                                (click)="openDetailsDialog(row, 'HWM')"
+                                (click)="openHWMDetailsDialog(row)"
                                 class="results-row"
                             ></tr>
                         </table>
@@ -533,8 +603,8 @@
                             <tr
                                 mat-row
                                 *matRowDef="let row; columns: displayedPeakColumns"
-                                (click)="openDetailsDialog(row, 'Peak')"
-                                class="results-row"
+                                (click)="openPeaksDetailsDialog(row, 'Peak')"
+                                class="results-noclick-row"
                             ></tr>
                         </table>
                         <ng-template #noPeakTable>
@@ -589,7 +659,7 @@
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedSiteFileColumns"
-                                        (click)="openDetailsDialog(row, 'Site File')"
+                                        (click)="openFileDetailsDialog(row, 'Site File')"
                                         class="results-row"
                                     ></tr>
                                 </table>
@@ -601,7 +671,7 @@
                         <mat-expansion-panel hideToggle>
                             <mat-expansion-panel-header class="panel-headers">
                                 <mat-panel-title>
-                                    Datum Location Files ({{datumLocFiles.length}})
+                                    Reference Mark Files ({{datumLocFiles.length}})
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="tableContainer" *ngIf="datumLocFiles !== undefined; else noDatumFileTable">
@@ -640,7 +710,7 @@
 
                                     <!-- datum file datum column -->
                                     <ng-container matColumnDef="FileDatum">
-                                        <th mat-header-cell *matHeaderCellDef>Datum</th>
+                                        <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.datum_name === '' || file.datum_name === undefined; else displayDatumFileDatum">
                                                 ---
@@ -655,13 +725,13 @@
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedDatumFileColumns"
-                                        (click)="openDetailsDialog(row, 'Datum File')"
+                                        (click)="openFileDetailsDialog(row, 'Reference Mark File')"
                                         class="results-row"
                                     ></tr>
                                 </table>
                             </div>
                             <ng-template #noDatumFileTable>
-                                <p class="tableContainer">No Datum Location Files listed.</p>
+                                <p class="tableContainer">No Reference Mark Files listed.</p>
                             </ng-template>
                         </mat-expansion-panel>
                         <mat-expansion-panel hideToggle>
@@ -721,7 +791,7 @@
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedSensorFileColumns"
-                                        (click)="openDetailsDialog(row, 'Sensor File')"
+                                        (click)="openFileDetailsDialog(row, 'Sensor File')"
                                         class="results-row"
                                     ></tr>
                                 </table>
@@ -774,7 +844,7 @@
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedHWMFileColumns"
-                                        (click)="openDetailsDialog(row, 'HWM File')"
+                                        (click)="openFileDetailsDialog(row, 'HWM File')"
                                         class="results-row"
                                     ></tr>
                                 </table>
@@ -788,7 +858,8 @@
             </mat-tab-group>
         </div>
         <ng-template #noSiteInfoAvailable>
-            <p>No details available for this site.</p>
+            <p>404 Page Not Found</p>
+            <p>The content you are looking for cannot be found. Check your URL or return to the homepage.</p>
         </ng-template>
     </ng-template>
 </div>
