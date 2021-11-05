@@ -100,6 +100,8 @@ Lauren Privette - _Lead Developer_ - [USGS Web Informatics & Mapping](https://wi
 
 Blake Draper - _Developer_ - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
+Abby Gleason - _Developer_ - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+
 See also the list of [contributors](../../graphs/contributors) who participated in this project.
 
 ## License
