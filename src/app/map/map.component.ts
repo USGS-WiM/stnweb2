@@ -1490,6 +1490,10 @@ export class MapComponent implements OnInit {
         this.siteService.allSiteMarkers.on('click', (e) => {
             this.addRouterLink(e);
         })
+
+        this.siteService.manyFilteredSitesMarkers.on('click', (e) => {
+            this.addRouterLink(e);
+        })
     }
 
     addRouterLink(e){
