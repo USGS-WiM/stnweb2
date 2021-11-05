@@ -13,52 +13,50 @@
             <mat-tab-group>
                 <mat-tab label="Site">
                     <div class="basic-site-info">
-                        <div class="table-container">
-                            <div class="outer-content" *ngIf="site !== undefined">
-                                <div class="cell-container">
-                                    <p class="content-left">Site Description</p>
-                                    <p class="content-right" *ngIf="site.site_description !== '' && site.site_description !== undefined; else nullSiteDesc">{{site.site_description}}</p>
-                                    <ng-template #nullSiteDesc><p class="content-right">---</p></ng-template>
-                                </div>
-                                <div class="cell-container">
-                                    <p class="content-left">Created By</p>
-                                    <p class="content-right" *ngIf="site.member_id !== '' && site.member_id !== undefined && memberName !== undefined; else nullMember">{{memberName}}</p>
-                                    <ng-template #nullMember><p class="content-right">---</p></ng-template>
-                                </div>
-                                <div class="cell-container">
-                                    <p class="content-left">Waterbody</p>
-                                    <p class="content-right" *ngIf="site.waterbody !== '' && site.waterbody !== undefined; else nullWaterbody">{{site.waterbody}}</p>
-                                    <ng-template #nullWaterbody><p class="content-right">---</p></ng-template>
-                                </div>
-                                <div class="cell-container">
-                                    <p class="content-left">Drainage Area</p>
-                                    <p class="content-right" *ngIf="site.drainage_area_sqmi !== '' && site.drainage_area_sqmi !== undefined; else nullDrainage">{{site.drainage_area_sqmi}}</p>
-                                    <ng-template #nullDrainage><p class="content-right">---</p></ng-template>
-                                </div>
-                                <div class="cell-container">
-                                    <p class="content-left">Station ID (USGS)</p>
-                                    <p class="content-right" *ngIf="site.usgs_sid !== '' && site.usgs_sid !== undefined; else nullUSGS">{{site.usgs_sid}}</p>
-                                    <ng-template #nullUSGS><p class="content-right">---</p></ng-template>
-                                </div>
-                                <div class="cell-container">
-                                    <p class="content-left">Station ID (NOAA)</p>
-                                    <p class="content-right" *ngIf="site.noaa_sid !== '' && site.noaa_sid !== undefined; else nullNOAA">{{site.noaa_sid}}</p>
-                                    <ng-template #nullNOAA><p class="content-right">---</p></ng-template>
-                                </div>
-                                <div class="cell-container">
-                                    <p class="content-left">Station ID (Other)</p>
-                                    <p class="content-right" *ngIf="site.other_sid !== '' && site.noaa_sid !== undefined; else nullOther">{{site.other_sid}}</p>
-                                    <ng-template #nullOther><p class="content-right">---</p></ng-template>
-                                </div>
-                            </div>
-                        </div>
                         <div id="siteMap">
                             <button mat-button class="map-button" (click)="toggleSiteMap()">
-                                <span *ngIf="siteMapHidden">View site on map</span>
-                                <span *ngIf="!siteMapHidden">Hide map</span>
+                                <span *ngIf="siteMapHidden">View site on map <mat-icon class="expand-icon">expand_more</mat-icon></span>
+                                <span *ngIf="!siteMapHidden">Hide map <mat-icon class="expand-icon">expand_less</mat-icon></span>
                             </button>
                         </div>
                         <div id="mapContainer">
+                        </div>
+                        <div class="outer-content" *ngIf="site !== undefined">
+                            <div class="cell-container">
+                                <p class="content-left">Site Description</p>
+                                <p class="content-right" *ngIf="site.site_description !== '' && site.site_description !== undefined; else nullSiteDesc">{{site.site_description}}</p>
+                                <ng-template #nullSiteDesc><p class="content-right">---</p></ng-template>
+                            </div>
+                            <div class="cell-container">
+                                <p class="content-left">Created By</p>
+                                <p class="content-right" *ngIf="site.member_id !== '' && site.member_id !== undefined && memberName !== undefined; else nullMember">{{memberName}}</p>
+                                <ng-template #nullMember><p class="content-right">---</p></ng-template>
+                            </div>
+                            <div class="cell-container">
+                                <p class="content-left">Waterbody</p>
+                                <p class="content-right" *ngIf="site.waterbody !== '' && site.waterbody !== undefined; else nullWaterbody">{{site.waterbody}}</p>
+                                <ng-template #nullWaterbody><p class="content-right">---</p></ng-template>
+                            </div>
+                            <div class="cell-container">
+                                <p class="content-left">Drainage Area</p>
+                                <p class="content-right" *ngIf="site.drainage_area_sqmi !== '' && site.drainage_area_sqmi !== undefined; else nullDrainage">{{site.drainage_area_sqmi}}</p>
+                                <ng-template #nullDrainage><p class="content-right">---</p></ng-template>
+                            </div>
+                            <div class="cell-container">
+                                <p class="content-left">Station ID (USGS)</p>
+                                <p class="content-right" *ngIf="site.usgs_sid !== '' && site.usgs_sid !== undefined; else nullUSGS">{{site.usgs_sid}}</p>
+                                <ng-template #nullUSGS><p class="content-right">---</p></ng-template>
+                            </div>
+                            <div class="cell-container">
+                                <p class="content-left">Station ID (NOAA)</p>
+                                <p class="content-right" *ngIf="site.noaa_sid !== '' && site.noaa_sid !== undefined; else nullNOAA">{{site.noaa_sid}}</p>
+                                <ng-template #nullNOAA><p class="content-right">---</p></ng-template>
+                            </div>
+                            <div class="cell-container">
+                                <p class="content-left">Station ID (Other)</p>
+                                <p class="content-right" *ngIf="site.other_sid !== '' && site.noaa_sid !== undefined; else nullOther">{{site.other_sid}}</p>
+                                <ng-template #nullOther><p class="content-right">---</p></ng-template>
+                            </div>
                         </div>
                     </div>
                     <mat-accordion multi="true">
@@ -410,7 +408,7 @@
                             matSort
                         >
                             <!-- serial number column -->
-                            <ng-container matColumnDef="SerialNumber">
+                            <ng-container matColumnDef="SerialNumber" >
                                 <th mat-header-cell *matHeaderCellDef>Serial Number</th>
                                 <td mat-cell *matCellDef="let sensor">
                                     <div *ngIf="sensor.serial_number === '' || sensor.serial_number === undefined; else displaySerialNum">
@@ -551,7 +549,7 @@
                     </div>
                 </mat-tab>
                 <mat-tab label="Peaks ({{peaks.length}})">
-                    <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To view a Peak Summary, first choose an Event above.</p></mat-card>
+                    <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To view details about a Peak Summary, first choose an Event above.</p></mat-card>
                     <div class="tableContainer" *ngIf="peaks !== undefined; else noPeakTable">
                         <table *ngIf="peaks.length > 0; else noPeakTable"
                             mat-table
@@ -858,8 +856,9 @@
             </mat-tab-group>
         </div>
         <ng-template #noSiteInfoAvailable>
-            <p>404 Page Not Found</p>
-            <p>The content you are looking for cannot be found. Check your URL or return to the homepage.</p>
+            <p><b>404 Page Not Found</b></p>
+            <p>The content you are looking for cannot be found.</p>
+            <p>Check your URL or return to the <a [routerLink]="['../../../map']">homepage.</a></p>
         </ng-template>
     </ng-template>
 </div>

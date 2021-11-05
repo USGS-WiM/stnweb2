@@ -29,6 +29,7 @@ export class ReferenceMarkDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if(this.data.row_data !== undefined){
       this.setOPType();
       this.setHDatum();
       this.setHCollectionMethod();
@@ -38,7 +39,7 @@ export class ReferenceMarkDialogComponent implements OnInit {
         this.setOPQuality();
       }
       this.getDatumFiles();
-      console.log(this.data.row_data)
+    }
   }
 
   setOPType() {

@@ -196,7 +196,13 @@
                 </div>
                 <div class="cell-container">
                     <p class="content-left">Preview Time in UTC</p>
-                    <p class="content-right"></p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0 && data.utcPreview !== undefined; else nullUTCPreview">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone !== undefined && instrument.time_zone !== '' && instrument.time_zone !== 'UTC'">{{data.utcPreview}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.time_zone === undefined || instrument.time_zone === '' || instrument.time_zone === 'UTC')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullUTCPreview><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
                     <p class="content-left">Note</p>
@@ -389,7 +395,7 @@
                 </div>
             </div>
         </mat-expansion-panel>
-        <mat-expansion-panel hideToggle [expanded]="LostExpanded" *ngIf="data.row_data.statusType === 'Lost'">
+        <mat-expansion-panel hideToggle [expanded]="lostExpanded" *ngIf="data.row_data.statusType === 'Lost'">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                 Lost Sensor Information

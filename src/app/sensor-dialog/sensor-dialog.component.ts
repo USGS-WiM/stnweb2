@@ -48,34 +48,34 @@ export class SensorDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if(this.data.row_data.statusType === "Deployed"){
-      this.deployedExpanded = true;
-    }else if (this.data.row_data.statusType === "Retrieved"){
-      this.retrievedExpanded = true;
-    }else if (this.data.row_data.statusType === "Lost"){
-      this.lostExpanded = true;
+    if(this.data.row_data !== undefined){
+      if(this.data.row_data.statusType === "Deployed"){
+        this.deployedExpanded = true;
+      }else if (this.data.row_data.statusType === "Retrieved"){
+        this.retrievedExpanded = true;
+      }else if (this.data.row_data.statusType === "Lost"){
+        this.lostExpanded = true;
+      }
+      
+      this.getSensorFiles();
+      this.setMembers();
+      this.setElevations();
+
+      let self = this;
+      // Check sensor statuses
+      this.data.row_data.instrument_status.forEach(function(instrument){
+        if(instrument.status === "Deployed"){
+          self.deployedSensors ++;
+        }
+        else if(instrument.status === "Retrieved"){
+          self.retrievedSensors ++;
+        }
+        else if(instrument.status === "Lost"){
+          self.lostSensors ++;
+        }
+      });
     }
-    
-    this.getSensorFiles();
-    this.setMembers();
-    // this.getEvent();
-    this.setElevations();
 
-    let self = this;
-    // Check sensor statuses
-    this.data.row_data.instrument_status.forEach(function(instrument){
-      if(instrument.status === "Deployed"){
-        self.deployedSensors ++;
-      }
-      else if(instrument.status === "Retrieved"){
-        self.retrievedSensors ++;
-      }
-      else if(instrument.status === "Lost"){
-        self.lostSensors ++;
-      }
-    });
-
-    console.log(this.data.row_data)
   }
 
   getSensorFiles(){
@@ -119,8 +119,11 @@ export class SensorDialogComponent implements OnInit {
         .getOPMeasurements(instrument.instrument_status_id)
         .subscribe((results) => {
           if(results.length > 0){
-            console.log(results)
-            tapedownArray[0].ground_surface = results[0].ground_surface;
+            if (tapedownArray[0] !== undefined){
+              tapedownArray[0].ground_surface = results[0].ground_surface;
+            }else{
+              tapedownArray.push({ground_surface: results[0].ground_surface});
+            }
             tapedownArray[0].water_surface = results[0].water_surface;
             tapedownArray[0].offset_correction = results[0].offset_correction;
             // get reference mark info using objective_point_id
@@ -128,6 +131,9 @@ export class SensorDialogComponent implements OnInit {
             .getOPInfo(results[0].objective_point_id)
             .subscribe((objectivePoints) => {
               tapedownArray[0].rmName = objectivePoints.name;
+              if(objectivePoints.elev_ft !== undefined){
+                tapedownArray[0].elevation = objectivePoints.elev_ft + " " + instrument.vdatum;
+              }
             })
           }
         });
@@ -145,21 +151,5 @@ export class SensorDialogComponent implements OnInit {
       }
     })
   }
-
-  // getEvent() {
-  //   let self = this;
-
-  //   this.siteService
-  //   .getSiteEvents(this.data.row_data.site_id)
-  //   .subscribe((results) => {
-  //     if(results.length > 0){
-  //       results.forEach(function(result){
-  //           if (self.data.row_data.event_id == result.event_id){
-  //             self.eventName = result.event_name;
-  //           }
-  //       })
-  //     }
-  //   })
-  // }
 
 }

@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 declare let L: any;
 import 'leaflet';
+import { DateTime } from "luxon";
 
 @Component({
     selector: 'app-site-details',
@@ -221,6 +222,7 @@ export class SiteDetailsComponent implements OnInit {
 
                                             if (timestamp.getTime() === time.getTime()){
                                                 result.statusType = statusType.status;
+                                                self.siteFullInstruments = self.siteFullInstruments.filter(({ statusType }) => statusType !== 'Proposed');
                                             }
                                         })
                                         
@@ -325,6 +327,7 @@ export class SiteDetailsComponent implements OnInit {
                                             statusResults.forEach(function(status){
                                                 if (result.statusID === status.status_type_id){
                                                     result.statusType = status.status;
+                                                    self.siteFullInstruments = self.siteFullInstruments.filter(({ statusType }) => statusType !== 'Proposed');
                                                 }
                                             });
                                         })
@@ -401,13 +404,13 @@ export class SiteDetailsComponent implements OnInit {
                     .subscribe((results) => {
                         if(results.length > 0){
                             results.forEach(function(result){
-                                // if (result.event_name === self.event){
+                                if (self.currentEvent === 0 || result.event_name === self.event){
                                     let peakDate = result.peak_date.split("T")[0];
                                     peakDate = peakDate.split("-");
                                     peakDate = peakDate[1] + "/" + peakDate[2] + "/" + peakDate[0];
                                     result.peak_date = peakDate;
                                     self.peaks.push(result);
-                                // }
+                                }
                             }) 
                         }
 
@@ -423,7 +426,7 @@ export class SiteDetailsComponent implements OnInit {
                     }
 
                     // Get member name
-                    if(this.site.member_id !== undefined){
+                    if(this.site.member_id !== undefined && this.site.member_id !== 0){
                         this.siteService
                             .getMemberName(this.site.member_id)
                             .subscribe((results) => {
@@ -508,10 +511,19 @@ export class SiteDetailsComponent implements OnInit {
             row.date_recovered = recoveredDate;
         }
 
+        let dialogWidth;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            dialogWidth = '80%';
+        }
+        else {
+            dialogWidth = '30%';
+        }
+
         const dialogRef = this.dialog.open(ReferenceMarkDialogComponent, {
             data: {
                 row_data: row
             },
+            width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
     }
@@ -525,29 +537,57 @@ export class SiteDetailsComponent implements OnInit {
             row.survey_date = surveyDate;
         }
 
+        let dialogWidth;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            dialogWidth = '80%';
+        }
+        else {
+            dialogWidth = '30%';
+        }
+
         const dialogRef = this.dialog.open(HwmDialogComponent, {
             data: {
                 row_data: row,
             },
+            width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
     }
 
     openSensorDetailsDialog(row): void {
         // Format dates
+        let utcPreview;
         row.instrument_status.forEach(function(instrument){
             if(instrument.time_stamp !== undefined && !instrument.time_stamp.includes("/")){
+                if(instrument.status === 'Deployed'){
+                    if(instrument.time_zone !== 'UTC'){
+                        let localTime = DateTime.fromISO(instrument.time_stamp, {zone: instrument.time_zone})
+                        utcPreview = localTime.setZone("UTC").toString();
+                    }
+                  }
                 let timestamp = instrument.time_stamp.split("T")[0];
+                let time = instrument.time_stamp.split("T")[1];
+                time = time.split (':')
                 timestamp = timestamp.split("-");
-                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0];
+                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + time[0] + ":" + time[1];
                 instrument.time_stamp = timestamp;
             }
         })
 
+        let dialogWidth;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            dialogWidth = '80%';
+        }
+        else {
+            dialogWidth = '30%';
+        }
+
         const dialogRef = this.dialog.open(SensorDialogComponent, {
             data: {
-                row_data: row
+                row_data: row,
+                utcPreview: utcPreview,
             },
+            width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
     }
@@ -565,13 +605,22 @@ export class SiteDetailsComponent implements OnInit {
             row.photo_date = photoDate;
         }
 
+        let dialogWidth;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            dialogWidth = '80%';
+        }
+        else {
+            dialogWidth = '30%';
+        }
+
         const dialogRef = this.dialog.open(FileDetailsDialogComponent, {
             data: {
                 row_data: row,
                 type: type,
                 siteInfo: this.site
             },
+            width: dialogWidth,
         });
-        dialogRef.afterClosed().subscribe((result) => {console.log(result)});
+        dialogRef.afterClosed().subscribe((result) => {});
     }
 }

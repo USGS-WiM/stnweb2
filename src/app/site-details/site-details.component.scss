@@ -14,6 +14,7 @@
     font-size: 15px;
     margin-top: 20px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .mat-expansion-panel-header {
@@ -215,9 +216,8 @@ table {
 // Site information
 #siteMap {
     width: 50%;
-    // height: 175px;
-    // line-height: 175px;
     display: inline-block;
+    text-align: left;
 }
 
 #mapContainer {
@@ -229,8 +229,9 @@ table {
 .map-button {
     margin: 5px 5px;
     background-color: white;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);;
     font-size: 15px;
+    font-weight: bold;
 }
 
 .table-container {
@@ -310,6 +311,12 @@ table {
     vertical-align: top;
     width: 20px;
     height: 20px;
+}
+
+.expand-icon {
+    display: inline;
+    vertical-align: middle;
+    color:rgba(0, 0, 0, 0.2);
 }
 
 .results-row {

@@ -223,7 +223,7 @@ describe('SiteDetailsComponent', () => {
 
     it('should call getLandownerContact if site has landownercontact_id', () => {
         const siteResponse = {landownercontact_id: 4};
-        const response = [{fname: "John Smith"}];
+        const response = {fname: "John", lname: "Smith"};
 
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
@@ -236,7 +236,8 @@ describe('SiteDetailsComponent', () => {
         component.getData();
         fixture.detectChanges();
         expect(landownerSpy).toHaveBeenCalled();
-        expect(component.landownerContact).toEqual("John Smith");
+        expect(component.landownerContact.fname).toEqual("John");
+        expect(component.landownerContact.lname).toEqual("Smith");
     });
 
     it('should call getMemberName if site has member_id', () => {

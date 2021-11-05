@@ -28,46 +28,46 @@ export class FileDetailsDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.setFileType();
-    if(this.data.row_data.source_id !== undefined){
-      this.setSourceAgency();
-      this.setSource();
-    }
+    if(this.data.row_data !== undefined){
+      this.setFileType();
+      if(this.data.row_data.source_id !== undefined){
+        this.setSourceAgency();
+        this.setSource();
+      }
 
-    this.associatedFileUrl = APP_SETTINGS.API_ROOT + '/Files/' + this.data.row_data.file_id + '/Item';
-    let associatedFile = document.querySelector("#associatedFile");
-    if(associatedFile !== null){
-      associatedFile.setAttribute('href', this.associatedFileUrl);
-    }
+      this.associatedFileUrl = APP_SETTINGS.API_ROOT + '/Files/' + this.data.row_data.file_id + '/Item';
+      let associatedFile = document.querySelector("#associatedFile");
+      if(associatedFile !== null){
+        associatedFile.setAttribute('href', this.associatedFileUrl);
+      }
 
-    this.previewCaption = {
-      description: this.data.row_data.description,
-      site_description: this.data.siteInfo.site_description,
-      county: this.data.siteInfo.county,
-      state: this.data.siteInfo.state,
-      photo_date: this.data.row_data.photo_date,
-      sourceName: this.sourceName,
-      sourceAgency: this.sourceAgency,
-    }
+      this.previewCaption = {
+        description: this.data.row_data.description,
+        site_description: this.data.siteInfo.site_description,
+        county: this.data.siteInfo.county,
+        state: this.data.siteInfo.state,
+        photo_date: this.data.row_data.photo_date,
+        sourceName: this.sourceName,
+        sourceAgency: this.sourceAgency,
+      }
 
-    // Replace any undefined preview caption info with placeholder
-    if (this.data.row_data.description === undefined || this.data.row_data.description == ''){
-      this.previewCaption.description = "(description)";
+      // Replace any undefined preview caption info with placeholder
+      if (this.data.row_data.description === undefined || this.data.row_data.description == ''){
+        this.previewCaption.description = "(description)";
+      }
+      if (this.data.siteInfo.site_description === undefined || this.data.siteInfo.site_description == ''){
+        this.previewCaption.site_description = '(site description)'
+      }
+      if (this.data.siteInfo.county === undefined || this.data.siteInfo.county == ''){
+        this.previewCaption.county = '(county)'
+      }
+      if (this.data.siteInfo.state === undefined || this.data.siteInfo.state == ''){
+        this.previewCaption.state = '(state)'
+      }
+      if (this.data.row_data.photo_date === undefined || this.data.row_data.photo_date == ''){
+        this.previewCaption.photo_date = '(photo date)'
+      }
     }
-    if (this.data.siteInfo.site_description === undefined || this.data.siteInfo.site_description == ''){
-      this.previewCaption.site_description = '(site description)'
-    }
-    if (this.data.siteInfo.county === undefined || this.data.siteInfo.county == ''){
-      this.previewCaption.county = '(county)'
-    }
-    if (this.data.siteInfo.state === undefined || this.data.siteInfo.state == ''){
-      this.previewCaption.state = '(state)'
-    }
-    if (this.data.row_data.photo_date === undefined || this.data.row_data.photo_date == ''){
-      this.previewCaption.photo_date = '(photo date)'
-    }
-
-    console.log(this.data.row_data)
   }
 
   setFileType(){
@@ -75,25 +75,29 @@ export class FileDetailsDialogComponent implements OnInit {
     .getFileType(this.data.row_data.filetype_id)
     .subscribe((results) => {
         this.fileType = results.filetype;
-        if(this.fileType === 'Data'){
+        if(this.fileType === 'Data' && this.data.row_data.data_file_id !== undefined){
           this.siteService
           .getApproval(this.data.row_data.data_file_id)
           .subscribe((approvalResults) => {
-              this.approvedOn = approvalResults.approval_date;
-              // Format approval date
-              if(this.approvedOn !== undefined && !this.approvedOn.includes("/")){
-                let approvalDate = this.approvedOn.split("T")[0];
-                approvalDate = approvalDate.split("-");
-                approvalDate = approvalDate[1] + "/" + approvalDate[2] + "/" + approvalDate[0];
-                this.approvedOn = approvalDate;
-              }
-              this.siteService
-              .getMemberName(approvalResults.member_id)
-              .subscribe((member) => {
-                if(member.length > 0){
-                  this.approvedBy = member.fname + " " + member.lname;
+              if(approvalResults !== null){
+                this.approvedOn = approvalResults.approval_date;
+                // Format approval date
+                if(this.approvedOn !== undefined && !this.approvedOn.includes("/")){
+                  let approvalDate = this.approvedOn.split("T")[0];
+                  approvalDate = approvalDate.split("-");
+                  approvalDate = approvalDate[1] + "/" + approvalDate[2] + "/" + approvalDate[0];
+                  this.approvedOn = approvalDate;
                 }
-              });
+                if(approvalResults.member_id !== undefined && approvalResults.member_id !== 0){
+                  this.siteService
+                  .getMemberName(approvalResults.member_id)
+                  .subscribe((member) => {
+                    if(member.length === undefined || member.length > 0){
+                      this.approvedBy = member.fname + " " + member.lname;
+                    }
+                  });
+                }
+              }
           });
           this.siteService
           .getDataFile(this.data.row_data.data_file_id)
@@ -107,13 +111,13 @@ export class FileDetailsDialogComponent implements OnInit {
                 collectDate = collectDate[1] + "/" + collectDate[2] + "/" + collectDate[0];
                 this.collectDate = collectDate;
               }
-              this.siteService
-              .getMemberName(datafileResults.processor_id)
-              .subscribe((memberResult) => {
-                if(memberResult.length > 0){
+              if(datafileResults.processor_id !== undefined && datafileResults.processor_id !== 0){
+                this.siteService
+                .getMemberName(datafileResults.processor_id)
+                .subscribe((memberResult) => {
                   this.processorName = memberResult.fname + " " + memberResult.lname;
-                }
-              });
+                });
+              }
           });
         }
     });

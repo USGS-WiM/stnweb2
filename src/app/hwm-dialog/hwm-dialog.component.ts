@@ -19,6 +19,7 @@ export class HwmDialogComponent implements OnInit {
   public vdatum;
   public vmethod;
   public stillwater;
+  public surveyMember;
   
   displayedHWMFileColumns: string[] = [
     'FileDate',
@@ -32,23 +33,25 @@ export class HwmDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getHWMFiles();
-    this.setHDatum();
-    this.setHCollectionMethod();
-    this.setMemberName();
-    this.setHWMType();
-    this.setHWMMarker();
-    this.setHWMQuality();
-    if(this.data.row_data.vdatum !== undefined){
-      this.setVDatum();
-    }
-    if(this.data.row_data.vdatum !== undefined){
-      this.setVCollectionMethod();
-    }
-    if(this.data.row_data.stillwater === 1){
-      this.stillwater = "Yes";
-    }else{
-      this.stillwater = "No";
+    if(this.data.row_data !== undefined){
+      this.getHWMFiles();
+      this.setHDatum();
+      this.setHCollectionMethod();
+      this.setMemberName();
+      this.setHWMType();
+      this.setHWMMarker();
+      this.setHWMQuality();
+      if(this.data.row_data.vdatum !== undefined){
+        this.setVDatum();
+      }
+      if(this.data.row_data.vdatum !== undefined){
+        this.setVCollectionMethod();
+      }
+      if(this.data.row_data.stillwater === 1){
+        this.stillwater = "Yes";
+      }else{
+        this.stillwater = "No";
+      }
     }
   }
 
@@ -106,7 +109,7 @@ export class HwmDialogComponent implements OnInit {
       this.siteService
       .getMemberName(this.data.row_data.survey_member_id)
       .subscribe((results) => {
-          self.flagMember = results.fname + " " + results.lname;
+          self.surveyMember = results.fname + " " + results.lname;
       });
     }
   }

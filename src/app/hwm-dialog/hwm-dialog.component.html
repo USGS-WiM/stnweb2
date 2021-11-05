@@ -109,7 +109,7 @@
                 </div>
                 <div class="cell-container">
                     <p class="content-left">Survey Member</p>
-                    <p class="content-right" *ngIf="data.row_data.survey_member_id !== undefined && data.row_data.survey_member_id !== '' && surveyMember !== undefined && surveyMember !== ''; else nullLong">{{surveyMember}}</p>
+                    <p class="content-right" *ngIf="data.row_data.survey_member_id !== undefined && data.row_data.survey_member_id !== '' && surveyMember !== undefined && surveyMember !== ''; else nullSurveyMember">{{surveyMember}}</p>
                     <ng-template #nullSurveyMember><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
