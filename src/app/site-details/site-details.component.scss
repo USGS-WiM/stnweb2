@@ -1,0 +1,328 @@
+#siteDetailsContainer {
+    margin: auto;
+    padding: 40px;
+}
+
+.site-title {
+    font-size: 27px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.basic-site-info {
+    color: #313b57;
+    font-size: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.mat-expansion-panel-header {
+    background-color: #03274B;
+}
+
+.mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
+    color: #FFF;
+    background-color: #03274B; 
+}
+
+.mat-expansion-panel-header:hover {
+    background-color: #03274B !important;
+    color: #FFF !important;
+}
+
+.mat-expansion-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
+    color: #FFF;
+    font-weight: 500;
+}
+
+// Tables
+table {
+    width: 100%;
+}
+
+.tableContainer {
+    width: 100%;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.mat-column-HousingType{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-HousingLength{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-HousingMaterial{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-Amount{
+    padding: 10px;
+    vertical-align: top;
+    border-right: 1px solid #e0e0e0;
+    align-self: stretch;
+}
+
+.mat-column-Notes{
+    padding: 10px;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-HwmID{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-HwmLabel{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-HwmFlagDate{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-HwmElev{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-SerialNumber{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-SensorEvent{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-DeploymentType{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-SensorStatus{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-PeakStage{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-PeakEventName{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-PeakDate{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-FileDate{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-FileName{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-FileDatum{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-FileSerialNum{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-RefMarkName{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-RefMarkEl{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-header-cell {
+    font-weight: bold;
+    text-transform: uppercase;
+    color:rgba(0, 0, 0, 0.87);
+    font-size: 12px;
+    vertical-align: middle;
+    background-color: #f7f7f7;
+}
+
+.mat-cell, .mat-header-cell, .mat-footer-cell {
+    overflow: auto;
+}
+
+// Site information
+#siteMap {
+    width: 50%;
+    display: inline-block;
+    text-align: left;
+}
+
+#mapContainer {
+    width: 100%;
+    height: 350px;
+    display: none;
+}
+
+.map-button {
+    margin: 5px 5px;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.2);;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.table-container {
+    display: inline-block;
+    margin: auto;
+    width: 50%;
+    vertical-align: top;
+}
+
+.outer-content{
+    display: table;
+    margin: auto;
+}
+
+.content-right {
+    display: table-cell;
+    width: 50%;
+    text-align: left;
+}
+
+.content-left {
+    display: table-cell;
+    width: 50%;
+    padding-right: 5px;
+    text-align: right;
+    font-weight: bold;
+}
+
+#landowner {
+    width: 100%;
+    display: table;
+    margin: auto;
+}
+
+#landownerTitle {
+    font-weight: bold;
+}
+
+.file-title {
+    font-weight: bold;
+}
+
+.cell-container {
+    display: table-row;
+}
+
+.ul {
+    width: 100%;
+}
+
+.cell-container p{
+    padding: 5px;
+    font-size: 15px
+}
+
+.event-alert {
+    margin: 10px;
+    border: solid 1px #ee992a;
+}
+
+.event-alert p{
+    display: inline;
+    vertical-align: middle;
+    color: #ee992a;
+    margin: 0px;
+}
+
+.warning-icon {
+    padding-right: 10px;
+    color: #ee992a;
+    display: inline;
+    vertical-align: middle;
+}
+
+.deployed-icon {
+    font-size: 20px;
+    vertical-align: top;
+    width: 20px;
+    height: 20px;
+}
+
+.expand-icon {
+    display: inline;
+    vertical-align: middle;
+    color:rgba(0, 0, 0, 0.2);
+}
+
+.results-row {
+    cursor: pointer;
+}
+
+.close-button {
+    float: right;
+}
