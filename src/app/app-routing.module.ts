@@ -11,7 +11,7 @@ const routes: Routes = [
     { path: '', redirectTo: 'map', pathMatch: 'full' },
     { path: 'map', component: MapComponent },
     { path: 'settings', component: SettingsComponent },
-    { path: 'site/:id', component: SiteDetailsComponent },
+    { path: 'Site/:id/SiteDashboard', component: SiteDetailsComponent },
     { path: 'approvals', component: ApprovalsComponent },
     { path: 'bulkhwm', component: BulkHwmComponent },
     { path: 'hwmupload', component: HwmUploadComponent },

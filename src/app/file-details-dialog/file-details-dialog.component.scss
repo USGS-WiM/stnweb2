@@ -1,0 +1,22 @@
+.content-right {
+    display: table-cell;
+    width: 50%;
+    text-align: left;
+}
+
+.content-left {
+    display: table-cell;
+    width: 50%;
+    padding-right: 5px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.cell-container {
+    display: table-row;
+}
+
+.cell-container p{
+    padding: 5px;
+    font-size: 15px;
+}

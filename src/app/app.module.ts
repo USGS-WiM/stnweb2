@@ -60,6 +60,11 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { ResultDetailsComponent } from './result-details/result-details.component';
 import { SensorService } from './services/sensor.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ReferenceMarkDialogComponent } from './reference-mark-dialog/reference-mark-dialog.component';
+import { HwmDialogComponent } from './hwm-dialog/hwm-dialog.component';
+import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
+import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
+import { FileDetailsDialogComponent } from './file-details-dialog/file-details-dialog.component';
 
 @NgModule({
     declarations: [
@@ -77,6 +82,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         BulkHwmComponent,
         HwmUploadComponent,
         ResultDetailsComponent,
+        ReferenceMarkDialogComponent,
+        HwmDialogComponent,
+        SensorDialogComponent,
+        PeakDialogComponent,
+        FileDetailsDialogComponent,
     ],
     imports: [
         BrowserModule,

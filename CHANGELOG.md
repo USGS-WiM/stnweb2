@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Added map filter button on mobile.  Map filters open to replace the map and filter results.
 -   Added Real-Time Stream Gage layer
+-   Added Site Pages with navigation from site popups on map
 
 ### Changed
 

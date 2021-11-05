@@ -24,6 +24,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 // import { by } from '@angular/platform-browser';
@@ -86,6 +87,7 @@ describe('MapComponent', () => {
                 MatButtonToggleModule,
                 MatRadioModule,
                 ReactiveFormsModule,
+                RouterTestingModule,
             ],
             providers: [
                 MapComponent,
@@ -323,6 +325,43 @@ describe('MapComponent', () => {
             expect(spyOnQueryMethod).toHaveBeenCalled();
         })
     })
+
+    it('should call addRouterLink on site marker click', () => {
+        let spyOnRouterLink = spyOn(component, 'addRouterLink');
+        let marker = Array.from(document.getElementsByClassName(component.siteService.siteMarkers));
+        marker.forEach((element) => {
+            element.dispatchEvent(new Event('click'));
+            fixture.detectChanges();
+            expect(spyOnRouterLink).toHaveBeenCalled();
+        })
+    })
+
+    it('should call addRouterLink on all sites marker click', () => {
+        let spyOnRouterLink = spyOn(component, 'addRouterLink');
+        let marker = Array.from(document.getElementsByClassName(component.siteService.allSiteMarkers));
+        marker.forEach((element) => {
+            element.dispatchEvent(new Event('click'));
+            fixture.detectChanges();
+            expect(spyOnRouterLink).toHaveBeenCalled();
+        })
+    })
+
+    // it('addRouterLink should clone router link div and add to popup', () => {
+    //     const e = new L.marker([43.44, -87.75]);
+    //     console.log(e)
+    //     component.addRouterLink(e);
+    //     expect(document.querySelector("#clonedSiteRouter")).not.toEqual(null);
+    // })
+
+    // it('should navigate to site url on route link click in site marker popups', () => {
+    //     let spyOnRouterLink = spyOn(component, 'router');
+    //     let marker = Array.from(document.getElementsByClassName(component.siteService.allSiteMarkers));
+    //     marker.forEach((element) => {
+    //         element.dispatchEvent(new Event('click'));
+    //         fixture.detectChanges();
+    //         expect(spyOnRouterLink).toHaveBeenCalled();
+    //     })
+    // })
 
     it('stream gage button should be enabled when zoomed to 9 or higher', () => {
         component.map.setZoom(10);
