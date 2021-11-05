@@ -1218,40 +1218,28 @@ export class MapComponent implements OnInit {
         }
         let timeQueryRange = "";
         let beginDate;
+        let initialEndDate;
         let endDate;
         if(this.submittedEvent.event_end_date !== undefined){
-            // If any filters but event are used, event will be a string instead of an object
-            if (typeof(this.submittedEvent) == 'string' || this.submittedEvent.event_end_date.toString() == "" || (this.submittedEvent.event_end_date.toString() == "" && this.submittedEvent.event_start_date.toString() == "")){
-                timeQueryRange = "&period=P7D";
-            }else if (this.submittedEvent.event_end_date.toString() == ""){
-                let newDate = new Date();
-                endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
-            }else{
-                beginDate = this.submittedEvent.event_start_date.substr(0, 10);
-                endDate = this.submittedEvent.event_end_date.substr(0, 10);
-                timeQueryRange =
-                    "&startDT=" +
-                    beginDate +
-                    "&endDT=" +
-                    endDate;
-            }
+            initialEndDate = this.submittedEvent.event_end_date;
         }else{
-            // Use last updated date if event end date does not exist
-            // If any filters but event are used, event will be a string instead of an object
-            if (typeof(this.submittedEvent) == 'string' || this.submittedEvent.last_updated.toString() == "" || (this.submittedEvent.last_updated.toString() == "" && this.submittedEvent.event_start_date.toString() == "")){
-                timeQueryRange = "&period=P7D";
-            }else if (this.submittedEvent.last_updated.toString() == ""){
-                let newDate = new Date();
-                endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
-            }else{
-                beginDate = this.submittedEvent.event_start_date.substr(0, 10);
-                endDate = this.submittedEvent.last_updated.substr(0, 10);
-                timeQueryRange =
-                    "&startDT=" +
-                    beginDate +
-                    "&endDT=" +
-                    endDate;
-            }
+            initialEndDate = this.submittedEvent.last_updated;
+        }
+        // Use last updated date if event end date does not exist
+        // If any filters but event are used, event will be a string instead of an object
+        if (typeof(this.submittedEvent) == 'string' || initialEndDate.toString() == "" || (initialEndDate.toString() == "" && this.submittedEvent.event_start_date.toString() == "")){
+            timeQueryRange = "&period=P7D";
+        }else if (initialEndDate.toString() == ""){
+            let newDate = new Date();
+            endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
+        }else{
+            beginDate = this.submittedEvent.event_start_date.substr(0, 10);
+            endDate = initialEndDate.substr(0, 10);
+            timeQueryRange =
+                "&startDT=" +
+                beginDate +
+                "&endDT=" +
+                endDate;
         }
         let popupContent;
         this.streamgageService.getSingleGage(siteID, timeQueryRange).subscribe((results) => {
