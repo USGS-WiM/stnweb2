@@ -1142,7 +1142,12 @@ export class MapComponent implements OnInit {
                     beginDate = event.event_start_date.substr(0, 10);
                     beginDate = beginDate.replace("-", "");
                     beginDate = beginDate.replace("-", "");
-                    endDate = event.event_end_date.substr(0, 10);
+                    // Use last updated date if end date does not exist
+                    if(event.event_end_data !== undefined){
+                        endDate = event.event_end_date.substr(0, 10);
+                    }else{
+                        endDate = event.last_updated.substr(0, 10);
+                    }
                     endDate = endDate.replace("-", "");
                     endDate = endDate.replace("-", "");
                 }
@@ -1214,20 +1219,39 @@ export class MapComponent implements OnInit {
         let timeQueryRange = "";
         let beginDate;
         let endDate;
-        // If any filters but event are used, event will be a string instead of an object
-        if (typeof(this.submittedEvent) == 'string' || this.submittedEvent.event_end_date.toString() == "" || (this.submittedEvent.event_end_date.toString() == "" && this.submittedEvent.event_start_date.toString() == "")){
-            timeQueryRange = "&period=P7D";
-        }else if (this.submittedEvent.event_end_date.toString() == ""){
-            let newDate = new Date();
-            endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
+        if(this.submittedEvent.event_end_date !== undefined){
+            // If any filters but event are used, event will be a string instead of an object
+            if (typeof(this.submittedEvent) == 'string' || this.submittedEvent.event_end_date.toString() == "" || (this.submittedEvent.event_end_date.toString() == "" && this.submittedEvent.event_start_date.toString() == "")){
+                timeQueryRange = "&period=P7D";
+            }else if (this.submittedEvent.event_end_date.toString() == ""){
+                let newDate = new Date();
+                endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
+            }else{
+                beginDate = this.submittedEvent.event_start_date.substr(0, 10);
+                endDate = this.submittedEvent.event_end_date.substr(0, 10);
+                timeQueryRange =
+                    "&startDT=" +
+                    beginDate +
+                    "&endDT=" +
+                    endDate;
+            }
         }else{
-            beginDate = this.submittedEvent.event_start_date.substr(0, 10);
-            endDate = this.submittedEvent.event_end_date.substr(0, 10);
-            timeQueryRange =
-                "&startDT=" +
-                beginDate +
-                "&endDT=" +
-                endDate;
+            // Use last updated date if event end date does not exist
+            // If any filters but event are used, event will be a string instead of an object
+            if (typeof(this.submittedEvent) == 'string' || this.submittedEvent.last_updated.toString() == "" || (this.submittedEvent.last_updated.toString() == "" && this.submittedEvent.event_start_date.toString() == "")){
+                timeQueryRange = "&period=P7D";
+            }else if (this.submittedEvent.last_updated.toString() == ""){
+                let newDate = new Date();
+                endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
+            }else{
+                beginDate = this.submittedEvent.event_start_date.substr(0, 10);
+                endDate = this.submittedEvent.last_updated.substr(0, 10);
+                timeQueryRange =
+                    "&startDT=" +
+                    beginDate +
+                    "&endDT=" +
+                    endDate;
+            }
         }
         let popupContent;
         this.streamgageService.getSingleGage(siteID, timeQueryRange).subscribe((results) => {
