@@ -1,12 +1,10 @@
-on:
-  pull_request_review:
-    types: [submitted]
+on: 
+  push:
     branches:
     - dev
 name: Deploy to Test site
 jobs:
   deployToTest:
-    if: github.event.review.state == 'approved'
     name: Deploy to Test Site
     runs-on: ubuntu-latest
     steps:
