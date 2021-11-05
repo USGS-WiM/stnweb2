@@ -1554,6 +1554,13 @@ export class MapComponent implements OnInit {
             this.streamGages,
             this.streamGageIcon
         );
+        if (this.map.hasLayer(this.streamgageService.streamGageMarkers)){
+            this.streamgageService.streamGageMarkers.clearLayers();
+            if(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== undefined){
+                document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
+            }
+            this.streamgagesVisible = true;
+        }
     }
 
     public submitMapFilter() {
