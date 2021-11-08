@@ -353,8 +353,9 @@
                         <table *ngIf="referenceMarks.length > 0; else noRMTable"
                             mat-table
                             id="datumLocTable"
-                            [dataSource]="referenceMarks"
+                            [dataSource]="refMarkDataSource"
                             class="mat-elevation-z5"
+                            (matSortChange)="sortData($event)"
                             matSort
                         >
 
@@ -396,6 +397,7 @@
                             <p class="tableContainer">No Reference Marks listed.</p>
                         </ng-template>
                     </div>
+                    <mat-paginator #paginator *ngIf="referenceMarks.length > 0" [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Sensors ({{siteFullInstruments.length}})">
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
@@ -403,7 +405,7 @@
                         <table *ngIf="siteFullInstruments.length > 0; else noSensorTable"
                             mat-table
                             id="sensorTable"
-                            [dataSource]="siteFullInstruments"
+                            [dataSource]="sensorDataSource"
                             class="mat-elevation-z5"
                             matSort
                         >
@@ -468,10 +470,11 @@
                                 class="results-row"
                             ></tr>
                         </table>
+                        <ng-template #noSensorTable>
+                            <p class="tableContainer">No Sensors listed.</p>
+                        </ng-template>
                     </div>
-                    <ng-template #noSensorTable>
-                        <p class="tableContainer">No Sensors listed.</p>
-                    </ng-template>
+                    <mat-paginator #paginator2 *ngIf="siteFullInstruments.length > 0" [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="High Water Marks ({{hwm.length}})">
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To create a HWM, first choose an Event above.</p></mat-card>
@@ -547,6 +550,7 @@
                             <p class="tableContainer">No HWMs listed.</p>
                         </ng-template>
                     </div>
+                    <!-- <mat-paginator *ngIf="hwm.length > 0" [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator> -->
                 </mat-tab>
                 <mat-tab label="Peaks ({{peaks.length}})">
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To view details about a Peak Summary, first choose an Event above.</p></mat-card>

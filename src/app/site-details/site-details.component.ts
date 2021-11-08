@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {
     Router,
     ActivatedRoute,
@@ -6,6 +6,10 @@ import {
     NavigationEnd,
 } from '@angular/router';
 import { SiteService } from '@services/site.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { ReferenceMarkDialogComponent } from '@app/reference-mark-dialog/reference-mark-dialog.component';
 import { SensorDialogComponent } from '@app/sensor-dialog/sensor-dialog.component';
 import { HwmDialogComponent } from '@app/hwm-dialog/hwm-dialog.component';
@@ -22,6 +26,10 @@ import { DateTime } from "luxon";
     styleUrls: ['./site-details.component.scss'],
 })
 export class SiteDetailsComponent implements OnInit {
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatPaginator) paginator2: MatPaginator;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
+    
     public siteID: string;
     public site;
     public siteHousing;
@@ -48,7 +56,14 @@ export class SiteDetailsComponent implements OnInit {
     public sensorFilesDone = false;
     public siteMapHidden = true;
     public map;
-    // private statusTypes;
+    
+    refMarkDataSource;
+    sensorDataSource;
+    hwmDataSource;
+    refMarkFilesDataSource;
+    sensorFilesDataSource;
+    hwmFilesDataSource;
+    siteFilesDataSource;
 
     displayedColumns: string[] = [
         'HousingType',
@@ -118,6 +133,14 @@ export class SiteDetailsComponent implements OnInit {
 
         this.getData();
 
+    }
+
+    ngAfterViewInit() {
+        this.refMarkDataSource = new MatTableDataSource(this.referenceMarks);
+        this.refMarkDataSource.paginator = this.paginator;
+
+        this.sensorDataSource = new MatTableDataSource(this.siteFullInstruments);
+        this.sensorDataSource.paginator = this.paginator2;
     }
 
     getData() {
@@ -192,7 +215,7 @@ export class SiteDetailsComponent implements OnInit {
 
                         });
 
-                    // Get datum locations
+                    // Get reference marks
                     this.siteService
                     .getObjectivePoints(this.siteID)
                     .subscribe((results) => {
@@ -200,6 +223,8 @@ export class SiteDetailsComponent implements OnInit {
                             results.forEach(function(result){
                                 self.referenceMarks.push(result);
                             })
+                            // this.refMarkDataSource = new MatTableDataSource(this.referenceMarks);
+                            // this.refMarkDataSource.paginator = this.paginator;
                         }
 
                     });
@@ -233,6 +258,8 @@ export class SiteDetailsComponent implements OnInit {
                                             result.eventName = eventResults.event_name;
                                         })
                                     })
+                                    // this.sensorDataSource = new MatTableDataSource(this.siteFullInstruments);
+                                    // this.sensorDataSource.paginator = this.paginator2;
                                 }
 
                         });
@@ -256,6 +283,8 @@ export class SiteDetailsComponent implements OnInit {
                                         hwm.eventName = eventResults.event_name;
                                     })
                                 })
+                                // this.hwmDataSource = new MatTableDataSource(this.hwm);
+                                // this.hwmDataSource.paginator = this.paginator2;
                             }
 
                         });
@@ -332,6 +361,8 @@ export class SiteDetailsComponent implements OnInit {
                                             });
                                         })
                                     });
+                                    // this.sensorDataSource = new MatTableDataSource(this.siteFullInstruments);
+                                    // this.sensorDataSource.paginator = this.paginator2;
                                 })
                             }
 
@@ -349,6 +380,8 @@ export class SiteDetailsComponent implements OnInit {
                                     flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
                                     hwm.flag_date = flagDate;
                                 })
+                                // this.hwmDataSource = new MatTableDataSource(this.hwm);
+                                // this.hwmDataSource.paginator = this.paginator;
                             }
 
                         });
