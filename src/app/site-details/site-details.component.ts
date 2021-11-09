@@ -606,6 +606,9 @@ export class SiteDetailsComponent implements OnInit {
             a.layer.spiderfy();
         });
 
+        // Spiderify on load
+        this.markers.zoomToShowLayer(siteMarker);
+
         // HWM markers
         this.hwm.forEach(function(mark){
             let hwmMarker = L.marker([mark.latitude_dd, mark.longitude_dd], {icon: hwmIcon});
@@ -620,9 +623,9 @@ export class SiteDetailsComponent implements OnInit {
         // Proximity site markers
         this.siteService.getProximitySites(this.site.latitude_dd, this.site.longitude_dd, 0.05).subscribe((results) => {
             if(results.length > 0){
-                this.nearbySitesVisible = true;
                 results.forEach(function(site){
                     if(site.site_no !== self.site.site_no){
+                        self.nearbySitesVisible = true;
                         let nearbySiteMarker = L.marker([site.latitude_dd, site.longitude_dd], {icon: nearbyIcon}).addTo(self.nearbySites);
                         nearbySiteMarker.data = {
                             id: site.site_no,
