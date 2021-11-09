@@ -10,6 +10,7 @@ import { SensorTypeService } from '@services/sensor-type.service';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { APP_SETTINGS } from './app.settings';
 import { Member } from '@interfaces/member';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -29,7 +30,8 @@ export class AppComponent implements OnInit {
         public StateService: StateService,
         public NetworkNameService: NetworkNameService,
         public SensorTypeService: SensorTypeService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private router: Router
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -45,7 +47,7 @@ export class AppComponent implements OnInit {
     }
 
     openLoginDialog(): void {
-        const dialogRef = this.dialog.open(LoginComponent, {});
+        const dialogRef = this.dialog.open(LoginComponent, { disableClose: true });
 
         dialogRef.afterClosed().subscribe((result) => {
             //console.log('The dialog was closed');
@@ -76,7 +78,12 @@ export class AppComponent implements OnInit {
         // remove user from local storage to log user out
         this.authenticationService.logout();
         this.openSnackBar('Successfully logged out.', 'OK', 5000);
-        // console.log('logged out');
+
+        // redircting to landing page
+        this.router.navigate(['/']);
+
+        // opening the login dialog again
+        this.openLoginDialog();
     }
     openSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
