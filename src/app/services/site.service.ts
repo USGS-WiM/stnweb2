@@ -105,7 +105,7 @@ export class SiteService {
     //Get horizontal datum lookup
     public getHDatum(): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/HorizontalDatums.json')
+            .get(APP_SETTINGS.API_ROOT + 'HorizontalDatums.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -120,7 +120,7 @@ export class SiteService {
     //Get horizontal collection method lookup
     public getHCollectionMethod(): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/HorizontalMethods.json')
+            .get(APP_SETTINGS.API_ROOT + 'HorizontalMethods.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -135,7 +135,7 @@ export class SiteService {
     //Get vertical datum by datum id
     public getVDatum(vDatumID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/VerticalDatums/'+ vDatumID + '.json')
+            .get(APP_SETTINGS.API_ROOT + 'VerticalDatums/'+ vDatumID + '.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -150,7 +150,7 @@ export class SiteService {
     //Get vertical collection method by id
     public getVCollectionMethod(vMethodID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/VerticalMethods/' + vMethodID + '.json')
+            .get(APP_SETTINGS.API_ROOT + 'VerticalMethods/' + vMethodID + '.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -165,7 +165,7 @@ export class SiteService {
     //Get housing type
     public getHousingType(housing_type_id): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/HousingTypes/' + housing_type_id + '.json')
+            .get(APP_SETTINGS.API_ROOT + 'HousingTypes/' + housing_type_id + '.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -312,7 +312,7 @@ export class SiteService {
     // Get sensor status
     public getStatus(sensorID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/Instruments/' + sensorID + '/InstrumentStatus.json', {
+            .get(APP_SETTINGS.API_ROOT + 'Instruments/' + sensorID + '/InstrumentStatus.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
@@ -359,7 +359,7 @@ export class SiteService {
     //Get OP Type
     public getOPType(opTypeID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/OPTypes/' + opTypeID + '.json')
+            .get(APP_SETTINGS.API_ROOT + 'OPTypes/' + opTypeID + '.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -374,7 +374,7 @@ export class SiteService {
     //Get OP Quality
     public getOPQuality(opQualityID): Observable<any> {
     return this.httpClient
-        .get(APP_SETTINGS.API_ROOT + '/ObjectivePointQualities/' + opQualityID + '.json')
+        .get(APP_SETTINGS.API_ROOT + 'ObjectivePointQualities/' + opQualityID + '.json')
         .pipe(
             tap((response) => {
                 console.log(
@@ -419,7 +419,7 @@ export class SiteService {
     //Get deployment types
     public getDeploymentTypes(): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/DeploymentTypes.json')
+            .get(APP_SETTINGS.API_ROOT + 'DeploymentTypes.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -480,7 +480,7 @@ export class SiteService {
     //Get Site Event Files
     public getSiteEventFiles(siteID, eventID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/Files.json?Site=' + siteID + '&Event=' + eventID)
+            .get(APP_SETTINGS.API_ROOT + 'Files.json?Site=' + siteID + '&Event=' + eventID)
             .pipe(
                 tap((response) => {
                     console.log(
@@ -495,7 +495,7 @@ export class SiteService {
     //Get File Sensors
     public getFileSensor(fileID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/Files/' + fileID + '/Instrument.json')
+            .get(APP_SETTINGS.API_ROOT + 'Files/' + fileID + '/Instrument.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -510,7 +510,7 @@ export class SiteService {
     // Get Datum Location Files
     public getDatumLocFiles(datumLocID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/ObjectivePoints/' + datumLocID + '/Files.json')
+            .get(APP_SETTINGS.API_ROOT + 'ObjectivePoints/' + datumLocID + '/Files.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -525,7 +525,7 @@ export class SiteService {
     //Get Sensor Files
     public getSensorFiles(SensorID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/Instruments/' + SensorID + '/Files.json')
+            .get(APP_SETTINGS.API_ROOT + 'Instruments/' + SensorID + '/Files.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -540,7 +540,7 @@ export class SiteService {
     //Get HWM Files
     public getHWMFiles(hwmID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Files.json')
+            .get(APP_SETTINGS.API_ROOT + 'HWMs/' + hwmID + '/Files.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -570,7 +570,7 @@ export class SiteService {
     //Get OP Measurements
     public getOPMeasurements(instrumentStatusID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/InstrumentStatus/' + instrumentStatusID + '/OPMeasurements.json')
+            .get(APP_SETTINGS.API_ROOT + 'InstrumentStatus/' + instrumentStatusID + '/OPMeasurements.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -585,7 +585,7 @@ export class SiteService {
     //Get HWM Type
     public getHWMType(hwmID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Type.json')
+            .get(APP_SETTINGS.API_ROOT + 'HWMs/' + hwmID + '/Type.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -600,7 +600,7 @@ export class SiteService {
     //Get HWM Marker
     public getHWMMarker(hwmID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Marker.json')
+            .get(APP_SETTINGS.API_ROOT + 'HWMs/' + hwmID + '/Marker.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -615,7 +615,7 @@ export class SiteService {
     //Get HWM Quality
     public getHWMQuality(hwmID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/HWMs/' + hwmID + '/Quality.json')
+            .get(APP_SETTINGS.API_ROOT + 'HWMs/' + hwmID + '/Quality.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -630,7 +630,7 @@ export class SiteService {
     //Get File Type
     public getFileType(fileTypeID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/FileTypes/' + fileTypeID + '.json')
+            .get(APP_SETTINGS.API_ROOT + 'FileTypes/' + fileTypeID + '.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -645,7 +645,7 @@ export class SiteService {
     //Get File Source
     public getFileSource(sourceID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/Sources/' + sourceID + '/Agencies.json', {
+            .get(APP_SETTINGS.API_ROOT + 'Sources/' + sourceID + '/Agencies.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
@@ -659,10 +659,10 @@ export class SiteService {
             );
     }
 
-    //Get File Source
+    //Get File Source Name
     public getSourceName(sourceID): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/Sources/' + sourceID + '.json', {
+            .get(APP_SETTINGS.API_ROOT + 'Sources/' + sourceID + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
@@ -685,11 +685,11 @@ export class SiteService {
             .pipe(
                 tap((response) => {
                     console.log(
-                        'getSourceName response received'
+                        'getApproval response received'
                     );
                     return response;
                 }),
-                catchError(this.handleError<any>('getSourceName', []))
+                catchError(this.handleError<any>('getApproval', []))
             );
     }
 

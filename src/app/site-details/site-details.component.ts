@@ -62,6 +62,11 @@ export class SiteDetailsComponent implements OnInit {
     public nearbySitesVisible = false;
     public nearbyToggled = false;
     public nearbySites = L.featureGroup([]);
+    public markers = L.markerClusterGroup({
+        spiderfyOnMaxZoom: false,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: false
+    });
 
     displayedColumns: string[] = [
         'HousingType',
@@ -506,16 +511,12 @@ export class SiteDetailsComponent implements OnInit {
             renderer: L.canvas(),
         });
 
-        let markers = L.markerClusterGroup({
-            spiderfyOnMaxZoom: false,
-            showCoverageOnHover: false,
-            zoomToBoundsOnClick: false
-        });
-
-        // Disable map scrolling when scrolling the legend
-        L.DomEvent.disableScrollPropagation(document.querySelector('#legend'));
-        // Enable clicking on map controls on mobile screens
-        L.DomEvent.disableClickPropagation(document.querySelector('#legend'));
+        if(document.querySelector('#legend') !== null){
+            // Disable map scrolling when scrolling the legend
+            L.DomEvent.disableScrollPropagation(document.querySelector('#legend'));
+            // Enable clicking on map controls on mobile screens
+            L.DomEvent.disableClickPropagation(document.querySelector('#legend'));
+        }
 
         let hwmIcon = L.divIcon({className: "wmm-diamond wmm-altred wmm-icon-noicon wmm-icon-red wmm-size-15"});
 
@@ -539,14 +540,14 @@ export class SiteDetailsComponent implements OnInit {
         
         let windspeedIcon = L.divIcon({className: "wmm-circle wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15"});
 
-        let otherIcon = L.divIcon({className: "wmm-square wmm-white wmm-icon-noicon wmm-icon-white wmm-size-15"});
+        let otherIcon = L.divIcon({className: "wmm-circle wmm-white wmm-icon-noicon wmm-icon-white wmm-size-15"});
 
         let nearbyIcon = L.divIcon({className: "wmm-pin wmm-altblue wmm-icon-circle wmm-icon-altblue wmm-size-15"});
 
         let sitePopupContent = `<b>Site:</b> ${this.site.site_no}`;
         let siteMarker = L.marker([this.site.latitude_dd, this.site.longitude_dd], {icon: siteIcon});
         siteMarker.bindPopup(sitePopupContent);
-        markers.addLayer(siteMarker)
+        this.markers.addLayer(siteMarker)
 
         siteMarker.desc = this.site.site_no;
         let self = this;
@@ -597,11 +598,11 @@ export class SiteDetailsComponent implements OnInit {
             let sensorMarker = L.marker([self.site.latitude_dd, self.site.longitude_dd], {icon: icon});
             sensorMarker.desc = sensor.serial_number;
             sensorMarker.bindPopup(`<b>Deployment Type: </b>${sensor.deploymentType}<br><b>Serial Number:</b> ${sensor.serial_number !== "" ? sensor.serial_number : "---"}<br><b>Status: </b>${sensor.statusType}`)
-            markers.addLayer(sensorMarker);
+            self.markers.addLayer(sensorMarker);
         })
-        self.map.addLayer(markers);
+        this.map.addLayer(this.markers);
 
-        markers.on('clusterclick', function (a) {
+        this.markers.on('clusterclick', function (a) {
             a.layer.spiderfy();
         });
 
@@ -613,7 +614,7 @@ export class SiteDetailsComponent implements OnInit {
             }
             let hwmPopupContent = `<b>HWM:</b> ${mark.hwm_id}`
             hwmMarker.bindPopup(hwmPopupContent)
-            markers.addLayer(hwmMarker)
+            self.markers.addLayer(hwmMarker)
         })
 
         // Proximity site markers
@@ -624,7 +625,7 @@ export class SiteDetailsComponent implements OnInit {
                     if(site.site_no !== self.site.site_no){
                         let nearbySiteMarker = L.marker([site.latitude_dd, site.longitude_dd], {icon: nearbyIcon}).addTo(self.nearbySites);
                         nearbySiteMarker.data = {
-                            id: site.hwm_id,
+                            id: site.site_no,
                         }
                         let nearbySitePopupContent = `<b>Nearby Site:</b> ${site.site_no}`
                         nearbySiteMarker.bindPopup(nearbySitePopupContent)

@@ -134,7 +134,7 @@ describe('SiteService', () => {
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.API_ROOT + '/HorizontalDatums.json'
+            APP_SETTINGS.API_ROOT + 'HorizontalDatums.json'
         );
         req.flush(mockHDatumList);
     });
@@ -155,7 +155,7 @@ describe('SiteService', () => {
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.API_ROOT + '/HorizontalMethods.json'
+            APP_SETTINGS.API_ROOT + 'HorizontalMethods.json'
 
         );
         req.flush(mockHCollectionMethodList);
@@ -176,7 +176,7 @@ describe('SiteService', () => {
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.API_ROOT + '/HousingTypes/' + 5 + '.json'
+            APP_SETTINGS.API_ROOT + 'HousingTypes/' + 5 + '.json'
 
         );
         req.flush(mockHousingTypeList);
@@ -333,7 +333,7 @@ describe('SiteService', () => {
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.API_ROOT + '/Instruments/' + 27 + '/InstrumentStatus.json'
+            APP_SETTINGS.API_ROOT + 'Instruments/' + 27 + '/InstrumentStatus.json'
 
         );
         req.flush(mockStatusList);
@@ -471,7 +471,7 @@ describe('SiteService', () => {
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.API_ROOT + '/DeploymentTypes.json'
+            APP_SETTINGS.API_ROOT + 'DeploymentTypes.json'
 
         );
         req.flush(mockDeploymentTypesList);
@@ -607,7 +607,7 @@ describe('SiteService', () => {
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.API_ROOT + '/Files.json?Site=' + 7 + '&Event=' + 31
+            APP_SETTINGS.API_ROOT + 'Files.json?Site=' + 7 + '&Event=' + 31
 
         );
         req.flush(mockSiteFilesList);
@@ -636,7 +636,7 @@ describe('SiteService', () => {
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.API_ROOT + '/Files/' + 2431 + '/Instrument.json'
+            APP_SETTINGS.API_ROOT + 'Files/' + 2431 + '/Instrument.json'
 
         );
         req.flush(mockFileSensorList);
@@ -664,5 +664,354 @@ describe('SiteService', () => {
 
         );
         req.flush(mockPeaksList);
+    });
+
+    it('#getDatumLocFiles() should retrieve reference marks for an objective point ID', () => {
+        let mockDatumLocFilesList = [
+            {
+                objective_point_id: 1687,
+                name: "RM1",
+                description: "Top of last bolt on guard rail, on east side of River, downstream of River Rd bridge.",
+                elev_ft: 7.735,
+                date_established: "2014-12-08T00:00:00",
+                op_is_destroyed: 0,
+                op_notes: "",
+                site_id: 4787,
+                vdatum_id: 2,
+                latitude_dd: 41.034347,
+                longitude_dd: -73.597142,
+                hdatum_id: 2,
+                hcollect_method_id: 1,
+                vcollect_method_id: 2,
+                op_type_id: 2,
+                unquantified: "",
+                op_quality_id: 2,
+                op_measurements: [],
+                op_control_identifier: [],
+                files: [],
+
+            }
+        ]
+        service.getDatumLocFiles("1687").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockDatumLocFilesList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'ObjectivePoints/' + 1687 + '/Files.json'
+
+        );
+        req.flush(mockDatumLocFilesList);
+    });
+
+    it('#getSensorFiles() should retrieve sensor files for an instrument ID', () => {
+        let mockSensorFilesList = [
+            {
+                file_id: 22253,
+                name: "SSS-MS-JAC-020WLGR.png",
+                description: "",
+                photo_direction: "",
+                file_date: "2016-05-31T00:00:00",
+                site_id: 6685,
+                filetype_id: 1,
+                source_id: 1809,
+                path: "EVENTS/EVENT_18/SITE_6685",
+                instrument_id: 1687,
+            }
+        ]
+        service.getSensorFiles("1687").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockSensorFilesList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'Instruments/' + 1687 + '/Files.json'
+
+        );
+        req.flush(mockSensorFilesList);
+    });
+
+    it('#getHWMFiles() should retrieve HWM files for a hwm ID', () => {
+        let mockHWMFilesList = [
+            {
+                file_id: 52725,
+                name: "DSC_0608.JPG",
+                description: "HWM",
+                file_date: "2016-09-06T21:06:07.606",
+                hwm_id: 13922,
+                site_id: 16106,
+                filetype_id: 1,
+                source_id: 2779,
+                path: "EVENTS/EVENT_123/SITE_16106",
+                photo_date: "2011-11-14T22:06:08",
+            }
+        ]
+        service.getHWMFiles("13922").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockHWMFilesList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'HWMs/' + 13922 + '/Files.json'
+
+        );
+        req.flush(mockHWMFilesList);
+    });
+
+    it('#getOPMeasurements() should retrieve OP Measurement info for an instrument ID', () => {
+        let mockOPMeasurementsList = [
+            {
+                op_measurements_id: 4687,
+                objective_point_id: 7998,
+                instrument_status_id: 13922,
+            }
+        ]
+        service.getOPMeasurements("13922").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockOPMeasurementsList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'InstrumentStatus/' + 13922 + '/OPMeasurements.json'
+
+        );
+        req.flush(mockOPMeasurementsList);
+    });
+
+    it('#getHWMType() should retrieve HWM Type info for an hwm ID', () => {
+        let mockHWMTypeList = [
+            { 
+                hwm_type_id: 1,
+                hwm_type: "Mud",
+                hwms: [],
+            }
+        ]
+        service.getHWMType("13922").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockHWMTypeList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'HWMs/' + 13922 + '/Type.json'
+
+        );
+        req.flush(mockHWMTypeList);
+    });
+
+    it('#getHWMMarker() should retrieve HWM Marker info for an hwm ID', () => {
+        let mockHWMMarkerList = [
+            { 
+                marker_id: 6,
+                marker1: "Nail and HWM tag",
+                hwms: [],
+            }
+        ]
+        service.getHWMMarker("13922").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockHWMMarkerList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'HWMs/' + 13922 + '/Marker.json'
+
+        );
+        req.flush(mockHWMMarkerList);
+    });
+
+    it('#getHWMQuality() should retrieve HWM Quality info for an hwm ID', () => {
+        let mockHWMQualityList = [
+            { 
+                hwm_quality_id: 1,
+                hwm_quality: "Excellent: +/- 0.05 ft",
+                min_range: 0,
+                max_range: 0.05,
+                hwms: [],
+            }
+        ]
+        service.getHWMQuality("13922").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockHWMQualityList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'HWMs/' + 13922 + '/Quality.json'
+
+        );
+        req.flush(mockHWMQualityList);
+    });
+
+    it('#getFileType() should retrieve File type info for a file type ID', () => {
+        let mockFileTypeList = [
+            {   
+                filetype_id: 8,
+                filetype: "Link",
+                files: [],
+            }
+        ]
+        service.getFileType("8").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockFileTypeList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'FileTypes/' + 8 + '.json'
+
+        );
+        req.flush(mockFileTypeList);
+    });
+
+    it('#getFileSource() should retrieve file source info for a source ID', () => {
+        let mockFileSourceList = [
+            {   
+                Links: [],
+                address: "1770 Corporate Dr. Ste 500",
+                agency_id: 4,
+                agency_name: "USGS GA",
+                city: "Norcross",
+                phone: "(000) 000-0000",
+                state: "GA",
+                zip: "30093",
+            }
+        ]
+        service.getFileSource("1815").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockFileSourceList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'Sources/' + 1815 + '/Agencies.json'
+
+        );
+        req.flush(mockFileSourceList);
+    });
+
+    it('#getSourceName() should retrieve source info for a source ID', () => {
+        let mockSourceNameList = [
+            {   
+                agency_id: 4,
+                files: [],
+                source_id: 1815,
+                source_name: "John Smith",
+            }
+        ]
+        service.getSourceName("1815").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockSourceNameList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'Sources/' + 1815 + '.json'
+
+        );
+        req.flush(mockSourceNameList);
+    });
+
+    it('#getApproval() should retrieve data file approval info for a data file ID', () => {
+        let mockApprovalList = [
+            {   
+                approval_id: 3460,
+                member_id: 870,
+                approval_date: "2017-07-28T16:23:38.74937",
+            }
+        ]
+        service.getApproval("3337").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockApprovalList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'DataFiles/' + 3337 + '/Approval.json'
+
+        );
+        req.flush(mockApprovalList);
+    });
+
+    it('#getDataFile() should retrieve data file info for a data file ID', () => {
+        let mockDataFileList = [
+            {   
+                data_file_id: 3337,
+                good_start: "2016-01-22T23:00:00",
+                good_end: "2016-01-26T16:00:00",
+                processor_id: 870,
+                instrument_id: 7053,
+                approval_id: 3460,
+                collect_date: "2016-02-08T00:00:00",
+                elevation_status: "",
+                time_zone: "UTC",
+            }
+        ]
+        service.getDataFile("3337").subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockDataFileList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.API_ROOT + 'DataFiles/' + 3337 + '.json'
+
+        );
+        req.flush(mockDataFileList);
+    });
+
+    it('#getProximitySites() should retrieve data file info for a data file ID', () => {
+        let mockProximitySitesList = [
+            {   
+                site_id: 7711,
+                site_no: "MDANN00001",
+                site_name: "MDANN00001",
+                site_description: "Annapolis City Dock",
+                address: "0",
+                city: "Annapolis",
+                state: "MD",
+                zip: "21401",
+                other_sid: "SSS-MD-ANN-001WL",
+                county: "Anne Arundel County",
+                waterbody: "Annapolis Harbor",
+                latitude_dd: 38.976833,
+                longitude_dd: -76.48505,
+                hdatum_id: 2,
+                drainage_area_sqmi: 0,
+                landownercontact_id: 283,
+                priority_id: 1,
+                zone: "0",
+                is_permanent_housing_installed: "No",
+                usgs_sid: "0",
+                noaa_sid: "0",
+                hcollect_method_id: 1,
+                site_notes: "0",
+                safety_notes: "0",
+                access_granted: "Yes",
+                member_id: 0,
+                network_name_site: [],
+                network_type_site: [],
+                objective_points: [],
+                instruments: [],
+                files: [],
+                site_housing: [],
+                hwms: [],
+            }
+        ]
+        service.getProximitySites(45, -89, 0.05).subscribe((results) => {
+            expect(results).not.toBe(null);
+            expect(JSON.stringify(results)).toEqual(
+                JSON.stringify(mockProximitySitesList)
+            );
+        });
+        const req = httpTestingController.expectOne(
+            APP_SETTINGS.SITES_URL + '.json?Latitude=' + 45 + '&Longitude=' + -89 + '&Buffer=' + 0.05
+
+        );
+        req.flush(mockProximitySitesList);
     });
 });
