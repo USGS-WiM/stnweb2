@@ -710,6 +710,24 @@ export class SiteService {
             );
     }
 
+    // Get nearby sites
+    public getProximitySites(lat, lon, buffer): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '.json?Latitude=' + lat + '&Longitude=' + lon + '&Buffer=' + buffer, {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getProximitySites response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getProximitySites', []))
+            );
+    }
+
+
     public setCurrentEvent(currentEvent: number) {
         this.event.next(currentEvent);
     }  

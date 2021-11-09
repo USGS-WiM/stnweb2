@@ -15,6 +15,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 declare let L: any;
 import 'leaflet';
 import { DateTime } from "luxon";
+import { marker } from 'leaflet';
 
 @Component({
     selector: 'app-site-details',
@@ -48,7 +49,19 @@ export class SiteDetailsComponent implements OnInit {
     public sensorFilesDone = false;
     public siteMapHidden = true;
     public map;
-    // private statusTypes;
+    public baroSensorVisible = false;
+    public rdgSensorVisible = false;
+    public airTempSensorVisible = false;
+    public waterTempSensorVisible = false;
+    public thermSensorVisible = false;
+    public waveSensorVisible = false;
+    public stormSensorVisible = false;
+    public humiditySensorVisible = false;
+    public windSensorVisible = false;
+    public otherSensorVisible = false;
+    public nearbySitesVisible = false;
+    public nearbyToggled = false;
+    public nearbySites = L.featureGroup([]);
 
     displayedColumns: string[] = [
         'HousingType',
@@ -488,10 +501,148 @@ export class SiteDetailsComponent implements OnInit {
         // instantiate leaflet map, with initial center, zoom level, and basemap
         this.map = new L.Map('mapContainer', {
             center: [this.site.latitude_dd, this.site.longitude_dd],
-            zoom: 12,
+            zoom: 14,
             layers: [osm],
             renderer: L.canvas(),
         });
+
+        let markers = L.markerClusterGroup({
+            spiderfyOnMaxZoom: false,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: false
+        });
+
+        // Disable map scrolling when scrolling the legend
+        L.DomEvent.disableScrollPropagation(document.querySelector('#legend'));
+        // Enable clicking on map controls on mobile screens
+        L.DomEvent.disableClickPropagation(document.querySelector('#legend'));
+
+        let hwmIcon = L.divIcon({className: "wmm-diamond wmm-altred wmm-icon-noicon wmm-icon-red wmm-size-15"});
+
+        let siteIcon = L.divIcon({className: "wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20"});
+
+        let baroIcon = L.divIcon({className: "wmm-square wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15"});
+        
+        let waterTempIcon = L.divIcon({className: "wmm-square wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15"});
+        
+        let rdgIcon = L.divIcon({className: "wmm-square wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15"});
+        
+        let stormIcon = L.divIcon({className: "wmm-square wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15"});
+        
+        let waveIcon = L.divIcon({className: "wmm-square wmm-blue wmm-icon-noicon wmm-icon-blue wmm-size-15"});
+        
+        let airTempIcon = L.divIcon({className: "wmm-circle wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15"});
+        
+        let thermIcon = L.divIcon({className: "wmm-circle wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15"});
+        
+        let humidityIcon = L.divIcon({className: "wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15"});
+        
+        let windspeedIcon = L.divIcon({className: "wmm-circle wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15"});
+
+        let otherIcon = L.divIcon({className: "wmm-square wmm-white wmm-icon-noicon wmm-icon-white wmm-size-15"});
+
+        let nearbyIcon = L.divIcon({className: "wmm-pin wmm-altblue wmm-icon-circle wmm-icon-altblue wmm-size-15"});
+
+        let sitePopupContent = `<b>Site:</b> ${this.site.site_no}`;
+        let siteMarker = L.marker([this.site.latitude_dd, this.site.longitude_dd], {icon: siteIcon});
+        siteMarker.bindPopup(sitePopupContent);
+        markers.addLayer(siteMarker)
+
+        siteMarker.desc = this.site.site_no;
+        let self = this;
+        let icon;
+        this.siteFullInstruments.forEach(function(sensor){
+            switch (sensor.deploymentType){
+                case 'Barometric Pressure': 
+                  icon = baroIcon;
+                  self.baroSensorVisible = true;
+                  break;
+                case 'Water Temperature':
+                  icon = waterTempIcon;
+                  self.waterTempSensorVisible = true;
+                  break;
+                case 'Rapid Deployment': 
+                  icon = rdgIcon;
+                  self.rdgSensorVisible = true;
+                  break;
+                case 'Air Temperature':
+                  icon = airTempIcon;
+                  self.airTempSensorVisible = true;
+                  break;
+                case 'Wave Height': 
+                  icon = waveIcon;
+                  self.waveSensorVisible = true;
+                  break;
+                case 'Temperature': 
+                  icon = thermIcon;
+                  self.thermSensorVisible = true;
+                  break;
+                case 'Humidity':
+                  icon = humidityIcon; 
+                  self.humiditySensorVisible = true;
+                  break;
+                case 'Water Level':
+                  icon = stormIcon;
+                  self.stormSensorVisible = true;
+                  break;
+                case 'Windspeed':
+                  icon = windspeedIcon;
+                  self.windSensorVisible = true;
+                  break;
+                case '': 
+                  icon = otherIcon;
+                  self.otherSensorVisible = true;
+                  break;
+              }
+            let sensorMarker = L.marker([self.site.latitude_dd, self.site.longitude_dd], {icon: icon});
+            sensorMarker.desc = sensor.serial_number;
+            sensorMarker.bindPopup(`<b>Deployment Type: </b>${sensor.deploymentType}<br><b>Serial Number:</b> ${sensor.serial_number !== "" ? sensor.serial_number : "---"}<br><b>Status: </b>${sensor.statusType}`)
+            markers.addLayer(sensorMarker);
+        })
+        self.map.addLayer(markers);
+
+        markers.on('clusterclick', function (a) {
+            a.layer.spiderfy();
+        });
+
+        // HWM markers
+        this.hwm.forEach(function(mark){
+            let hwmMarker = L.marker([mark.latitude_dd, mark.longitude_dd], {icon: hwmIcon});
+            hwmMarker.data = {
+                id: mark.hwm_id,
+            }
+            let hwmPopupContent = `<b>HWM:</b> ${mark.hwm_id}`
+            hwmMarker.bindPopup(hwmPopupContent)
+            markers.addLayer(hwmMarker)
+        })
+
+        // Proximity site markers
+        this.siteService.getProximitySites(this.site.latitude_dd, this.site.longitude_dd, 0.05).subscribe((results) => {
+            if(results.length > 0){
+                this.nearbySitesVisible = true;
+                results.forEach(function(site){
+                    if(site.site_no !== self.site.site_no){
+                        let nearbySiteMarker = L.marker([site.latitude_dd, site.longitude_dd], {icon: nearbyIcon}).addTo(self.nearbySites);
+                        nearbySiteMarker.data = {
+                            id: site.hwm_id,
+                        }
+                        let nearbySitePopupContent = `<b>Nearby Site:</b> ${site.site_no}`
+                        nearbySiteMarker.bindPopup(nearbySitePopupContent)
+                    }
+                })
+            }
+        });
+    }
+
+    toggleNearby() {
+        // Toggle nearby sites layer with checkbox in legend
+        if(this.nearbyToggled) {
+            this.nearbySites.addTo(this.map);
+        }else{
+            if(this.map.hasLayer(this.nearbySites)){
+                this.nearbySites.removeFrom(this.map);
+            }
+        }
     }
 
     openRefMarkDetailsDialog(row): void {
