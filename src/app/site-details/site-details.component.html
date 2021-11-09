@@ -20,6 +20,121 @@
                             </button>
                         </div>
                         <div id="mapContainer">
+                            <mat-accordion id="legend">
+                                <mat-expansion-panel id="legend-expansion" expanded="true">
+                                    <mat-expansion-panel-header id="legend-header">
+                                        Legend
+                                    </mat-expansion-panel-header>
+                                    <div id="legend-content">
+                                        <div class="legend-row" *ngIf="nearbySitesVisible">
+                                            <mat-checkbox [(ngModel)]="nearbyToggled" (change)="toggleNearby()">
+                                                <div
+                                                class="
+                                                    legend-icon wmm-pin wmm-altblue wmm-icon-circle wmm-icon-altblue wmm-size-15
+                                                "
+                                                ></div>
+                                                <p>Nearby Sites</p>
+                                            </mat-checkbox>
+                                        </div>
+                                        <div class="legend-row" *ngIf="site !== undefined">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20
+                                                "
+                                            ></div>
+                                            <p>Site</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="hwm.length > 0">
+                                            <div
+                                            class="
+                                                legend-icon wmm-diamond wmm-altred wmm-icon-noicon wmm-icon-red wmm-size-15
+                                            "
+                                            ></div>
+                                            <p>High Water Mark</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="baroSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-square wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Barometric Pressure </p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="airTempSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-circle wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Air Temperature</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="waterTempSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-square wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Water Temperature</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="rdgSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-square wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Rapid Deployment</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="thermSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-circle wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Temperature</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="waveSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-square wmm-blue wmm-icon-noicon wmm-icon-blue wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Wave Height</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="stormSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-square wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Water Level</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="humiditySensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Humidity</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="windSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-circle wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>Windspeed</p>
+                                        </div>
+                                        <div class="legend-row" *ngIf="otherSensorVisible">
+                                            <div
+                                                class="
+                                                    legend-icon wmm-circle wmm-white wmm-icon-noicon wmm-icon-white wmm-size-15
+                                                "
+                                            ></div>
+                                            <p>No deployment type specified</p>
+                                        </div>
+                                    </div>
+                                </mat-expansion-panel>
+                            </mat-accordion>
                         </div>
                         <div class="outer-content" *ngIf="site !== undefined">
                             <div class="cell-container">
