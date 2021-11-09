@@ -5,7 +5,7 @@
     "ng": "ng",
     "clean": "rimraf ./dist",
     "start": "ng serve",
-    "build": "npm install && ng build --prod --base-href --aot=false --build-optimizer=false",
+    "build": "ng build --prod --base-href --aot=false --build-optimizer=false",
     "build:prod": "ng build --configuration production",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCustom",
@@ -47,6 +47,7 @@
     "rx": "^4.1.0",
     "rxjs": "^6.6.3",
     "rxjs-compat": "^6.3.3",
+    "uswds": "^2.12.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
