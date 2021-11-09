@@ -227,7 +227,7 @@ export class SiteService {
     //Get member name
     public getMemberName(member_id): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + '/Members/' + member_id + '.json', {
+            .get(APP_SETTINGS.API_ROOT + 'Members/' + member_id + '.json', {
                 headers: APP_SETTINGS.AUTH_JSON_HEADERS,
             })
             .pipe(
