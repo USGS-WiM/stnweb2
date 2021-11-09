@@ -5,12 +5,11 @@
 export const environment = {
     production: false,
     hmr: false,
-    api_root: 'https://stn.wim.usgs.gov/STNServices/', // add service endpoint once they're ready
+    api_root: 'https://stntest.wim.usgs.gov/stnservices/', // add service endpoint once they're ready
 };
 
 /*
  * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
  *
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.

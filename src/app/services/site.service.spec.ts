@@ -257,7 +257,7 @@ describe('SiteService', () => {
             );
         });
         const req = httpTestingController.expectOne(
-            APP_SETTINGS.API_ROOT + '/Members/' + 5 + '.json'
+            APP_SETTINGS.API_ROOT + 'Members/' + 5 + '.json'
 
         );
         req.flush(mockMemberNameList);
