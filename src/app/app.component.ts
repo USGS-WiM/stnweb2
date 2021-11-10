@@ -10,6 +10,7 @@ import { SensorTypeService } from '@services/sensor-type.service';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { APP_SETTINGS } from './app.settings';
 import { Member } from '@interfaces/member';
+import 'uswds';
 
 @Component({
     selector: 'app-root',
