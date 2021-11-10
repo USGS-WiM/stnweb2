@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SiteService } from '@app/services/site.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-reference-mark-dialog',
@@ -9,6 +11,7 @@ import { SiteService } from '@app/services/site.service';
   styleUrls: ['./reference-mark-dialog.component.scss']
 })
 export class ReferenceMarkDialogComponent implements OnInit {
+  @ViewChild('paginator') paginator: MatPaginator;
   public opType;
   public hdatum;
   public hmethod;
@@ -16,6 +19,8 @@ export class ReferenceMarkDialogComponent implements OnInit {
   public vmethod;
   public opQuality;
   public datumFiles;
+
+  filesDataSource;
 
   displayedDatumFileColumns: string[] = [
     'FileDate',
@@ -116,6 +121,9 @@ export class ReferenceMarkDialogComponent implements OnInit {
       if(results.length > 0){
         this.datumFiles = results;
       }
+      
+      this.filesDataSource = new MatTableDataSource(this.datumFiles);
+      this.filesDataSource.paginator = this.paginator;
     });
   }
 

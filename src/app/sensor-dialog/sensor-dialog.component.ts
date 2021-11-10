@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SiteService } from '@app/services/site.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-sensor-dialog',
@@ -9,6 +11,9 @@ import { SiteService } from '@app/services/site.service';
   styleUrls: ['./sensor-dialog.component.scss']
 })
 export class SensorDialogComponent implements OnInit {
+  @ViewChild('sensorFilesPaginator') sensorFilesPaginator: MatPaginator;
+  @ViewChild('nwisFilesPaginator') nwisFilesPaginator: MatPaginator;
+  
   public sensorFiles = [];
   public nwisFiles = [];
   public members = [];
@@ -22,6 +27,9 @@ export class SensorDialogComponent implements OnInit {
   public deployedExpanded = false;
   public retrievedExpanded = false;
   public lostExpanded = false;
+
+  nwisFilesDataSource;
+  sensorFilesDataSource;
 
   displayedSensorFileColumns: string[] = [
     'FileDate',
@@ -93,6 +101,11 @@ export class SensorDialogComponent implements OnInit {
           }
         })
       }
+      this.nwisFilesDataSource = new MatTableDataSource(this.nwisFiles);
+      this.nwisFilesDataSource.paginator = this.nwisFilesPaginator;
+
+      this.sensorFilesDataSource = new MatTableDataSource(this.sensorFiles);
+      this.sensorFilesDataSource.paginator = this.sensorFilesPaginator;
     });
   }
 

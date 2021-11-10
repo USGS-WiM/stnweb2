@@ -150,7 +150,7 @@
             <table *ngIf="hwmFiles.length > 0; else noHWMFileTable"
                 mat-table
                 id="hwmFilesTable"
-                [dataSource]="hwmFiles"
+                [dataSource]="filesDataSource"
                 class="mat-elevation-z5"
                 matSort
             >
@@ -192,6 +192,7 @@
         <ng-template #noHWMFileTable>
             <p class="tableContainer">No HWM Files listed.</p>
         </ng-template>
+        <mat-paginator [hidden]="hwmFiles === undefined || hwmFiles.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
     </mat-accordion>
 </mat-dialog-content>

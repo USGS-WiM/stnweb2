@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SiteService } from '@app/services/site.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-hwm-dialog',
@@ -9,6 +11,7 @@ import { SiteService } from '@app/services/site.service';
   styleUrls: ['./hwm-dialog.component.scss']
 })
 export class HwmDialogComponent implements OnInit {
+  @ViewChild('paginator') paginator: MatPaginator;
   public hwmFiles = [];
   public hdatum;
   public hmethod;
@@ -20,6 +23,8 @@ export class HwmDialogComponent implements OnInit {
   public vmethod;
   public stillwater;
   public surveyMember;
+
+  filesDataSource;
   
   displayedHWMFileColumns: string[] = [
     'FileDate',
@@ -62,6 +67,9 @@ export class HwmDialogComponent implements OnInit {
       if(results.length > 0){
         this.hwmFiles = results;
       }
+
+      this.filesDataSource = new MatTableDataSource(this.hwmFiles);
+      this.filesDataSource.paginator = this.paginator;
     });
   }
 

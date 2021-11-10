@@ -102,7 +102,7 @@
             <table *ngIf="datumFiles.length > 0; else noDatumFileTable"
                 mat-table
                 id="datumFilesTable"
-                [dataSource]="datumFiles"
+                [dataSource]="filesDataSource"
                 class="mat-elevation-z5"
                 matSort
             >
@@ -143,6 +143,7 @@
         <ng-template #noDatumFileTable>
             <p class="tableContainer">No Reference Mark Files listed.</p>
         </ng-template>
+        <mat-paginator [hidden]="datumFiles === undefined || datumFiles.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
       </mat-accordion>
 </mat-dialog-content>

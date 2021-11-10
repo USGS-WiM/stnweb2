@@ -574,7 +574,7 @@
                 <table *ngIf="sensorFiles.length > 0; else noSensorFileTable"
                     mat-table
                     id="sensorFilesTable"
-                    [dataSource]="sensorFiles"
+                    [dataSource]="sensorFilesDataSource"
                     class="mat-elevation-z5"
                     matSort
                 >
@@ -615,6 +615,7 @@
             <ng-template #noSensorFileTable>
                 <p class="tableContainer">No Sensor Files listed.</p>
             </ng-template>
+            <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
         <mat-expansion-panel hideToggle expanded="false" *ngIf="data.row_data.statusType === 'Deployed'">
         <mat-expansion-panel-header>
@@ -626,7 +627,7 @@
             <table *ngIf="nwisFiles.length > 0; else noNWISFileTable"
                 mat-table
                 id="nwisFilesTable"
-                [dataSource]="nwisFiles"
+                [dataSource]="nwisFilesDataSource"
                 class="mat-elevation-z5"
                 matSort
             >
@@ -667,6 +668,7 @@
         <ng-template #noNWISFileTable>
             <p class="tableContainer">No NWIS Files listed.</p>
         </ng-template>
+        <mat-paginator [hidden]="nwisFiles === undefined || nwisFiles.length === 0" #nwisFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
     </mat-accordion>
 

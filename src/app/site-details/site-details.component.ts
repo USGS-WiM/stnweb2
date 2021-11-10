@@ -26,8 +26,14 @@ import { DateTime } from "luxon";
     styleUrls: ['./site-details.component.scss'],
 })
 export class SiteDetailsComponent implements OnInit {
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatPaginator) paginator2: MatPaginator;
+    @ViewChild('paginator') paginator: MatPaginator;
+    @ViewChild('sensorPaginator') sensorPaginator: MatPaginator;
+    @ViewChild('hwmPaginator') hwmPaginator: MatPaginator;
+    @ViewChild('peaksPaginator') peaksPaginator: MatPaginator;
+    @ViewChild('siteFilesPaginator') siteFilesPaginator: MatPaginator;
+    @ViewChild('hwmFilesPaginator') hwmFilesPaginator: MatPaginator;
+    @ViewChild('refMarkFilesPaginator') refMarkFilesPaginator: MatPaginator;
+    @ViewChild('sensorFilesPaginator') sensorFilesPaginator: MatPaginator;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
     
     public siteID: string;
@@ -60,6 +66,7 @@ export class SiteDetailsComponent implements OnInit {
     refMarkDataSource;
     sensorDataSource;
     hwmDataSource;
+    peaksDataSource;
     refMarkFilesDataSource;
     sensorFilesDataSource;
     hwmFilesDataSource;
@@ -133,14 +140,6 @@ export class SiteDetailsComponent implements OnInit {
 
         this.getData();
 
-    }
-
-    ngAfterViewInit() {
-        this.refMarkDataSource = new MatTableDataSource(this.referenceMarks);
-        this.refMarkDataSource.paginator = this.paginator;
-
-        this.sensorDataSource = new MatTableDataSource(this.siteFullInstruments);
-        this.sensorDataSource.paginator = this.paginator2;
     }
 
     getData() {
@@ -223,8 +222,8 @@ export class SiteDetailsComponent implements OnInit {
                             results.forEach(function(result){
                                 self.referenceMarks.push(result);
                             })
-                            // this.refMarkDataSource = new MatTableDataSource(this.referenceMarks);
-                            // this.refMarkDataSource.paginator = this.paginator;
+                            this.refMarkDataSource = new MatTableDataSource(this.referenceMarks);
+                            this.refMarkDataSource.paginator = this.paginator;
                         }
 
                     });
@@ -258,8 +257,8 @@ export class SiteDetailsComponent implements OnInit {
                                             result.eventName = eventResults.event_name;
                                         })
                                     })
-                                    // this.sensorDataSource = new MatTableDataSource(this.siteFullInstruments);
-                                    // this.sensorDataSource.paginator = this.paginator2;
+                                    this.sensorDataSource = new MatTableDataSource(this.siteFullInstruments);
+                                    this.sensorDataSource.paginator = this.sensorPaginator;
                                 }
 
                         });
@@ -283,8 +282,8 @@ export class SiteDetailsComponent implements OnInit {
                                         hwm.eventName = eventResults.event_name;
                                     })
                                 })
-                                // this.hwmDataSource = new MatTableDataSource(this.hwm);
-                                // this.hwmDataSource.paginator = this.paginator2;
+                                this.hwmDataSource = new MatTableDataSource(this.hwm);
+                                this.hwmDataSource.paginator = this.hwmPaginator;
                             }
 
                         });
@@ -305,6 +304,8 @@ export class SiteDetailsComponent implements OnInit {
                                         // Wait for all files to finish being retrieved before loading table
                                         if (self.files.length === (self.sensorFiles.length + self.hwmFiles.length + self.siteFiles.length + self.datumLocFiles.length)){
                                             self.sensorFilesDone = true;
+                                            self.sensorFilesDataSource = new MatTableDataSource(self.sensorFiles);
+                                            self.sensorFilesDataSource.paginator = self.sensorFilesPaginator;
                                         }
                                     });
                                 }else if (file.hwm_id !== undefined){
@@ -315,6 +316,14 @@ export class SiteDetailsComponent implements OnInit {
                                     self.siteFiles.push(file);
                                 }
                             });
+                            this.siteFilesDataSource = new MatTableDataSource(this.siteFiles);
+                            this.siteFilesDataSource.paginator = this.siteFilesPaginator;
+
+                            this.refMarkFilesDataSource = new MatTableDataSource(this.datumLocFiles);
+                            this.refMarkFilesDataSource.paginator = this.refMarkFilesPaginator;
+
+                            this.hwmFilesDataSource = new MatTableDataSource(this.hwmFiles);
+                            this.hwmFilesDataSource.paginator = this.hwmFilesPaginator;
                         });
 
                     }else{
@@ -361,8 +370,8 @@ export class SiteDetailsComponent implements OnInit {
                                             });
                                         })
                                     });
-                                    // this.sensorDataSource = new MatTableDataSource(this.siteFullInstruments);
-                                    // this.sensorDataSource.paginator = this.paginator2;
+                                    this.sensorDataSource = new MatTableDataSource(this.siteFullInstruments);
+                                    this.sensorDataSource.paginator = this.sensorPaginator;
                                 })
                             }
 
@@ -380,8 +389,8 @@ export class SiteDetailsComponent implements OnInit {
                                     flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
                                     hwm.flag_date = flagDate;
                                 })
-                                // this.hwmDataSource = new MatTableDataSource(this.hwm);
-                                // this.hwmDataSource.paginator = this.paginator;
+                                this.hwmDataSource = new MatTableDataSource(this.hwm);
+                                this.hwmDataSource.paginator = this.hwmPaginator;
                             }
 
                         });
@@ -409,6 +418,11 @@ export class SiteDetailsComponent implements OnInit {
                                     self.fileLength ++;
                                 }
                             });
+                            this.hwmFilesDataSource = new MatTableDataSource(this.hwmFiles);
+                            this.hwmFilesDataSource.paginator = this.hwmFilesPaginator;
+
+                            this.sensorFilesDataSource = new MatTableDataSource(this.sensorFiles);
+                            this.sensorFilesDataSource.paginator = this.sensorFilesPaginator;
                         });
 
                         // Get site and datum location files not associated with an event
@@ -427,6 +441,11 @@ export class SiteDetailsComponent implements OnInit {
                                     self.fileLength ++;
                                 }
                             });
+                            this.siteFilesDataSource = new MatTableDataSource(this.siteFiles);
+                            this.siteFilesDataSource.paginator = this.siteFilesPaginator;
+
+                            this.refMarkFilesDataSource = new MatTableDataSource(this.datumLocFiles);
+                            this.refMarkFilesDataSource.paginator = this.refMarkFilesPaginator;
                         });
 
                     }
@@ -446,7 +465,8 @@ export class SiteDetailsComponent implements OnInit {
                                 }
                             }) 
                         }
-
+                        this.peaksDataSource = new MatTableDataSource(this.peaks);
+                        this.peaksDataSource.paginator = this.peaksPaginator;
                     });
 
                     // Get landowner contact
