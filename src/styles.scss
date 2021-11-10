@@ -3,6 +3,7 @@
 
 @import './assets/styles/makers.css';
 @import './app/app.variables.scss';
+@import '../node_modules/uswds/dist/css/uswds.min.css';
 
 $stn-app-primary: mat-palette($mat-light-blue, 900);
 $stn-app-accent: mat-palette($mat-indigo, 900);
