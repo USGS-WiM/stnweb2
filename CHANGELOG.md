@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added Real-Time Stream Gage layer
 -   Added Site Pages with navigation from site popups on map
 -   Added map to site details page
+-   Added USWDS Banner to top of page
 
 ### Changed
 

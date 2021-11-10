@@ -11,6 +11,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { APP_SETTINGS } from './app.settings';
 import { Member } from '@interfaces/member';
 import { Router } from '@angular/router';
+import 'uswds';
 
 @Component({
     selector: 'app-root',
