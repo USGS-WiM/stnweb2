@@ -536,13 +536,62 @@ describe('SiteDetailsComponent', () => {
     });
 
     it ('map should be created when createSiteMap is called', () => {
+        component.siteFullInstruments = [
+            {deploymentType: "Barometric Pressure"}, 
+            {deploymentType: "Temperature"}, 
+            {deployementType: "Humidity"},
+        ];
+
+        component.hwm = [
+            {latitude_dd: "38", longitude_dd: "-79"}, 
+            {latitude_dd: "39", longitude_dd: "-80"}, 
+            {latitude_dd: "38.5", longitude_dd: "-79"},
+        ]
+
+        const response: any[] = [{latitude_dd: 38, longitude_dd: -79, site_no: 8}]
+
         component.site = {latitude_dd: 44.64, longitude_dd: -89.73};
         let mapContainer = document.createElement("div");
         mapContainer.id = "mapContainer";
         document.body.appendChild(mapContainer);
 
+        let proximitySpy = spyOn(component.siteService, 'getProximitySites').and.returnValue(
+            of(response)
+        );
+
         component.createSiteMap();
         expect(component.map).not.toBeNull;
+        expect(component.baroSensorVisible).toBeTrue;
+        expect(component.thermSensorVisible).toBeTrue;
+        expect(component.humiditySensorVisible).toBeTrue;
+        expect(proximitySpy).toHaveBeenCalled();
+        expect(component.markers.getLayers().length).toEqual(7);
+        document.querySelector("#mapContainer").remove();
+    });
+
+    it ('toggleNearby should turn nearbySites layer on and off', () => {
+        const response: any[] = [{latitude_dd: 38, longitude_dd: -79, site_no: 8}]
+
+        component.site = {latitude_dd: 44.64, longitude_dd: -89.73};
+        let mapContainer = document.createElement("div");
+        mapContainer.id = "mapContainer";
+        document.body.appendChild(mapContainer);
+
+        spyOn(component.siteService, 'getProximitySites').and.returnValue(
+            of(response)
+        );
+        component.nearbyToggled = true;
+
+        component.createSiteMap();
+        component.toggleNearby();
+
+        expect(component.map.hasLayer(component.nearbySites)).toEqual(true);
+
+        component.nearbyToggled = false;
+
+        component.toggleNearby();
+
+        expect(component.map.hasLayer(component.nearbySites)).toEqual(false);
         document.querySelector("#mapContainer").remove();
     });
 });
