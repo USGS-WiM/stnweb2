@@ -140,6 +140,10 @@ export class APP_UTILITIES {
         return null;
     }
 
+    public static GET_ROLE() {
+        return localStorage.getItem('role');
+    }
+
     public static get DUMMY_USER(): Member {
         return {
             member_id: 1,

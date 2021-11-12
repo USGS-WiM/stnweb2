@@ -133,6 +133,10 @@
                         {{ currentUser.username }}
                     </button>
                     <mat-menu #userMenu="matMenu" xPosition="before">
+                        <button mat-menu-item *ngIf="role === '1' || role === '2'">
+                            <mat-icon class="icon">manage_accounts </mat-icon>
+                            User Management
+                        </button>
                         <button mat-menu-item (click)="logout()">
                             <mat-icon class="icon">exit_to_app </mat-icon>
                             Logout

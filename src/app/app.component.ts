@@ -8,7 +8,7 @@ import { StateService } from '@services/state.service';
 import { NetworkNameService } from '@services/network-name.service';
 import { SensorTypeService } from '@services/sensor-type.service';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { APP_SETTINGS } from './app.settings';
+import { APP_UTILITIES } from './app.utilities';
 import { Member } from '@interfaces/member';
 import { Router } from '@angular/router';
 import 'uswds';
@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
 
     public currentUser;
     public loggedIn: boolean = false;
+    role;
 
     constructor(
         public dialog: MatDialog,
@@ -56,6 +57,8 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.role = APP_UTILITIES.GET_ROLE();
+        console.log(this.role)
         if (localStorage.getItem('currentUser')) {
             const currentUserObj = JSON.parse(
                 localStorage.getItem('currentUser')
