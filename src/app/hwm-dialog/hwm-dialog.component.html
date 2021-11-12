@@ -150,13 +150,14 @@
             <table *ngIf="hwmFiles.length > 0; else noHWMFileTable"
                 mat-table
                 id="hwmFilesTable"
-                [dataSource]="hwmFiles"
+                [dataSource]="filesDataSource"
+                (matSortChange)="sortFilesData($event)"
                 class="mat-elevation-z5"
                 matSort
             >
                 <!-- HWM file date column -->
                 <ng-container matColumnDef="FileDate">
-                    <th mat-header-cell *matHeaderCellDef>File Date</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                     <td mat-cell *matCellDef="let file">
                         <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayHWMFileDate">
                             ---
@@ -169,7 +170,7 @@
 
                 <!-- HWM file name column -->
                 <ng-container matColumnDef="FileName">
-                    <th mat-header-cell *matHeaderCellDef>File Name</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                     <td mat-cell *matCellDef="let file">
                         <div *ngIf="file.name === '' || file.name === undefined; else displayHWMFileName">
                             ---
@@ -192,6 +193,7 @@
         <ng-template #noHWMFileTable>
             <p class="tableContainer">No HWM Files listed.</p>
         </ng-template>
+        <mat-paginator [hidden]="hwmFiles === undefined || hwmFiles.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
     </mat-accordion>
 </mat-dialog-content>

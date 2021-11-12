@@ -4,9 +4,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReferenceMarkDialogComponent } from './reference-mark-dialog.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { of } from 'rxjs';
 
 describe('ReferenceMarkDialogComponent', () => {
@@ -35,7 +37,9 @@ describe('ReferenceMarkDialogComponent', () => {
       imports: [HttpClientTestingModule,
         NoopAnimationsModule,
         MatExpansionModule,
-        MatTableModule
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })

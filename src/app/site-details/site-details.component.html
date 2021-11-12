@@ -468,14 +468,15 @@
                         <table *ngIf="referenceMarks.length > 0; else noRMTable"
                             mat-table
                             id="datumLocTable"
-                            [dataSource]="referenceMarks"
+                            [dataSource]="refMarkDataSource"
                             class="mat-elevation-z5"
+                            (matSortChange)="sortRefMarkData($event)"
                             matSort
                         >
 
                             <!-- reference mark name column -->
                             <ng-container matColumnDef="RefMarkName">
-                                <th mat-header-cell *matHeaderCellDef>Name</th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="name">Name</th>
                                 <td mat-cell *matCellDef="let rm">
                                     <div *ngIf="rm.name === '' || rm.name === undefined; else displayReferenceMark">
                                         ---
@@ -488,7 +489,7 @@
 
                             <!-- reference elevation column -->
                             <ng-container matColumnDef="RefMarkEl">
-                                <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="elev_ft">Elevation (ft)</th>
                                 <td mat-cell *matCellDef="let rm">
                                     <div *ngIf="rm.elev_ft === '' || rm.elev_ft === undefined; else displayReferenceMarkEl">
                                         ---
@@ -511,20 +512,23 @@
                             <p class="tableContainer">No Reference Marks listed.</p>
                         </ng-template>
                     </div>
+                    <mat-paginator [hidden]="referenceMarks === undefined || referenceMarks.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Sensors ({{siteFullInstruments.length}})">
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
                     <div class="tableContainer" *ngIf="siteFullInstruments !== undefined; else noSensorTable">
                         <table *ngIf="siteFullInstruments.length > 0; else noSensorTable"
                             mat-table
+                            #sensorSort
                             id="sensorTable"
-                            [dataSource]="siteFullInstruments"
+                            [dataSource]="sensorDataSource"
+                            (matSortChange)="sortSensorData($event)"
                             class="mat-elevation-z5"
                             matSort
                         >
                             <!-- serial number column -->
-                            <ng-container matColumnDef="SerialNumber" >
-                                <th mat-header-cell *matHeaderCellDef>Serial Number</th>
+                            <ng-container matColumnDef="serial_number" >
+                                <th mat-header-cell mat-sort-header="serial_number" *matHeaderCellDef>Serial Number</th>
                                 <td mat-cell *matCellDef="let sensor">
                                     <div *ngIf="sensor.serial_number === '' || sensor.serial_number === undefined; else displaySerialNum">
                                         ---
@@ -536,8 +540,8 @@
                             </ng-container>
 
                             <!-- sensor event column -->
-                            <ng-container matColumnDef="SensorEvent">
-                                <th mat-header-cell *matHeaderCellDef>Event</th>
+                            <ng-container matColumnDef="eventName">
+                                <th mat-header-cell mat-sort-header="eventName" *matHeaderCellDef>Event</th>
                                 <td mat-cell *matCellDef="let sensor">
                                     <div *ngIf="sensor.eventName === undefined || sensor.eventName === ''; else displaySensorEvent">
                                         ---
@@ -549,8 +553,8 @@
                             </ng-container>
 
                             <!-- sensor type column -->
-                            <ng-container matColumnDef="DeploymentType">
-                                <th mat-header-cell *matHeaderCellDef>Deployment Type</th>
+                            <ng-container matColumnDef="deploymentType">
+                                <th mat-header-cell mat-sort-header="deploymentType" *matHeaderCellDef>Deployment Type</th>
                                 <td mat-cell *matCellDef="let sensor">
                                     <div *ngIf="sensor.deploymentType === '' || sensor.deploymentType === undefined; else displayDeploymentType">
                                         ---
@@ -561,9 +565,22 @@
                                 </td>
                             </ng-container>
 
+                            <!-- sensor type column -->
+                            <ng-container matColumnDef="sensorType">
+                                <th mat-header-cell mat-sort-header="sensorType" *matHeaderCellDef>Sensor Type</th>
+                                <td mat-cell *matCellDef="let sensor">
+                                    <div *ngIf="sensor.sensorType === '' || sensor.sensorType === undefined; else displaySensorType">
+                                        ---
+                                    </div>
+                                    <ng-template #displaySensorType>
+                                        {{ sensor.sensorType }}
+                                    </ng-template>
+                                </td>
+                            </ng-container>
+
                             <!-- sensor status column -->
-                            <ng-container matColumnDef="SensorStatus">
-                                <th mat-header-cell *matHeaderCellDef>Status</th>
+                            <ng-container matColumnDef="statusType">
+                                <th mat-header-cell mat-sort-header="statusType" *matHeaderCellDef>Status</th>
                                 <td mat-cell *matCellDef="let sensor">
                                     <div *ngIf="sensor.statusType === '' || sensor.statusType === undefined; else displayStatusType">
                                         ---
@@ -583,24 +600,27 @@
                                 class="results-row"
                             ></tr>
                         </table>
+                        <ng-template #noSensorTable>
+                            <p class="tableContainer">No Sensors listed.</p>
+                        </ng-template>
                     </div>
-                    <ng-template #noSensorTable>
-                        <p class="tableContainer">No Sensors listed.</p>
-                    </ng-template>
+                    <mat-paginator [hidden]="siteFullInstruments === undefined || siteFullInstruments.length === 0" #sensorPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="High Water Marks ({{hwm.length}})">
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To create a HWM, first choose an Event above.</p></mat-card>
                     <div class="tableContainer" *ngIf="hwm !== undefined; else noHWMTable">
                         <table *ngIf="hwm.length > 0; else noHWMTable"
                             mat-table
+                            #hwmSort
                             id="hwmTable"
-                            [dataSource]="hwm"
+                            [dataSource]="hwmDataSource"
+                            (matSortChange)="sortHWMData($event)"
                             class="mat-elevation-z5"
                             matSort
                         >
                             <!-- hwm ID column -->
-                            <ng-container matColumnDef="HwmID">
-                                <th mat-header-cell *matHeaderCellDef>HWM ID</th>
+                            <ng-container matColumnDef="hwm_id">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="hwm_id">HWM ID</th>
                                 <td mat-cell *matCellDef="let mark">
                                     <div *ngIf="mark.hwm_id === '' || mark.hwm_id === undefined; else displayHWMID">
                                         ---
@@ -612,8 +632,8 @@
                             </ng-container>
 
                             <!-- hwm label column -->
-                            <ng-container matColumnDef="HwmLabel">
-                                <th mat-header-cell *matHeaderCellDef>Label</th>
+                            <ng-container matColumnDef="hwm_label">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="hwm_label">Label</th>
                                 <td mat-cell *matCellDef="let mark">
                                     <div *ngIf="mark.hwm_label === '' || mark.hwm_label === undefined; else displayHWMLabel">
                                         ---
@@ -625,8 +645,8 @@
                             </ng-container>
 
                             <!-- hwm flag date column -->
-                            <ng-container matColumnDef="HwmFlagDate">
-                                <th mat-header-cell *matHeaderCellDef>Flag Date</th>
+                            <ng-container matColumnDef="flag_date">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="flag_date">Flag Date</th>
                                 <td mat-cell *matCellDef="let mark">
                                     <div *ngIf="mark.flag_date === '' || mark.flag_date === undefined; else displayFlagDate">
                                         ---
@@ -638,14 +658,14 @@
                             </ng-container>
 
                             <!-- hwm elevation column -->
-                            <ng-container matColumnDef="HwmElev">
-                                <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                            <ng-container matColumnDef="elev_ft">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="elev_ft">Elevation (ft)</th>
                                 <td mat-cell *matCellDef="let mark">
                                     <div *ngIf="mark.elev_ft === '' || mark.elev_ft === undefined; else displayElev">
                                         ---
                                     </div>
                                     <ng-template #displayElev>
-                                        {{mark.elev_ft}}ft
+                                        {{mark.elev_ft}}
                                     </ng-template>
                                 </td>
                             </ng-container>
@@ -662,6 +682,7 @@
                             <p class="tableContainer">No HWMs listed.</p>
                         </ng-template>
                     </div>
+                    <mat-paginator [hidden]="hwm === undefined || hwm.length === 0" #hwmPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Peaks ({{peaks.length}})">
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To view details about a Peak Summary, first choose an Event above.</p></mat-card>
@@ -669,13 +690,14 @@
                         <table *ngIf="peaks.length > 0; else noPeakTable"
                             mat-table
                             id="peakTable"
-                            [dataSource]="peaks"
+                            [dataSource]="peaksDataSource"
+                            (matSortChange)="sortPeaksData($event)"
                             class="mat-elevation-z5"
                             matSort
                         >
                             <!-- peak stage column -->
                             <ng-container matColumnDef="PeakStage">
-                                <th mat-header-cell *matHeaderCellDef>Stage</th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_stage">Stage</th>
                                 <td mat-cell *matCellDef="let peak">
                                     <div *ngIf="peak.peak_stage === '' || peak.peak_stage === undefined; else displayPeakStage">
                                         ---
@@ -688,7 +710,7 @@
 
                             <!-- peak event name column -->
                             <ng-container matColumnDef="PeakEventName">
-                                <th mat-header-cell *matHeaderCellDef>Event Name</th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="event_name">Event Name</th>
                                 <td mat-cell *matCellDef="let peak">
                                     <div *ngIf="peak.event_name === '' || peak.event_name === undefined; else displayPeakEvent">
                                         ---
@@ -701,7 +723,7 @@
 
                             <!-- peak date column -->
                             <ng-container matColumnDef="PeakDate">
-                                <th mat-header-cell *matHeaderCellDef>Date</th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_date">Date</th>
                                 <td mat-cell *matCellDef="let peak">
                                     <div *ngIf="peak.peak_date === '' || peak.peak_date === undefined; else displayPeakDate">
                                         ---
@@ -724,6 +746,7 @@
                             <p class="tableContainer">No Peaks listed.</p>
                         </ng-template>
                     </div>
+                    <mat-paginator [hidden]="peaks === undefined || peaks.length === 0" #peaksPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Files ({{fileLength}})">
                     <mat-accordion multi="true">
@@ -738,13 +761,14 @@
                                 <table *ngIf="siteFiles.length > 0; else noSiteFileTable"
                                     mat-table
                                     id="siteFilesTable"
-                                    [dataSource]="siteFiles"
+                                    [dataSource]="siteFilesDataSource"
+                                    (matSortChange)="sortSiteFilesData($event)"
                                     class="mat-elevation-z5"
                                     matSort
                                 >
                                     <!-- site file date column -->
                                     <ng-container matColumnDef="FileDate">
-                                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySiteFileDate">
                                                 ---
@@ -757,7 +781,7 @@
 
                                     <!-- site file name column -->
                                     <ng-container matColumnDef="FileName">
-                                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.name === '' || file.name === undefined; else displaySiteFileName">
                                                 ---
@@ -780,6 +804,7 @@
                             <ng-template #noSiteFileTable>
                                 <p class="tableContainer">No Site Files listed.</p>
                             </ng-template>
+                            <mat-paginator [hidden]="siteFiles === undefined || siteFiles.length === 0" #siteFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
                         <mat-expansion-panel hideToggle>
                             <mat-expansion-panel-header class="panel-headers">
@@ -791,13 +816,14 @@
                                 <table *ngIf="datumLocFiles.length > 0; else noDatumFileTable"
                                     mat-table
                                     id="datumLocFilesTable"
-                                    [dataSource]="datumLocFiles"
+                                    [dataSource]="refMarkFilesDataSource"
+                                    (matSortChange)="sortRefMarkFilesData($event)"
                                     class="mat-elevation-z5"
                                     matSort
                                 >
                                     <!-- datum file date column -->
                                     <ng-container matColumnDef="FileDate">
-                                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayDatumFileDate">
                                                 ---
@@ -810,7 +836,7 @@
 
                                     <!-- datum file name column -->
                                     <ng-container matColumnDef="FileName">
-                                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.name === '' || file.name === undefined; else displayDatumFileName">
                                                 ---
@@ -823,7 +849,7 @@
 
                                     <!-- datum file datum column -->
                                     <ng-container matColumnDef="FileDatum">
-                                        <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="datum_name">Reference Mark</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.datum_name === '' || file.datum_name === undefined; else displayDatumFileDatum">
                                                 ---
@@ -846,6 +872,7 @@
                             <ng-template #noDatumFileTable>
                                 <p class="tableContainer">No Reference Mark Files listed.</p>
                             </ng-template>
+                            <mat-paginator [hidden]="datumLocFiles === undefined || datumLocFiles.length === 0" #refMarkFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
                         <mat-expansion-panel hideToggle>
                             <mat-expansion-panel-header class="panel-headers">
@@ -857,13 +884,14 @@
                                 <table *ngIf="sensorFiles.length > 0 && sensorFilesDone; else noSensorFileTable"
                                     mat-table
                                     id="sensorFilesTable"
-                                    [dataSource]="sensorFiles"
+                                    [dataSource]="sensorFilesDataSource"
+                                    (matSortChange)="sortSensorFilesData($event)"
                                     class="mat-elevation-z5"
                                     matSort
                                 >
                                     <!-- Sensor file date column -->
                                     <ng-container matColumnDef="FileDate">
-                                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySensorFileDate">
                                                 ---
@@ -876,7 +904,7 @@
 
                                     <!-- Sensor file name column -->
                                     <ng-container matColumnDef="FileName">
-                                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.name === '' || file.name === undefined; else displaySensorFileName">
                                                 ---
@@ -889,7 +917,7 @@
 
                                     <!-- Sensor file serial number column -->
                                     <ng-container matColumnDef="FileSerialNum">
-                                        <th mat-header-cell *matHeaderCellDef>Sensor Serial Number</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="serial_number">Sensor Serial Number</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.details.serial_number === '' || file.details.serial_number === undefined; else displaySensorFileSerial">
                                                 ---
@@ -912,6 +940,7 @@
                             <ng-template #noSensorFileTable>
                                 <p class="tableContainer">No Sensor Files listed.</p>
                             </ng-template>
+                            <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
                         <mat-expansion-panel hideToggle>
                             <mat-expansion-panel-header class="panel-headers">
@@ -923,13 +952,14 @@
                                 <table *ngIf="hwmFiles.length > 0; else noHWMFileTable"
                                     mat-table
                                     id="hwmFilesTable"
-                                    [dataSource]="hwmFiles"
+                                    [dataSource]="hwmFilesDataSource"
+                                    (matSortChange)="sortHWMFilesData($event)"
                                     class="mat-elevation-z5"
                                     matSort
                                 >
                                     <!-- HWM file date column -->
                                     <ng-container matColumnDef="FileDate">
-                                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayHWMFileDate">
                                                 ---
@@ -942,7 +972,7 @@
 
                                     <!-- HWM file name column -->
                                     <ng-container matColumnDef="FileName">
-                                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.name === '' || file.name === undefined; else displayHWMFileName">
                                                 ---
@@ -965,6 +995,7 @@
                             <ng-template #noHWMFileTable>
                                 <p class="tableContainer">No HWM Files listed.</p>
                             </ng-template>
+                            <mat-paginator [hidden]="hwmFiles === undefined || hwmFiles.length === 0" #hwmFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
                     </mat-accordion>
                 </mat-tab>

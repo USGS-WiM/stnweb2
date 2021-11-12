@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SiteService } from '@app/services/site.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-hwm-dialog',
@@ -9,6 +12,8 @@ import { SiteService } from '@app/services/site.service';
   styleUrls: ['./hwm-dialog.component.scss']
 })
 export class HwmDialogComponent implements OnInit {
+  @ViewChild('paginator') paginator: MatPaginator;
+  @ViewChild('filesSort', { static: false }) filesSort: MatSort;
   public hwmFiles = [];
   public hdatum;
   public hmethod;
@@ -20,6 +25,9 @@ export class HwmDialogComponent implements OnInit {
   public vmethod;
   public stillwater;
   public surveyMember;
+
+  filesDataSource = new MatTableDataSource<any>();
+  sortedFilesData = [];
   
   displayedHWMFileColumns: string[] = [
     'FileDate',
@@ -55,13 +63,29 @@ export class HwmDialogComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit(): void {
+    this.filesDataSource.sort = this.filesSort;
+  }
+
   getHWMFiles(){
     this.siteService
     .getHWMFiles(this.data.row_data.hwm_id)
     .subscribe((results) => {
       if(results.length > 0){
+        results.forEach(function(result){
+          // Format file date
+          if(result.file_date !== undefined && !result.file_date.includes("/")){
+            let fileDate = result.file_date.split("T")[0];
+            fileDate = fileDate.split("-");
+            fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+            result.file_date = fileDate;
+          }
+        });
         this.hwmFiles = results;
       }
+
+      this.filesDataSource.data = this.hwmFiles;
+      this.filesDataSource.paginator = this.paginator;
     });
   }
 
@@ -154,6 +178,39 @@ export class HwmDialogComponent implements OnInit {
     .subscribe((results) => {
       this.vmethod = results.vcollect_method;
     });
+  }
+
+  sortFilesData(sort: Sort) {
+    const data = this.filesDataSource.data.slice();
+    if (!sort.active || sort.direction === '') {
+        this.sortedFilesData = data;
+        return;
+    }
+    /* istanbul ignore next */
+    this.sortedFilesData = data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        switch (sort.active) {
+            case 'name':
+                return this.compare(a.name, b.name, isAsc);
+            case 'file_date':
+                let aDate = this.checkDate(a.file_date);
+                let bDate = this.checkDate(b.file_date);
+                return this.compare(aDate, bDate, isAsc);
+            default:
+                return 0;
+        }
+    });
+
+    // Need to update the data source to update the table rows
+    this.filesDataSource.data = this.sortedFilesData;
+  }
+
+  compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  checkDate(date) {
+      return new Date(date);
   }
 
 }

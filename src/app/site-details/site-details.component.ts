@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {
     Router,
     ActivatedRoute,
@@ -6,6 +6,10 @@ import {
     NavigationEnd,
 } from '@angular/router';
 import { SiteService } from '@services/site.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { ReferenceMarkDialogComponent } from '@app/reference-mark-dialog/reference-mark-dialog.component';
 import { SensorDialogComponent } from '@app/sensor-dialog/sensor-dialog.component';
 import { HwmDialogComponent } from '@app/hwm-dialog/hwm-dialog.component';
@@ -23,6 +27,23 @@ import { marker } from 'leaflet';
     styleUrls: ['./site-details.component.scss'],
 })
 export class SiteDetailsComponent implements OnInit {
+    @ViewChild('paginator') paginator: MatPaginator;
+    @ViewChild('sensorPaginator') sensorPaginator: MatPaginator;
+    @ViewChild('hwmPaginator') hwmPaginator: MatPaginator;
+    @ViewChild('peaksPaginator') peaksPaginator: MatPaginator;
+    @ViewChild('siteFilesPaginator') siteFilesPaginator: MatPaginator;
+    @ViewChild('hwmFilesPaginator') hwmFilesPaginator: MatPaginator;
+    @ViewChild('refMarkFilesPaginator') refMarkFilesPaginator: MatPaginator;
+    @ViewChild('sensorFilesPaginator') sensorFilesPaginator: MatPaginator;
+    @ViewChild('sensorSort', { static: false }) sensorSort: MatSort;
+    @ViewChild('hwmSort', { static: false }) hwmSort: MatSort;
+    @ViewChild('refMarkSort', { static: false }) refMarkSort: MatSort;
+    @ViewChild('peaksSort', { static: false }) peaksSort: MatSort;
+    @ViewChild('refMarkFilesSort', { static: false }) refMarkFilesSort: MatSort;
+    @ViewChild('hwmFilesSort', { static: false }) hwmFilesSort: MatSort;
+    @ViewChild('sensorFilesSort', { static: false }) sensorFilesSort: MatSort;
+    @ViewChild('siteFilesSort', { static: false }) siteFilesSort: MatSort;
+    
     public siteID: string;
     public site;
     public siteHousing;
@@ -49,6 +70,25 @@ export class SiteDetailsComponent implements OnInit {
     public sensorFilesDone = false;
     public siteMapHidden = true;
     public map;
+    
+    refMarkDataSource = new MatTableDataSource<any>();
+    sensorDataSource = new MatTableDataSource<any>();
+    hwmDataSource = new MatTableDataSource<any>();
+    peaksDataSource = new MatTableDataSource<any>();
+    refMarkFilesDataSource = new MatTableDataSource<any>();
+    sensorFilesDataSource = new MatTableDataSource<any>();
+    hwmFilesDataSource = new MatTableDataSource<any>();
+    siteFilesDataSource = new MatTableDataSource<any>();
+
+    sortedSensorData = [];
+    sortedHWMData = [];
+    sortedPeaksData = [];
+    sortedRefMarkData = [];
+    sortedRefMarkFilesData = [];
+    sortedSensorFilesData = [];
+    sortedHWMFilesData = [];
+    sortedSiteFilesData = [];
+    
     public baroSensorVisible = false;
     public rdgSensorVisible = false;
     public airTempSensorVisible = false;
@@ -77,17 +117,18 @@ export class SiteDetailsComponent implements OnInit {
     ];
 
     displayedSensorColumns: string[] = [
-        'SerialNumber',
-        'SensorEvent',
-        'DeploymentType',
-        'SensorStatus',
+        'serial_number',
+        'eventName',
+        'deploymentType',
+        'sensorType',
+        'statusType',
     ];
 
     displayedHWMColumns: string[] = [
-        'HwmID',
-        'HwmLabel',
-        'HwmFlagDate',
-        'HwmElev',
+        'hwm_id',
+        'hwm_label',
+        'flag_date',
+        'elev_ft',
     ];
 
     displayedPeakColumns: string[] = [
@@ -136,6 +177,17 @@ export class SiteDetailsComponent implements OnInit {
 
         this.getData();
 
+    }
+
+    ngAfterViewInit(): void {
+        this.sensorDataSource.sort = this.sensorSort;
+        this.hwmDataSource.sort = this.hwmSort;
+        this.refMarkDataSource.sort = this.refMarkSort; 
+        this.peaksDataSource.sort = this.peaksSort;
+        this.refMarkFilesDataSource.sort = this.refMarkSort;
+        this.sensorFilesDataSource.sort = this.sensorFilesSort;
+        this.hwmFilesDataSource.sort = this.hwmFilesSort;
+        this.siteFilesDataSource.sort = this.siteFilesSort;
     }
 
     getData() {
@@ -210,7 +262,7 @@ export class SiteDetailsComponent implements OnInit {
 
                         });
 
-                    // Get datum locations
+                    // Get reference marks
                     this.siteService
                     .getObjectivePoints(this.siteID)
                     .subscribe((results) => {
@@ -218,6 +270,8 @@ export class SiteDetailsComponent implements OnInit {
                             results.forEach(function(result){
                                 self.referenceMarks.push(result);
                             })
+                            this.refMarkDataSource.data = this.referenceMarks;
+                            this.refMarkDataSource.paginator = this.paginator;
                         }
 
                     });
@@ -251,6 +305,8 @@ export class SiteDetailsComponent implements OnInit {
                                             result.eventName = eventResults.event_name;
                                         })
                                     })
+                                    this.sensorDataSource.data = this.siteFullInstruments;
+                                    this.sensorDataSource.paginator = this.sensorPaginator;
                                 }
 
                         });
@@ -274,6 +330,8 @@ export class SiteDetailsComponent implements OnInit {
                                         hwm.eventName = eventResults.event_name;
                                     })
                                 })
+                                this.hwmDataSource.data = this.hwm;
+                                this.hwmDataSource.paginator = this.hwmPaginator;
                             }
 
                         });
@@ -294,6 +352,8 @@ export class SiteDetailsComponent implements OnInit {
                                         // Wait for all files to finish being retrieved before loading table
                                         if (self.files.length === (self.sensorFiles.length + self.hwmFiles.length + self.siteFiles.length + self.datumLocFiles.length)){
                                             self.sensorFilesDone = true;
+                                            self.sensorFilesDataSource.data = self.sensorFiles;
+                                            self.sensorFilesDataSource.paginator = self.sensorFilesPaginator;
                                         }
                                     });
                                 }else if (file.hwm_id !== undefined){
@@ -304,6 +364,14 @@ export class SiteDetailsComponent implements OnInit {
                                     self.siteFiles.push(file);
                                 }
                             });
+                            this.siteFilesDataSource.data = this.siteFiles;
+                            this.siteFilesDataSource.paginator = this.siteFilesPaginator;
+
+                            this.refMarkFilesDataSource.data = this.datumLocFiles;
+                            this.refMarkFilesDataSource.paginator = this.refMarkFilesPaginator;
+
+                            this.hwmFilesDataSource.data = this.hwmFiles;
+                            this.hwmFilesDataSource.paginator = this.hwmFilesPaginator;
                         });
 
                     }else{
@@ -350,6 +418,8 @@ export class SiteDetailsComponent implements OnInit {
                                             });
                                         })
                                     });
+                                    this.sensorDataSource.data = this.siteFullInstruments;
+                                    this.sensorDataSource.paginator = this.sensorPaginator;
                                 })
                             }
 
@@ -367,6 +437,8 @@ export class SiteDetailsComponent implements OnInit {
                                     flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
                                     hwm.flag_date = flagDate;
                                 })
+                                this.hwmDataSource.data = this.hwm;
+                                this.hwmDataSource.paginator = this.hwmPaginator;
                             }
 
                         });
@@ -394,6 +466,11 @@ export class SiteDetailsComponent implements OnInit {
                                     self.fileLength ++;
                                 }
                             });
+                            this.hwmFilesDataSource.data = this.hwmFiles;
+                            this.hwmFilesDataSource.paginator = this.hwmFilesPaginator;
+
+                            this.sensorFilesDataSource.data = this.sensorFiles;
+                            this.sensorFilesDataSource.paginator = this.sensorFilesPaginator;
                         });
 
                         // Get site and datum location files not associated with an event
@@ -412,6 +489,11 @@ export class SiteDetailsComponent implements OnInit {
                                     self.fileLength ++;
                                 }
                             });
+                            this.siteFilesDataSource.data = this.siteFiles;
+                            this.siteFilesDataSource.paginator = this.siteFilesPaginator;
+
+                            this.refMarkFilesDataSource.data = this.datumLocFiles;
+                            this.refMarkFilesDataSource.paginator = this.refMarkFilesPaginator;
                         });
 
                     }
@@ -431,7 +513,8 @@ export class SiteDetailsComponent implements OnInit {
                                 }
                             }) 
                         }
-
+                        this.peaksDataSource.data = this.peaks;
+                        this.peaksDataSource.paginator = this.peaksPaginator;
                     });
 
                     // Get landowner contact
@@ -777,5 +860,225 @@ export class SiteDetailsComponent implements OnInit {
             width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    // fired when user clicks a sortable header
+    sortSensorData(sort: Sort) {
+        const data = this.sensorDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedSensorData = data;
+            return;
+        }
+        this.sortedSensorData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'serial_number':
+                    return this.compare(a.serial_number, b.serial_number, isAsc);
+                case 'eventName':
+                    return this.compare(a.eventName, b.eventName, isAsc);
+                case 'deploymentType':
+                    return this.compare(a.deploymentType, b.deploymentType, isAsc);
+                case 'sensorType':
+                    return this.compare(a.sensorType, b.sensorType, isAsc);
+                case 'statusType':
+                    return this.compare(a.statusType, b.statusType, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.sensorDataSource.data = this.sortedSensorData;
+    }
+
+    // fired when user clicks a sortable header
+    sortHWMData(sort: Sort) {
+        const data = this.hwmDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedHWMData = data;
+            return;
+        }
+        this.sortedHWMData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'hwm_id':
+                    return this.compare(a.hwm_id, b.hwm_id, isAsc);
+                case 'hwm_label':
+                    return this.compare(a.hwm_label, b.hwm_label, isAsc);
+                case 'flag_date':
+                    let aDate = this.checkDate(a.flag_date);
+                    let bDate = this.checkDate(b.flag_date);
+                    return this.compare(aDate, bDate, isAsc);
+                case 'elev_ft':
+                    return this.compare(a.elev_ft, b.elev_ft, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.hwmDataSource.data = this.sortedHWMData;
+    }
+
+     // fired when user clicks a sortable header
+     sortPeaksData(sort: Sort) {
+        const data = this.peaksDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedPeaksData = data;
+            return;
+        }
+        this.sortedPeaksData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'peak_stage':
+                    return this.compare(a.peak_stage, b.peak_stage, isAsc);
+                case 'event_name':
+                    return this.compare(a.event_name, b.event_name, isAsc);
+                case 'peak_date':
+                    let aDate = this.checkDate(a.peak_date);
+                    let bDate = this.checkDate(b.peak_date);
+                    return this.compare(aDate, bDate, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.peaksDataSource.data = this.sortedPeaksData;
+    }
+
+    sortRefMarkData(sort: Sort) {
+        const data = this.refMarkDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedRefMarkData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedRefMarkData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'name':
+                    return this.compare(a.name, b.name, isAsc);
+                case 'elev_ft':
+                    return this.compare(a.elev_ft, b.elev_ft, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.refMarkDataSource.data = this.sortedRefMarkData;
+    }
+
+    sortRefMarkFilesData(sort: Sort) {
+        const data = this.refMarkFilesDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedRefMarkFilesData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedRefMarkFilesData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'name':
+                    return this.compare(a.name, b.name, isAsc);
+                case 'file_date':
+                    let aDate = this.checkDate(a.file_date);
+                    let bDate = this.checkDate(b.file_date);
+                    return this.compare(aDate, bDate, isAsc);
+                case 'datum_name':
+                    return this.compare(a.datum_name, b.datum_name, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.refMarkFilesDataSource.data = this.sortedRefMarkFilesData;
+    }
+
+    sortSiteFilesData(sort: Sort) {
+        const data = this.siteFilesDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedSiteFilesData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedSiteFilesData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'name':
+                    return this.compare(a.name, b.name, isAsc);
+                case 'file_date':
+                    let aDate = this.checkDate(a.file_date);
+                    let bDate = this.checkDate(b.file_date);
+                    return this.compare(aDate, bDate, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.siteFilesDataSource.data = this.sortedSiteFilesData;
+    }
+
+    sortSensorFilesData(sort: Sort) {
+        const data = this.sensorFilesDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedSensorFilesData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedSensorFilesData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'name':
+                    return this.compare(a.name, b.name, isAsc);
+                case 'file_date':
+                    let aDate = this.checkDate(a.file_date);
+                    let bDate = this.checkDate(b.file_date);
+                    return this.compare(aDate, bDate, isAsc);
+                case 'serial_number':
+                    return this.compare(a.details.serial_number, b.details.serial_number, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.sensorFilesDataSource.data = this.sortedSensorFilesData;
+    }
+
+    sortHWMFilesData(sort: Sort) {
+        const data = this.hwmFilesDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedHWMFilesData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedHWMFilesData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'name':
+                    return this.compare(a.name, b.name, isAsc);
+                case 'file_date':
+                    let aDate = this.checkDate(a.file_date);
+                    let bDate = this.checkDate(b.file_date);
+                    return this.compare(aDate, bDate, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.hwmFilesDataSource.data = this.sortedHWMFilesData;
+    }
+    
+    compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
+        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    }
+
+    checkDate(date) {
+        return new Date(date);
     }
 }
