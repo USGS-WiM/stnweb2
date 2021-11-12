@@ -575,12 +575,13 @@
                     mat-table
                     id="sensorFilesTable"
                     [dataSource]="sensorFilesDataSource"
+                    (matSortChange)="sortSensorFilesData($event)"
                     class="mat-elevation-z5"
                     matSort
                 >
                     <!-- Sensor file date column -->
                     <ng-container matColumnDef="FileDate">
-                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                         <td mat-cell *matCellDef="let file">
                             <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySensorFileDate">
                                 ---
@@ -593,7 +594,7 @@
 
                     <!-- Sensor file name column -->
                     <ng-container matColumnDef="FileName">
-                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                         <td mat-cell *matCellDef="let file">
                             <div *ngIf="file.name === '' || file.name === undefined; else displaySensorFileName">
                                 ---
@@ -628,12 +629,13 @@
                 mat-table
                 id="nwisFilesTable"
                 [dataSource]="nwisFilesDataSource"
+                (matSortChange)="sortNWISFilesData($event)"
                 class="mat-elevation-z5"
                 matSort
             >
                 <!-- NWIS file date column -->
                 <ng-container matColumnDef="FileDate">
-                    <th mat-header-cell *matHeaderCellDef>File Date</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                     <td mat-cell *matCellDef="let file">
                         <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayNWISFileDate">
                             ---
@@ -646,7 +648,7 @@
 
                 <!-- NWIS file name column -->
                 <ng-container matColumnDef="FileName">
-                    <th mat-header-cell *matHeaderCellDef>File Name</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                     <td mat-cell *matCellDef="let file">
                         <div *ngIf="file.name === '' || file.name === undefined; else displayNWISFileName">
                             ---

@@ -120,6 +120,7 @@ export class SiteDetailsComponent implements OnInit {
         'serial_number',
         'eventName',
         'deploymentType',
+        'sensorType',
         'statusType',
     ];
 
@@ -351,7 +352,7 @@ export class SiteDetailsComponent implements OnInit {
                                         // Wait for all files to finish being retrieved before loading table
                                         if (self.files.length === (self.sensorFiles.length + self.hwmFiles.length + self.siteFiles.length + self.datumLocFiles.length)){
                                             self.sensorFilesDone = true;
-                                            self.sensorFilesDataSource = new MatTableDataSource(self.sensorFiles);
+                                            self.sensorFilesDataSource.data = self.sensorFiles;
                                             self.sensorFilesDataSource.paginator = self.sensorFilesPaginator;
                                         }
                                     });
@@ -363,13 +364,13 @@ export class SiteDetailsComponent implements OnInit {
                                     self.siteFiles.push(file);
                                 }
                             });
-                            this.siteFilesDataSource = new MatTableDataSource(this.siteFiles);
+                            this.siteFilesDataSource.data = this.siteFiles;
                             this.siteFilesDataSource.paginator = this.siteFilesPaginator;
 
-                            this.refMarkFilesDataSource = new MatTableDataSource(this.datumLocFiles);
+                            this.refMarkFilesDataSource.data = this.datumLocFiles;
                             this.refMarkFilesDataSource.paginator = this.refMarkFilesPaginator;
 
-                            this.hwmFilesDataSource = new MatTableDataSource(this.hwmFiles);
+                            this.hwmFilesDataSource.data = this.hwmFiles;
                             this.hwmFilesDataSource.paginator = this.hwmFilesPaginator;
                         });
 
@@ -868,18 +869,18 @@ export class SiteDetailsComponent implements OnInit {
             this.sortedSensorData = data;
             return;
         }
-        /* istanbul ignore next */
         this.sortedSensorData = data.sort((a, b) => {
             const isAsc = sort.direction === 'asc';
             switch (sort.active) {
                 case 'serial_number':
                     return this.compare(a.serial_number, b.serial_number, isAsc);
-                case 'sensorEvent':
+                case 'eventName':
                     return this.compare(a.eventName, b.eventName, isAsc);
                 case 'deploymentType':
                     return this.compare(a.deploymentType, b.deploymentType, isAsc);
+                case 'sensorType':
+                    return this.compare(a.sensorType, b.sensorType, isAsc);
                 case 'statusType':
-                    console.log(a.statusType)
                     return this.compare(a.statusType, b.statusType, isAsc);
                 default:
                     return 0;
@@ -897,7 +898,6 @@ export class SiteDetailsComponent implements OnInit {
             this.sortedHWMData = data;
             return;
         }
-        /* istanbul ignore next */
         this.sortedHWMData = data.sort((a, b) => {
             const isAsc = sort.direction === 'asc';
             switch (sort.active) {
@@ -906,7 +906,9 @@ export class SiteDetailsComponent implements OnInit {
                 case 'hwm_label':
                     return this.compare(a.hwm_label, b.hwm_label, isAsc);
                 case 'flag_date':
-                    return this.compare(a.flag_date, b.flag_date, isAsc);
+                    let aDate = this.checkDate(a.flag_date);
+                    let bDate = this.checkDate(b.flag_date);
+                    return this.compare(aDate, bDate, isAsc);
                 case 'elev_ft':
                     return this.compare(a.elev_ft, b.elev_ft, isAsc);
                 default:
@@ -925,7 +927,6 @@ export class SiteDetailsComponent implements OnInit {
             this.sortedPeaksData = data;
             return;
         }
-        /* istanbul ignore next */
         this.sortedPeaksData = data.sort((a, b) => {
             const isAsc = sort.direction === 'asc';
             switch (sort.active) {
@@ -934,7 +935,9 @@ export class SiteDetailsComponent implements OnInit {
                 case 'event_name':
                     return this.compare(a.event_name, b.event_name, isAsc);
                 case 'peak_date':
-                    return this.compare(a.peak_date, b.peak_date, isAsc);
+                    let aDate = this.checkDate(a.peak_date);
+                    let bDate = this.checkDate(b.peak_date);
+                    return this.compare(aDate, bDate, isAsc);
                 default:
                     return 0;
             }
@@ -980,7 +983,9 @@ export class SiteDetailsComponent implements OnInit {
                 case 'name':
                     return this.compare(a.name, b.name, isAsc);
                 case 'file_date':
-                    return this.compare(a.file_date, b.file_date, isAsc);
+                    let aDate = this.checkDate(a.file_date);
+                    let bDate = this.checkDate(b.file_date);
+                    return this.compare(aDate, bDate, isAsc);
                 case 'datum_name':
                     return this.compare(a.datum_name, b.datum_name, isAsc);
                 default:
@@ -1005,7 +1010,9 @@ export class SiteDetailsComponent implements OnInit {
                 case 'name':
                     return this.compare(a.name, b.name, isAsc);
                 case 'file_date':
-                    return this.compare(a.elev_ft, b.elev_ft, isAsc);
+                    let aDate = this.checkDate(a.file_date);
+                    let bDate = this.checkDate(b.file_date);
+                    return this.compare(aDate, bDate, isAsc);
                 default:
                     return 0;
             }
@@ -1014,8 +1021,64 @@ export class SiteDetailsComponent implements OnInit {
         // Need to update the data source to update the table rows
         this.siteFilesDataSource.data = this.sortedSiteFilesData;
     }
+
+    sortSensorFilesData(sort: Sort) {
+        const data = this.sensorFilesDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedSensorFilesData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedSensorFilesData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'name':
+                    return this.compare(a.name, b.name, isAsc);
+                case 'file_date':
+                    let aDate = this.checkDate(a.file_date);
+                    let bDate = this.checkDate(b.file_date);
+                    return this.compare(aDate, bDate, isAsc);
+                case 'serial_number':
+                    return this.compare(a.details.serial_number, b.details.serial_number, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.sensorFilesDataSource.data = this.sortedSensorFilesData;
+    }
+
+    sortHWMFilesData(sort: Sort) {
+        const data = this.hwmFilesDataSource.data.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedHWMFilesData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedHWMFilesData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'name':
+                    return this.compare(a.name, b.name, isAsc);
+                case 'file_date':
+                    let aDate = this.checkDate(a.file_date);
+                    let bDate = this.checkDate(b.file_date);
+                    return this.compare(aDate, bDate, isAsc);
+                default:
+                    return 0;
+            }
+        });
+
+        // Need to update the data source to update the table rows
+        this.hwmFilesDataSource.data = this.sortedHWMFilesData;
+    }
     
-    compare(a: number | string, b: number | string, isAsc: boolean) {
+    compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
         return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    }
+
+    checkDate(date) {
+        return new Date(date);
     }
 }

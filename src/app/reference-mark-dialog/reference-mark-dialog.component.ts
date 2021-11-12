@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { SiteService } from '@app/services/site.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-reference-mark-dialog',
@@ -12,6 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class ReferenceMarkDialogComponent implements OnInit {
   @ViewChild('paginator') paginator: MatPaginator;
+  @ViewChild('refMarkFilesSort', { static: false }) refMarkFilesSort: MatSort;
   public opType;
   public hdatum;
   public hmethod;
@@ -20,7 +22,8 @@ export class ReferenceMarkDialogComponent implements OnInit {
   public opQuality;
   public datumFiles;
 
-  filesDataSource;
+  refMarkFilesDataSource = new MatTableDataSource<any>();
+  sortedRefMarkFilesData = [];
 
   displayedDatumFileColumns: string[] = [
     'FileDate',
@@ -45,6 +48,10 @@ export class ReferenceMarkDialogComponent implements OnInit {
       }
       this.getDatumFiles();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.refMarkFilesDataSource.sort = this.refMarkFilesSort;
   }
 
   setOPType() {
@@ -119,12 +126,53 @@ export class ReferenceMarkDialogComponent implements OnInit {
     .getDatumLocFiles(this.data.row_data.objective_point_id)
     .subscribe((results) => {
       if(results.length > 0){
+        results.forEach(function(result){
+          // Format file date
+          if(result.file_date !== undefined && !result.file_date.includes("/")){
+            let fileDate = result.file_date.split("T")[0];
+            fileDate = fileDate.split("-");
+            fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+            result.file_date = fileDate;
+          }
+        });
         this.datumFiles = results;
+        this.refMarkFilesDataSource.data = this.datumFiles;
+        this.refMarkFilesDataSource.paginator = this.paginator;
       }
-      
-      this.filesDataSource = new MatTableDataSource(this.datumFiles);
-      this.filesDataSource.paginator = this.paginator;
     });
+  }
+
+  sortRefMarkFilesData(sort: Sort) {
+    const data = this.refMarkFilesDataSource.data.slice();
+    if (!sort.active || sort.direction === '') {
+        this.sortedRefMarkFilesData = data;
+        return;
+    }
+    /* istanbul ignore next */
+    this.sortedRefMarkFilesData = data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        switch (sort.active) {
+            case 'name':
+                return this.compare(a.name, b.name, isAsc);
+            case 'file_date':
+                let aDate = this.checkDate(a.file_date);
+                let bDate = this.checkDate(b.file_date);
+                return this.compare(aDate, bDate, isAsc);
+            default:
+                return 0;
+        }
+    });
+
+    // Need to update the data source to update the table rows
+    this.refMarkFilesDataSource.data = this.sortedRefMarkFilesData;
+  }
+
+  compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  checkDate(date) {
+      return new Date(date);
   }
 
 }

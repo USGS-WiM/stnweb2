@@ -2,9 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 
 import { HwmDialogComponent } from './hwm-dialog.component';
 import { of } from 'rxjs';
@@ -39,7 +40,8 @@ describe('HwmDialogComponent', () => {
       imports: [HttpClientTestingModule,
         NoopAnimationsModule,
         MatTableModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatSortModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })

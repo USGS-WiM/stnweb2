@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added Site Pages with navigation from site popups on map
 -   Added map to site details page
 -   Added USWDS Banner to top of page
+-   Added pagination and sorting to tables on site dashboard page
 
 ### Changed
 

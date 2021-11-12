@@ -7,9 +7,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { of } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { not } from '@angular/compiler/src/output/output_ast';
@@ -45,6 +47,8 @@ describe('SiteDetailsComponent', () => {
                 MatTableModule,
                 MatTabsModule,
                 NoopAnimationsModule,
+                MatSortModule,
+                MatPaginatorModule,
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
@@ -593,5 +597,196 @@ describe('SiteDetailsComponent', () => {
 
         expect(component.map.hasLayer(component.nearbySites)).toEqual(false);
         document.querySelector("#mapContainer").remove();
+    });
+
+    it ('should compare strings, dates, and numbers', () => {
+        let result = component.compare("a", "c", true);
+        expect(result).toEqual(-1);
+
+        result = component.compare(1, 3, true);
+        expect(result).toEqual(-1);
+
+        result = component.compare(new Date("01/18/2021"), new Date("02/20/2020"), true);
+        expect(result).toEqual(1);
+    });
+
+    it ('should convert a string to a date', () => {
+        let result = component.checkDate('01/20/2021');
+        expect(typeof result).toEqual('object');
+        expect(result).toEqual(new Date('01/20/2021'))
+    });
+
+    it('should initialize table datasources', () => {
+        fixture.detectChanges();
+        const table = component.sensorDataSource;
+        expect(table).toBeInstanceOf(MatTableDataSource);
+    });
+
+    it('should sort sensors', () => {
+        fixture.detectChanges();
+        const sort: Sort = {active: 'sensorType', direction: 'asc'};
+        component.sensorDataSource.data = [{sensorType: "Pressure Transducer"}, {sensorType: "Meteorological Station"}]
+        component.sortSensorData(sort);
+
+        expect(component.sensorDataSource.data).toEqual([{sensorType: "Meteorological Station"}, {sensorType: "Pressure Transducer"}]);
+
+        const sort1: Sort = {active: 'deploymentType', direction: 'asc'};
+        component.sensorDataSource.data = [{deploymentType: "Wave Height"}, {deploymentType: "Barometric Pressure"}]
+        component.sortSensorData(sort1);
+
+        expect(component.sensorDataSource.data).toEqual([{deploymentType: "Barometric Pressure"}, {deploymentType: "Wave Height"}]);
+
+        const sort2: Sort = {active: 'statusType', direction: 'asc'};
+        component.sensorDataSource.data = [{statusType: "Retrieved"}, {statusType: "Deployed"}]
+        component.sortSensorData(sort2);
+
+        expect(component.sensorDataSource.data).toEqual([{statusType: "Deployed"}, {statusType: "Retrieved"}]);
+
+        const sort3: Sort = {active: 'serial_number', direction: 'asc'};
+        component.sensorDataSource.data = [{serial_number: 18}, {serial_number: 5}]
+        component.sortSensorData(sort3);
+
+        expect(component.sensorDataSource.data).toEqual([{serial_number: 5}, {serial_number: 18}]);
+
+        const sort4: Sort = {active: 'eventName', direction: 'asc'};
+        component.sensorDataSource.data = [{eventName: "Hurricane Laura"}, {eventName: "Hurricane Delta"}]
+        component.sortSensorData(sort4);
+
+        expect(component.sensorDataSource.data).toEqual([{eventName: "Hurricane Delta"}, {eventName: "Hurricane Laura"}]);
+    });
+
+    it('should sort HWMs', () => {
+        fixture.detectChanges();
+        const sort: Sort = {active: 'hwm_id', direction: 'asc'};
+        component.hwmDataSource.data = [{hwm_id: 18}, {hwm_id: 5}]
+        component.sortHWMData(sort);
+
+        expect(component.hwmDataSource.data).toEqual([{hwm_id: 5}, {hwm_id: 18}]);
+
+        const sort1: Sort = {active: 'hwm_label', direction: 'asc'};
+        component.hwmDataSource.data = [{hwm_label: "test"}, {hwm_label: "hwmtest"}]
+        component.sortHWMData(sort1);
+
+        expect(component.hwmDataSource.data).toEqual([{hwm_label: "hwmtest"}, {hwm_label: "test"}]);
+
+        const sort2: Sort = {active: 'flag_date', direction: 'asc'};
+        component.hwmDataSource.data = [{flag_date: "01/21/2021"}, {flag_date: "02/20/2020"}]
+        component.sortHWMData(sort2);
+
+        expect(component.hwmDataSource.data).toEqual([{flag_date: "02/20/2020"}, {flag_date: "01/21/2021"}]);
+
+        const sort3: Sort = {active: 'elev_ft', direction: 'asc'};
+        component.hwmDataSource.data = [{elev_ft: 18}, {elev_ft: 5}]
+        component.sortHWMData(sort3);
+
+        expect(component.hwmDataSource.data).toEqual([{elev_ft: 5}, {elev_ft: 18}]);
+    });
+
+    it('should sort peaks', () => {
+        fixture.detectChanges();
+        const sort: Sort = {active: 'peak_stage', direction: 'asc'};
+        component.peaksDataSource.data = [{peak_stage: 18}, {peak_stage: 5}]
+        component.sortPeaksData(sort);
+
+        expect(component.peaksDataSource.data).toEqual([{peak_stage: 5}, {peak_stage: 18}]);
+
+        const sort1: Sort = {active: 'event_name', direction: 'asc'};
+        component.peaksDataSource.data = [{event_name: "Hurricane Laura"}, {event_name: "Hurricane Delta"}]
+        component.sortPeaksData(sort1);
+
+        expect(component.peaksDataSource.data).toEqual([{event_name: "Hurricane Delta"}, {event_name: "Hurricane Laura"}]);
+
+        const sort2: Sort = {active: 'peak_date', direction: 'asc'};
+        component.peaksDataSource.data = [{peak_date: "01/21/2021"}, {peak_date: "02/20/2020"}]
+        component.sortPeaksData(sort2);
+
+        expect(component.peaksDataSource.data).toEqual([{peak_date: "02/20/2020"}, {peak_date: "01/21/2021"}]);
+    });
+
+    it('should sort reference marks', () => {
+        fixture.detectChanges();
+        const sort: Sort = {active: 'name', direction: 'asc'};
+        component.refMarkDataSource.data = [{name: "test.jpg"}, {name: "datumloctest.png"}]
+        component.sortRefMarkData(sort);
+
+        expect(component.refMarkDataSource.data).toEqual([{name: "datumloctest.png"}, {name: "test.jpg"}]);
+
+        const sort1: Sort = {active: 'elev_ft', direction: 'asc'};
+        component.refMarkDataSource.data = [{elev_ft: 18}, {elev_ft: 5.4}]
+        component.sortRefMarkData(sort1);
+
+        expect(component.refMarkDataSource.data).toEqual([{elev_ft: 5.4}, {elev_ft: 18}]);
+    });
+
+    it('should sort reference mark files', () => {
+        fixture.detectChanges();
+        const sort: Sort = {active: 'name', direction: 'asc'};
+        component.refMarkFilesDataSource.data = [{name: "test.jpg"}, {name: "datumloctest.png"}]
+        component.sortRefMarkFilesData(sort);
+
+        expect(component.refMarkFilesDataSource.data).toEqual([{name: "datumloctest.png"}, {name: "test.jpg"}]);
+
+        const sort1: Sort = {active: 'file_date', direction: 'asc'};
+        component.refMarkFilesDataSource.data = [{file_date: "01/21/2021"}, {file_date: "02/20/2020"}]
+        component.sortRefMarkFilesData(sort1);
+
+        expect(component.refMarkFilesDataSource.data).toEqual([{file_date: "02/20/2020"}, {file_date: "01/21/2021"}]);
+
+        const sort2: Sort = {active: 'datum_name', direction: 'asc'};
+        component.refMarkFilesDataSource.data = [{datum_name: "test"}, {datum_name: "datumtest"}]
+        component.sortRefMarkFilesData(sort2);
+
+        expect(component.refMarkFilesDataSource.data).toEqual([{datum_name: "datumtest"}, {datum_name: "test"}]);
+    });
+
+    it('should sort site files', () => {
+        fixture.detectChanges();
+        const sort: Sort = {active: 'name', direction: 'asc'};
+        component.siteFilesDataSource.data = [{name: "test.jpg"}, {name: "datumloctest.png"}]
+        component.sortSiteFilesData(sort);
+
+        expect(component.siteFilesDataSource.data).toEqual([{name: "datumloctest.png"}, {name: "test.jpg"}]);
+
+        const sort1: Sort = {active: 'file_date', direction: 'asc'};
+        component.siteFilesDataSource.data = [{file_date: "01/21/2021"}, {file_date: "02/20/2020"}]
+        component.sortSiteFilesData(sort1);
+
+        expect(component.siteFilesDataSource.data).toEqual([{file_date: "02/20/2020"}, {file_date: "01/21/2021"}]);
+    });
+
+    it('should sort sensor files', () => {
+        fixture.detectChanges();
+        const sort: Sort = {active: 'name', direction: 'asc'};
+        component.sensorFilesDataSource.data = [{name: "test.jpg"}, {name: "datumloctest.png"}]
+        component.sortSensorFilesData(sort);
+
+        expect(component.sensorFilesDataSource.data).toEqual([{name: "datumloctest.png"}, {name: "test.jpg"}]);
+
+        const sort1: Sort = {active: 'file_date', direction: 'asc'};
+        component.sensorFilesDataSource.data = [{file_date: "01/21/2021"}, {file_date: "02/20/2020"}]
+        component.sortSensorFilesData(sort1);
+
+        expect(component.sensorFilesDataSource.data).toEqual([{file_date: "02/20/2020"}, {file_date: "01/21/2021"}]);
+
+        const sort2: Sort = {active: 'serial_number', direction: 'asc'};
+        component.sensorFilesDataSource.data = [{details: {serial_number: 186}}, {details: {serial_number: 34}}]
+        component.sortSensorFilesData(sort2);
+
+        expect(component.sensorFilesDataSource.data).toEqual([{details: {serial_number: 34}}, {details: {serial_number: 186}}]);
+    });
+
+    it('should sort HWM files', () => {
+        fixture.detectChanges();
+        const sort: Sort = {active: 'name', direction: 'asc'};
+        component.hwmFilesDataSource.data = [{name: "test.jpg"}, {name: "datumloctest.png"}]
+        component.sortHWMFilesData(sort);
+
+        expect(component.hwmFilesDataSource.data).toEqual([{name: "datumloctest.png"}, {name: "test.jpg"}]);
+
+        const sort1: Sort = {active: 'file_date', direction: 'asc'};
+        component.hwmFilesDataSource.data = [{file_date: "01/21/2021"}, {file_date: "02/20/2020"}]
+        component.sortHWMFilesData(sort1);
+
+        expect(component.hwmFilesDataSource.data).toEqual([{file_date: "02/20/2020"}, {file_date: "01/21/2021"}]);
     });
 });

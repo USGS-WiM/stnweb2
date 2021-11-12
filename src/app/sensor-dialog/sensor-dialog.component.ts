@@ -3,6 +3,7 @@ import { Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SiteService } from '@app/services/site.service';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -13,6 +14,8 @@ import { MatTableDataSource } from '@angular/material/table';
 export class SensorDialogComponent implements OnInit {
   @ViewChild('sensorFilesPaginator') sensorFilesPaginator: MatPaginator;
   @ViewChild('nwisFilesPaginator') nwisFilesPaginator: MatPaginator;
+  @ViewChild('sensorFilesSort', { static: false }) sensorFilesSort: MatSort;
+  @ViewChild('nwisFilesSort', { static: false }) nwisFilesSort: MatSort;
   
   public sensorFiles = [];
   public nwisFiles = [];
@@ -28,8 +31,11 @@ export class SensorDialogComponent implements OnInit {
   public retrievedExpanded = false;
   public lostExpanded = false;
 
-  nwisFilesDataSource;
-  sensorFilesDataSource;
+  nwisFilesDataSource = new MatTableDataSource<any>();
+  sensorFilesDataSource = new MatTableDataSource<any>();
+
+  sortedSensorFilesData = [];
+  sortedNWISFilesData = [];
 
   displayedSensorFileColumns: string[] = [
     'FileDate',
@@ -86,6 +92,11 @@ export class SensorDialogComponent implements OnInit {
 
   }
 
+  ngAfterViewInit(): void {
+    this.sensorFilesDataSource.sort = this.sensorFilesSort;
+    this.nwisFilesDataSource.sort = this.nwisFilesSort;
+  }
+
   getSensorFiles(){
     let self = this;
 
@@ -94,6 +105,13 @@ export class SensorDialogComponent implements OnInit {
     .subscribe((results) => {
       if(results.length > 0){
         results.forEach(function(result){
+          // Format file date
+          if(result.file_date !== undefined && !result.file_date.includes("/")){
+              let fileDate = result.file_date.split("T")[0];
+              fileDate = fileDate.split("-");
+              fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+              result.file_date = fileDate;
+          }
           if(result.is_nwis !== undefined && result.is_nwis === 1){
             self.nwisFiles.push(result);
           }else{
@@ -101,10 +119,10 @@ export class SensorDialogComponent implements OnInit {
           }
         })
       }
-      this.nwisFilesDataSource = new MatTableDataSource(this.nwisFiles);
+      this.nwisFilesDataSource.data = this.nwisFiles;
       this.nwisFilesDataSource.paginator = this.nwisFilesPaginator;
 
-      this.sensorFilesDataSource = new MatTableDataSource(this.sensorFiles);
+      this.sensorFilesDataSource.data = this.sensorFiles;
       this.sensorFilesDataSource.paginator = this.sensorFilesPaginator;
     });
   }
@@ -163,6 +181,64 @@ export class SensorDialogComponent implements OnInit {
         getTapedowns(self.lostTapedowns, instrument);
       }
     })
+  }
+
+  sortSensorFilesData(sort: Sort) {
+    const data = this.sensorFilesDataSource.data.slice();
+    if (!sort.active || sort.direction === '') {
+        this.sortedSensorFilesData = data;
+        return;
+    }
+    /* istanbul ignore next */
+    this.sortedSensorFilesData = data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        switch (sort.active) {
+            case 'name':
+                return this.compare(a.name, b.name, isAsc);
+            case 'file_date':
+                let aDate = this.checkDate(a.file_date);
+                let bDate = this.checkDate(b.file_date);
+                return this.compare(aDate, bDate, isAsc);
+            default:
+                return 0;
+        }
+    });
+
+    // Need to update the data source to update the table rows
+    this.sensorFilesDataSource.data = this.sortedSensorFilesData;
+  }
+
+  sortNWISFilesData(sort: Sort) {
+    const data = this.nwisFilesDataSource.data.slice();
+    if (!sort.active || sort.direction === '') {
+        this.sortedNWISFilesData = data;
+        return;
+    }
+    /* istanbul ignore next */
+    this.sortedNWISFilesData = data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        switch (sort.active) {
+            case 'name':
+                return this.compare(a.name, b.name, isAsc);
+            case 'file_date':
+                let aDate = this.checkDate(a.file_date);
+                let bDate = this.checkDate(b.file_date);
+                return this.compare(aDate, bDate, isAsc);
+            default:
+                return 0;
+        }
+    });
+
+    // Need to update the data source to update the table rows
+    this.nwisFilesDataSource.data = this.sortedNWISFilesData;
+  }
+
+  compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  checkDate(date) {
+      return new Date(date);
   }
 
 }
