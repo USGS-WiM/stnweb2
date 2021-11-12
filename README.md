@@ -14,6 +14,8 @@
 npm install -g @angular/cli
 ```
 
+Recommended node version: v12.14 or greater.
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -38,10 +40,15 @@ ng serve
 
 ### Building and testing
 
-to build a distribution folder for production:
+To build a distribution folder for production:
 
 ```bash
 ng build --prod --base-href --aot=false --build-optimizer=false
+```
+
+To run tests:
+```bash
+ng test --watch=false --browsers=ChromeHeadlessCustom
 ```
 
 ### Development Workflow

@@ -74,7 +74,7 @@ describe('AppComponent', () => {
     it(`#openLoginDialog should open the Login Component inside a MatDialog`, () => {
         spyOn(component.dialog, 'open').and.callThrough();
         component.openLoginDialog();
-        expect(component.dialog.open).toHaveBeenCalledWith(LoginComponent, {});
+        expect(component.dialog.open).toHaveBeenCalledWith(LoginComponent, { disableClose: true });
         component.dialog.closeAll();
     });
 
