@@ -1520,6 +1520,17 @@ export class MapComponent implements OnInit {
     }
 
     public clearMapFilterForm(): void {
+        
+        // Close map filters when submitted
+        if (this.filterComponent !== undefined) {
+            this.filterComponent.eventPanelState = false;
+            this.filterComponent.networksPanelState = false;
+            this.filterComponent.sensorPanelState = false;
+            this.filterComponent.statesPanelState = false;
+            this.filterComponent.hmwPanelState = false;
+            this.filterComponent.additionalFiltersPanelState = false;
+        }
+
         // remove active styling on previous selected options
         if (this.filterComponent !== undefined) {
             this.filterComponent.eventTypeOptions.options.forEach((option: MatOption) => option.setInactiveStyles());
@@ -1580,16 +1591,6 @@ export class MapComponent implements OnInit {
     }
 
     public submitMapFilter() {
-
-        // Close map filters when submitted
-        if (this.filterComponent !== undefined) {
-            this.filterComponent.eventPanelState = false;
-            this.filterComponent.networksPanelState = false;
-            this.filterComponent.sensorPanelState = false;
-            this.filterComponent.statesPanelState = false;
-            this.filterComponent.hmwPanelState = false;
-            this.filterComponent.additionalFiltersPanelState = false;
-        }
 
         //each time filter is clicked, reset status of results
         this.resultsReturned = false;

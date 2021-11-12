@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   If no location description for sensors in table, display N/A
 -   Disallowed closing of the login dialog
 -   Redirecting to landing page on logout
+-   Multiple panels may be open and do not reset on filtering the map
 
 ### Fixed
 
