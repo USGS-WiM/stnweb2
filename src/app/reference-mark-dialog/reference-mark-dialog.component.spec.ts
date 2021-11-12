@@ -8,6 +8,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { of } from 'rxjs';
 
 describe('ReferenceMarkDialogComponent', () => {
@@ -38,6 +39,7 @@ describe('ReferenceMarkDialogComponent', () => {
         MatExpansionModule,
         MatTableModule,
         MatSortModule,
+        MatPaginatorModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })

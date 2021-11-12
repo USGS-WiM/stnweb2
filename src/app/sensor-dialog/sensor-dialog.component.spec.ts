@@ -6,6 +6,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { SensorDialogComponent } from './sensor-dialog.component';
 import { of } from 'rxjs';
@@ -36,6 +37,7 @@ describe('SensorDialogComponent', () => {
         MatExpansionModule,
         MatTableModule,
         MatSortModule,
+        MatPaginatorModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })

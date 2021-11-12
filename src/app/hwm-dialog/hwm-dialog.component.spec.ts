@@ -9,6 +9,7 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 
 import { HwmDialogComponent } from './hwm-dialog.component';
 import { of } from 'rxjs';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 describe('HwmDialogComponent', () => {
   let component: HwmDialogComponent;
@@ -42,6 +43,7 @@ describe('HwmDialogComponent', () => {
         MatTableModule,
         MatExpansionModule,
         MatSortModule,
+        MatPaginatorModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
