@@ -133,7 +133,7 @@
                         {{ currentUser.username }}
                     </button>
                     <mat-menu #userMenu="matMenu" xPosition="before">
-                        <button mat-menu-item *ngIf="role === '1' || role === '2'">
+                        <button mat-menu-item *ngIf="role === '1' || role === '2'" [routerLink]="['/users']" routerLinkActive="active">
                             <mat-icon class="icon">manage_accounts </mat-icon>
                             User Management
                         </button>
