@@ -14,11 +14,19 @@
                 <mat-tab label="Site">
                     <div class="basic-site-info">
                         <div id="siteMap">
-                            <button mat-button class="map-button" (click)="toggleSiteMap()">
-                                <span *ngIf="siteMapHidden">View site on map <mat-icon class="expand-icon">expand_more</mat-icon></span>
-                                <span *ngIf="!siteMapHidden">Hide map <mat-icon class="expand-icon">expand_less</mat-icon></span>
-                            </button>
+                                <div class="left">
+                                    <button mat-raised-button class="edit-button" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
+                                </div>
+                                <div class="right">
+                                    <button mat-raised-button disabled class="delete-button"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                                    <mat-icon class="info-icon" matTooltip="To delete a site, please contact a STN administrator." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </div>
                         </div>
+                        <button mat-raised-button class="map-button" (click)="toggleSiteMap()">
+                            <span *ngIf="siteMapHidden">View site on map <mat-icon class="expand-icon">expand_more</mat-icon></span>
+                            <span *ngIf="!siteMapHidden">Hide map <mat-icon class="expand-icon">expand_less</mat-icon></span>
+                        </button>
                         <div id="mapContainer">
                             <mat-accordion id="legend">
                                 <mat-expansion-panel id="legend-expansion" expanded="true">

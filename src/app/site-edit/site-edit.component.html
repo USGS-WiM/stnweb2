@@ -1,0 +1,283 @@
+<h2 mat-dialog-title>
+    Site
+    <!-- <button class="close-button" mat-button mat-dialog-close aria-mat-label="Exit"><mat-icon>close</mat-icon></button> -->
+</h2>
+<form [formGroup]="siteForm" (ngSubmit)="submitSiteForm()">
+    <mat-dialog-content>
+        <mat-accordion multi="true">
+            <mat-expansion-panel hideToggle expanded="false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                    Site Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                        <mat-form-field appearance="fill">
+                            <mat-label for="description">Site Description</mat-label>
+                            <textarea matInput formControlName="site_description" required id="description" [value]="site.description"></textarea>
+                            <mat-icon matSuffix class="info-icon" matTooltip="Brief description of the site area." 
+                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Internal Notes</mat-label>
+                            <textarea matInput formControlName="site_notes" [value]="site.internal_notes"></textarea>
+                        </mat-form-field>
+                        <mat-radio-group id="latLngUnit">
+                            <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
+                            <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
+                        </mat-radio-group>                
+                        <mat-form-field appearance="fill">
+                            <mat-label>Latitude</mat-label>
+                            <input formControlName="latitude_dd" required matInput [value]="site.latitude_dd"/>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Longitude</mat-label>
+                            <input formControlName = "longitude_dd" required matInput [value]="site.longitude_dd"/>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Horizontal Datum</mat-label>
+                            <mat-select formControlName="hdatum" required [(value)]="site.hdatum">
+                                <mat-option *ngFor="let datum of hDatums" [value]="datum.datum_name">
+                                {{datum.datum_name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Horizontal Collection Method</mat-label>
+                            <mat-select formControlName="hmethod" required [(value)]="site.hmethod">
+                                <mat-option *ngFor="let method of hMethods" [value]="method.hcollect_method">
+                                {{method.hcollect_method}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Waterbody</mat-label>
+                            <input formControlName="waterbody" required matInput [value]="site.waterbody"/>
+                            <mat-icon matSuffix class="info-icon" matTooltip="Required by NWIS.  Can be listed as 'Unknown' or 'Atlantic Ocean'" 
+                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                            <mat-hint>e.g. Atlantic Ocean</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Drainage Area</mat-label>
+                            <input formControlName="drainage_area_sqmi" matInput [value]="site.drainage_area"/>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Station ID for USGS Gage</mat-label>
+                            <input matInput formControlName="usgs_sid" [value]="site.usgs_id"/>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Station ID for NOAA Gage</mat-label>
+                            <input matInput formControlName="noaa_sid" [value]="site.noaa_id"/>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Other Station ID</mat-label>
+                            <input matInput formControlName="other_sid" [value]="site.other_id"/>
+                            <mat-hint>Please add details in the Site Description</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Safety Notes</mat-label>
+                            <textarea matInput formControlName="safety_notes" [value]="site.safety_notes"></textarea>
+                        </mat-form-field>
+                        <mat-accordion multi="true">
+                            <mat-expansion-panel hideToggle>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                Location Information
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Address</mat-label>
+                                        <input matInput formControlName="address" [value]="site.address"/>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>City</mat-label>
+                                        <input matInput formControlName="city" [value]="site.city"/>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>State</mat-label>
+                                        <mat-select formControlName="state" required [(value)]="site.state" (selectionChange)="getCountyList($event.value)">
+                                            <mat-option *ngFor="let state of stateList" [value]="state.state_name">
+                                                {{state.state_name}}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-icon matSuffix class="info-icon" matTooltip="Used to autogenerate the Site Number." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Zip</mat-label>
+                                        <input matInput formControlName="zip" [value]="site.zip"/>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>County</mat-label>
+                                        <mat-select formControlName="county" required [(value)]="site.county">
+                                            <mat-option *ngFor="let county of countyList" [value]="county.county_name">
+                                                {{county.county_name}}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-icon matSuffix class="info-icon" matTooltip="Used to autogenerate the Site Number. Use the Verify Location to populate." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Priority</mat-label>
+                                        <mat-select>
+
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div>Site Location Type in the Network</div>
+                                    <ul>
+                                        <li *ngFor="let type of networkTypes">
+                                        <mat-checkbox [checked]="type.selected" (change)="setSelected($event, type)">
+                                            {{type.network_type_name}}
+                                        </mat-checkbox>
+                                        </li>
+                                    </ul>
+                                    <div>Network Name</div>
+                                    <ul>
+                                        <li *ngFor="let name of networkNames" (change)="setSelected($event, name)">
+                                        <mat-checkbox [checked]="name.selected">
+                                            {{name.name}}
+                                        </mat-checkbox>
+                                        </li>
+                                    </ul>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Zone</mat-label>
+                                        <input matInput [value]="site.zone"/>
+                                    </mat-form-field>
+                                    <mat-checkbox id="sensorAppropriate" [value]="sensorNotAppropriate">
+                                        Sensor Not Appropriate
+                                    </mat-checkbox>
+                                    <div>
+                                        <label>Permanent Housing Installed</label>
+                                        <mat-radio-group class="radio-group" [(value)]="perm_housing_installed" formControlName="is_permanent_housing_installed">
+                                            <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
+                                            <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                                    <div>
+                                        Site Creator {{site.memberName}}
+                                    </div>
+                                    <div>
+                                        <div>
+                                            <label>Landowner Contact</label><mat-icon matSuffix class="info-icon" matTooltip="Do not record information that private citizens have a reasonable expectation of privacy about. No names or phone numbers of private citizens.  Business contact information is acceptable." 
+                                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                        </div>
+                                        <button mat-raised-button class="add-button"><mat-icon>add</mat-icon> Add Landowner</button>
+                                    </div>
+                                    <div>
+                                        <label>Access Permission Granted</label>
+                                        <mat-radio-group class="radio-group" [(value)]="accessGranted" formControlName="access_granted">
+                                            <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
+                                            <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
+                                            <mat-radio-button class="radio-button" value="Not Needed">Not Needed</mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel hideToggle>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                    Housing Information
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Site Housing(s)</mat-label>
+                                            <mat-select [value]="siteHousingArray[0].housingType" (selectionChange)="changeTableValue($event.value)">
+                                                <mat-option *ngFor="let option of siteHousingLookup" [value]="option.type_name">
+                                                    {{option.type_name}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <div class="tableContainer">
+                                            <table
+                                                mat-table
+                                                id="siteHousingTable"
+                                                [dataSource]="siteHousingArray"
+                                                class="mat-elevation-z5"
+                                                matSort
+                                            >
+
+                                                <!-- housing type column -->
+                                                <ng-container matColumnDef="HousingType">
+                                                    <th mat-header-cell *matHeaderCellDef>Housing Type</th>
+                                                    <td mat-cell *matCellDef="let housing">
+                                                        <div>
+                                                            {{housing.housingType}}
+                                                        </div>
+                                                    </td>
+                                                </ng-container>
+
+                                                <!-- housing length column -->
+                                                <ng-container matColumnDef="HousingLength">
+                                                    <th mat-header-cell *matHeaderCellDef>Housing Length (ft)</th>
+                                                    <td mat-cell *matCellDef="let housing">
+                                                        <mat-form-field appearance="fill">
+                                                            <input matInput [value]="housing.length"/>
+                                                        </mat-form-field>
+                                                    </td>
+                                                </ng-container>
+
+                                                <!-- housing material column -->
+                                                <ng-container matColumnDef="HousingMaterial">
+                                                    <th mat-header-cell *matHeaderCellDef>Housing Material</th>
+                                                    <td mat-cell *matCellDef="let housing">
+                                                        <mat-form-field appearance="fill">
+                                                            <input matInput [value]="housing.material"/>
+                                                        </mat-form-field>
+                                                    </td>
+                                                </ng-container>
+
+                                                <!-- amount column -->
+                                                <ng-container matColumnDef="Amount">
+                                                    <th
+                                                        mat-header-cell
+                                                        *matHeaderCellDef
+                                                    >
+                                                        Amount
+                                                    </th>
+                                                    <td
+                                                        mat-cell
+                                                        *matCellDef="let housing"
+                                                    >
+                                                        <mat-form-field appearance="fill">
+                                                            <input matInput [value]="housing.amount"/>
+                                                        </mat-form-field>
+                                                    </td>
+                                                </ng-container>
+
+                                                <!-- housing notes column -->
+                                                <ng-container matColumnDef="Notes">
+                                                    <th mat-header-cell *matHeaderCellDef>Notes</th>
+                                                    <td mat-cell *matCellDef="let housing">
+                                                        <mat-form-field appearance="fill">
+                                                            <input matInput [value]="housing.notes"/>
+                                                        </mat-form-field>
+                                                    </td>
+                                                </ng-container>
+
+                                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                                <tr
+                                                    mat-row
+                                                    *matRowDef="let row; columns: displayedColumns"
+                                                    class="results-noclick-row"
+                                                ></tr>
+                                            </table>
+                                        </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+            </mat-expansion-panel>
+            <mat-expansion-panel hideToggle expanded="false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                    Site Files
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <div class="detail-section-buttons centered">
+            <button mat-button mat-dialog-close cdkFocusInitial aria-mat-label="Save" type="submit">Save</button>
+            <button mat-button mat-dialog-close cdkFocusInitial aria-mat-label="Cancel">Cancel</button>
+            <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+        </div>
+    </mat-dialog-actions>
+</form>
+

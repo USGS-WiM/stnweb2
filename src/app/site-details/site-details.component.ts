@@ -6,16 +6,17 @@ import {
     NavigationEnd,
 } from '@angular/router';
 import { SiteService } from '@services/site.service';
+import { CurrentUserService } from '@services/current-user.service';
 import { ReferenceMarkDialogComponent } from '@app/reference-mark-dialog/reference-mark-dialog.component';
 import { SensorDialogComponent } from '@app/sensor-dialog/sensor-dialog.component';
 import { HwmDialogComponent } from '@app/hwm-dialog/hwm-dialog.component';
 import { FileDetailsDialogComponent } from '@app/file-details-dialog/file-details-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 declare let L: any;
 import 'leaflet';
 import { DateTime } from "luxon";
 import { marker } from 'leaflet';
+import { SiteEditComponent } from '@app/site-edit/site-edit.component';
 
 @Component({
     selector: 'app-site-details',
@@ -29,6 +30,8 @@ export class SiteDetailsComponent implements OnInit {
     public noSiteInfo;
     public hdatum;
     public hmethod;
+    public hdatumList = [];
+    public hmethodList = [];
     public housingType;
     public networkType;
     public networkName;
@@ -67,6 +70,7 @@ export class SiteDetailsComponent implements OnInit {
         showCoverageOnHover: false,
         zoomToBoundsOnClick: false
     });
+    public currentUser;
 
     displayedColumns: string[] = [
         'HousingType',
@@ -126,8 +130,13 @@ export class SiteDetailsComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         public siteService: SiteService,
+        public currentUserService: CurrentUserService,
         public dialog: MatDialog,
-    ) {}
+    ) {
+        currentUserService.currentUser.subscribe((user) => {
+            this.currentUser = user;
+        });
+    }
 
     ngOnInit(): void {
         this.route.params.subscribe(routeParams => {
@@ -171,6 +180,7 @@ export class SiteDetailsComponent implements OnInit {
                     this.siteService
                         .getHDatum()
                         .subscribe((results) => {
+                            this.hdatumList = results;
                             results.forEach(function(result){
                                 if (result.datum_id === self.site.hdatum_id){
                                     self.hdatum = result.datum_name;
@@ -182,6 +192,7 @@ export class SiteDetailsComponent implements OnInit {
                     this.siteService
                         .getHCollectionMethod()
                         .subscribe((results) => {
+                            this.hmethodList = results;
                             results.forEach(function(result){
                                 if (result.hcollect_method_id === self.site.hcollect_method_id){
                                     self.hmethod = result.hcollect_method;
@@ -194,8 +205,12 @@ export class SiteDetailsComponent implements OnInit {
                     this.siteService
                         .getNetworkType(this.siteID)
                         .subscribe((results) => {
+                            let networkTypeArray = [];
                             if(results.length > 0){
-                                this.networkType = results[0].network_type_name;
+                                results.forEach(function(result){
+                                    networkTypeArray.push(result.network_type_name)
+                                })
+                                this.networkType = networkTypeArray.join(", ");
                             }
 
                         });
@@ -204,8 +219,12 @@ export class SiteDetailsComponent implements OnInit {
                     this.siteService
                         .getNetworkName(this.siteID)
                         .subscribe((results) => {
+                            let networkNameArray = [];
                             if(results.length > 0){
-                                this.networkName = results[0].name
+                                results.forEach(function(result){
+                                    networkNameArray.push(result.name)
+                                })
+                                this.networkName = networkNameArray.join(", ");
                             }
 
                         });
@@ -448,9 +467,7 @@ export class SiteDetailsComponent implements OnInit {
                         this.siteService
                             .getMemberName(this.site.member_id)
                             .subscribe((results) => {
-                                if(results.length > 0){
-                                    this.memberName = results[0].fname + " " + results[0].lname;
-                                }
+                                this.memberName = results.fname + " " + results.lname;
                                 
                             });
                     }else{
@@ -777,5 +794,41 @@ export class SiteDetailsComponent implements OnInit {
             width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openEditDialog(){
+        let siteHousing = [{
+            amount: null,
+            notes: null,
+            housingType: null,
+            material: null,
+            length: null,
+        }];
+        this.siteHousing.forEach(function(value){
+            siteHousing[0].amount = value.amount !== undefined && value.amount !== "" ? value.amount : null;
+            siteHousing[0].notes = value.notes !== undefined && value.notes !== "" ? value.notes : null;
+            siteHousing[0].housingType = value.housingType !== undefined && value.housingType !== "" ? value.housingType : null;
+            siteHousing[0].material = value.material !== undefined && value.material !== "" ? value.material : null;
+            siteHousing[0].length = value.length !== undefined && value.length !== "" ? value.length : null;
+        })
+
+        if(this.currentUser !== ''){
+            const dialogRef = this.dialog.open(SiteEditComponent, {
+                data: {
+                    site: this.site,
+                    networkType: this.networkType,
+                    networkName: this.networkName,
+                    hdatum: this.hdatum,
+                    hmethod: this.hmethod,
+                    hdatumList: this.hdatumList,
+                    hmethodList: this.hmethodList,
+                    siteFiles: this.siteFiles,
+                    siteHousing: siteHousing,
+                    memberName: this.memberName,
+                },
+                disableClose: true,
+            });
+            dialogRef.afterClosed().subscribe((result) => {});
+        }
     }
 }

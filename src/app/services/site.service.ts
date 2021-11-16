@@ -207,6 +207,36 @@ export class SiteService {
             );
     }
 
+    //Get network types
+    public getNetworkTypesList(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/NetworkTypes.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getNetworkTypesList response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getNetworkTypesList', []))
+            );
+    }
+
+    //Get network names
+    public getNetworkNamesList(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/NetworkNames.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getNetworkNamesList response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getNetworkNamesList', []))
+            );
+    }
+
     //Get landowner contact
     public getLandownerContact(siteID): Observable<any> {
         return this.httpClient
@@ -727,6 +757,50 @@ export class SiteService {
             );
     }
 
+    // Get all counties in state
+    public getAllCounties(state_id): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'States/' + state_id + '/Counties.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getAllCounties response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getAllCounties', []))
+            );
+    }
+
+    // Get all states
+    public getAllStates(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'States.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getAllStates response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getAllStates', []))
+            );
+    }
+
+    // Get all housing types
+    public getAllHousingTypes(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'HousingTypes.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getAllHousingTypes response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getAllHousingTypes', []))
+            );
+    }
 
     public setCurrentEvent(currentEvent: number) {
         this.event.next(currentEvent);
