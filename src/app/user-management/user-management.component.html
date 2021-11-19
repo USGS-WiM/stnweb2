@@ -1,3 +1,36 @@
+<div id="userManagement">
+<div id="tableFilters">
+    <form [formGroup]="searchForm" class="search__form">
+        <mat-form-field class="search__form_field" appearance="outline">
+          <mat-label>Filter by Username</mat-label>
+          <input type="text"
+                 aria-label="Filter by Username"
+                 matInput
+                 formControlName="username"
+                 (keyup)="applyFilter()"
+          >
+        </mat-form-field>
+    
+        <mat-form-field class="search__form_field" appearance="outline">
+          <mat-label>Filter by First Name</mat-label>
+          <input type="text"
+                 aria-label="Filter by First Name"
+                 matInput
+                 formControlName="fname"
+                 (keyup)="applyFilter()"
+          >
+        </mat-form-field>
+    
+        <mat-form-field class="search__form_field" appearance="outline">
+          <mat-label>Filter by Last Name</mat-label>
+          <input 
+          aria-label="Filter by Last Name"matInput
+                 formControlName="lname"
+                 (keyup)="applyFilter()">
+        </mat-form-field>
+      </form>
+</div>
+
 <table mat-table [dataSource]="userDataSource" class="mat-elevation-z8">
 
     <!--- Note that these columns can be defined in any order.
@@ -30,13 +63,13 @@
     <!-- agency Column -->
     <ng-container matColumnDef="Agency">
         <th mat-header-cell *matHeaderCellDef> Agency </th>
-        <td mat-cell *matCellDef="let element"> {{element.agency_id}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.agency_n}} </td>
     </ng-container>
 
     <!-- role Column -->
     <ng-container matColumnDef="Role">
         <th mat-header-cell *matHeaderCellDef> Role </th>
-        <td mat-cell *matCellDef="let element"> {{element.role_id}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.role_n}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -46,4 +79,5 @@
 <div *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center; background: white;">
     <mat-progress-spinner color="primary" mode="indeterminate">
     </mat-progress-spinner>
+</div>
 </div>

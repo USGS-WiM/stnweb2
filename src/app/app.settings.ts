@@ -29,6 +29,12 @@ export class APP_SETTINGS {
     public static get EVENTS(): string {
         return this.API_ROOT + 'Events/';
     }
+    public static get AGENCIES(): string {
+        return this.API_ROOT + 'Agencies';
+    }
+    public static get ROLES(): string {
+        return this.API_ROOT + 'Roles';
+    }
     public static get EVENT_TYPES(): string {
         return this.API_ROOT + 'EventTypes';
     }
