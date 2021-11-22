@@ -17,6 +17,7 @@ import 'leaflet';
 import { DateTime } from "luxon";
 import { marker } from 'leaflet';
 import { SiteEditComponent } from '@app/site-edit/site-edit.component';
+import { ResultDetailsComponent } from '@app/result-details/result-details.component';
 
 @Component({
     selector: 'app-site-details',
@@ -64,6 +65,7 @@ export class SiteDetailsComponent implements OnInit {
     public otherSensorVisible = false;
     public nearbySitesVisible = false;
     public nearbyToggled = false;
+    public priority;
     public nearbySites = L.featureGroup([]);
     public markers = L.markerClusterGroup({
         spiderfyOnMaxZoom: false,
@@ -239,6 +241,13 @@ export class SiteDetailsComponent implements OnInit {
                             })
                         }
 
+                    });
+
+                    // Get deployment priority
+                    this.siteService
+                    .getDepPriority(this.siteID)
+                    .subscribe((results) => {
+                        this.priority = results;
                     });
 
                     // If no event selected
@@ -825,6 +834,8 @@ export class SiteDetailsComponent implements OnInit {
                     siteFiles: this.siteFiles,
                     siteHousing: siteHousing,
                     memberName: this.memberName,
+                    priority: this.priority,
+                    landowner: this.landownerContact,
                 },
                 disableClose: true,
             });

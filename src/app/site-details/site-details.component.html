@@ -180,6 +180,11 @@
                                 <p class="content-right" *ngIf="site.other_sid !== '' && site.noaa_sid !== undefined; else nullOther">{{site.other_sid}}</p>
                                 <ng-template #nullOther><p class="content-right">---</p></ng-template>
                             </div>
+                            <div class="cell-container">
+                                <p class="content-left">Priority</p>
+                                <p class="content-right" *ngIf="priority !== '' && priority !== undefined && priority !== null; else nullPriority">{{priority.priority_name}}</p>
+                                <ng-template #nullPriority><p class="content-right">---</p></ng-template>
+                            </div>
                         </div>
                     </div>
                     <mat-accordion multi="true">

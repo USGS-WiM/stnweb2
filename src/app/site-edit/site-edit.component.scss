@@ -91,10 +91,20 @@ ul {
     color: #03274B;
 }
 
+.info-header-icon {
+    font-size: 20px;
+    color: #FFF;
+    text-align: right;
+}
+
 .tableContainer {
     width: 100%;
     margin-bottom: 20px;
     margin-top: 10px;
+}
+
+table {
+    width: 100%;
 }
 
 .mat-column-HousingType{
@@ -131,6 +141,19 @@ ul {
     align-self: stretch;
 }
 
+.mat-column-FileName{
+    padding: 10px;
+    vertical-align: middle;
+    border-right: 1px solid #e0e0e0;
+    align-self: stretch;
+}
+
+.mat-column-FileDate{
+    padding: 10px;
+    vertical-align: middle;
+    align-self: stretch;
+}
+
 .mat-header-cell {
     font-weight: bold;
     text-transform: uppercase;
@@ -145,6 +168,95 @@ ul {
     column-width: 150px;
 }
 
+#siteFileTable {
+    .mat-cell, .mat-header-cell, .mat-footer-cell {
+        overflow: auto;
+        column-width: 150px;
+    }
+}
+
+.file-table {
+    cursor: pointer;
+}
+
+.mat-expansion-panel-header-description {
+    flex-basis: 0;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
 .add-button {
     margin: 10px;
+    background-color: #008248;
+    color: #F4F4F4;
+    border: 1px solid #2B7059;
+}
+
+.remove-button {
+    margin-bottom: 10px;
+    background-color: #E70000;
+    color: #F4F4F4;
+    border: 1px solid #ce0000;
+}
+
+.form-header {
+    font-weight: bold;
+}
+
+.event-alert {
+    margin: 10px;
+    border: solid 1px #ee992a;
+}
+
+.event-alert p{
+    display: inline;
+    vertical-align: middle;
+    color: #ee992a;
+    margin: 0px;
+}
+
+.warning-icon {
+    padding-right: 10px;
+    color: #ee992a;
+    display: inline;
+    vertical-align: middle;
+}
+
+.alert.alert-danger {
+    color: #f44336;
+}
+
+.site-button-group {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.save-btn {
+    background-color: #008248;
+    color: #F4F4F4;
+    border: 1px solid #2B7059;
+}
+
+.cancel-btn {
+    margin-left: 10px;
+}
+
+.delete-btn {
+    background-color: #E70000;
+    color: #F4F4F4;
+    border: 1px solid #ce0000;
+    margin-left: 10px;
+}
+
+.file-button-group {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.upload-file {
+    margin-left: 20px;
+}
+
+.invalid {
+    padding: 15px;
 }

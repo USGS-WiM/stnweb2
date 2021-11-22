@@ -21,18 +21,130 @@
                             <mat-label>Internal Notes</mat-label>
                             <textarea matInput formControlName="site_notes" [value]="site.internal_notes"></textarea>
                         </mat-form-field>
-                        <mat-radio-group id="latLngUnit">
+                        <mat-radio-group id="latLngUnit" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
                             <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
                             <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
-                        </mat-radio-group>                
-                        <mat-form-field appearance="fill">
-                            <mat-label>Latitude</mat-label>
-                            <input formControlName="latitude_dd" required matInput [value]="site.latitude_dd"/>
-                        </mat-form-field>
-                        <mat-form-field appearance="fill">
-                            <mat-label>Longitude</mat-label>
-                            <input formControlName = "longitude_dd" required matInput [value]="site.longitude_dd"/>
-                        </mat-form-field>
+                        </mat-radio-group>   
+                        <div *ngIf="latLngUnit === 'decdeg'">            
+                            <mat-form-field appearance="fill">
+                                <mat-label>Latitude</mat-label>
+                                <input formControlName="latitude_dd" required matInput [value]="site.latitude_dd"/>
+                            </mat-form-field>
+                            <!-- LatDD Validator -->
+                            <div *ngIf="siteForm.controls.latitude_dd.invalid && (siteForm.controls.latitude_dd.dirty || siteForm.controls.latitude_dd.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="siteForm.controls.latitude_dd.errors?.['incorrectValue']">
+                                    The latitude must be between 0 and 73.0.
+                                </div>
+                            </div>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Longitude</mat-label>
+                                <input formControlName = "longitude_dd" required matInput [value]="site.longitude_dd"/>
+                            </mat-form-field>
+                            <!-- LonDD Validator -->
+                            <div *ngIf="siteForm.controls.longitude_dd.invalid && (siteForm.controls.longitude_dd.dirty || siteForm.controls.longitude_dd.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="siteForm.controls.longitude_dd.errors?.['incorrectValue']">
+                                    The longitude must be between -175.0 and -60.0.
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="latLngUnit === 'dms'">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label>Latitude</label>
+                                    </td>
+                                    <td>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Degree</mat-label>
+                                            <input required formControlName="latdeg" matInput [value]="dms.latdeg"/>
+                                        </mat-form-field>
+                                    </td>
+                                    <td>°</td>
+                                    <td>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Minute</mat-label>
+                                            <input required formControlName="latmin" matInput [value]="dms.latmin"/>
+                                        </mat-form-field>
+                                    </td>
+                                    <td>′</td>
+                                    <td>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Second</mat-label>
+                                            <input required formControlName="latsec" matInput [value]="dms.latsec"/>
+                                        </mat-form-field>
+                                    </td>
+                                    <td>″</td>
+                                </tr>
+                            </table>
+                            <!-- LatDD Validator -->
+                            <div *ngIf="siteForm.controls.latdeg.invalid && (siteForm.controls.latdeg.dirty || siteForm.controls.latdeg.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="siteForm.controls.latdeg.errors?.['incorrectValue']">
+                                    The latitude must be between -175.0 and -60.0.
+                                </div>
+                            </div>
+                            <div *ngIf="siteForm.controls.latmin.invalid && (siteForm.controls.latmin.dirty || siteForm.controls.latmin.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="siteForm.controls.latmin.errors?.['incorrectValue']">
+                                    The latitude must be between 0 and 73.
+                                </div>
+                            </div>
+                            <div *ngIf="siteForm.controls.latsec.invalid && (siteForm.controls.latsec.dirty || siteForm.controls.latsec.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="siteForm.controls.latsec.errors?.['incorrectValue']">
+                                    The latitude must be between 0 and 73.
+                                </div>
+                            </div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label>Longitude</label>
+                                    </td>
+                                    <td>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Degree</mat-label>
+                                            <input required formControlName="londeg" matInput [value]="dms.londeg"/>
+                                        </mat-form-field>
+                                    </td>
+                                    <td>°</td>
+                                    <td>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Minute</mat-label>
+                                            <input required formControlName="lonmin" matInput [value]="dms.lonmin"/>
+                                        </mat-form-field>
+                                    </td>
+                                    <td>′</td>
+                                    <td>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Second</mat-label>
+                                            <input required formControlName="lonsec" matInput [value]="dms.lonsec"/>
+                                        </mat-form-field>
+                                    </td>
+                                    <td>″</td>
+                                </tr>
+                            </table>
+                            <!-- LonDD Validator -->
+                            <div *ngIf="siteForm.controls.londeg.invalid && (siteForm.controls.londeg.dirty || siteForm.controls.londeg.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="siteForm.controls.londeg.errors?.['incorrectValue']">
+                                    The longitude must be between -175.0 and -60.0.
+                                </div>
+                            </div>
+                            <div *ngIf="siteForm.controls.lonmin.invalid && (siteForm.controls.lonmin.dirty || siteForm.controls.lonmin.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="siteForm.controls.lonmin.errors?.['incorrectValue']">
+                                    The longitude must be between -175.0 and -60.0.
+                                </div>
+                            </div>
+                            <div *ngIf="siteForm.controls.lonsec.invalid && (siteForm.controls.lonsec.dirty || siteForm.controls.lonsec.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="siteForm.controls.lonsec.errors?.['incorrectValue']">
+                                    The longitude must be between -175.0 and -60.0.
+                                </div>
+                            </div>
+                        </div>
                         <mat-form-field appearance="fill">
                             <mat-label>Horizontal Datum</mat-label>
                             <mat-select formControlName="hdatum" required [(value)]="site.hdatum">
@@ -77,63 +189,63 @@
                             <mat-label>Safety Notes</mat-label>
                             <textarea matInput formControlName="safety_notes" [value]="site.safety_notes"></textarea>
                         </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Address</mat-label>
+                            <input matInput formControlName="address" [value]="site.address"/>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>City</mat-label>
+                            <input matInput formControlName="city" [value]="site.city"/>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>State</mat-label>
+                            <mat-select formControlName="state" required (selectionChange)="getCountyList($event.value)">
+                                <mat-option *ngFor="let state of stateList" [value]="state.state_name">
+                                    {{state.state_name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-icon matSuffix class="info-icon" matTooltip="Used to autogenerate the Site Number." 
+                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Zip</mat-label>
+                            <input matInput formControlName="zip" [value]="site.zip"/>
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>County</mat-label>
+                            <mat-select formControlName="county" required>
+                                <mat-option *ngFor="let county of countyList" [value]="county.county_name">
+                                    {{county.county_name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                         <mat-accordion multi="true">
                             <mat-expansion-panel hideToggle>
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                Location Information
+                                Additional Information
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                                     <mat-form-field appearance="fill">
-                                        <mat-label>Address</mat-label>
-                                        <input matInput formControlName="address" [value]="site.address"/>
-                                    </mat-form-field>
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>City</mat-label>
-                                        <input matInput formControlName="city" [value]="site.city"/>
-                                    </mat-form-field>
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>State</mat-label>
-                                        <mat-select formControlName="state" required [(value)]="site.state" (selectionChange)="getCountyList($event.value)">
-                                            <mat-option *ngFor="let state of stateList" [value]="state.state_name">
-                                                {{state.state_name}}
-                                            </mat-option>
-                                        </mat-select>
-                                        <mat-icon matSuffix class="info-icon" matTooltip="Used to autogenerate the Site Number." 
-                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                    </mat-form-field>
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Zip</mat-label>
-                                        <input matInput formControlName="zip" [value]="site.zip"/>
-                                    </mat-form-field>
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>County</mat-label>
-                                        <mat-select formControlName="county" required [(value)]="site.county">
-                                            <mat-option *ngFor="let county of countyList" [value]="county.county_name">
-                                                {{county.county_name}}
-                                            </mat-option>
-                                        </mat-select>
-                                        <mat-icon matSuffix class="info-icon" matTooltip="Used to autogenerate the Site Number. Use the Verify Location to populate." 
-                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                    </mat-form-field>
-                                    <mat-form-field appearance="fill">
                                         <mat-label>Priority</mat-label>
-                                        <mat-select>
-
+                                        <mat-select formControlName="priority_id">
+                                            <mat-option *ngFor="let priority of priorityList" [value]="priority.priority_id">
+                                                {{priority.priority_name}}
+                                            </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <div>Site Location Type in the Network</div>
+                                    <div class="form-header">Site Location Type in the Network</div>
                                     <ul>
                                         <li *ngFor="let type of networkTypes">
-                                        <mat-checkbox [checked]="type.selected" (change)="setSelected($event, type)">
+                                        <mat-checkbox [checked]="type.selected" (change)="setSelectedNetworkType($event, type)">
                                             {{type.network_type_name}}
                                         </mat-checkbox>
                                         </li>
                                     </ul>
-                                    <div>Network Name</div>
+                                    <div class="form-header">Network Name</div>
                                     <ul>
-                                        <li *ngFor="let name of networkNames" (change)="setSelected($event, name)">
-                                        <mat-checkbox [checked]="name.selected">
+                                        <li *ngFor="let name of networkNames">
+                                        <mat-checkbox [checked]="name.selected" (change)="setSelectedNetworkName($event, name)" [disabled]="name.name !== 'Not Defined' && isDisabled">
                                             {{name.name}}
                                         </mat-checkbox>
                                         </li>
@@ -142,44 +254,99 @@
                                         <mat-label>Zone</mat-label>
                                         <input matInput [value]="site.zone"/>
                                     </mat-form-field>
-                                    <mat-checkbox id="sensorAppropriate" [value]="sensorNotAppropriate">
+                                    <mat-checkbox id="sensorAppropriate" [value]="sensorNotAppropriate" [checked]="sensorNotAppropriate" (change)="sensorAppropriateChanged($event)">
                                         Sensor Not Appropriate
                                     </mat-checkbox>
                                     <div>
-                                        <label>Permanent Housing Installed</label>
+                                        <label class="form-header">Permanent Housing Installed</label>
                                         <mat-radio-group class="radio-group" [(value)]="perm_housing_installed" formControlName="is_permanent_housing_installed">
                                             <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
                                             <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
                                         </mat-radio-group>
                                     </div>
                                     <div>
-                                        Site Creator {{site.memberName}}
+                                        <label class="form-header">Site Creator:</label> {{site.memberName}}
                                     </div>
                                     <div>
                                         <div>
-                                            <label>Landowner Contact</label><mat-icon matSuffix class="info-icon" matTooltip="Do not record information that private citizens have a reasonable expectation of privacy about. No names or phone numbers of private citizens.  Business contact information is acceptable." 
+                                            <label class="form-header">Landowner Contact</label><mat-icon matSuffix class="info-icon" matTooltip="Do not record information that private citizens have a reasonable expectation of privacy about. No names or phone numbers of private citizens.  Business contact information is acceptable." 
                                             aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                         </div>
-                                        <button mat-raised-button class="add-button"><mat-icon>add</mat-icon> Add Landowner</button>
+                                        <button mat-raised-button class="add-button" (click)="addLandownerContact()" type="button"><mat-icon>add</mat-icon> Add Landowner</button>
+                                        <form [formGroup]="landownerForm" [hidden]="!hasLandownerContact && !addLandownerCheck">
+                                            <mat-expansion-panel hideToggle expanded="true">
+                                                <mat-expansion-panel-header>
+                                                    <mat-panel-title>
+                                                    Landowner Information
+                                                    </mat-panel-title>
+                                                </mat-expansion-panel-header>
+                                                <mat-card class="mat-elevation-z0 event-alert"><mat-icon class="warning-icon">warning</mat-icon><p>Do not record information that private citizens have a reasonable expectation of privacy about. No names or phone numbers of private citizens. Business contact information is acceptable.</p></mat-card>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>First Name</mat-label>
+                                                    <input formControlName="fname" required matInput [value]="landownerContact.fname"/>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Last Name</mat-label>
+                                                    <input formControlName="lname" matInput [value]="landownerContact.name"/>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Affiliation/Title</mat-label>
+                                                    <input formControlName="title" matInput [value]="landownerContact.title"/>
+                                                </mat-form-field>
+                                                <mat-checkbox class="site-chx" [value]="useSiteAddress" (click)="useAddressforLO()" >Address same as Site address</mat-checkbox>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Address</mat-label>
+                                                    <input formControlName="fname" matInput [value]="landownerContact.address"/>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>City</mat-label>
+                                                    <input formControlName="city" matInput [value]="landownerContact.city"/>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>State</mat-label>
+                                                    <mat-select formControlName="state">
+                                                        <mat-option *ngFor="let state of stateList" [value]="state.state_name">
+                                                            {{state.state_name}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Zip</mat-label>
+                                                    <input formControlName="zip" matInput [value]="landownerContact.zip"/>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Primary Phone</mat-label>
+                                                    <input formControlName="primaryphone" matInput [value]="landownerContact.primaryphone"/>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Secondary Phone</mat-label>
+                                                    <input formControlName="secondaryphone" matInput [value]="landownerContact.secondaryphone"/>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Email</mat-label>
+                                                    <input formControlName="email" matInput [value]="landownerContact.email"/>
+                                                </mat-form-field>
+                                            </mat-expansion-panel>
+                                        </form>
                                     </div>
                                     <div>
-                                        <label>Access Permission Granted</label>
+                                        <label class="form-header">Access Permission Granted</label>
                                         <mat-radio-group class="radio-group" [(value)]="accessGranted" formControlName="access_granted">
                                             <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
                                             <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
                                             <mat-radio-button class="radio-button" value="Not Needed">Not Needed</mat-radio-button>
                                         </mat-radio-group>
                                     </div>
-                            </mat-expansion-panel>
+                            <!-- </mat-expansion-panel>
                             <mat-expansion-panel hideToggle>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
                                     Housing Information
                                     </mat-panel-title>
-                                </mat-expansion-panel-header>
+                                </mat-expansion-panel-header> -->
                                         <mat-form-field appearance="fill">
                                             <mat-label>Site Housing(s)</mat-label>
-                                            <mat-select [value]="siteHousingArray[0].housingType" (selectionChange)="changeTableValue($event.value)">
+                                            <mat-select formControlName="housingType" (selectionChange)="changeTableValue($event.value)" multiple>
                                                 <mat-option *ngFor="let option of siteHousingLookup" [value]="option.type_name">
                                                     {{option.type_name}}
                                                 </mat-option>
@@ -261,6 +428,10 @@
                                             </table>
                                         </div>
                             </mat-expansion-panel>
+                            <div class="site-button-group">
+                                <button class="save-btn" mat-button cdkFocusInitial aria-mat-label="Save" type="submit">Save</button>
+                                <button class="cancel-btn" mat-raised-button mat-dialog-close cdkFocusInitial aria-mat-label="Cancel">Cancel</button>
+                            </div>
                         </mat-accordion>
             </mat-expansion-panel>
             <mat-expansion-panel hideToggle expanded="false">
@@ -268,14 +439,216 @@
                     <mat-panel-title>
                     Site Files
                     </mat-panel-title>
+                    <mat-panel-description>
+                        <mat-icon class="info-header-icon" matTooltip="For general site files only. Please add event-specific files (e.g. HWM photos, field sheets, sensor data files, etc.) by editing the Sensor or HWM sections within this site and uploading files from there ." 
+                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                    </mat-panel-description>
                 </mat-expansion-panel-header>
+                <button mat-raised-button class="add-button" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <div class="tableContainer" [hidden]="initSiteFiles.length === 0">
+                    <table
+                        mat-table
+                        id="siteFileTable"
+                        [dataSource]="initSiteFiles"
+                        class="mat-elevation-z5"
+                        matSort
+                    >
+
+                        <!-- file name column -->
+                        <ng-container matColumnDef="FileName">
+                            <th mat-header-cell *matHeaderCellDef>File Name</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div>
+                                    {{file.name}}
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <!-- file date column -->
+                        <ng-container matColumnDef="FileDate">
+                            <th mat-header-cell *matHeaderCellDef>File Date</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div>
+                                    {{file.file_date}}
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedFileColumns"></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: displayedFileColumns"
+                            class="file-table"
+                            (click)="showFileEdit(row)"
+                        ></tr>
+                    </table>
+                </div>
+                <form [formGroup]="siteFileForm" [hidden]="!showFileForm">
+                    <mat-form-field appearance="fill">
+                        <mat-label>File Type</mat-label>
+                        <mat-select formControlName="filetype_id" (selectionChange)="getFileTypeSelection($event)">
+                            <mat-option *ngFor="let file of fileTypes" [value]="file.filetype_id">
+                                {{file.filetype}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    
+                                    <!--Upload Single Image with validations*-->
+                                    <div *ngIf="addFileType === 'New' && siteFiles.filetype_id !== 8">
+                                        <input #upload class="upload-file" type="file" max="500000">
+                                    </div>
+                                    <br clear="all" />
+
+                                    <!--File URL (LINK file)-->
+                                    <div *ngIf="siteFiles.filetype_id === 8">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>File URL</mat-label>
+                                            <input formControlName="name" matInput required [value]="siteFiles.name"/>
+                                            <mat-icon matSuffix class="info-icon" matTooltip="Please link to persistent URLs or digital object identifier (doi) urls." 
+                                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>                
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!--Source Name (photo)-->
+                                    <div *ngIf="siteFiles.filetype_id === 1">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Source Photographer</mat-label>
+                                            <input formControlName="FULLname" matInput required [value]="siteFiles.FULLname"/>           
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!--Source Name (all other)-->
+                                    <div *ngIf="siteFiles.filetype_id  > 2">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Source Name</mat-label>
+                                            <input formControlName="FULLname" matInput required [value]="siteFiles.FULLname"/>           
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!--Source Agency* (photo, allOther)-->
+                                    <div *ngIf="siteFiles.filetype_id === 1 || siteFiles.filetype_id > 2">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Source Agency</mat-label>
+                                            <mat-select required formControlName="agency_id" (selectionChange)="updateAgencyForCaption($event)">
+                                                <mat-option *ngFor="let a of agencies" [value]="a.agency_id">
+                                                    {{a.agency_name}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!-- Photo Date* (photo) -->
+                                    <div *ngIf="siteFiles.filetype_id === 1">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Photo Date</mat-label>
+                                            <input matInput formControlName="photo_date" [value]="siteFiles.photo_date" [matDatepicker]="photoDatePicker" (dateChange)="formatDate($event)" required placeholder="Choose a date">
+                                            <mat-datepicker-toggle matSuffix [for]="photoDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker [value]="siteFiles.photo_date" #photoDatePicker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!-- Date Uploaded* (photo, data, allother) -->
+                                    <div *ngIf="siteFiles.filetype_id > 0">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Date Uploaded</mat-label>
+                                            <input matInput formControlName="file_date" [value]="siteFiles.file_date" [matDatepicker]="fileDatePicker" required placeholder="Choose a date" (dateChange)="formatDate($event)">
+                                            <mat-datepicker-toggle matSuffix [for]="fileDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #fileDatePicker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!--Description*(photo, data, allother)-->
+                                    <div *ngIf="siteFiles.filetype_id > 0">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label for="description">Description</mat-label>
+                                            <textarea matInput formControlName="description" required id="description" [value]="siteFiles.description"></textarea>
+                                            <mat-icon [hidden]="siteFiles.filetype_id !== 1" matSuffix class="info-icon" matTooltip="Populates in Photo caption below. If a person or people appear in photo include name(s). If non-USGS personnel, ensure consent to publish name in caption is given." 
+                                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!-- This is where Other ends, rest is for Photo -->
+                                    <!--Photo Direction (photo)-->
+                                    <div *ngIf="siteFiles.filetype_id === 1">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Photo Direction</mat-label>
+                                            <input formControlName="photo_direction" matInput [value]="siteFiles.photo_direction"/>           
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!-- Photo Latitude (photo)-->
+                                    <div *ngIf="siteFiles.filetype_id === 1">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Photo Latitude (if different)</mat-label>
+                                            <input formControlName="latitude_dd" matInput [value]="siteFiles.latitude_dd"/>           
+                                        </mat-form-field>
+                                    </div>
+                                    <!-- LatDD Validator -->
+                                    <div *ngIf="siteFileForm.controls.latitude_dd.invalid && (siteFileForm.controls.latitude_dd.dirty || siteFileForm.controls.latitude_dd.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="siteFileForm.controls.latitude_dd.errors?.['incorrectValue']">
+                                            The latitude must be between 0 and 73.0.
+                                        </div>
+                                    </div>
+
+                                    <!--Photo Longitude (photo)-->
+                                    <div *ngIf="siteFiles.filetype_id === 1">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Photo Longitude (if different)</mat-label>
+                                            <input formControlName="longitude_dd" matInput [value]="siteFiles.longitude_dd"/>           
+                                        </mat-form-field>
+                                    </div>
+                                    <!-- LonDD Validator -->
+                                    <div *ngIf="siteFileForm.controls.longitude_dd.invalid && (siteFileForm.controls.longitude_dd.dirty || siteFileForm.controls.longitude_dd.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="siteFileForm.controls.longitude_dd.errors?.['incorrectValue']">
+                                            The longitude must be between -175.0 and -60.0.
+                                        </div>
+                                    </div>
+
+                                    <div *ngIf="siteFiles.filetype_id === 11">
+                                        <label class="form-header" for="Caption">Preview Caption</label>
+                                        <div>
+                                            <span>
+                                                Photo of {{siteFileForm.value.description || ' (Description HERE) '}} at {{siteForm.value.site_description}}, {{siteForm.value.county}}, {{siteForm.value.state}}, {{formattedPhotoDate || ' Date taken HERE '}}. Photograph by {{siteFileForm.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- associated files -->
+                                    <div *ngIf="addFileType === 'Existing' && siteFiles.filetype_id !== 8">
+                                        <label class="form-header">Associated File:</label>
+                                        <div>
+                                            <span *ngIf="fileItemExists">
+                                                <a target="_blank" title="Download File" href="{{fileSource}}">{{siteFiles.name}}</a>
+                                            </span>
+                                            <span *ngIf="!fileItemExists">-- Missing --</span>
+                                            <!--ReUpload Single Image with validations*-->
+                                            <div *ngIf="!fileItemExists">
+                                                <!-- <label for="Upload"></label> -->
+                                                <input #upload id="Upload" type="file" max="500000" file-model="existingFile.File" (click)="saveFileUpload($event)">
+                                            </div>
+                                            <!-- change out the existing fileItem with a different one-->
+                                            <div *ngIf="fileItemExists">
+                                                <div>
+                                                    <input #upload id="Upload" type="file" max="500000" file-model="existingFile.File1" (click)="saveFileUpload($event)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div [hidden]="siteFileIsUploading" class="file-button-group">
+                                        <button mat-button type="button" class="save-btn" *ngIf="siteFiles.file_id !== null" (click)="saveFile()">Save File</button>
+                                        <button mat-button class="delete-btn" type="button" *ngIf="siteFiles.file_id !== null" (click)="deleteFile()">Delete File</button>
+                                        <button mat-button type="button" class="save-btn" *ngIf="siteFiles.file_id == null" (click)="createFile()">Create File</button>
+                                        <button mat-raised-button style="margin-left: 10px" type="button" (click)="cancelFile()">Close/Cancel File</button>
+                                    </div>
+                </form>
             </mat-expansion-panel>
         </mat-accordion>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
-            <button mat-button mat-dialog-close cdkFocusInitial aria-mat-label="Save" type="submit">Save</button>
-            <button mat-button mat-dialog-close cdkFocusInitial aria-mat-label="Cancel">Cancel</button>
+            <button mat-raised-button mat-dialog-close cdkFocusInitial aria-mat-label="Cancel">Cancel</button>
             <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
         </div>
     </mat-dialog-actions>
