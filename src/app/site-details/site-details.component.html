@@ -759,11 +759,11 @@
                                     <ng-container matColumnDef="FileDate">
                                         <th mat-header-cell *matHeaderCellDef>File Date</th>
                                         <td mat-cell *matCellDef="let file">
-                                            <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySiteFileDate">
+                                            <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displaySiteFileDate">
                                                 ---
                                             </div>
                                             <ng-template #displaySiteFileDate>
-                                                {{ file.file_date }}
+                                                {{ file.format_file_date }}
                                             </ng-template>
                                         </td>
                                     </ng-container>

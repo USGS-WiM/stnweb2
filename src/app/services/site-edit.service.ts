@@ -15,10 +15,9 @@ export class SiteEditService {
   }
 
   //Update single site by ID
-  public updateSingleSite(siteID: string): Observable<any> {
-    console.log(APP_SETTINGS.SITES_URL);
+  public putSite(siteID: string): Observable<any> {
     return this.httpClient
-        .get(APP_SETTINGS.SITES_URL + '/' + siteID + '.json',  {
+        .put(APP_SETTINGS.SITES_URL + '/' + siteID + '.json',  {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -33,64 +32,207 @@ export class SiteEditService {
         );
   }
 
-  // Post site info
-  public submitForm(data): Observable<any> {
-    console.log(data)
-    return data;
-    // return this.httpClient.post<any>(api-url, data);
-  }
-
   // Put landowner
-  public putLandowner(data): Observable<any> {
-    console.log(data)
-    return data;
+  public putLandowner(landownerContactID): Observable<any> {
+    // rootURL + '/LandOwners/:id.json'
+    // return this.httpClient
+    //     .put(APP_SETTINGS.SITES_URL + '/LandOwners/' + landownerContactID + '.json',  {
+    //       headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+    //   })
+    //     .pipe(
+    //         tap((response) => {
+    //             console.log(
+    //                 'putLandowner response received' //: ' +
+    //                 // JSON.stringify(response)
+    //             );
+    //             return response;
+    //         }),
+    //         catchError(this.handleError<any>('putLandowner', []))
+    //     );
+    return landownerContactID;
   }
 
-  public postLandowner(data): Observable<any> {
-    console.log(data)
-    return data;
+  public postLandowner(landownerContactID): Observable<any> {
+    // rootURL + '/LandOwners/:id.json'
+    return this.httpClient
+        .post(APP_SETTINGS.SITES_URL + '/LandOwners/' + landownerContactID + '.json',  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postLandowner response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postLandowner', []))
+        );
   }
 
-  public postNetworkNames(data): Observable<any> {
+  public postNetworkNames(siteID, networkNameID): Observable<any> {
     // params: { siteId: '@siteId', NetworkNameId: '@networkNameId' }, isArray: true, url: rootURL + '/sites/:siteId/AddNetworkName'
-    console.log(data)
-    return data;
+    return this.httpClient
+        .post(APP_SETTINGS.SITES_URL + '/sites' + siteID + 'AddNetworkName',  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+          params: { siteId: siteID, NetworkNameId: networkNameID },
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postNetworkNames response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postNetworkNames', []))
+        );
   }
 
-  public deleteNetworkNames(data): Observable<any> {
+  public deleteNetworkNames(siteID, networkNameID): Observable<any> {
     // url: rootURL + '/sites/:siteId/removeNetworkName?NetworkNameId=:networkNameId'
-    console.log(data)
-    return data;
+    return this.httpClient
+        .delete(APP_SETTINGS.SITES_URL + '/sites/' + siteID + '/removeNetworkName?NetworkNameId=' + networkNameID,  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteNetworkNames response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteNetworkNames', []))
+        );
   }
 
-  public postNetworkTypes(data): Observable<any> {
+  public postNetworkTypes(siteID, networkTypeID): Observable<any> {
     // { siteId: '@siteId', NetworkTypeId: '@networkTypeId' }, isArray: true, url: rootURL + '/sites/:siteId/AddNetworkType'
-    console.log(data)
-    return data;
+    return this.httpClient
+        .post(APP_SETTINGS.SITES_URL + '/sites/' + siteID + '/AddNetworkType',  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+          params: { siteId: siteID, NetworkTypeId: networkTypeID },
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postNetworkTypes response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postNetworkTypes', []))
+        );
   }
 
-  public deleteNetworkTypes(data): Observable<any> {
+  public deleteNetworkTypes(siteID, networkTypeID): Observable<any> {
     // url: rootURL + '/sites/:siteId/removeNetworkType?NetworkTypeId=:networkTypeId'
-    console.log(data)
-    return data;
+    return this.httpClient
+        .delete(APP_SETTINGS.SITES_URL + '/sites/' + siteID + '/removeNetworkType?NetworkTypeId=' + networkTypeID,  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteNetworkTypes response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteNetworkTypes', []))
+        );
   }
 
-  public deleteSiteHousings(data): Observable<any> {
+  public deleteSiteHousings(siteHousingID): Observable<any> {
     // rootURL + '/SiteHousings/:id.json'
-    console.log(data)
-    return data;
+    return this.httpClient
+        .delete(APP_SETTINGS.SITES_URL + '/SiteHousings/' + siteHousingID + '.json',  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteSiteHousings response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteSiteHousings', []))
+        );
   }
 
-  public postSiteHousings(data): Observable<any> {
+  public postSiteHousings(siteHousingID): Observable<any> {
     // rootURL + '/SiteHousings/:id.json'
-    console.log(data)
-    return data;
+    return this.httpClient
+        .post(APP_SETTINGS.SITES_URL + '/SiteHousings/' + siteHousingID + '.json',  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postSiteHousings response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postSiteHousings', []))
+        );
   }
 
-  public putSiteHousings(data): Observable<any> {
+  public putSiteHousings(siteHousingID): Observable<any> {
     // rootURL + '/SiteHousings/:id.json'
-    console.log(data)
-    return data;
+    return this.httpClient
+        .put(APP_SETTINGS.SITES_URL + '/SiteHousings/' + siteHousingID + '.json',  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'putSiteHousings response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('putSiteHousings', []))
+        );
+  }
+
+  public postSource(sourceID): Observable<any> {
+    // rootURL + '/Sources/:id.json'
+    return this.httpClient
+        .post(APP_SETTINGS.SITES_URL + '/Sources/' + sourceID + '.json',  {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postSource response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postSource', []))
+        );
+  }
+  
+  public uploadFile(sourceID): Observable<any> {
+  // uploadFile: { method: 'POST', url: rootURL + '/Files/bytes', headers: { 'Content-Type': undefined }, transformRequest: angular.identity, cache: false, isArray: false },
+    // return this.httpClient
+    //     .post(APP_SETTINGS.SITES_URL + 'Files/bytes',  {
+    //       headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+    //   })
+    //     .pipe(
+    //         tap((response) => {
+    //             console.log(
+    //                 'uploadFile response received' //: ' +
+    //                 // JSON.stringify(response)
+    //             );
+    //             return response;
+    //         }),
+    //         catchError(this.handleError<any>('uploadFile', []))
+    //     );
+    return sourceID;
   }
 
   /**

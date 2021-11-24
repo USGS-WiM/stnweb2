@@ -314,7 +314,7 @@ export class SiteDetailsComponent implements OnInit {
                                 let fileDate = file.file_date.split("T")[0];
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.file_date = fileDate;
+                                file.format_file_date = fileDate;
                                 if(file.instrument_id !== undefined){
                                     self.siteService.getFileSensor(file.file_id).subscribe((results) => {
                                         file.details = results;
@@ -431,7 +431,7 @@ export class SiteDetailsComponent implements OnInit {
                                 let fileDate = file.file_date.split("T")[0];
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.file_date = fileDate;
+                                file.format_file_date = fileDate;
                                 if (file.objective_point_id !== undefined){
                                     self.datumLocFiles.push(file);
                                     self.fileLength ++;
@@ -783,8 +783,10 @@ export class SiteDetailsComponent implements OnInit {
             let photoDate = row.photo_date.split("T")[0];
             photoDate = photoDate.split("-");
             photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
-            row.photo_date = photoDate;
+            row.format_photo_date = photoDate;
         }
+
+        console.log(row)
 
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
@@ -827,8 +829,6 @@ export class SiteDetailsComponent implements OnInit {
                     site: this.site,
                     networkType: this.networkType,
                     networkName: this.networkName,
-                    hdatum: this.hdatum,
-                    hmethod: this.hmethod,
                     hdatumList: this.hdatumList,
                     hmethodList: this.hmethodList,
                     siteFiles: this.siteFiles,

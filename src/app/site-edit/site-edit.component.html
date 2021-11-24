@@ -147,16 +147,16 @@
                         </div>
                         <mat-form-field appearance="fill">
                             <mat-label>Horizontal Datum</mat-label>
-                            <mat-select formControlName="hdatum" required [(value)]="site.hdatum">
-                                <mat-option *ngFor="let datum of hDatums" [value]="datum.datum_name">
+                            <mat-select formControlName="hdatum_id" required>
+                                <mat-option *ngFor="let datum of hDatums" [value]="datum.datum_id">
                                 {{datum.datum_name}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field appearance="fill">
                             <mat-label>Horizontal Collection Method</mat-label>
-                            <mat-select formControlName="hmethod" required [(value)]="site.hmethod">
-                                <mat-option *ngFor="let method of hMethods" [value]="method.hcollect_method">
+                            <mat-select formControlName="hcollect_method_id" required [(value)]="site.hcollect_method_id">
+                                <mat-option *ngFor="let method of hMethods" [value]="method.hcollect_method_id">
                                 {{method.hcollect_method}}
                                 </mat-option>
                             </mat-select>
@@ -296,7 +296,7 @@
                                                 <mat-checkbox class="site-chx" [value]="useSiteAddress" (click)="useAddressforLO()" >Address same as Site address</mat-checkbox>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Address</mat-label>
-                                                    <input formControlName="fname" matInput [value]="landownerContact.address"/>
+                                                    <input formControlName="address" matInput [value]="landownerContact.address"/>
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>City</mat-label>
@@ -445,7 +445,7 @@
                     </mat-panel-description>
                 </mat-expansion-panel-header>
                 <button mat-raised-button class="add-button" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
-                <div class="tableContainer" [hidden]="initSiteFiles.length === 0">
+                <div class="tableContainer" [hidden]="initSiteFiles?.length === 0">
                     <table
                         mat-table
                         id="siteFileTable"
@@ -469,7 +469,7 @@
                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                             <td mat-cell *matCellDef="let file">
                                 <div>
-                                    {{file.file_date}}
+                                    {{file.format_file_date}}
                                 </div>
                             </td>
                         </ng-container>
@@ -495,7 +495,10 @@
                     
                                     <!--Upload Single Image with validations*-->
                                     <div *ngIf="addFileType === 'New' && siteFiles.filetype_id !== 8">
-                                        <input #upload class="upload-file" type="file" max="500000">
+                                        <label class="custom-file-input-add" for="addFile">
+                                            <p class="required">*</p>
+                                        </label>
+                                        <input #upload id="addFile" class="upload-file" type="file" max="500000" [hidden]="true" (click)="saveFileUpload($event)">
                                     </div>
                                     <br clear="all" />
 
@@ -529,7 +532,7 @@
                                     <div *ngIf="siteFiles.filetype_id === 1 || siteFiles.filetype_id > 2">
                                         <mat-form-field appearance="fill">
                                             <mat-label>Source Agency</mat-label>
-                                            <mat-select required formControlName="agency_id" (selectionChange)="updateAgencyForCaption($event)">
+                                            <mat-select required formControlName="agency_id" (selectionChange)="updateAgencyForCaption()">
                                                 <mat-option *ngFor="let a of agencies" [value]="a.agency_id">
                                                     {{a.agency_name}}
                                                 </mat-option>
@@ -625,13 +628,14 @@
                                             <span *ngIf="!fileItemExists">-- Missing --</span>
                                             <!--ReUpload Single Image with validations*-->
                                             <div *ngIf="!fileItemExists">
-                                                <!-- <label for="Upload"></label> -->
-                                                <input #upload id="Upload" type="file" max="500000" file-model="existingFile.File" (click)="saveFileUpload($event)">
+                                                <label class="custom-file-input" for="Upload"></label>
+                                                <input #upload [hidden]="true" id="Upload" type="file" max="500000" file-model="existingFile.File" (click)="saveFileUpload($event)">
                                             </div>
                                             <!-- change out the existing fileItem with a different one-->
                                             <div *ngIf="fileItemExists">
                                                 <div>
-                                                    <input #upload id="Upload" type="file" max="500000" file-model="existingFile.File1" (click)="saveFileUpload($event)">
+                                                    <label class="custom-file-inputChange" for="Upload"></label>
+                                                    <input #upload [hidden]="true" id="Upload" type="file" max="500000" file-model="existingFile.File1" (click)="saveFileUpload($event)">
                                                 </div>
                                             </div>
                                         </div>

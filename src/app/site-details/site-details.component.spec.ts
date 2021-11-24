@@ -13,6 +13,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { of } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { not } from '@angular/compiler/src/output/output_ast';
+import { CurrentUserService } from '@services/current-user.service';
 
 declare let L: any;
 import 'leaflet';
@@ -36,6 +37,7 @@ describe('SiteDetailsComponent', () => {
             providers: [
                 { provide: ActivatedRoute, useValue: fakeActivatedRoute },
                 { provide: MatDialogRef, useValue: dialogMock },
+                CurrentUserService,
             ],
             imports: [HttpClientTestingModule,
                 MatDialogModule,
@@ -242,7 +244,7 @@ describe('SiteDetailsComponent', () => {
 
     it('should call getMemberName if site has member_id', () => {
         const siteResponse = {member_id: 4};
-        const response = [{fname: "John", lname: "Smith"}];
+        const response = {fname: "John", lname: "Smith"};
 
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
@@ -368,7 +370,7 @@ describe('SiteDetailsComponent', () => {
         expect(component.sensorFiles.length).toEqual(1);
         expect(component.sensorFilesDone).toBeTrue;
         expect(siteFilesSpy).toHaveBeenCalled();
-        expect(component.files[0].file_date).toContain("/");
+        expect(component.files[0].format_file_date).toContain("/");
         expect(component.files[2].details).not.toEqual(undefined);
     });
 
