@@ -468,6 +468,7 @@ export class SiteDetailsComponent implements OnInit {
                             .getLandownerContact(this.siteID)
                             .subscribe((results) => {
                                 this.landownerContact = results;
+                                console.log(this.landownerContact);
                             });
                     }
 
@@ -814,6 +815,7 @@ export class SiteDetailsComponent implements OnInit {
             housingType: null,
             material: null,
             length: null,
+            site_housing_id: null,
         }];
         this.siteHousing.forEach(function(value){
             siteHousing[0].amount = value.amount !== undefined && value.amount !== "" ? value.amount : null;
@@ -821,6 +823,7 @@ export class SiteDetailsComponent implements OnInit {
             siteHousing[0].housingType = value.housingType !== undefined && value.housingType !== "" ? value.housingType : null;
             siteHousing[0].material = value.material !== undefined && value.material !== "" ? value.material : null;
             siteHousing[0].length = value.length !== undefined && value.length !== "" ? value.length : null;
+            siteHousing[0].site_housing_id = value.site_housing_id !== undefined && value.site_housing_id !== "" ? value.site_housing_id : null;
         })
 
         if(this.currentUser !== ''){

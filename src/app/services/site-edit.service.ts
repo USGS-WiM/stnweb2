@@ -15,28 +15,28 @@ export class SiteEditService {
   }
 
   //Update single site by ID
-  public putSite(siteID: string): Observable<any> {
+  public putSite(siteID: string, site): Observable<any> {
     return this.httpClient
-        .put(APP_SETTINGS.SITES_URL + '/' + siteID + '.json',  {
+        .put(APP_SETTINGS.SITES_URL + '/' + siteID + '.json', site, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
             tap((response) => {
                 console.log(
-                    'updateSingleSite response received' //: ' +
+                    'putSite response received' //: ' +
                     // JSON.stringify(response)
                 );
                 return response;
             }),
-            catchError(this.handleError<any>('updateSingleSite', []))
+            catchError(this.handleError<any>('putSite', []))
         );
   }
 
   // Put landowner
-  public putLandowner(landownerContactID): Observable<any> {
+  public putLandowner(landownerContactID, landowner): Observable<any> {
     // rootURL + '/LandOwners/:id.json'
     // return this.httpClient
-    //     .put(APP_SETTINGS.SITES_URL + '/LandOwners/' + landownerContactID + '.json',  {
+    //     .put(APP_SETTINGS.SITES_URL + '/LandOwners/' + landownerContactID + '.json', landowner {
     //       headers: APP_SETTINGS.AUTH_JSON_HEADERS,
     //   })
     //     .pipe(
@@ -52,10 +52,10 @@ export class SiteEditService {
     return landownerContactID;
   }
 
-  public postLandowner(landownerContactID): Observable<any> {
+  public postLandowner(landowner): Observable<any> {
     // rootURL + '/LandOwners/:id.json'
     return this.httpClient
-        .post(APP_SETTINGS.SITES_URL + '/LandOwners/' + landownerContactID + '.json',  {
+        .post(APP_SETTINGS.API_ROOT + '/LandOwners.json',  landowner, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -73,9 +73,8 @@ export class SiteEditService {
   public postNetworkNames(siteID, networkNameID): Observable<any> {
     // params: { siteId: '@siteId', NetworkNameId: '@networkNameId' }, isArray: true, url: rootURL + '/sites/:siteId/AddNetworkName'
     return this.httpClient
-        .post(APP_SETTINGS.SITES_URL + '/sites' + siteID + 'AddNetworkName',  {
+        .post(APP_SETTINGS.SITES_URL + '/' + siteID + '/AddNetworkName?NetworkNameId=' + networkNameID, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
-          params: { siteId: siteID, NetworkNameId: networkNameID },
       })
         .pipe(
             tap((response) => {
@@ -92,7 +91,7 @@ export class SiteEditService {
   public deleteNetworkNames(siteID, networkNameID): Observable<any> {
     // url: rootURL + '/sites/:siteId/removeNetworkName?NetworkNameId=:networkNameId'
     return this.httpClient
-        .delete(APP_SETTINGS.SITES_URL + '/sites/' + siteID + '/removeNetworkName?NetworkNameId=' + networkNameID,  {
+        .delete(APP_SETTINGS.SITES_URL + '/' + siteID + '/removeNetworkName?NetworkNameId=' + networkNameID,  {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -110,9 +109,8 @@ export class SiteEditService {
   public postNetworkTypes(siteID, networkTypeID): Observable<any> {
     // { siteId: '@siteId', NetworkTypeId: '@networkTypeId' }, isArray: true, url: rootURL + '/sites/:siteId/AddNetworkType'
     return this.httpClient
-        .post(APP_SETTINGS.SITES_URL + '/sites/' + siteID + '/AddNetworkType',  {
+        .post(APP_SETTINGS.SITES_URL + '/' + siteID + '/AddNetworkType?NetworkTypeId=' + networkTypeID, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
-          params: { siteId: siteID, NetworkTypeId: networkTypeID },
       })
         .pipe(
             tap((response) => {
@@ -147,7 +145,7 @@ export class SiteEditService {
   public deleteSiteHousings(siteHousingID): Observable<any> {
     // rootURL + '/SiteHousings/:id.json'
     return this.httpClient
-        .delete(APP_SETTINGS.SITES_URL + '/SiteHousings/' + siteHousingID + '.json',  {
+        .delete(APP_SETTINGS.API_ROOT + '/SiteHousings/' + siteHousingID + '.json',  {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -162,10 +160,10 @@ export class SiteEditService {
         );
   }
 
-  public postSiteHousings(siteHousingID): Observable<any> {
+  public postSiteHousings(housing): Observable<any> {
     // rootURL + '/SiteHousings/:id.json'
     return this.httpClient
-        .post(APP_SETTINGS.SITES_URL + '/SiteHousings/' + siteHousingID + '.json',  {
+        .post(APP_SETTINGS.API_ROOT + 'SiteHousings/' + housing.site_housing_id + '.json', housing, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -180,10 +178,10 @@ export class SiteEditService {
         );
   }
 
-  public putSiteHousings(siteHousingID): Observable<any> {
+  public putSiteHousings(siteHousingID, siteHousing): Observable<any> {
     // rootURL + '/SiteHousings/:id.json'
     return this.httpClient
-        .put(APP_SETTINGS.SITES_URL + '/SiteHousings/' + siteHousingID + '.json',  {
+        .put(APP_SETTINGS.API_ROOT + '/SiteHousings/' + siteHousingID + '.json', siteHousing, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -198,10 +196,10 @@ export class SiteEditService {
         );
   }
 
-  public postSource(sourceID): Observable<any> {
+  public postSource(sourceID, source): Observable<any> {
     // rootURL + '/Sources/:id.json'
     return this.httpClient
-        .post(APP_SETTINGS.SITES_URL + '/Sources/' + sourceID + '.json',  {
+        .post(APP_SETTINGS.SITES_URL + '/Sources/' + sourceID + '.json',  source, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -216,11 +214,11 @@ export class SiteEditService {
         );
   }
   
-  public uploadFile(sourceID): Observable<any> {
+  public uploadFile(sourceID, file): Observable<any> {
   // uploadFile: { method: 'POST', url: rootURL + '/Files/bytes', headers: { 'Content-Type': undefined }, transformRequest: angular.identity, cache: false, isArray: false },
     // return this.httpClient
-    //     .post(APP_SETTINGS.SITES_URL + 'Files/bytes',  {
-    //       headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+    //     .post(APP_SETTINGS.SITES_URL + 'Files/bytes',  file, {
+    //       headers: { 'Content-Type': undefined },
     //   })
     //     .pipe(
     //         tap((response) => {
@@ -233,6 +231,30 @@ export class SiteEditService {
     //         catchError(this.handleError<any>('uploadFile', []))
     //     );
     return sourceID;
+  }
+
+  public deleteFile(sourceID, file): Observable<any> {
+    // uploadFile: { method: 'POST', url: rootURL + '/Files/bytes', headers: { 'Content-Type': undefined }, transformRequest: angular.identity, cache: false, isArray: false },
+      // return this.httpClient
+      //     .post(APP_SETTINGS.SITES_URL + 'Files/bytes',  file, {
+      //       headers: { 'Content-Type': undefined },
+      //   })
+      //     .pipe(
+      //         tap((response) => {
+      //             console.log(
+      //                 'uploadFile response received' //: ' +
+      //                 // JSON.stringify(response)
+      //             );
+      //             return response;
+      //         }),
+      //         catchError(this.handleError<any>('uploadFile', []))
+      //     );
+      return sourceID;
+    }
+
+  public fileStamp(): string {
+        let stamp = '?' + new Date().getTime();
+        return stamp;
   }
 
   /**

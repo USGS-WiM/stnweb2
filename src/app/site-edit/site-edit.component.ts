@@ -1,7 +1,7 @@
 import { L } from '@angular/cdk/keycodes';
 import { GlobalPositionStrategy } from '@angular/cdk/overlay';
 import { ConditionalExpr } from '@angular/compiler';
-import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ComponentFactoryResolver, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NetworkNameService } from '@app/services/network-name.service';
@@ -45,6 +45,7 @@ export class SiteEditComponent implements OnInit {
   public valid;
   public landownerValid;
   public fileValid;
+  public fileUploading;
   public dms = {
     latdeg: null,
     latmin: null,
@@ -54,25 +55,28 @@ export class SiteEditComponent implements OnInit {
     lonsec: null,
   }
   public siteFiles = {
-    file_id: null,
-    name: null,
-    FULLname: null,
-    source_id: null,
-    description: null,
-    file_date: null,
-    photo_date: null,
-    agency_id: null,
-    site_id: null,
-    filetype_id: null,
-    path: null,
-    data_file_id: null,
-    instrument_id: null,
-    last_updated: null,
-    last_updated_by: null,
-    site_description: null,
-    photo_direction: null,
-    latitude_dd: null,
-    longitude_dd: null,
+    FileEntity: {
+      file_id: null,
+      name: null,
+      FULLname: null,
+      source_id: null,
+      description: null,
+      file_date: null,
+      photo_date: null,
+      agency_id: null,
+      site_id: null,
+      filetype_id: null,
+      path: null,
+      data_file_id: null,
+      instrument_id: null,
+      last_updated: null,
+      last_updated_by: null,
+      site_description: null,
+      photo_direction: null,
+      latitude_dd: null,
+      longitude_dd: null,
+    },
+    File: null
   };
   public site = {
     description: null,
@@ -108,6 +112,7 @@ export class SiteEditComponent implements OnInit {
     primaryphone: null,
     secondaryphone: null,
     email: null,
+    landownercontactid: null,
   }
 
   siteForm;
@@ -323,11 +328,28 @@ export class SiteEditComponent implements OnInit {
     }
     this.siteForm.controls['housingType'].setValue(this.housingTypeArray);
     this.siteHousingArray = [...this.siteHousingArray];
+    this.siteForm.controls["siteHousings"].setValue(this.siteHousingArray);
+    // this.setHousingAttributes();
+  }
+
+  updateHousingAttr(event, housingType, attr) {
+    let self = this;
+    console.log(this.siteForm.controls["siteHousings"]);
+    console.log(this.siteHousingArray);
+    console.log(event.target.value);
+    console.log(housingType);
+    console.log(attr);
+    this.siteHousingArray.forEach(function(housing){
+        if(housing.housingType === housingType){
+          console.log(housingType)
+          // self.siteHousingArray.attr = event.target.value;
+        }
+    })
+    // this.siteForm.controls["siteHousings"].setValue(this.siteHousingArray);
   }
 
   // Populate site info initially with existing site info
   setInitialSite() {
-    console.log(this.data.site)
     let self = this;
     this.site.description =  this.data.site.site_description !== undefined && this.data.site.site_description !== "" ? this.data.site.site_description : null;
     this.site.latitude_dd = this.data.site.latitude_dd !== undefined && this.data.site.latitude_dd !== "" ? this.data.site.latitude_dd : null;
@@ -351,15 +373,17 @@ export class SiteEditComponent implements OnInit {
     this.landownerContact = this.data.landowner !== "" && this.data.landowner !== undefined && this.data.landowner !== null ? JSON.parse(JSON.stringify(this.data.landowner)) : this.landownerContact;
     this.addLandownerCheck = this.data.landowner !== "" && this.data.landowner !== undefined && this.data.landowner !== null ? true: false;
     this.data.siteHousing.forEach(function(type){
-      self.siteHousingArray.push(type);
-      self.housingTypeArray.push(type.housingType);
+      if(type.housingType !== null){
+        self.siteHousingArray.push(type);
+        self.housingTypeArray.push(type.housingType);
+      }
     });
     this.initSiteFiles = this.data.siteFiles;
     this.priority = this.data.priority !== undefined && this.data.priority !== null ? this.data.priority : {priority_id: null};
     
     this.perm_housing_installed = this.data.site.is_permanent_housing_installed !== undefined && this.data.site.is_permanent_housing_installed === "Yes" ? "Yes" : "No";
-    this.sensorNotAppropriate = this.data.site.sensor_not_appropriate !== undefined && this.sensorNotAppropriate === 1 ? true : false;
-    if(this.sensorNotAppropriate){
+    this.sensorNotAppropriate = this.data.site.sensor_not_appropriate !== undefined && this.sensorNotAppropriate === 1 ? 1 : null;
+    if(this.sensorNotAppropriate === 1){
       this.permHousingDisabled = true;
     }
     if (this.data.site.access_granted !== undefined){
@@ -382,8 +406,8 @@ export class SiteEditComponent implements OnInit {
         this.stateList.forEach(function(state){
           if(state.state_abbrev === self.data.site.state){
             self.site.state = state.state_name;
-            self.getCountyList(self.site.state);
-            self.siteForm.controls['state'].setValue(self.site.state);
+            self.getCountyList(state.state_abbrev);
+            self.siteForm.controls['state'].setValue(state.state_abbrev);
           }
         });
       }
@@ -394,17 +418,32 @@ export class SiteEditComponent implements OnInit {
       let self = this;
       let stateID;
       this.stateList.forEach(function(state){
-        if(stateName === state.state_name){
+        if(stateName === state.state_abbrev){
           stateID = state.state_id;
           self.siteService.getAllCounties(stateID).subscribe((results) => {
             self.countyList = results;
           });
-          if(stateName !== self.site.state){
+          if(state.state_name !== self.site.state){
             self.site.county = null;
             self.siteForm.controls['county'].setValue(self.site.county);
           }
         }
       })
+
+      this.updateLOAddress();
+  }
+
+  updateLOAddress() {
+    if(this.addLandownerCheck && this.useSiteAddress) {
+      this.landownerContact.address = this.site.address;
+      this.landownerContact.city = this.site.city;
+      this.landownerContact.state = this.site.state;
+      this.landownerContact.zip = this.site.zip;
+      this.landownerForm.controls['address'].setValue(this.landownerContact.address);
+      this.landownerForm.controls['city'].setValue(this.landownerContact.city);
+      this.landownerForm.controls['state'].setValue(this.landownerContact.state);
+      this.landownerForm.controls['zip'].setValue(this.landownerContact.zip);
+    }
   }
 
   addLandownerContact() {
@@ -423,6 +462,7 @@ export class SiteEditComponent implements OnInit {
       email: new FormControl(this.landownerContact.email),
       primaryphone: new FormControl(this.landownerContact.primaryphone),
       secondaryphone: new FormControl(this.landownerContact.secondaryphone),
+      landownercontact_id: new FormControl(this.landownerContact.landownercontactid)
     })
   }
 
@@ -459,13 +499,15 @@ export class SiteEditComponent implements OnInit {
   }
 
   getFileTypeSelection(event) {
-    this.siteFiles.filetype_id = event.value;
+    this.siteFiles.FileEntity.filetype_id = event.value;
   }
 
   initSiteForm() {
     this.siteForm = new FormGroup({
       site_description: new FormControl(this.site.description, Validators.required),
       site_notes: new FormControl(this.site.internal_notes),
+      site_name: new FormControl(this.data.site.site_name),
+      site_no: new FormControl(this.data.site.site_no),
       latitude_dd: new FormControl(this.site.latitude_dd),
       longitude_dd: new FormControl(this.site.longitude_dd),
       is_permanent_housing_installed: new FormControl({value: this.perm_housing_installed, disabled: this.permHousingDisabled}),
@@ -485,6 +527,8 @@ export class SiteEditComponent implements OnInit {
       county: new FormControl(this.site.county, Validators.required),
       zip: new FormControl(this.site.zip),
       housingType: new FormControl(this.housingTypeArray),
+      siteHousings: new FormControl(this.siteHousingArray),
+      // siteHousings: new FormArray(this.siteHousingArray.map(housing => this.createHousingArray(housing))),
       priority_id: new FormControl(this.priority.priority_id),
       latdeg: new FormControl(this.dms.latdeg),
       latmin: new FormControl(this.dms.latmin),
@@ -494,11 +538,43 @@ export class SiteEditComponent implements OnInit {
       lonsec: new FormControl(this.dms.lonsec),
       networkType: new FormArray([]),
       networkName: new FormArray([]),
+      hwms: new FormControl([]),
+      instruments: new FormControl([]),
+      files: new FormControl([]),
+      objective_points: new FormControl([]),
+      site_housing: new FormControl([]),
+      network_type_site: new FormControl([]),
+      network_name_site: new FormControl([]),
       landownercontact_id: new FormControl(),
+      member_id: new FormControl(this.data.site.member_id),
+      sensor_not_appropriate: new FormControl(this.sensorNotAppropriate),
     });
+
+    // this.setHousingAttributes();
 
     this.setLatLngValidators();
   }
+
+  // setHousingAttributes() {
+  //   let self = this;
+  //   if(this.siteHousingArray.length > 0){
+  //     this.siteHousingArray.forEach(function(housing){
+  //       console.log(self.siteForm.controls.siteHousings)
+  //       self.siteForm.controls.siteHousings.push(new FormControl(housing));
+  //     })
+  //   }else{
+  //       self.siteForm.controls.siteHousings.push(new FormControl(null));
+  //   }
+  // }
+
+  // createHousingArray(housing) {
+  //   return {
+  //     amount: housing ? housing.amount : null,
+  //     length: housing ? housing.length : null,
+  //     material: housing ? housing.material : null,
+  //     notes: housing ? housing.notes : null,
+  //   } as FormArray["value"];
+  // }
 
   setLatLngValidators() {
     if (this.latLngUnit === "dms"){
@@ -532,26 +608,26 @@ export class SiteEditComponent implements OnInit {
 
   initSiteFileForm() {
     this.siteFileForm = new FormGroup({
-      File: new FormControl(),
-      file_id: new FormControl(this.siteFiles.file_id),
-      name: new FormControl(this.siteFiles.name),
-      FULLname: new FormControl(this.siteFiles.FULLname, Validators.required),
-      source_id: new FormControl(this.siteFiles.source_id),
-      description: new FormControl(this.siteFiles.description, Validators.required),
-      file_date: new FormControl(this.siteFiles.file_date, Validators.required),
-      photo_date: new FormControl(this.siteFiles.photo_date, Validators.required),
-      agency_id: new FormControl(this.siteFiles.agency_id, Validators.required),
-      site_id: new FormControl(this.siteFiles.site_id),
-      filetype_id: new FormControl(this.siteFiles.filetype_id, Validators.required),
-      path: new FormControl(this.siteFiles.path),
-      data_file_id: new FormControl(this.siteFiles.data_file_id),
-      instrument_id: new FormControl(this.siteFiles.instrument_id),
-      last_updated: new FormControl(this.siteFiles.last_updated),
-      last_updated_by: new FormControl(this.siteFiles.last_updated_by),
-      site_description: new FormControl(this.siteFiles.site_description),
-      photo_direction: new FormControl(this.siteFiles.photo_direction),
-      latitude_dd: new FormControl(this.siteFiles.latitude_dd, [this.checkLatValue()]),
-      longitude_dd: new FormControl(this.siteFiles.longitude_dd, [this.checkLonValue()]),
+      File: new FormControl(this.siteFiles.File),
+      file_id: new FormControl(this.siteFiles.FileEntity.file_id),
+      name: new FormControl(this.siteFiles.FileEntity.name),
+      FULLname: new FormControl(this.siteFiles.FileEntity.FULLname, Validators.required),
+      source_id: new FormControl(this.siteFiles.FileEntity.source_id),
+      description: new FormControl(this.siteFiles.FileEntity.description, Validators.required),
+      file_date: new FormControl(this.siteFiles.FileEntity.file_date, Validators.required),
+      photo_date: new FormControl(this.siteFiles.FileEntity.photo_date, Validators.required),
+      agency_id: new FormControl(this.siteFiles.FileEntity.agency_id, Validators.required),
+      site_id: new FormControl(this.siteFiles.FileEntity.site_id),
+      filetype_id: new FormControl(this.siteFiles.FileEntity.filetype_id, Validators.required),
+      path: new FormControl(this.siteFiles.FileEntity.path),
+      data_file_id: new FormControl(this.siteFiles.FileEntity.data_file_id),
+      instrument_id: new FormControl(this.siteFiles.FileEntity.instrument_id),
+      last_updated: new FormControl(this.siteFiles.FileEntity.last_updated),
+      last_updated_by: new FormControl(this.siteFiles.FileEntity.last_updated_by),
+      site_description: new FormControl(this.siteFiles.FileEntity.site_description),
+      photo_direction: new FormControl(this.siteFiles.FileEntity.photo_direction),
+      latitude_dd: new FormControl(this.siteFiles.FileEntity.latitude_dd, [this.checkLatValue()]),
+      longitude_dd: new FormControl(this.siteFiles.FileEntity.longitude_dd, [this.checkLonValue()]),
     })
   }
 
@@ -687,37 +763,40 @@ export class SiteEditComponent implements OnInit {
 
   sensorAppropriateChanged(event){
     if(event.checked){
+      this.sensorNotAppropriate = 1;
+      this.siteForm.controls["sensor_not_appropriate"].setValue(this.sensorNotAppropriate);
       this.perm_housing_installed = "No";
       this.siteForm.controls['is_permanent_housing_installed'].setValue(this.perm_housing_installed);
       this.siteForm.controls['is_permanent_housing_installed'].disable();
 
     }else{
+      this.sensorNotAppropriate = null;
+      this.siteForm.controls["sensor_not_appropriate"].setValue(this.sensorNotAppropriate);
       this.siteForm.controls['is_permanent_housing_installed'].enable();
     }
   }
 
   showFileEdit(row) {
-    console.log(row)
     // Reset form
     this.cancelFile();
     this.setInitFileEditForm(row);
     this.showFileForm = true;
-    this.siteFiles.file_id = row.file_id;
-    this.siteFiles.filetype_id = row.filetype_id;
+    this.siteFiles.FileEntity.file_id = row.file_id;
+    this.siteFiles.FileEntity.filetype_id = row.filetype_id;
     this.addFileType = "Existing";
-    this.siteFiles.source_id = row.source_id;
-    this.siteFiles.file_date = row.file_date;
-    this.siteFiles.photo_date = row.photo_date !== undefined ? row.photo_date : null;
-    this.siteFiles.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
-    this.siteFiles.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
-    this.siteFiles.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
+    this.siteFiles.FileEntity.source_id = row.source_id;
+    this.siteFiles.FileEntity.file_date = row.file_date;
+    this.siteFiles.FileEntity.photo_date = row.photo_date !== undefined ? row.photo_date : null;
+    this.siteFiles.FileEntity.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
+    this.siteFiles.FileEntity.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
+    this.siteFiles.FileEntity.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
     
-    this.siteFileForm.controls['file_date'].setValue(this.siteFiles.file_date);
-    this.siteFileForm.controls['photo_date'].setValue(this.siteFiles.photo_date);
-    this.siteFileForm.controls['file_id'].setValue(this.siteFiles.file_id);
-    this.siteFileForm.controls['photo_direction'].setValue(this.siteFiles.photo_direction);
-    this.siteFileForm.controls['latitude_dd'].setValue(this.siteFiles.latitude_dd);
-    this.siteFileForm.controls['longitude_dd'].setValue(this.siteFiles.longitude_dd);
+    this.siteFileForm.controls['file_date'].setValue(this.siteFiles.FileEntity.file_date);
+    this.siteFileForm.controls['photo_date'].setValue(this.siteFiles.FileEntity.photo_date);
+    this.siteFileForm.controls['file_id'].setValue(this.siteFiles.FileEntity.file_id);
+    this.siteFileForm.controls['photo_direction'].setValue(this.siteFiles.FileEntity.photo_direction);
+    this.siteFileForm.controls['latitude_dd'].setValue(this.siteFiles.FileEntity.latitude_dd);
+    this.siteFileForm.controls['longitude_dd'].setValue(this.siteFiles.FileEntity.longitude_dd);
 
     this.getFile();
   }
@@ -744,13 +823,13 @@ export class SiteEditComponent implements OnInit {
   }
 
   getFile() {
-    if(this.siteFiles.file_id !== null && this.siteFiles.file_id !== undefined){
-      this.siteService.getFileItem(this.siteFiles.file_id).subscribe((results) => {
+    if(this.siteFiles.FileEntity.file_id !== null && this.siteFiles.FileEntity.file_id !== undefined){
+      this.siteService.getFileItem(this.siteFiles.FileEntity.file_id).subscribe((results) => {
         if(results.FileName !== undefined) {
           this.fileItemExists = true;
-          this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.siteFiles.file_id + '/item';
-          this.siteFiles.name = results.FileName;
-          this.siteFileForm.controls['name'].setValue(this.siteFiles.name);
+          this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.siteFiles.FileEntity.file_id + '/item';
+          this.siteFiles.FileEntity.name = results.FileName;
+          this.siteFileForm.controls['name'].setValue(this.siteFiles.FileEntity.name);
           this.setFileSourceAgency();
           this.setFileSource();
         }else{
@@ -764,25 +843,49 @@ export class SiteEditComponent implements OnInit {
 
   setFileSourceAgency(){
     this.siteService
-    .getFileSource(this.siteFiles.source_id)
+    .getFileSource(this.siteFiles.FileEntity.source_id)
     .subscribe((results) => {
-        this.siteFiles.agency_id = results.agency_id;
+        this.siteFiles.FileEntity.agency_id = results.agency_id;
         this.agencyNameForCap = results.agency_name;
-        this.siteFileForm.controls['agency_id'].setValue(this.siteFiles.agency_id);
+        this.siteFileForm.controls['agency_id'].setValue(this.siteFiles.FileEntity.agency_id);
     });
   }
 
   setFileSource(){
     this.siteService
-    .getSourceName(this.siteFiles.source_id)
+    .getSourceName(this.siteFiles.FileEntity.source_id)
     .subscribe((results) => {
-        this.siteFiles.FULLname = results.source_name;
-        this.siteFileForm.controls['FULLname'].setValue(this.siteFiles.FULLname);
+        this.siteFiles.FileEntity.FULLname = results.source_name;
+        this.siteFileForm.controls['FULLname'].setValue(this.siteFiles.FileEntity.FULLname);
     });
   }
 
-  saveFileUpload(event) {
-    console.log(event)
+  // Re-upload file or add missing file
+  saveFileUpload() {
+    // update this.siteFiles
+    // update siteFilesForm
+    let siteFileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+    delete siteFileSubmission.data_file_id;
+    console.log(siteFileSubmission);
+    // post file
+    this.siteEditService.uploadFile(siteFileSubmission.FileEntity.source_id, siteFileSubmission).subscribe((response) => {
+      console.log(response)
+      // file stamp
+      let fileStamp = this.siteEditService.fileStamp();
+      // push into files table
+      this.initSiteFiles.push(response);
+    })
+    this.fileUploading = false;
+    this.fileItemExists = true;
+  }
+
+  // Set file attributes
+  getFileName(event) {
+    this.siteFiles.FileEntity.name = event.target.files[0].name;
+    this.siteFileForm.controls['name'].setValue(this.siteFiles.FileEntity.name);
+    this.siteFiles.File = event.target.files[0];
+    this.siteFileForm.controls['File'].setValue(this.siteFiles.File);
+    this.fileUploading = true;
   }
 
   cancelFile() {
@@ -797,25 +900,28 @@ export class SiteEditComponent implements OnInit {
     this.siteFileForm.reset();
 
     this.siteFiles = {
-      file_id: null,
-      name: null,
-      FULLname: null,
-      source_id: null,
-      description: null,
-      file_date: null,
-      photo_date: null,
-      agency_id: null,
-      site_id: null,
-      filetype_id: null,
-      path: null,
-      data_file_id: null,
-      instrument_id: null,
-      last_updated: null,
-      last_updated_by: null,
-      site_description: null,
-      photo_direction: null,
-      latitude_dd: null,
-      longitude_dd: null,
+      FileEntity: {
+        file_id: null,
+        name: null,
+        FULLname: null,
+        source_id: null,
+        description: null,
+        file_date: null,
+        photo_date: null,
+        agency_id: null,
+        site_id: null,
+        filetype_id: null,
+        path: null,
+        data_file_id: null,
+        instrument_id: null,
+        last_updated: null,
+        last_updated_by: null,
+        site_description: null,
+        photo_direction: null,
+        latitude_dd: null,
+        longitude_dd: null,
+      },
+      File: null
     };
   }
 
@@ -823,16 +929,29 @@ export class SiteEditComponent implements OnInit {
     this.siteForm.markAllAsTouched();
     if(this.siteForm.valid){
       this.valid = true;
-      console.log(this.landownerForm)
+      console.log(this.landownerForm);
+      console.log(this.siteForm);
       // Post landowner if added/changed
       if(this.landownerForm.dirty){
         if(this.landownerForm.valid){
           this.landownerValid = true;
-          console.log(this.landownerForm)
-          this.siteEditService.putLandowner(this.landownerForm.value).subscribe((response) => {
-            this.putSite();
-            this.dialogRef.close();
-          })
+          if(this.landownerForm.landownercontact_id !== undefined && this.landownerForm.landownercontact_id !== null && this.landownerForm.landownercontact_id > 0){
+            this.siteEditService.putLandowner(this.landownerForm.landownercontact_id, this.landownerForm.value).subscribe((response) => {
+              console.log(response);
+              this.putSite();
+              this.dialogRef.close();
+            })
+          }else{
+            this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
+              console.log(response.landownercontactid);
+              console.log(response)
+              console.log("post")
+              this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
+              console.log(this.siteForm.controls);
+              this.putSite();
+              this.dialogRef.close();
+            })
+          }
         }else{
           this.landownerValid = false;
           this.putSite();
@@ -849,44 +968,113 @@ export class SiteEditComponent implements OnInit {
       this.valid = false;
       alert("Some required site fields are missing or incorrect.  Please fix these fields before submitting.")
     }
+    this.fileUploading = false;
   }
 
   putSite() {
+    let self = this;
     // Convert dms to dd
     if(this.latLngUnit === "dms"){
       this.siteForm.controls['latitude_dd'].setValue(this.azimuth(this.siteForm.controls.latdeg.value, this.siteForm.controls.latmin.value, this.siteForm.controls.latsec.value));
       this.siteForm.controls['longitude_dd'].setValue(this.azimuth(this.siteForm.controls.londeg.value, this.siteForm.controls.lonmin.value, this.siteForm.controls.lonsec.value));
     }
-    // Copy form value object and delete extra fields
-    let siteSubmission = JSON.parse(JSON.stringify(this.siteForm.value));
+    // Copy form value object and delete extra fields, include disabled form values in submission
+    let siteSubmission = JSON.parse(JSON.stringify(this.siteForm.getRawValue()));
     delete siteSubmission.latdeg; delete siteSubmission.latmin; delete siteSubmission.latsec; delete siteSubmission.londeg; delete siteSubmission.lonmin; delete siteSubmission.lonsec;
-    
-    // Last updated date
-    let lastUpdated = new Date();
-    siteSubmission.last_updated = lastUpdated;
+    delete siteSubmission.housingType; delete siteSubmission.siteHousings; delete siteSubmission.networkType; delete siteSubmission.networkName;
 
-    // last updated by
-    console.log(siteSubmission);
-    console.log(this.siteForm.value);
+    console.log(siteSubmission)
+    console.log(this.data.site.site_id);
 
-    // this.siteEditService.putSite(this.siteForm.value)
-    //   .subscribe(
-    //       (data) => {
-    //           console.log('Form submitted successfully'); 
-    //           console.log(data)                          
-    //       },
-    //       (error) => {
-    //           console.log(error);
-    //       }
-    //   );
+    this.siteEditService.putSite(this.data.site.site_id, siteSubmission)
+      .subscribe(
+          (data) => {
+              console.log('Form submitted successfully'); 
+              console.log(data)                          
+          },
+          (error) => {
+              console.log(error);
+          }
+      );
 
-    // create list of housing types, network names and network types to remove
-    // For each:
-    // Delete housing info
-    // Delete netowrk type info
-    // delete network names
+    // Delete housing info using housing ids
+    let siteHousings = this.housingTypeArray.join(",");
+    this.data.siteHousing.forEach(function(housing){
+      if(!siteHousings.includes(housing.housingType)){
+        console.log("delete " + housing.housingType);
+        // self.siteEditService.deleteSiteHousings(housing.site_housing_id).subscribe((response) => {
+        //     console.log(response);
+        // });
+      }
+    })
+
+    let initNetworkNames = this.data.networkName.split(',');
+    //Remove NetNames
+    if(this.data.networkName !== undefined){
+      let selectedNames = this.selectedNetworkNames.join(',');
+      initNetworkNames.forEach(function (networkName) {
+        networkName = networkName.trim()
+        if(!selectedNames.includes(networkName)){
+          console.log("delete" + networkName);
+          self.siteEditService.deleteNetworkNames(self.siteForm.site_id, networkName.network_name_id ).subscribe((response) => {
+            console.log(response);
+          });
+        }
+      });
+    }
+    //Remove NetTypes
+    if(this.data.networkType !== undefined){
+      let selectedTypes = this.selectedNetworkTypes.join(',');
+      let initNetworkTypes = this.data.networkType.split(',');
+      initNetworkTypes.forEach(function (networkType) {
+        networkType = networkType.trim();
+        if(!selectedTypes.includes(networkType)){
+          console.log("delete" + networkType);
+          self.siteEditService.deleteNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+            console.log(response);
+          });
+        }
+      });
+    }
     // Insert housing info
-    // Insert Network type and network name
+    //Add housing info
+    if(this.siteForm.controls.siteHousings.dirty || this.siteForm.controls.housingType.dirty){
+      this.siteHousingArray.forEach(function (ht) {
+        console.log(ht)
+        // if (ht.site_housing_id !== undefined) {
+        //     //PUT it
+        //     self.siteEditService.putSiteHousings(ht.site_housing_id, ht).subscribe((response) => {
+        //       console.log(response);
+        //     });
+        // } else {
+        //     //POST it
+        //     ht.site_id = self.data.site.site_id;
+        //     self.siteEditService.postSiteHousings(ht).subscribe((response) => {
+        //       console.log(response);
+        //     });
+        // }
+      });
+    }
+    //Add NetNames
+    this.networkNames.forEach(function (networkName) {
+      // let initname;
+      // initNetworkNames.forEach(function (name) {
+      //   initname = name.trim()
+      // });
+      if(networkName.selected){
+        self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
+          console.log(response);
+        });
+      }
+    });
+    //Add NetTypes
+    this.networkTypes.forEach(function (networkType) {
+      if(networkType.selected){
+        self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+          console.log(response);
+        });
+      }
+    });
   }
 
   saveFile() {

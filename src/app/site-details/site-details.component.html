@@ -228,12 +228,12 @@
                                 <div class="outer-content" *ngIf="site !== undefined">
                                     <div class="cell-container">
                                         <p class="content-left">Latitude</p>
-                                        <p class="content-right" *ngIf="site.latitude_dd !== '' && site.latitude_dd !== undefined; else nullLat">{{site.latitude_dd.toFixed(2)}}</p>
+                                        <p class="content-right" *ngIf="site.latitude_dd !== '' && site.latitude_dd !== undefined; else nullLat">{{site.latitude_dd}}</p>
                                         <ng-template #nullLat><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
                                         <p class="content-left">Longitude</p>
-                                        <p class="content-right" *ngIf="site.longitude_dd !== '' && site.longitude_dd !== undefined; else nullLon">{{site.longitude_dd.toFixed(2)}}</p>
+                                        <p class="content-right" *ngIf="site.longitude_dd !== '' && site.longitude_dd !== undefined; else nullLon">{{site.longitude_dd}}</p>
                                         <ng-template #nullLon><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
