@@ -356,7 +356,8 @@
                                             <table
                                                 mat-table
                                                 id="siteHousingTable"
-                                                [dataSource]="siteHousingArray"
+                                                [dataSource]="siteForm.controls.siteHousings.controls"
+                                                formArrayName="siteHousings"
                                                 class="mat-elevation-z5"
                                                 matSort
                                             >
@@ -364,19 +365,19 @@
                                                 <!-- housing type column -->
                                                 <ng-container matColumnDef="HousingType">
                                                     <th mat-header-cell *matHeaderCellDef>Housing Type</th>
-                                                    <td mat-cell *matCellDef="let housing">
-                                                        <div>
-                                                            {{housing.housingType}}
-                                                        </div>
+                                                    <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
+                                                        <mat-form-field>
+                                                            <input matInput formControlName="housingType" [value]="housing.housingType" class="disabled"/>
+                                                        </mat-form-field>
                                                     </td>
                                                 </ng-container>
 
                                                 <!-- housing length column -->
                                                 <ng-container matColumnDef="HousingLength">
                                                     <th mat-header-cell *matHeaderCellDef>Housing Length (ft)</th>
-                                                    <td mat-cell *matCellDef="let housing">
+                                                    <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
                                                         <mat-form-field appearance="fill">
-                                                            <input matInput [value]="housing.length" (change)="updateHousingAttr($event, housing)"/>
+                                                            <input matInput formControlName="length" [value]="housing.length"/>
                                                         </mat-form-field>
                                                     </td>
                                                 </ng-container>
@@ -384,9 +385,9 @@
                                                 <!-- housing material column -->
                                                 <ng-container matColumnDef="HousingMaterial">
                                                     <th mat-header-cell *matHeaderCellDef>Housing Material</th>
-                                                    <td mat-cell *matCellDef="let housing">
+                                                    <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
                                                         <mat-form-field appearance="fill">
-                                                            <input matInput [value]="housing.material" (change)="updateHousingAttr($event, housing)"/>
+                                                            <input matInput formControlName="material" [value]="housing.material"/>
                                                         </mat-form-field>
                                                     </td>
                                                 </ng-container>
@@ -401,10 +402,10 @@
                                                     </th>
                                                     <td
                                                         mat-cell
-                                                        *matCellDef="let housing"
+                                                        *matCellDef="let housing; let i = index" [formGroupName]="i"
                                                     >
                                                         <mat-form-field appearance="fill">
-                                                            <input matInput [value]="housing.amount"/>
+                                                            <input formControlName="amount" matInput [value]="housing.amount"/>
                                                         </mat-form-field>
                                                     </td>
                                                 </ng-container>
@@ -412,9 +413,9 @@
                                                 <!-- housing notes column -->
                                                 <ng-container matColumnDef="Notes">
                                                     <th mat-header-cell *matHeaderCellDef>Notes</th>
-                                                    <td mat-cell *matCellDef="let housing">
+                                                    <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
                                                         <mat-form-field appearance="fill">
-                                                            <input matInput [value]="housing.notes"/>
+                                                            <input formControlName="notes" matInput [value]="housing.notes"/>
                                                         </mat-form-field>
                                                     </td>
                                                 </ng-container>

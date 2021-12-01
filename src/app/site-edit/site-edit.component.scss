@@ -48,12 +48,12 @@
 
 .cell-container label{
     padding: 5px;
-    font-size: 15px
+    font-size: 15px;
 }
 
 .cell-container input{
     padding: 5px;
-    font-size: 15px
+    font-size: 15px;
 }
 
 .mat-form-field {
@@ -165,7 +165,11 @@ table {
 
 .mat-cell, .mat-header-cell, .mat-footer-cell {
     overflow: auto;
-    column-width: 150px;
+    column-width: 170px;
+}
+
+.disabled {
+    color: #000;
 }
 
 #siteFileTable {

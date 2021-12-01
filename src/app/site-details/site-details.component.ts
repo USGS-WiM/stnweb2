@@ -816,6 +816,7 @@ export class SiteDetailsComponent implements OnInit {
             material: null,
             length: null,
             site_housing_id: null,
+            housing_type_id: null,
         }];
         this.siteHousing.forEach(function(value){
             siteHousing[0].amount = value.amount !== undefined && value.amount !== "" ? value.amount : null;
@@ -824,6 +825,7 @@ export class SiteDetailsComponent implements OnInit {
             siteHousing[0].material = value.material !== undefined && value.material !== "" ? value.material : null;
             siteHousing[0].length = value.length !== undefined && value.length !== "" ? value.length : null;
             siteHousing[0].site_housing_id = value.site_housing_id !== undefined && value.site_housing_id !== "" ? value.site_housing_id : null;
+            siteHousing[0].housing_type_id = value.housing_type_id !== undefined && value.housing_type_id !== "" ? value.housing_type_id : null;
         })
 
         if(this.currentUser !== ''){

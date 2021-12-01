@@ -7,6 +7,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { NetworkNameService } from '@app/services/network-name.service';
 import { SiteEditService } from '@app/services/site-edit.service';
 import { SiteService } from '@app/services/site.service';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { APP_SETTINGS } from '../app.settings';
 
 @Component({
@@ -297,11 +298,23 @@ export class SiteEditComponent implements OnInit {
       length: null,
       material: null,
       notes: null,
+      housing_type_id: null,
+      site_housing_id: null,
     }
     let self = this;
     // If no housing types, only 1 value exists
     if(this.siteHousingArray.length === 0){
       newObject.housingType = value[0];
+      this.siteHousingLookup.forEach(function(housingType){
+        if(housingType.type_name === value[0]){
+          newObject.housing_type_id = housingType.housing_type_id;
+        }
+      });
+      this.data.siteHousing.forEach(function(siteHousing){
+        if(siteHousing.housingType !== null && siteHousing.housingType === value[0].housingType){
+          newObject.site_housing_id = siteHousing.site_housing_id;
+        }
+      });
       // Add to housing table array
       this.siteHousingArray.push(newObject);
       // Populate the dropdown value
@@ -311,6 +324,16 @@ export class SiteEditComponent implements OnInit {
       value.forEach(function(type){
         if(!self.housingTypeArray.join(',').includes(type)){
           newObject.housingType = type;
+          self.siteHousingLookup.forEach(function(housingType){
+            if(housingType.type_name === type){
+              newObject.housing_type_id = housingType.housing_type_id;
+            }
+            self.data.siteHousing.forEach(function(siteHousing){
+              if(siteHousing.housingType !== null && siteHousing.housingType === type){
+                newObject.site_housing_id = siteHousing.site_housing_id;
+              }
+            });
+          })
           self.housingTypeArray.push(type);
           self.siteHousingArray.push(newObject);
         }
@@ -328,24 +351,7 @@ export class SiteEditComponent implements OnInit {
     }
     this.siteForm.controls['housingType'].setValue(this.housingTypeArray);
     this.siteHousingArray = [...this.siteHousingArray];
-    this.siteForm.controls["siteHousings"].setValue(this.siteHousingArray);
-    // this.setHousingAttributes();
-  }
-
-  updateHousingAttr(event, housingType, attr) {
-    let self = this;
-    console.log(this.siteForm.controls["siteHousings"]);
-    console.log(this.siteHousingArray);
-    console.log(event.target.value);
-    console.log(housingType);
-    console.log(attr);
-    this.siteHousingArray.forEach(function(housing){
-        if(housing.housingType === housingType){
-          console.log(housingType)
-          // self.siteHousingArray.attr = event.target.value;
-        }
-    })
-    // this.siteForm.controls["siteHousings"].setValue(this.siteHousingArray);
+    this.siteForm.controls["siteHousings"] = new FormArray(this.siteHousingArray.map((housing, index) => new FormGroup(this.createHousingArray(housing))));
   }
 
   // Populate site info initially with existing site info
@@ -503,10 +509,12 @@ export class SiteEditComponent implements OnInit {
   }
 
   initSiteForm() {
+    console.log(this.data.site.site_id)
     this.siteForm = new FormGroup({
       site_description: new FormControl(this.site.description, Validators.required),
       site_notes: new FormControl(this.site.internal_notes),
       site_name: new FormControl(this.data.site.site_name),
+      site_id: new FormControl(this.data.site.site_id),
       site_no: new FormControl(this.data.site.site_no),
       latitude_dd: new FormControl(this.site.latitude_dd),
       longitude_dd: new FormControl(this.site.longitude_dd),
@@ -527,8 +535,8 @@ export class SiteEditComponent implements OnInit {
       county: new FormControl(this.site.county, Validators.required),
       zip: new FormControl(this.site.zip),
       housingType: new FormControl(this.housingTypeArray),
-      siteHousings: new FormControl(this.siteHousingArray),
-      // siteHousings: new FormArray(this.siteHousingArray.map(housing => this.createHousingArray(housing))),
+      // siteHousings: new FormControl(this.siteHousingArray),
+      siteHousings: new FormArray(this.siteHousingArray.map((housing, index) => new FormGroup(this.createHousingArray(housing)))),
       priority_id: new FormControl(this.priority.priority_id),
       latdeg: new FormControl(this.dms.latdeg),
       latmin: new FormControl(this.dms.latmin),
@@ -550,31 +558,21 @@ export class SiteEditComponent implements OnInit {
       sensor_not_appropriate: new FormControl(this.sensorNotAppropriate),
     });
 
-    // this.setHousingAttributes();
-
     this.setLatLngValidators();
   }
 
-  // setHousingAttributes() {
-  //   let self = this;
-  //   if(this.siteHousingArray.length > 0){
-  //     this.siteHousingArray.forEach(function(housing){
-  //       console.log(self.siteForm.controls.siteHousings)
-  //       self.siteForm.controls.siteHousings.push(new FormControl(housing));
-  //     })
-  //   }else{
-  //       self.siteForm.controls.siteHousings.push(new FormControl(null));
-  //   }
-  // }
-
-  // createHousingArray(housing) {
-  //   return {
-  //     amount: housing ? housing.amount : null,
-  //     length: housing ? housing.length : null,
-  //     material: housing ? housing.material : null,
-  //     notes: housing ? housing.notes : null,
-  //   } as FormArray["value"];
-  // }
+  createHousingArray(housing) {
+    return {
+      housingType: new FormControl({value: housing ? housing.housingType : null,  disabled: true}),
+      amount: new FormControl(housing ? housing.amount : null),
+      length: new FormControl(housing ? housing.length : null),
+      material: new FormControl(housing ? housing.material : null),
+      notes: new FormControl(housing ? housing.notes : null),
+      housing_type_id: new FormControl(housing ? housing.housing_type_id : null),
+      site_id: new FormControl(this.data.site.site_id),
+      site_housing_id: new FormControl(housing ? housing.site_housing_id : null),
+    } as FormArray["value"];
+  }
 
   setLatLngValidators() {
     if (this.latLngUnit === "dms"){
@@ -599,6 +597,7 @@ export class SiteEditComponent implements OnInit {
   }
 
   range = function (x, min, max) {
+    console.log(x, min, max);
     return x < min || x > max;
   }
 
@@ -607,6 +606,7 @@ export class SiteEditComponent implements OnInit {
   }
 
   initSiteFileForm() {
+    console.log(this.siteFiles.FileEntity)
     this.siteFileForm = new FormGroup({
       File: new FormControl(this.siteFiles.File),
       file_id: new FormControl(this.siteFiles.FileEntity.file_id),
@@ -628,6 +628,9 @@ export class SiteEditComponent implements OnInit {
       photo_direction: new FormControl(this.siteFiles.FileEntity.photo_direction),
       latitude_dd: new FormControl(this.siteFiles.FileEntity.latitude_dd, [this.checkLatValue()]),
       longitude_dd: new FormControl(this.siteFiles.FileEntity.longitude_dd, [this.checkLonValue()]),
+      hwm_id: new FormControl(null),
+      is_nwis: new FormControl(null),
+      objective_point_id: new FormControl(null),
     })
   }
 
@@ -679,7 +682,7 @@ export class SiteEditComponent implements OnInit {
 
   checkLonValue() {
     return (control: AbstractControl): ValidationErrors | null => {
-      const incorrect = this.range(control.value, -175, -60) || this.checkNaN(control.value);
+      const incorrect = control.value !== null ? (this.range(control.value, -175, -60) || this.checkNaN(control.value)) : this.checkNaN(control.value);
       return incorrect ? {incorrectValue: {value: control.value}} : null;
     };
   }
@@ -868,7 +871,7 @@ export class SiteEditComponent implements OnInit {
     delete siteFileSubmission.data_file_id;
     console.log(siteFileSubmission);
     // post file
-    this.siteEditService.uploadFile(siteFileSubmission.FileEntity.source_id, siteFileSubmission).subscribe((response) => {
+    this.siteEditService.uploadFile(siteFileSubmission).subscribe((response) => {
       console.log(response)
       // file stamp
       let fileStamp = this.siteEditService.fileStamp();
@@ -960,6 +963,7 @@ export class SiteEditComponent implements OnInit {
         }
       }
       else{
+        console.log("no landowner edits")
         this.putSite();
         this.dialogRef.close();
       }
@@ -984,7 +988,6 @@ export class SiteEditComponent implements OnInit {
     delete siteSubmission.housingType; delete siteSubmission.siteHousings; delete siteSubmission.networkType; delete siteSubmission.networkName;
 
     console.log(siteSubmission)
-    console.log(this.data.site.site_id);
 
     this.siteEditService.putSite(this.data.site.site_id, siteSubmission)
       .subscribe(
@@ -997,84 +1000,119 @@ export class SiteEditComponent implements OnInit {
           }
       );
 
+    // Copy form value object, include disabled form values in submission
+    let siteHousingValue = JSON.parse(JSON.stringify(this.siteForm.controls["siteHousings"].getRawValue()));
+    siteHousingValue.forEach(function(value){
+      delete value.housingType;
+    })
     // Delete housing info using housing ids
     let siteHousings = this.housingTypeArray.join(",");
     this.data.siteHousing.forEach(function(housing){
-      if(!siteHousings.includes(housing.housingType)){
+      if(housing.housingType !== null && !siteHousings.includes(housing.housingType)){
         console.log("delete " + housing.housingType);
-        // self.siteEditService.deleteSiteHousings(housing.site_housing_id).subscribe((response) => {
-        //     console.log(response);
-        // });
+        self.siteEditService.deleteSiteHousings(housing.site_housing_id).subscribe((response) => {
+            console.log(response);
+        });
       }
     })
 
-    let initNetworkNames = this.data.networkName.split(',');
-    //Remove NetNames
     if(this.data.networkName !== undefined){
+      let initNetworkNames = this.data.networkName.split(',');
       let selectedNames = this.selectedNetworkNames.join(',');
+      //Remove NetNames
       initNetworkNames.forEach(function (networkName) {
         networkName = networkName.trim()
         if(!selectedNames.includes(networkName)){
           console.log("delete" + networkName);
-          self.siteEditService.deleteNetworkNames(self.siteForm.site_id, networkName.network_name_id ).subscribe((response) => {
-            console.log(response);
-          });
+          // self.siteEditService.deleteNetworkNames(self.siteForm.site_id, networkName.network_name_id ).subscribe((response) => {
+          //   console.log(response);
+          // });
+        }
+      });
+      //Add NetNames
+      this.networkNames.forEach(function (networkName) {
+        let initname;
+        initNetworkNames.forEach(function (name) {
+          initname = name.trim();
+          // Only add new network names
+          if(networkName.selected && !selectedNames.includes(initname) && !self.data.networkName.includes(networkName.name)){
+            console.log("add" + networkName.name);
+            // self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
+            //   console.log(response);
+            // });
+          }
+        });
+      });
+    }else{
+      // No network names to remove
+      //Add NetNames
+      this.networkNames.forEach(function (networkName) {
+        if(networkName.selected){
+          // self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
+          //   console.log(response);
+          // });
         }
       });
     }
-    //Remove NetTypes
     if(this.data.networkType !== undefined){
       let selectedTypes = this.selectedNetworkTypes.join(',');
       let initNetworkTypes = this.data.networkType.split(',');
+      //Remove NetTypes
       initNetworkTypes.forEach(function (networkType) {
         networkType = networkType.trim();
         if(!selectedTypes.includes(networkType)){
           console.log("delete" + networkType);
-          self.siteEditService.deleteNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
-            console.log(response);
-          });
+          // self.siteEditService.deleteNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+          //   console.log(response);
+          // });
+        }
+      });
+      //Add NetTypes
+      this.networkTypes.forEach(function (networkType) {
+        let initnetwork;
+        initNetworkTypes.forEach(function (network) {
+          initnetwork = network.trim();
+          // Only add new network names
+          if(networkType.selected && !selectedTypes.includes(initnetwork) && !self.data.networkName.includes(networkType.network_type_name)){
+            console.log("add" + networkType.network_type_name);
+            // self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+            //   console.log(response);
+            // });
+          }
+        });
+      });
+    }else{
+      // No network types to remove
+      //Add NetTypes
+      this.networkTypes.forEach(function (networkType) {
+        if(networkType.selected){
+          console.log("add" + networkType.network_type_name);
+          // self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+          //   console.log(response);
+          // });
         }
       });
     }
     // Insert housing info
     //Add housing info
     if(this.siteForm.controls.siteHousings.dirty || this.siteForm.controls.housingType.dirty){
-      this.siteHousingArray.forEach(function (ht) {
-        console.log(ht)
-        // if (ht.site_housing_id !== undefined) {
-        //     //PUT it
-        //     self.siteEditService.putSiteHousings(ht.site_housing_id, ht).subscribe((response) => {
-        //       console.log(response);
-        //     });
-        // } else {
-        //     //POST it
-        //     ht.site_id = self.data.site.site_id;
-        //     self.siteEditService.postSiteHousings(ht).subscribe((response) => {
-        //       console.log(response);
-        //     });
-        // }
+      siteHousingValue.forEach(function (ht) {
+        if (ht.site_housing_id !== null) {
+          console.log(ht)
+          //PUT it
+          self.siteEditService.putSiteHousings(ht.site_housing_id, ht).subscribe((response) => {
+            console.log(response);
+          });
+        } else {
+          // Remove site housing id field before sending to avoid 500 error
+          delete ht.site_housing_id;
+          //POST it
+          self.siteEditService.postSiteHousings(ht).subscribe((response) => {
+            console.log(response);
+          });
+        }
       });
     }
-    //Add NetNames
-    this.networkNames.forEach(function (networkName) {
-      // let initname;
-      // initNetworkNames.forEach(function (name) {
-      //   initname = name.trim()
-      // });
-      if(networkName.selected){
-        self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
-          console.log(response);
-        });
-      }
-    });
-    //Add NetTypes
-    this.networkTypes.forEach(function (networkType) {
-      if(networkType.selected){
-        self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
-          console.log(response);
-        });
-      }
-    });
   }
 
   saveFile() {
@@ -1094,37 +1132,40 @@ export class SiteEditComponent implements OnInit {
 
   createFile() {
     this.siteFileForm.markAllAsTouched();
+    let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+    console.log(fileSubmission)
     if(this.siteFileForm.valid){
       this.fileValid = true;
-      var theSource = { source_name: this.siteForm.value.FULLname, agency_id: this.siteForm.value.agency_id };
+      // check if source already exists?
+      var theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
       console.log(theSource)
       //post source first to get source_id
-      // this.siteEditService.postSource(source)
-    //   .subscribe(
-    //       (response) => {
-                // if (this.siteFiles.filetype_id !== 8) {
-    //           //then POST fileParts (Services populate PATH)
-                  console.log(this.siteFileForm.value)
-                  // this.siteEditService.postSource(source)
-                  //   .subscribe(
-                  //       (data) => {
-                                // Update file list in files tab
-                  //       },
-                  //       (error) => {
-                  //           console.log(error);
-                  //       }
-                  //   );
-                // }
-                // else{
-                  // Link FileTypes
-                  // this.siteFiles.source_id = response.source_id; this.siteFiles.site_id = this.site.site_id;
+      this.siteEditService.postSource(theSource)
+      .subscribe(
+          (response) => {
+            console.log(console.log(response))
+            // delete fullname, agency_id, site_description
+            delete fileSubmission.FULLname; delete fileSubmission.agency_id; delete fileSubmission.site_description;
+            if (fileSubmission.filetype_id !== 8) {
+              //then POST fileParts (Services populate PATH)
+              this.siteEditService.uploadFile(fileSubmission)
+                .subscribe(
+                    (data) => {
+                      console.log(data)
+                            // Update file list in files tab
+                    }
+                );
+            }
+            else{
+              // Link FileTypes
+              fileSubmission.source_id = response.source_id; fileSubmission.site_id = this.data.site.site_id;
 
-                // }
-    //       },
-    //       (error) => {
-    //           console.log(error);
-    //       }
-    //   );
+            }
+          },
+          (error) => {
+              console.log(error);
+          }
+      );
     }else{
       this.fileValid = false;
       alert("Some required site file fields are missing or incorrect.  Please fix these fields before submitting.")
