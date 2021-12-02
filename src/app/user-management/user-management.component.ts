@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { UserService } from '@services/user.service';
 import { AgencyService } from '@services/agency.service';
 import { RoleService } from '@services/role.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Role } from '@app/interfaces/role';
+import {MatPaginator} from '@angular/material/paginator';
 
 
 @Component({
@@ -15,6 +15,7 @@ import { Role } from '@app/interfaces/role';
 
 export class UserManagementComponent implements OnInit {
   userDataSource = new MatTableDataSource([]);
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   searchForm: FormGroup;
   username = '';
   fname = '';
@@ -39,6 +40,8 @@ export class UserManagementComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    // getting agencies and initializing form
     this.getAgencies()
     this.searchFormInit();
   }
@@ -60,23 +63,23 @@ export class UserManagementComponent implements OnInit {
       });
   }
   getUserData() {
+    // get users
     this.userService
       .getAllUsers()
       .toPromise()
       .then((results) => {
+        // adding the agency and role names to the user object 
         if (results.length > 0) {
           this.users = results;
           console.log(this.users)
           this.formatData()
-
         }
       },
         error => this.isLoading = false);
   }
   formatData() {
+    // identifies the agency name and attaches it to user object
     for (const obj in this.users) {
-
-      // get agency name 
       let agencyName = '';
       this.agencyService
         .getAnAgency(this.users[obj].agency_id)
@@ -86,7 +89,7 @@ export class UserManagementComponent implements OnInit {
           this.users[obj].agency_n = agencyName;
         });
 
-      // set role name
+      // set role name based on role id
       const roleId = this.users[obj].role_id;
       switch (roleId) {
         case 1:
@@ -105,6 +108,7 @@ export class UserManagementComponent implements OnInit {
     }
     this.isLoading = false;
     this.userDataSource.data = this.users;
+    this.userDataSource.paginator = this.paginator;
     this.userDataSource.filterPredicate = this.getFilterPredicate();
   }
   getRoles() {

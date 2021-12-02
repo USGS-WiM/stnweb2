@@ -1,5 +1,6 @@
 <div id="userManagement">
 <div id="tableFilters">
+    <h3>Find a User:</h3>
     <form [formGroup]="searchForm" class="search__form">
         <mat-form-field class="search__form_field" appearance="outline">
           <mat-label>Filter by Username</mat-label>
@@ -28,6 +29,9 @@
                  formControlName="lname"
                  (keyup)="applyFilter()">
         </mat-form-field>
+        <div class="topOfTableButton">
+            <button color="accent" mat-raised-button><mat-icon class="icon">add</mat-icon> Add new User</button>
+        </div>
       </form>
 </div>
 
@@ -75,6 +79,10 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+<mat-paginator [pageSizeOptions]="[10, 30, 50]"
+                 showFirstLastButtons 
+                 aria-label="Select page of periodic elements">
+</mat-paginator>
 
 <div *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center; background: white;">
     <mat-progress-spinner color="primary" mode="indeterminate">

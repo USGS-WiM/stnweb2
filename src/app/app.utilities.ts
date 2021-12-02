@@ -167,6 +167,55 @@ export class APP_UTILITIES {
         };
     }
 
+    public static get USERS_DUMMY_DATA_LIST(): Member[] {
+        return [
+            {
+                agency_id: 1,
+                approvals: [],
+                data_file: [],
+                email: 'stnadmin@usgs.gov',
+                events: [],
+                fname: 'STN',
+                hwms: [],
+                hwms1: [],
+                instrument_status: [],
+                lname: 'Admin',
+                member_id: 1,
+                password: 'password',
+                peak_summary: [],
+                phone: '(123) 456-7890',
+                role_id: 1,
+                salt: 'ZTBXfhJn6C3zxD1+',
+                sites: [],
+                username: 'fradmin',
+            },
+            {
+                agency_id: 1,
+                approvals: [],
+                data_file: [],
+                email: 'billt@usgs.gov',
+                emergency_contact_name: '',
+                emergency_contact_phone: '',
+                events: [],
+                fname: 'Bill',
+                hwms: [],
+                hwms1: [],
+                instrument_status: [],
+                last_updated: '2018-03-12T21:51:24.157148',
+                last_updated_by: 35,
+                lname: 'Test',
+                member_id: 2,
+                password: 'password',
+                peak_summary: [],
+                phone: '(508) 490-5041',
+                role_id: 2,
+                salt: '',
+                sites: [],
+                username: 'billtest'
+            }
+        ];
+    }
+
     public static get RESULT_DIALOG_DUMMY_DATA() {
         return {
             mapFilterForm: 'event',

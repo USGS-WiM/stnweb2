@@ -38,7 +38,6 @@ export class APP_SETTINGS {
     public static get EVENT_TYPES(): string {
         return this.API_ROOT + 'EventTypes';
     }
-
     public static get NETWORK_NAMES(): string {
         return this.API_ROOT + 'NetworkNames';
     }
@@ -47,6 +46,9 @@ export class APP_SETTINGS {
     }
     public static get SENSOR_TYPES(): string {
         return this.API_ROOT + 'SensorTypes';
+    }
+    public static get USERS(): string {
+        return this.API_ROOT + 'Members';
     }
     /* istanbul ignore next */
     public static get SITES_URL(): string {

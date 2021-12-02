@@ -18,7 +18,7 @@ export class UserService {
     constructor(private httpClient: HttpClient) {
     }
 
-    //Get member name
+    // get all users
     public getAllUsers(): Observable<any> {
         return this.httpClient
             .get(APP_SETTINGS.API_ROOT + 'Members.json', {
