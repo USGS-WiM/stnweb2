@@ -61,6 +61,7 @@ export class UserManagementComponent implements OnInit {
         this.getUserData();
       });
   }
+  /* istanbul ignore next */
   getUserData() {
     // get users
     this.userService
@@ -76,6 +77,7 @@ export class UserManagementComponent implements OnInit {
       },
         error => this.isLoading = false);
   }
+  /* istanbul ignore next */
   formatData() {
     // identifies the agency name and attaches it to user object
     for (const obj in this.users) {
@@ -112,6 +114,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   /* this method well be called for each row in table  */
+  /* istanbul ignore next */
   getFilterPredicate() {
     return (row, filters: string) => {
       // split string per '$' to array
@@ -142,6 +145,7 @@ export class UserManagementComponent implements OnInit {
       return matchFilter.every(Boolean);
     };
   }
+  /* istanbul ignore next */
   applyFilter() {
     const un = this.searchForm.get('username').value;
     const fn = this.searchForm.get('fname').value;
