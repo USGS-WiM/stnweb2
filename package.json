@@ -14,7 +14,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "live": "ng serve --configuration hmr",
-    "build:ci": "npm run clean && npm run test:ci && npm run build:prod"
+    "build:ci": "npm run clean && npm run test:ci && npm run build"
   },
   "private": true,
   "prettier": {
