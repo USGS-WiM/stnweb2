@@ -73,7 +73,7 @@ export class SiteEditService {
   public postNetworkNames(siteID, networkNameID): Observable<any> {
     // params: { siteId: '@siteId', NetworkNameId: '@networkNameId' }, isArray: true, url: rootURL + '/sites/:siteId/AddNetworkName'
     return this.httpClient
-        .post(APP_SETTINGS.SITES_URL + '/' + siteID + '/AddNetworkName?NetworkNameId=' + networkNameID, {
+        .post(APP_SETTINGS.API_ROOT + 'sites/' + siteID + '/AddNetworkName?NetworkNameId=' + networkNameID, { siteId: siteID, NetworkNameId: networkNameID }, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -107,9 +107,8 @@ export class SiteEditService {
   }
 
   public postNetworkTypes(siteID, networkTypeID): Observable<any> {
-    // { siteId: '@siteId', NetworkTypeId: '@networkTypeId' }, isArray: true, url: rootURL + '/sites/:siteId/AddNetworkType'
     return this.httpClient
-        .post(APP_SETTINGS.SITES_URL + '/' + siteID + '/AddNetworkType?NetworkTypeId=' + networkTypeID, {
+        .post(APP_SETTINGS.API_ROOT + 'sites/' + siteID + '/AddNetworkType?NetworkTypeId=' + networkTypeID, { siteId: siteID, NetworkNameId: networkTypeID }, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -127,7 +126,7 @@ export class SiteEditService {
   public deleteNetworkTypes(siteID, networkTypeID): Observable<any> {
     // url: rootURL + '/sites/:siteId/removeNetworkType?NetworkTypeId=:networkTypeId'
     return this.httpClient
-        .delete(APP_SETTINGS.SITES_URL + '/sites/' + siteID + '/removeNetworkType?NetworkTypeId=' + networkTypeID,  {
+        .delete(APP_SETTINGS.API_ROOT + 'sites/' + siteID + '/removeNetworkType?NetworkTypeId=' + networkTypeID, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -231,6 +230,40 @@ export class SiteEditService {
             catchError(this.handleError<any>('uploadFile', []))
         );
   }
+
+  public saveFile(file): Observable<any> {
+      return this.httpClient
+          .post(APP_SETTINGS.API_ROOT + 'Files.json',  file, {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+          .pipe(
+              tap((response) => {
+                  console.log(
+                      'saveFile response received' //: ' +
+                      // JSON.stringify(response)
+                  );
+                  return response;
+              }),
+              catchError(this.handleError<any>('saveFile', []))
+          );
+    }
+
+    public updateFile(file): Observable<any> {
+        return this.httpClient
+            .put(APP_SETTINGS.API_ROOT + 'Files/' + file.file_id + '.json',  file, {
+              headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+          })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'updateFile response received' //: ' +
+                        // JSON.stringify(response)
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('updateFile', []))
+            );
+      }
 
   public deleteFile(sourceID, file): Observable<any> {
     // uploadFile: { method: 'POST', url: rootURL + '/Files/bytes', headers: { 'Content-Type': undefined }, transformRequest: angular.identity, cache: false, isArray: false },

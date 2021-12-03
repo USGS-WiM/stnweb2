@@ -18,6 +18,7 @@ import { DateTime } from "luxon";
 import { marker } from 'leaflet';
 import { SiteEditComponent } from '@app/site-edit/site-edit.component';
 import { ResultDetailsComponent } from '@app/result-details/result-details.component';
+import { networkInterfaces } from 'os';
 
 @Component({
     selector: 'app-site-details',
@@ -809,24 +810,7 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openEditDialog(){
-        let siteHousing = [{
-            amount: null,
-            notes: null,
-            housingType: null,
-            material: null,
-            length: null,
-            site_housing_id: null,
-            housing_type_id: null,
-        }];
-        this.siteHousing.forEach(function(value){
-            siteHousing[0].amount = value.amount !== undefined && value.amount !== "" ? value.amount : null;
-            siteHousing[0].notes = value.notes !== undefined && value.notes !== "" ? value.notes : null;
-            siteHousing[0].housingType = value.housingType !== undefined && value.housingType !== "" ? value.housingType : null;
-            siteHousing[0].material = value.material !== undefined && value.material !== "" ? value.material : null;
-            siteHousing[0].length = value.length !== undefined && value.length !== "" ? value.length : null;
-            siteHousing[0].site_housing_id = value.site_housing_id !== undefined && value.site_housing_id !== "" ? value.site_housing_id : null;
-            siteHousing[0].housing_type_id = value.housing_type_id !== undefined && value.housing_type_id !== "" ? value.housing_type_id : null;
-        })
+        let siteHousing = JSON.parse(JSON.stringify(this.siteHousing));
 
         if(this.currentUser !== ''){
             const dialogRef = this.dialog.open(SiteEditComponent, {
@@ -844,7 +828,47 @@ export class SiteDetailsComponent implements OnInit {
                 },
                 disableClose: true,
             });
-            dialogRef.afterClosed().subscribe((result) => {});
+            dialogRef.afterClosed().subscribe((result) => {
+                if(result){
+                    // Update site details page with any edits
+                    let siteResultCopy = JSON.parse(JSON.stringify(result.site));
+                    let currentSiteCopy = JSON.parse(JSON.stringify(this.site));
+                    delete siteResultCopy.last_updated; delete siteResultCopy.last_updated_by; delete currentSiteCopy.last_updated; delete currentSiteCopy.last_updated_by;
+                    // copy and remove last updated info to compare
+                    // Site info changed
+                    if(siteResultCopy !== currentSiteCopy){
+                        console.log("site changed")
+                        this.site = result.site;
+                    }
+                    
+                    // Update housing
+                    let housingResultCopy = JSON.parse(JSON.stringify(result.housings));
+                    let currentHousingCopy = JSON.parse(JSON.stringify(this.siteHousing));
+                    delete housingResultCopy.last_updated; delete housingResultCopy.last_updated_by; delete currentHousingCopy.last_updated; delete currentHousingCopy.last_updated_by;
+                    if(currentHousingCopy !== housingResultCopy){
+                        console.log("site housing changed")                        
+                        this.siteHousing = result.housings;
+                    }
+                    console.log(result.networkName);
+                    console.log(this.networkName);
+                    console.log(result.networkType.join(','));
+
+                    // Update network types
+                    // let netTypeResultCopy = JSON.parse(JSON.stringify(result.networkType));
+                    // let currentNetTypeCopy = JSON.parse(JSON.stringify(this.networkType));
+                    // console.log(netTypeResultCopy, currentNetTypeCopy)
+                    // delete netTypeResultCopy.last_updated; delete netTypeResultCopy.last_updated_by; delete currentNetTypeCopy.last_updated; delete currentNetTypeCopy.last_updated_by;
+                    if(result.networkType.join(',') !== this.networkType){
+                        console.log("network types changed")
+                        this.networkType = result.networkType.join(',');
+                    }
+
+                    if(result.networkName.join(',') !== this.networkName){
+                        console.log("network names changed")
+                        this.networkName = result.networkName.join(',');
+                    }
+                }
+            });
         }
     }
 }

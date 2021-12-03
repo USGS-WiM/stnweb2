@@ -362,12 +362,12 @@
                                 <div class="outer-content" *ngIf="site !== undefined">
                                     <div class="cell-container">
                                         <p class="content-left">Network Type</p>
-                                        <p class="content-right" *ngIf="networkType !== undefined; else nullNetworkType">{{networkType}}</p>
+                                        <p class="content-right" *ngIf="networkType !== undefined && networkType !== ''; else nullNetworkType">{{networkType}}</p>
                                         <ng-template #nullNetworkType><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
                                         <p class="content-left">Network</p>
-                                        <p class="content-right" *ngIf="networkName !== undefined; else nullNetwork">{{networkName}}</p>
+                                        <p class="content-right" *ngIf="networkName !== undefined && networkName !== ''; else nullNetwork">{{networkName}}</p>
                                         <ng-template #nullNetwork><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
