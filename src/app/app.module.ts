@@ -61,14 +61,15 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { ResultDetailsComponent } from './result-details/result-details.component';
 import { SensorService } from './services/sensor.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SiteEditComponent } from './site-edit/site-edit.component';
+import * as angular from 'angular';
 import { ReferenceMarkDialogComponent } from './reference-mark-dialog/reference-mark-dialog.component';
 import { HwmDialogComponent } from './hwm-dialog/hwm-dialog.component';
 import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
 import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
 import { FileDetailsDialogComponent } from './file-details-dialog/file-details-dialog.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { SiteEditComponent } from './site-edit/site-edit.component';
-import * as angular from 'angular';
+import { UserManagementComponent } from './user-management/user-management.component';
 
 @NgModule({
     declarations: [
@@ -92,6 +93,7 @@ import * as angular from 'angular';
         PeakDialogComponent,
         FileDetailsDialogComponent,
         SiteEditComponent,
+        UserManagementComponent,
     ],
     imports: [
         BrowserModule,

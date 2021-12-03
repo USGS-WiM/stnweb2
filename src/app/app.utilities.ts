@@ -9,6 +9,8 @@ import { Sitefullsensors } from '@interfaces/sitefullsensors';
 import { SensorType } from '@interfaces/sensor-type';
 import { Member } from '@interfaces/member';
 import { NoaaStation } from '@interfaces/noaa-station';
+import { Role } from '@interfaces/role';
+import { Agency } from '@interfaces/agency';
 
 @Injectable()
 export class APP_UTILITIES {
@@ -140,6 +142,10 @@ export class APP_UTILITIES {
         return null;
     }
 
+    public static GET_ROLE() {
+        return localStorage.getItem('role');
+    }
+
     public static get DUMMY_USER(): Member {
         return {
             member_id: 1,
@@ -161,6 +167,55 @@ export class APP_UTILITIES {
             hwms: [],
             hwms1: [],
         };
+    }
+
+    public static get USERS_DUMMY_DATA_LIST(): Member[] {
+        return [
+            {
+                agency_id: 1,
+                approvals: [],
+                data_file: [],
+                email: 'stnadmin@usgs.gov',
+                events: [],
+                fname: 'STN',
+                hwms: [],
+                hwms1: [],
+                instrument_status: [],
+                lname: 'Admin',
+                member_id: 1,
+                password: 'password',
+                peak_summary: [],
+                phone: '(123) 456-7890',
+                role_id: 1,
+                salt: 'ZTBXfhJn6C3zxD1+',
+                sites: [],
+                username: 'fradmin',
+            },
+            {
+                agency_id: 1,
+                approvals: [],
+                data_file: [],
+                email: 'billt@usgs.gov',
+                emergency_contact_name: '',
+                emergency_contact_phone: '',
+                events: [],
+                fname: 'Bill',
+                hwms: [],
+                hwms1: [],
+                instrument_status: [],
+                last_updated: '2018-03-12T21:51:24.157148',
+                last_updated_by: 35,
+                lname: 'Test',
+                member_id: 2,
+                password: 'password',
+                peak_summary: [],
+                phone: '(508) 490-5041',
+                role_id: 2,
+                salt: '',
+                sites: [],
+                username: 'billtest'
+            }
+        ];
     }
 
     public static get RESULT_DIALOG_DUMMY_DATA() {
@@ -418,5 +473,90 @@ export class APP_UTILITIES {
             timezone: 'EST',
             timezonecorr: -5,
         };
+    }
+
+    public static get ROLES_DUMMY_DATA_LIST(): Role[] {
+        return [
+            {
+                role_id: 1,
+                role_name: "Admin",
+                role_description: "Administrator",
+                members: []
+            },
+            {
+                role_id: 2,
+                role_name: "Manager",
+                role_description: "Manager (web page, provisional data)",
+                members: []
+            },
+            {
+                role_id: 3,
+                role_name: "Field",
+                role_description: "Field data entry",
+                members: []
+            },
+            {
+                role_id: 4,
+                role_name: "Public",
+                role_description: "Read-only (web page only)",
+                members: []
+            }
+        ];
+    }
+    public static get AGENCY_DUMMY_DATA_LIST(): Agency[] {
+        return [
+            {
+                agency_id: 1,
+                agency_name: "USGS MA-RI",
+                address: "10 Bearfoot Rd",
+                city: "Northborough",
+                state: "MA",
+                zip: "1532",
+                phone: "(000) 000-0000",
+                Links: [
+                    {
+                        rel: "self",
+                        Href: "https://stn.wim.usgs.gov/STNServices/Agencies/1",
+                        method: "GET"
+                    },
+                    {
+                        rel: "edit",
+                        Href: "https://stn.wim.usgs.gov/STNServices/Agencies/1",
+                        method: "PUT"
+                    },
+                    {
+                        rel: "delete",
+                        Href: "https://stn.wim.usgs.gov/STNServices/Agencies/1",
+                        method: "DELETE"
+                    }
+                ]
+            },
+            {
+                agency_id: 2,
+                agency_name: "USGS FL",
+                address: "7500 SW 36th Street",
+                city: "Davie",
+                state: "FL",
+                zip: "33314",
+                phone: "(000) 000-0000",
+                Links: [
+                    {
+                        rel: "self",
+                        Href: "https://stn.wim.usgs.gov/STNServices/Agencies/2",
+                        method: "GET"
+                    },
+                    {
+                        rel: "edit",
+                        Href: "https://stn.wim.usgs.gov/STNServices/Agencies/2",
+                        method: "PUT"
+                    },
+                    {
+                        rel: "delete",
+                        Href: "https://stn.wim.usgs.gov/STNServices/Agencies/2",
+                        method: "DELETE"
+                    }
+                ]
+            }
+        ];
     }
 }

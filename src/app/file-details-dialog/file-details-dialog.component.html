@@ -48,12 +48,12 @@
             </div>
             <div class="cell-container"  *ngIf="fileType === 'Photo'">
                 <p class="content-left">Photo Date</p>
-                <p class="content-right" *ngIf="data.row_data.format_photo_date !== undefined && data.row_data.format_photo_date !== ''; else nullPhotoDate">{{data.row_data.format_photo_date}}</p>
+                <p class="content-right" *ngIf="data.row_data.photo_date !== undefined && data.row_data.photo_date !== ''; else nullPhotoDate">{{data.row_data.photo_date}}</p>
                 <ng-template #nullPhotoDate><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
                 <p class="content-left">Date Uploaded</p>
-                <p class="content-right" *ngIf="data.row_data.format_file_date !== undefined && data.row_data.format_file_date !== ''; else nullFileDate">{{data.row_data.format_file_date}}</p>
+                <p class="content-right" *ngIf="data.row_data.file_date !== undefined && data.row_data.file_date !== ''; else nullFileDate">{{data.row_data.file_date}}</p>
                 <ng-template #nullFileDate><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">

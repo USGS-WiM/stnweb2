@@ -81,56 +81,63 @@ table {
     align-self: stretch;
 }
 
-.mat-column-HwmID{
+.mat-column-hwm_id{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
     align-self: stretch;
 }
 
-.mat-column-HwmLabel{
+.mat-column-hwm_label{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
     align-self: stretch;
 }
 
-.mat-column-HwmFlagDate{
+.mat-column-flag_date{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
     align-self: stretch;
 } 
 
-.mat-column-HwmElev{
+.mat-column-elev_ft{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
     align-self: stretch;
 }
 
-.mat-column-SerialNumber{
+.mat-column-serial_number{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
     align-self: stretch;
 }
 
-.mat-column-SensorEvent{
+.mat-column-eventName{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
     align-self: stretch;
 }
 
-.mat-column-DeploymentType{
+.mat-column-deploymentType{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
     align-self: stretch;
 }
 
-.mat-column-SensorStatus{
+.mat-column-statusType{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-sensorType{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
@@ -215,13 +222,9 @@ table {
 
 // Site information
 #siteMap {
-    display: flex;
-    margin: auto;
-    width: 100%;
-}
-
-#siteMapContainer {
-    display: table-row;
+    width: 50%;
+    display: inline-block;
+    text-align: left;
 }
 
 #mapContainer {
@@ -231,8 +234,12 @@ table {
     margin-bottom: 20px;
 }
 
-.delete-button {
+.map-button {
     margin: 5px 5px;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.2);;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 .table-container {
@@ -259,28 +266,6 @@ table {
     padding-right: 5px;
     text-align: right;
     font-weight: bold;
-}
-
-.map-button {
-    margin: 5px 5px;
-}
-
-.edit-button {
-    margin: 5px 5px;
-}
-
-.left {
-    flex: 1;
-    text-align: right;
-}
-
-.right {
-    flex: 1;
-}
-
-.info-icon {
-    font-size: 20px;
-    color: #03274B;
 }
 
 #landowner {
@@ -348,6 +333,10 @@ table {
 
 .close-button {
     float: right;
+}
+
+[hidden] {
+    display: none !important;
 }
 
 #legend {

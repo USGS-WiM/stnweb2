@@ -574,13 +574,14 @@
                 <table *ngIf="sensorFiles.length > 0; else noSensorFileTable"
                     mat-table
                     id="sensorFilesTable"
-                    [dataSource]="sensorFiles"
+                    [dataSource]="sensorFilesDataSource"
+                    (matSortChange)="sortSensorFilesData($event)"
                     class="mat-elevation-z5"
                     matSort
                 >
                     <!-- Sensor file date column -->
                     <ng-container matColumnDef="FileDate">
-                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                         <td mat-cell *matCellDef="let file">
                             <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySensorFileDate">
                                 ---
@@ -593,7 +594,7 @@
 
                     <!-- Sensor file name column -->
                     <ng-container matColumnDef="FileName">
-                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                         <td mat-cell *matCellDef="let file">
                             <div *ngIf="file.name === '' || file.name === undefined; else displaySensorFileName">
                                 ---
@@ -615,6 +616,7 @@
             <ng-template #noSensorFileTable>
                 <p class="tableContainer">No Sensor Files listed.</p>
             </ng-template>
+            <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
         <mat-expansion-panel hideToggle expanded="false" *ngIf="data.row_data.statusType === 'Deployed'">
         <mat-expansion-panel-header>
@@ -626,13 +628,14 @@
             <table *ngIf="nwisFiles.length > 0; else noNWISFileTable"
                 mat-table
                 id="nwisFilesTable"
-                [dataSource]="nwisFiles"
+                [dataSource]="nwisFilesDataSource"
+                (matSortChange)="sortNWISFilesData($event)"
                 class="mat-elevation-z5"
                 matSort
             >
                 <!-- NWIS file date column -->
                 <ng-container matColumnDef="FileDate">
-                    <th mat-header-cell *matHeaderCellDef>File Date</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                     <td mat-cell *matCellDef="let file">
                         <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayNWISFileDate">
                             ---
@@ -645,7 +648,7 @@
 
                 <!-- NWIS file name column -->
                 <ng-container matColumnDef="FileName">
-                    <th mat-header-cell *matHeaderCellDef>File Name</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
                     <td mat-cell *matCellDef="let file">
                         <div *ngIf="file.name === '' || file.name === undefined; else displayNWISFileName">
                             ---
@@ -667,6 +670,7 @@
         <ng-template #noNWISFileTable>
             <p class="tableContainer">No NWIS Files listed.</p>
         </ng-template>
+        <mat-paginator [hidden]="nwisFiles === undefined || nwisFiles.length === 0" #nwisFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
     </mat-accordion>
 
