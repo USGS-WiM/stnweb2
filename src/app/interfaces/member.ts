@@ -23,4 +23,8 @@ export interface Member {
     salt?: string;
     sites?: Site[];
     username: string;
+    emergency_contact_name?: string;
+    emergency_contact_phone?: string;
+    last_updated?: string;
+    last_updated_by?: number;
 }

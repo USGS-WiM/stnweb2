@@ -33,6 +33,7 @@ export class AuthenticationService {
                     this.user = response;
                     localStorage.setItem('username', username);
                     localStorage.setItem('password', password);
+                    localStorage.setItem('role', response.role_id.toString());
                     localStorage.setItem(
                         'currentUser',
                         JSON.stringify(response)
@@ -52,6 +53,7 @@ export class AuthenticationService {
         localStorage.removeItem('username');
         localStorage.removeItem('password');
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('role');
         this.currentUserService.updateLoggedInStatus(false);
 
         return of(true);

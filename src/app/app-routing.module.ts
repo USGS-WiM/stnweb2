@@ -6,6 +6,7 @@ import { ApprovalsComponent } from '@app/approvals/approvals.component';
 import { BulkHwmComponent } from './bulk-hwm/bulk-hwm.component';
 import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { SiteDetailsComponent } from './site-details/site-details.component';
+import { UserManagementComponent } from './user-management/user-management.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'map', pathMatch: 'full' },
@@ -15,6 +16,7 @@ const routes: Routes = [
     { path: 'approvals', component: ApprovalsComponent },
     { path: 'bulkhwm', component: BulkHwmComponent },
     { path: 'hwmupload', component: HwmUploadComponent },
+    { path: 'users', component: UserManagementComponent },
 ];
 
 @NgModule({

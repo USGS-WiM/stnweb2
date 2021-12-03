@@ -5,7 +5,7 @@
     "ng": "ng",
     "clean": "rimraf ./dist",
     "start": "ng serve",
-    "build": "ng build --prod --base-href --aot=false --build-optimizer=false",
+    "build": "ng build --prod --base-href=/stnweb2/ --aot=false --build-optimizer=false",
     "build:prod": "ng build --configuration production",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCustom",
@@ -14,7 +14,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "live": "ng serve --configuration hmr",
-    "build:ci": "npm run clean && npm run test:ci && npm run build:prod"
+    "build:ci": "npm run clean && npm run test:ci && npm run build"
   },
   "private": true,
   "prettier": {
