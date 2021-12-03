@@ -42,7 +42,7 @@ export class UserManagementComponent implements OnInit {
   ngOnInit(): void {
 
     // getting agencies and initializing form
-    this.getAgencies()
+    this.getRoles()
     this.searchFormInit();
   }
 
@@ -53,12 +53,11 @@ export class UserManagementComponent implements OnInit {
       lname: new FormControl('', Validators.pattern('^[a-zA-Z ]+$')),
     });
   }
-  getAgencies() {
-    this.agencyService
-      .getAllAgencies()
+  getRoles() {
+    this.roleService
+      .getAllRoles()
       .subscribe((results) => {
-        this.agencies = results;
-        console.log(this.agencies)
+        this.roles = results;
         this.getUserData();
       });
   }
@@ -111,13 +110,7 @@ export class UserManagementComponent implements OnInit {
     this.userDataSource.paginator = this.paginator;
     this.userDataSource.filterPredicate = this.getFilterPredicate();
   }
-  getRoles() {
-    this.roleService
-      .getAllRoles()
-      .subscribe((results) => {
-        this.roles = results;
-      });
-  }
+  
   /* this method well be called for each row in table  */
   getFilterPredicate() {
     return (row, filters: string) => {

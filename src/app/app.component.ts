@@ -58,7 +58,6 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.role = APP_UTILITIES.GET_ROLE();
-        console.log(this.role)
         if (localStorage.getItem('currentUser')) {
             const currentUserObj = JSON.parse(
                 localStorage.getItem('currentUser')

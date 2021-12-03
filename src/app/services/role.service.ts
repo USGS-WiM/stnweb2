@@ -21,7 +21,7 @@ export class RoleService {
   public getAllRoles(): Observable<Role[]> {
     return (
       this.httpClient
-        .get(APP_SETTINGS.AGENCIES + '.json')
+        .get(APP_SETTINGS.ROLES + '.json')
         .pipe(
           tap((response) => {
             return response;

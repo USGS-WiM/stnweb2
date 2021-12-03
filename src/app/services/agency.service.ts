@@ -23,7 +23,7 @@ export class AgencyService {
         // .get(APP_SETTINGS.EVENTS + '.json', {
         //     headers: APP_SETTINGS.AUTH_JSON_HEADERS,
         // })
-        .get(APP_SETTINGS.ROLES + '.json')
+        .get(APP_SETTINGS.AGENCIES + '.json')
         .pipe(
           tap((response) => {
             return response;
