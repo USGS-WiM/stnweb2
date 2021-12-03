@@ -41,7 +41,7 @@ export class UserManagementComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // getting agencies and initializing form
+    // getting roles and initializing form
     this.getRoles()
     this.searchFormInit();
   }
@@ -110,7 +110,7 @@ export class UserManagementComponent implements OnInit {
     this.userDataSource.paginator = this.paginator;
     this.userDataSource.filterPredicate = this.getFilterPredicate();
   }
-  
+
   /* this method well be called for each row in table  */
   getFilterPredicate() {
     return (row, filters: string) => {

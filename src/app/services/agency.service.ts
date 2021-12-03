@@ -16,6 +16,7 @@ import { APP_UTILITIES } from '@app/app.utilities';
 export class AgencyService {
 
   constructor(private httpClient: HttpClient) { }
+  
   // retrieve the full agency list
   public getAllAgencies(): Observable<Agency[]> {
     return (
@@ -31,7 +32,7 @@ export class AgencyService {
         )
     );
   }
-  
+
   // get a specific agency by id
   public getAnAgency(id): Observable<Agency> {
     return (
