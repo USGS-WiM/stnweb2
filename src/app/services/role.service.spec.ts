@@ -32,7 +32,7 @@ describe('RoleService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('#getAllRoles() should retrieve a states list from the data API', () => {
+  it('#getAllRoles() should retrieve a roles list from the data API', () => {
     service.getAllRoles().subscribe((results) => {
       expect(results).not.toBe(null);
       expect(JSON.stringify(results)).toEqual(

@@ -9,8 +9,8 @@ import { Sitefullsensors } from '@interfaces/sitefullsensors';
 import { SensorType } from '@interfaces/sensor-type';
 import { Member } from '@interfaces/member';
 import { NoaaStation } from '@interfaces/noaa-station';
-import { Role } from './interfaces/role';
-import { Agency } from './interfaces/agency';
+import { Role } from '@interfaces/role';
+import { Agency } from '@interfaces/agency';
 
 @Injectable()
 export class APP_UTILITIES {

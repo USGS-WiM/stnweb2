@@ -9,7 +9,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Member } from '@app/interfaces/member';
 import { UserService } from './user.service';
 import { APP_UTILITIES } from '@app/app.utilities';
-import { APP_SETTINGS } from '../app.settings';
+import { APP_SETTINGS } from '@app/app.settings';
 
 export const mockUserList: Member[] = APP_UTILITIES.USERS_DUMMY_DATA_LIST;
 

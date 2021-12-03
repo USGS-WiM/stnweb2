@@ -1,5 +1,4 @@
-import { APP_SETTINGS } from '../app.settings';
-import { APP_UTILITIES } from '@app/app.utilities';
+import { APP_SETTINGS } from '@app/app.settings';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
