@@ -114,6 +114,8 @@ export class SiteDetailsComponent implements OnInit {
         zoomToBoundsOnClick: false
     });
     public currentUser;
+    // Disable edit button for some roles
+    editDisabled = localStorage.role !== '3' && localStorage.role !== '2' && localStorage.role !== '1';
 
     displayedColumns: string[] = [
         'HousingType',
@@ -871,8 +873,6 @@ export class SiteDetailsComponent implements OnInit {
             row.format_photo_date = photoDate;
         }
 
-        console.log(row)
-
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '80%';
@@ -895,7 +895,7 @@ export class SiteDetailsComponent implements OnInit {
     openEditDialog(){
         let siteHousing = JSON.parse(JSON.stringify(this.siteHousing));
 
-        if(this.currentUser !== ''){
+        if(localStorage.role === '3' || localStorage.role === '2' || localStorage.role === '1'){
             const dialogRef = this.dialog.open(SiteEditComponent, {
                 data: {
                     site: this.site,
@@ -913,42 +913,56 @@ export class SiteDetailsComponent implements OnInit {
             });
             dialogRef.afterClosed().subscribe((result) => {
                 if(result){
-                    // Update site details page with any edits
-                    let siteResultCopy = JSON.parse(JSON.stringify(result.site));
-                    let currentSiteCopy = JSON.parse(JSON.stringify(this.site));
-                    delete siteResultCopy.last_updated; delete siteResultCopy.last_updated_by; delete currentSiteCopy.last_updated; delete currentSiteCopy.last_updated_by;
-                    // copy and remove last updated info to compare
-                    // Site info changed
-                    if(siteResultCopy !== currentSiteCopy){
-                        console.log("site changed")
-                        this.site = result.site;
+                    console.log(result)
+                    if(result.site !== null){
+                        // Update site details page with any edits
+                        let siteResultCopy = JSON.parse(JSON.stringify(result.site));
+                        let currentSiteCopy = JSON.parse(JSON.stringify(this.site));
+                        delete siteResultCopy.last_updated; delete siteResultCopy.last_updated_by; delete currentSiteCopy.last_updated; delete currentSiteCopy.last_updated_by;
+                        // copy and remove last updated info to compare
+                        // Site info changed
+                        if(siteResultCopy !== currentSiteCopy){
+                            this.site = result.site;
+                        }
                     }
                     
-                    // Update housing
-                    let housingResultCopy = JSON.parse(JSON.stringify(result.housings));
-                    let currentHousingCopy = JSON.parse(JSON.stringify(this.siteHousing));
-                    delete housingResultCopy.last_updated; delete housingResultCopy.last_updated_by; delete currentHousingCopy.last_updated; delete currentHousingCopy.last_updated_by;
-                    if(currentHousingCopy !== housingResultCopy){
-                        console.log("site housing changed")                        
-                        this.siteHousing = result.housings;
-                    }
-                    console.log(result.networkName);
-                    console.log(this.networkName);
-                    console.log(result.networkType.join(','));
-
-                    // Update network types
-                    // let netTypeResultCopy = JSON.parse(JSON.stringify(result.networkType));
-                    // let currentNetTypeCopy = JSON.parse(JSON.stringify(this.networkType));
-                    // console.log(netTypeResultCopy, currentNetTypeCopy)
-                    // delete netTypeResultCopy.last_updated; delete netTypeResultCopy.last_updated_by; delete currentNetTypeCopy.last_updated; delete currentNetTypeCopy.last_updated_by;
-                    if(result.networkType.join(',') !== this.networkType){
-                        console.log("network types changed")
-                        this.networkType = result.networkType.join(',');
+                    if(result.housings.length > 0){
+                        // Update housing
+                        let housingResultCopy = JSON.parse(JSON.stringify(result.housings));
+                        let currentHousingCopy = JSON.parse(JSON.stringify(this.siteHousing));
+                        delete housingResultCopy.last_updated; delete housingResultCopy.last_updated_by; delete currentHousingCopy.last_updated; delete currentHousingCopy.last_updated_by;
+                        if(currentHousingCopy !== housingResultCopy){                     
+                            this.siteHousing = result.housings;
+                        }
                     }
 
-                    if(result.networkName.join(',') !== this.networkName){
-                        console.log("network names changed")
-                        this.networkName = result.networkName.join(',');
+                    if(result.networkType.length > 0){
+                        // Update network types
+                        // let netTypeResultCopy = JSON.parse(JSON.stringify(result.networkType));
+                        // let currentNetTypeCopy = JSON.parse(JSON.stringify(this.networkType));
+                        // console.log(netTypeResultCopy, currentNetTypeCopy)
+                        // delete netTypeResultCopy.last_updated; delete netTypeResultCopy.last_updated_by; delete currentNetTypeCopy.last_updated; delete currentNetTypeCopy.last_updated_by;
+                        if(result.networkType.join(',') !== this.networkType){
+                            console.log("network types changed")
+                            this.networkType = result.networkType.join(', ');
+                        }
+                    }
+
+                    if(result.networkType.length > 0){
+                        if(result.networkName.join(',') !== this.networkName){
+                            this.networkName = result.networkName.join(', ');
+                        }
+                    }
+
+                    // Files
+                    if(result.files.length > 0){
+                        this.siteFilesDataSource.data = result.files;
+                        this.fileLength = this.siteFilesDataSource.data.length + this.hwmFilesDataSource.data.length + this.refMarkFilesDataSource.data.length + this.sensorFilesDataSource.data.length;
+                    }
+
+                    // Landowner
+                    if(result.landowner !== null){
+                        console.log(result.landowner);
                     }
                 }
             });

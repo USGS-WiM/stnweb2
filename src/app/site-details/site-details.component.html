@@ -15,7 +15,7 @@
                     <div class="basic-site-info">
                         <div id="siteMap">
                                 <div class="left">
-                                    <button mat-raised-button class="edit-button" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
+                                    <button mat-raised-button class="edit-button" [disabled]="editDisabled" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
                                 </div>
                                 <div class="right">
                                     <button mat-raised-button disabled class="delete-button"><mat-icon>delete_forever</mat-icon> Delete Site</button>

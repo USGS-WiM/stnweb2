@@ -1,7 +1,10 @@
 <h2 mat-dialog-title>
     Site
-    <!-- <button class="close-button" mat-button mat-dialog-close aria-mat-label="Exit"><mat-icon>close</mat-icon></button> -->
+    <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-mat-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
+<div [hidden]="!loading" class="loading">
+    <mat-spinner style="margin:0 auto; top: 50%" mode="indeterminate" diameter="20"></mat-spinner>
+</div>
 <form [formGroup]="siteForm" (ngSubmit)="submitSiteForm()">
     <mat-dialog-content>
         <mat-accordion multi="true">
@@ -507,7 +510,7 @@
                                     <div *ngIf="siteFiles.FileEntity.filetype_id === 8">
                                         <mat-form-field appearance="fill">
                                             <mat-label>File URL</mat-label>
-                                            <input formControlName="name" matInput required [value]="siteFiles.FileEntity.name"/>
+                                            <input formControlName="name" matInput [value]="siteFiles.FileEntity.name"/>
                                             <mat-icon matSuffix class="info-icon" matTooltip="Please link to persistent URLs or digital object identifier (doi) urls." 
                                             aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>                
                                         </mat-form-field>
@@ -665,7 +668,7 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
-            <button mat-raised-button mat-dialog-close cdkFocusInitial aria-mat-label="Cancel">Cancel</button>
+            <button mat-raised-button [mat-dialog-close]="returnData" cdkFocusInitial aria-mat-label="Close">Close</button>
             <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
         </div>
     </mat-dialog-actions>

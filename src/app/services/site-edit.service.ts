@@ -35,21 +35,20 @@ export class SiteEditService {
   // Put landowner
   public putLandowner(landownerContactID, landowner): Observable<any> {
     // rootURL + '/LandOwners/:id.json'
-    // return this.httpClient
-    //     .put(APP_SETTINGS.SITES_URL + '/LandOwners/' + landownerContactID + '.json', landowner {
-    //       headers: APP_SETTINGS.AUTH_JSON_HEADERS,
-    //   })
-    //     .pipe(
-    //         tap((response) => {
-    //             console.log(
-    //                 'putLandowner response received' //: ' +
-    //                 // JSON.stringify(response)
-    //             );
-    //             return response;
-    //         }),
-    //         catchError(this.handleError<any>('putLandowner', []))
-    //     );
-    return landownerContactID;
+    return this.httpClient
+        .put(APP_SETTINGS.SITES_URL + '/LandOwners/' + landownerContactID + '.json', landowner, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'putLandowner response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('putLandowner', []))
+        );
   }
 
   public postLandowner(landowner): Observable<any> {
@@ -214,11 +213,10 @@ export class SiteEditService {
   }
   
   public uploadFile(file): Observable<any> {
-  // uploadFile: { method: 'POST', url: rootURL + '/Files/bytes', headers: { 'Content-Type': undefined }, transformRequest: angular.identity, cache: false, isArray: false },
     return this.httpClient
         .post(APP_SETTINGS.API_ROOT + 'Files/bytes',  file, {
-          headers: { 'Content-Type': undefined },
-      })
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
         .pipe(
             tap((response) => {
                 console.log(
@@ -233,7 +231,7 @@ export class SiteEditService {
 
   public saveFile(file): Observable<any> {
       return this.httpClient
-          .post(APP_SETTINGS.API_ROOT + 'Files.json',  file, {
+          .post(APP_SETTINGS.API_ROOT + 'Files.json', file, {
             headers: APP_SETTINGS.AUTH_JSON_HEADERS,
         })
           .pipe(
@@ -265,29 +263,22 @@ export class SiteEditService {
             );
       }
 
-  public deleteFile(sourceID, file): Observable<any> {
-    // uploadFile: { method: 'POST', url: rootURL + '/Files/bytes', headers: { 'Content-Type': undefined }, transformRequest: angular.identity, cache: false, isArray: false },
-      // return this.httpClient
-      //     .post(APP_SETTINGS.SITES_URL + 'Files/bytes',  file, {
-      //       headers: { 'Content-Type': undefined },
-      //   })
-      //     .pipe(
-      //         tap((response) => {
-      //             console.log(
-      //                 'uploadFile response received' //: ' +
-      //                 // JSON.stringify(response)
-      //             );
-      //             return response;
-      //         }),
-      //         catchError(this.handleError<any>('uploadFile', []))
-      //     );
-      return sourceID;
+  public deleteFile(fileID): Observable<any> {
+      return this.httpClient
+          .delete(APP_SETTINGS.API_ROOT + 'Files/' + fileID + '.json', {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+          .pipe(
+              tap((response) => {
+                  console.log(
+                      'deleteFile response received' //: ' +
+                      // JSON.stringify(response)
+                  );
+                  return response;
+              }),
+              catchError(this.handleError<any>('deleteFile', []))
+          );
     }
-
-  public fileStamp(): string {
-        let stamp = '?' + new Date().getTime();
-        return stamp;
-  }
 
   /**
      * Handle Http operation that failed.

@@ -7,9 +7,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { NetworkNameService } from '@app/services/network-name.service';
 import { SiteEditService } from '@app/services/site-edit.service';
 import { SiteService } from '@app/services/site.service';
+import { resolve } from 'path';
 import { forkJoin } from 'rxjs';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { APP_SETTINGS } from '../app.settings';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-site-edit',
@@ -69,8 +71,6 @@ export class SiteEditComponent implements OnInit {
       site_id: null,
       filetype_id: null,
       path: null,
-      data_file_id: null,
-      instrument_id: null,
       last_updated: null,
       last_updated_by: null,
       site_description: null,
@@ -121,6 +121,8 @@ export class SiteEditComponent implements OnInit {
   landownerForm;
   siteFileForm;
 
+  loading = false;
+
   public hasLandownerContact = false;
   public addLandownerCheck = false;
   public useSiteAddress = false;
@@ -135,7 +137,7 @@ export class SiteEditComponent implements OnInit {
     networkType: [],
     networkName: [],
     landowner: null,
-    files: null,
+    files: [],
   };
   
   displayedColumns: string[] = [
@@ -157,6 +159,7 @@ export class SiteEditComponent implements OnInit {
     public siteService: SiteService,
     public siteEditService: SiteEditService,
     private changeDetector : ChangeDetectorRef,
+    private _snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -393,7 +396,6 @@ export class SiteEditComponent implements OnInit {
         self.housingTypeArray.push(type.housingType);
       }
     });
-    console.log(self.siteHousingArray)
     this.initSiteFiles = this.data.siteFiles;
     this.priority = this.data.priority !== undefined && this.data.priority !== null ? this.data.priority : {priority_id: null};
     
@@ -513,6 +515,10 @@ export class SiteEditComponent implements OnInit {
     this.cancelFile();
     this.showFileForm = true;
     this.addFileType = "New";
+    this.siteFiles.FileEntity.file_date = new Date();
+    this.siteFiles.FileEntity.photo_date = new Date();
+    this.siteFileForm.controls["file_date"].setValue(this.siteFiles.FileEntity.file_date);
+    this.siteFileForm.controls["photo_date"].setValue(this.siteFiles.FileEntity.photo_date);
   }
 
   getFileTypeSelection(event) {
@@ -520,7 +526,6 @@ export class SiteEditComponent implements OnInit {
   }
 
   initSiteForm() {
-    console.log(this.data.site.site_id)
     this.siteForm = new FormGroup({
       site_description: new FormControl(this.site.description, Validators.required),
       site_notes: new FormControl(this.site.internal_notes),
@@ -628,17 +633,13 @@ export class SiteEditComponent implements OnInit {
       site_id: new FormControl(this.siteFiles.FileEntity.site_id),
       filetype_id: new FormControl(this.siteFiles.FileEntity.filetype_id, Validators.required),
       path: new FormControl(this.siteFiles.FileEntity.path),
-      data_file_id: new FormControl(this.siteFiles.FileEntity.data_file_id),
-      instrument_id: new FormControl(this.siteFiles.FileEntity.instrument_id),
       last_updated: new FormControl(this.siteFiles.FileEntity.last_updated),
       last_updated_by: new FormControl(this.siteFiles.FileEntity.last_updated_by),
       site_description: new FormControl(this.siteFiles.FileEntity.site_description),
       photo_direction: new FormControl(this.siteFiles.FileEntity.photo_direction),
       latitude_dd: new FormControl(this.siteFiles.FileEntity.latitude_dd, [this.checkLatValue()]),
       longitude_dd: new FormControl(this.siteFiles.FileEntity.longitude_dd, [this.checkLonValue()]),
-      hwm_id: new FormControl(null),
       is_nwis: new FormControl(null),
-      objective_point_id: new FormControl(null),
     })
   }
 
@@ -673,7 +674,7 @@ export class SiteEditComponent implements OnInit {
 
             var longDMS = this.deg_to_dms(this.siteForm.controls.longitude_dd.value);
             var longDMSarray = longDMS.split(':');
-            this.siteForm.controls['londeg'].setValue(-(longDMSarray[0]));
+            this.siteForm.controls['londeg'].setValue((-(longDMSarray[0])).toString());
             this.siteForm.controls['lonmin'].setValue(longDMSarray[1]);
             this.siteForm.controls['lonsec'].setValue(longDMSarray[2]);
         }
@@ -801,6 +802,8 @@ export class SiteEditComponent implements OnInit {
     this.siteFiles.FileEntity.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
     this.siteFiles.FileEntity.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
     this.siteFiles.FileEntity.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
+    this.siteFiles.FileEntity.site_id = this.data.site.site_id;
+    this.siteFiles.FileEntity.name = row.name !== undefined && row.name !== "" ? row.name : null;
     
     this.siteFileForm.controls['file_date'].setValue(this.siteFiles.FileEntity.file_date);
     this.siteFileForm.controls['photo_date'].setValue(this.siteFiles.FileEntity.photo_date);
@@ -808,6 +811,8 @@ export class SiteEditComponent implements OnInit {
     this.siteFileForm.controls['photo_direction'].setValue(this.siteFiles.FileEntity.photo_direction);
     this.siteFileForm.controls['latitude_dd'].setValue(this.siteFiles.FileEntity.latitude_dd);
     this.siteFileForm.controls['longitude_dd'].setValue(this.siteFiles.FileEntity.longitude_dd);
+    this.siteFileForm.controls['site_id'].setValue(this.siteFiles.FileEntity.site_id);
+    this.siteFileForm.controls['name'].setValue(this.siteFiles.FileEntity.name);
 
     this.getFile();
   }
@@ -824,7 +829,6 @@ export class SiteEditComponent implements OnInit {
     this.siteFileForm.controls['site_id'].setValue(data.site_id);
     this.siteFileForm.controls['filetype_id'].setValue(data.filetype_id);
     this.siteFileForm.controls['path'].setValue(data.path);
-    this.siteFileForm.controls['instrument_id'].setValue(data.instrument_id);
     this.siteFileForm.controls['last_updated'].setValue(data.last_updated);
     this.siteFileForm.controls['last_updated_by'].setValue(data.last_updated_by);
     this.siteFileForm.controls['site_description'].setValue(data.site_description);
@@ -845,6 +849,8 @@ export class SiteEditComponent implements OnInit {
           this.setFileSource();
         }else{
           this.fileItemExists = false;
+          this.setFileSourceAgency();
+          this.setFileSource();
         }
       });
     }else{
@@ -873,19 +879,48 @@ export class SiteEditComponent implements OnInit {
 
   // Re-upload file or add missing file
   saveFileUpload() {
+    let self = this;
     // update this.siteFiles
     // update siteFilesForm
-    let siteFileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
-    delete siteFileSubmission.data_file_id;
-    console.log(siteFileSubmission);
+    let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+    let formatFileSubmission = {
+      file_id: fileSubmission.file_id,
+      description: fileSubmission.description,
+      source_id: fileSubmission.source_id,
+      filetype_id: fileSubmission.filetype_id,
+      latitude_dd: fileSubmission.latitude_dd,
+      longitude_dd: fileSubmission.longitude_dd,
+      file_date: fileSubmission.file_date,
+      name: fileSubmission.name,
+      photo_date: fileSubmission.photo_date,
+      photo_direction: fileSubmission.photo_direction,
+      site_id: this.data.site.site_id,
+    }
+    let fd = new FormData();
+    fd.append("FileEntity", JSON.stringify(formatFileSubmission));
+    fd.append("File", this.siteFileForm.controls["File"].value);
     // post file
-    this.siteEditService.uploadFile(siteFileSubmission).subscribe((response) => {
-      console.log(response)
-      // file stamp
-      let fileStamp = this.siteEditService.fileStamp();
-      // push into files table
-      this.initSiteFiles.push(response);
-    })
+    this.siteEditService.uploadFile(fd)
+      .subscribe(
+          (data) => {
+            console.log(data)
+            if(data.length !== []){
+              this.returnData.files.forEach(function(file, i){
+                if(file.file_id === data.file_id){
+                  self.returnData.files[i] = data;
+                  let fileDate = self.returnData.files[i].file_date.split("T")[0];
+                  fileDate = fileDate.split("-");
+                  fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+                  self.returnData.files[i].format_file_date = fileDate;
+                  self.initSiteFiles = self.returnData.files;
+                  self.initSiteFiles = [...self.initSiteFiles];
+                  self.showFileForm = false;
+                }
+              });
+              this.loading = false;
+            }
+          }
+      );
     this.fileUploading = false;
     this.fileItemExists = true;
   }
@@ -912,6 +947,7 @@ export class SiteEditComponent implements OnInit {
     }
 
     this.showFileForm = false;
+    this.fileUploading = false;
 
     this.siteFileForm.reset();
 
@@ -928,8 +964,6 @@ export class SiteEditComponent implements OnInit {
         site_id: null,
         filetype_id: null,
         path: null,
-        data_file_id: null,
-        instrument_id: null,
         last_updated: null,
         last_updated_by: null,
         site_description: null,
@@ -941,55 +975,55 @@ export class SiteEditComponent implements OnInit {
     };
   }
 
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action);
+  }
+
   submitSiteForm(){
     this.siteForm.markAllAsTouched();
     if(this.siteForm.valid){
+      this.loading = true;
       this.valid = true;
-      console.log(this.landownerForm);
-      console.log(this.siteForm);
       // Post landowner if added/changed
       if(this.landownerForm.dirty){
         if(this.landownerForm.valid){
           this.landownerValid = true;
-          if(this.landownerForm.landownercontact_id !== undefined && this.landownerForm.landownercontact_id !== null && this.landownerForm.landownercontact_id > 0){
-            this.siteEditService.putLandowner(this.landownerForm.landownercontact_id, this.landownerForm.value).subscribe((response) => {
-              console.log(response);
+          if(this.landownerForm.controls.landownercontact_id.value !== undefined && this.landownerForm.controls.landownercontact_id.value !== null && this.landownerForm.controls.landownercontact_id.value > 0){
+            console.log("put landowner")
+            console.log(this.landownerForm.controls)
+            this.siteEditService.putLandowner(this.landownerForm.controls.landownercontact_id.value, this.landownerForm.value).subscribe((response) => {
               this.putSite();
-              // this.dialogRef.close(this.returnData);
+              this.returnData.landowner = response;
+              console.log(this.returnData.landowner)
             })
           }else{
             this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
-              console.log(response.landownercontactid);
-              console.log(response)
-              console.log("post")
               this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
-              console.log(this.siteForm.controls);
               this.putSite();
-              // this.dialogRef.close(this.returnData);
+              this.returnData.landowner = response;
+              console.log(this.returnData.landowner)
             })
           }
         }else{
           this.landownerValid = false;
           this.putSite();
-          alert("Error creating landowner contact.")
-          // this.dialogRef.close(this.returnData);
+          alert("Error creating landowner contact.");
         }
       }
       else{
-        console.log("no landowner edits")
         this.putSite();
-        // this.dialogRef.close(this.returnData);
       }
-      // Close dialog
     }else{
       this.valid = false;
+      this.loading = false;
       alert("Some required site fields are missing or incorrect.  Please fix these fields before submitting.")
     }
     this.fileUploading = false;
   }
 
-  putSite() {
+  async putSite() {
     let self = this;
+    let promises = [];
     // Convert dms to dd
     if(this.latLngUnit === "dms"){
       this.siteForm.controls['latitude_dd'].setValue(this.azimuth(this.siteForm.controls.latdeg.value, this.siteForm.controls.latmin.value, this.siteForm.controls.latsec.value));
@@ -1000,17 +1034,17 @@ export class SiteEditComponent implements OnInit {
     delete siteSubmission.latdeg; delete siteSubmission.latmin; delete siteSubmission.latsec; delete siteSubmission.londeg; delete siteSubmission.lonmin; delete siteSubmission.lonsec;
     delete siteSubmission.housingType; delete siteSubmission.siteHousings; delete siteSubmission.networkType; delete siteSubmission.networkName;
 
-    console.log(siteSubmission)
-
-    this.siteEditService.putSite(this.data.site.site_id, siteSubmission)
+    const updateSite = await new Promise<string>(resolve => this.siteEditService.putSite(this.data.site.site_id, siteSubmission)
       .subscribe(
           (data) => {
               console.log('Form submitted successfully');
               this.returnData.site = data;
-              this.dialogRef.close(this.returnData);
+              resolve(updateSite);
           }
-      );
+      )
+    )
 
+    promises.push(updateSite)
     // Copy form value object, include disabled form values in submission
     let siteHousingValue = JSON.parse(JSON.stringify(this.siteForm.controls["siteHousings"].getRawValue()));
     siteHousingValue.forEach(function(value){
@@ -1021,27 +1055,32 @@ export class SiteEditComponent implements OnInit {
     if(this.data.siteHousing.site_housing_id !== null){
       this.returnData.housings = JSON.parse(JSON.stringify(this.data.siteHousing));
     }
-    this.data.siteHousing.forEach(function(housing){
+    for(let housing of this.data.siteHousing){
       if(housing.housingType !== null && !siteHousings.includes(housing.housingType)){
         console.log("delete " + housing.housingType);
-        self.siteEditService.deleteSiteHousings(housing.site_housing_id).subscribe((response) => {
+        const deleteHousing = await new Promise<string>(resolve => self.siteEditService.deleteSiteHousings(housing.site_housing_id).subscribe((response) => {
+          console.log("housings: " + self.returnData.housings)
             let index = self.returnData.housings.forEach(function(returnHousing, i){
               if(housing.site_housing_id === returnHousing.site_housing_id){
                 return i;
               }
             });
             self.returnData.housings.splice(self.returnData.housings.indexOf(index), 1);
-        });
+            resolve(deleteHousing);
+          })
+        )
+        promises.push(deleteHousing);
       }
-    })
+    }
 
     console.log(this.data.networkName)
     if(this.data.networkName !== undefined || this.data.networkName === ""){
+      console.log("before split")
       let initNetworkNames = this.data.networkName.split(',');
       this.returnData.networkName = JSON.parse(JSON.stringify(initNetworkNames));
       let selectedNames = this.selectedNetworkNames.join(',');
       //Remove NetNames
-      initNetworkNames.forEach(function (networkName) {
+      for(let networkName of initNetworkNames) {
         networkName = networkName.trim()
         if(!selectedNames.includes(networkName)){
           console.log("delete" + networkName);
@@ -1052,7 +1091,7 @@ export class SiteEditComponent implements OnInit {
               networkNameID = network.network_name_id;
             }
           })
-          self.siteEditService.deleteNetworkNames(self.data.site.site_id, networkNameID ).subscribe((response) => {
+          const deleteNetNames = await new Promise<string>(resolve => self.siteEditService.deleteNetworkNames(self.data.site.site_id, networkNameID ).subscribe((response) => {
             console.log(response);
               let index = self.returnData.networkName.forEach(function(returnNetName, i){
                 if(networkName.network_name_id === returnNetName.network_name_id){
@@ -1060,47 +1099,60 @@ export class SiteEditComponent implements OnInit {
                 }
               });
               self.returnData.networkName.splice(self.returnData.networkName.indexOf(index), 1);
-          });
+              resolve(deleteNetNames)
+            })
+          )
+          promises.push(deleteNetNames);
+        }
+      };
+      //Add NetNames
+      let skipnames = [];
+      let initname;
+      initNetworkNames.forEach(function (name) {
+        initname = name.trim();
+        // Only add new network names
+        if(selectedNames.includes(initname)){
+          skipnames.push(initname)
         }
       });
-      //Add NetNames
-      this.networkNames.forEach(function (networkName) {
-        let initname;
-        initNetworkNames.forEach(function (name) {
-          initname = name.trim();
-          // Only add new network names
-          console.log(!selectedNames.includes(initname))
-          console.log(networkName.selected)
-          console.log(!self.data.networkName.includes(networkName.name));
-          if(networkName.selected && !selectedNames.includes(initname) && !self.data.networkName.includes(networkName.name)){
+      for(let networkName of this.networkNames) {
+          if(networkName.selected && !skipnames.includes(networkName.name)){
             console.log("add" + networkName.name);
-            self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
+            const addNetNames = await new Promise<string>(resolve => self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
               console.log(response);
-              self.returnData.networkName.push(response);
-            });
+              response.forEach(function(name){
+                if(!self.returnData.networkName.join(',').includes(name.name)){
+                  self.returnData.networkName.push(name.name);
+                }
+              });
+              resolve(addNetNames);
+              })
+            )
+            promises.push(addNetNames);
           }
-        });
-      });
+      };
     }else{
       // No network names to remove
       //Add NetNames
-      this.networkNames.forEach(function (networkName) {
-        console.log(networkName)
+      for(let networkName of this.networkNames) {
         if(networkName.selected){
-          self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
+          const addNetNames = await new Promise<string>(resolve => self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
             console.log("add" + networkName.name)
-            console.log(response);
             self.returnData.networkName.push(response);
-          });
+            resolve(addNetNames);
+            })
+          )
+          promises.push(addNetNames);
         }
-      });
+      };
     }
-    if(this.data.networkType !== undefined && this.data.networkTyp !== ""){
+    console.log(this.data.networkType)
+    if(this.data.networkType !== undefined && this.data.networkType !== ""){
       let selectedTypes = this.selectedNetworkTypes.join(',');
       let initNetworkTypes = this.data.networkType.split(',');
       this.returnData.networkType = JSON.parse(JSON.stringify(initNetworkTypes));
       //Remove NetTypes
-      initNetworkTypes.forEach(function (networkType) {
+      for(let networkType of initNetworkTypes) {
         networkType = networkType.trim();
         if(!selectedTypes.includes(networkType)){
           console.log("delete" + networkType);
@@ -1112,76 +1164,108 @@ export class SiteEditComponent implements OnInit {
             }
           })
           // Delete network type
-          self.siteEditService.deleteNetworkTypes(self.data.site.site_id, networkTypeID ).subscribe((response) => {
+          const deleteNetTypes = await new Promise<string>(resolve => self.siteEditService.deleteNetworkTypes(self.data.site.site_id, networkTypeID ).subscribe((response) => {
               let index = self.returnData.networkType.forEach(function(returnNetType, i){
                 if(networkType.network_type_id === returnNetType.network_type_id){
                   return i;
                 }
               });
               self.returnData.networkType.splice(self.returnData.networkType.indexOf(index), 1);
-          });
+              resolve(deleteNetTypes);
+            })
+          )
+          promises.push(deleteNetTypes);
+        }
+      };
+      let skiptypes = [];
+      let initnetwork;
+      initNetworkTypes.forEach(function (name) {
+        initnetwork = name.trim();
+        // Only add new network types
+        if(selectedTypes.includes(initnetwork)){
+          skiptypes.push(initnetwork)
         }
       });
       //Add NetTypes
-      this.networkTypes.forEach(function (networkType) {
-        let initnetwork;
-        initNetworkTypes.forEach(function (network) {
-          initnetwork = network.trim();
+      for(let networkType of this.networkTypes) {
+        // let initnetwork;
+        // initNetworkTypes.forEach(function (network) {
+        //   initnetwork = network.trim();
           // Only add new network names
-          if(networkType.selected  && !initnetwork.includes(networkType.network_type_name) && !self.data.networkType.includes(networkType.network_type_name)){
+          if(networkType.selected && !skiptypes.includes(networkType.network_type_name)){
             console.log("add" + networkType.network_type_name);
-            self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+            const addNetTypes = await new Promise<string>(resolve => self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
               console.log(response);
               response.forEach(function(network){
                 self.returnData.networkType.push(network.network_type_name);
               })
-            });
+              resolve(addNetTypes)
+              })
+            )
+            promises.push(addNetTypes);
           }
-        });
-      });
+        // });
+      };
     }else{
       // No network types to remove
       //Add NetTypes
-      this.networkTypes.forEach(function (networkType) {
+      for(let networkType of this.networkTypes) {
         if(networkType.selected){
           console.log("add2" + networkType.network_type_name);
-          self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+          const addNetTypes = await new Promise<string>(resolve => self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
             console.log(response);
             self.returnData.networkType.push(response[0].network_type_name);
-          });
+            resolve(addNetTypes)
+            })
+          )
+          promises.push(addNetTypes)
         }
-      });
+      };
     }
     // Insert housing info
     //Add housing info
+    console.log("before housing")
     if(this.siteForm.controls.siteHousings.dirty || this.siteForm.controls.housingType.dirty){
-      siteHousingValue.forEach(function (ht) {
+      for(let ht of siteHousingValue) {
         if (ht.site_housing_id !== null) {
           //PUT it
-          self.siteEditService.putSiteHousings(ht.site_housing_id, ht).subscribe((response) => {
-            let index = self.returnData.housings.forEach(function(returnHousing, i){
-              if(ht.site_housing_id === returnHousing.site_housing_id){
-                return i;
-              }
-            });
-            self.returnData.housings.splice(self.returnData.housings.indexOf(index), 1);
-            response = self.getHousingType(response);
-            self.returnData.housings.push(response);
-          });
+          const updateHousing = await new Promise<string>(resolve => self.siteEditService.putSiteHousings(ht.site_housing_id, ht).subscribe((response) => {
+              let index = self.returnData.housings.forEach(function(returnHousing, i){
+                if(ht.site_housing_id === returnHousing.site_housing_id){
+                  return i;
+                }
+              });
+              self.returnData.housings.splice(self.returnData.housings.indexOf(index), 1);
+              response = self.getHousingType(response);
+              self.returnData.housings.push(response);
+              resolve(updateHousing);
+            })
+          )
+          promises.push(updateHousing);
         } else {
           // Remove site housing id field before sending to avoid 500 error
           delete ht.site_housing_id;
           //POST it
-          self.siteEditService.postSiteHousings(ht).subscribe((response) => {
-            response = self.getHousingType(response);
-            self.returnData.housings.push(response);
-          });
+          const addHousing = await new Promise<string>(resolve => self.siteEditService.postSiteHousings(ht).subscribe((response) => {
+              response = self.getHousingType(response);
+              self.returnData.housings.push(response);
+              resolve(addHousing);
+            })
+          )
+          promises.push(addHousing);
         }
-      });
+      };
     }
+
+    Promise.all(promises).then(() => {
+      this.dialogRef.close(this.returnData);
+      this.loading = false;
+      this.fileUploading = false;
+    })
   }
 
   saveFile() {
+    let self = this;
     this.siteFileForm.markAllAsTouched();
     let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
     if(this.siteFileForm.valid){
@@ -1191,21 +1275,34 @@ export class SiteEditComponent implements OnInit {
         this.siteEditService.postSource(theSource)
         .subscribe(
             (response) => {
-              console.log(console.log(response))
               fileSubmission.source_id = response.source_id;
-              console.log(fileSubmission);
+              fileSubmission.fileBelongsTo = "Site File";
+              fileSubmission.fileType = this.fileTypeLookup(fileSubmission.filetype_id);
+              
+              delete fileSubmission.is_nwis; delete fileSubmission.FULLname;
+              delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.File; delete fileSubmission.agency_id;
               this.siteEditService.updateFile(fileSubmission)
                 .subscribe(
                     (data) => {
-                      console.log(data)
-                        this.returnData.files = data;
-                            // Update file list in files tab
+                      this.returnData.files.forEach(function(file, i){
+                        if(file.file_id === data.file_id){
+                          self.returnData.files[i] = data;
+                          let fileDate = self.returnData.files[i].file_date.split("T")[0];
+                          fileDate = fileDate.split("-");
+                          fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+                          self.returnData.files[i].format_file_date = fileDate;
+                          self.initSiteFiles = self.returnData.files;
+                          self.initSiteFiles = [...self.initSiteFiles];
+                          self.showFileForm = false;
+                        }
+                      });
                     }
                 );
             }
         )
       }
     }else{
+      this.loading = false;
       this.fileValid = false;
       alert("Some required site file fields are missing or incorrect.  Please fix these fields before submitting.")
     }
@@ -1221,57 +1318,116 @@ export class SiteEditComponent implements OnInit {
     return response;
   }
 
+  fileTypeLookup(response) {
+    for(let filetype of this.fileTypes){
+      if(filetype.filetype_id === response){
+        return filetype.filetype;
+      }
+    }
+  }
+
   deleteFile() {
-    this.siteFileForm.markAllAsTouched();
-    let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
-    // this.siteEditService.deleteFile({id: this.fileSubmission.file_id})
-              //   .subscribe(
-              //       (data) => {
-              //         console.log(data)
-                        // this.returnData.files.splice(data);
-              //               // Update file list in files tab
-              //       }
-              //   );
+    let okayToDelete = confirm("Are you sure you want to remove this file?");
+    if(okayToDelete){
+      this.siteFileForm.markAllAsTouched();
+      let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+      this.siteEditService.deleteFile(fileSubmission.file_id)
+        .subscribe(
+            (data) => {
+              console.log(data);
+              let index;
+              for(let file of this.returnData.files){
+                if(JSON.stringify(file) === JSON.stringify(data)){
+                  index = this.returnData.files.indexOf(file);
+                }
+              }
+              this.returnData.files.splice(index, 1);
+              this.initSiteFiles = this.returnData.files;
+              this.initSiteFiles = [...this.initSiteFiles];
+              this.cancelFile();
+              this.showFileForm = false;
+            }
+        );
+    }
   }
 
   createFile() {
+    let self = this;
+    this.loading = true;
     this.siteFileForm.markAllAsTouched();
     let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
-    console.log(fileSubmission)
     if(this.siteFileForm.valid){
       this.fileValid = true;
       // check if source already exists?
       let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
-      console.log(theSource)
+      
       //post source first to get source_id
       this.siteEditService.postSource(theSource)
       .subscribe(
           (response) => {
-            console.log(response);
             fileSubmission.source_id = response.source_id;
-            // delete fullname, agency_id, site_description
-            delete fileSubmission.FULLname; delete fileSubmission.agency_id; delete fileSubmission.site_description;
+            // delete fileSubmission.fullname; delete fileSubmission.agency_id; delete fileSubmission.site_description;
+            delete fileSubmission.FULLname; delete fileSubmission.agency_id; delete fileSubmission.site_description; delete fileSubmission.path;
+            // delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.last_updated; delete fileSubmission.last_updated_by;
             if (fileSubmission.filetype_id !== 8) {
+              let formatFileSubmission = {
+                  description: fileSubmission.description,
+                  source_id: fileSubmission.source_id,
+                  filetype_id: fileSubmission.filetype_id,
+                  latitude_dd: fileSubmission.latitude_dd,
+                  longitude_dd: fileSubmission.longitude_dd,
+                  file_date: fileSubmission.file_date,
+                  name: fileSubmission.name,
+                  photo_date: fileSubmission.photo_date,
+                  photo_direction: fileSubmission.photo_direction,
+                  site_id: this.data.site.site_id,
+              }
+              let fd = new FormData();
+              fd.append("FileEntity", JSON.stringify(formatFileSubmission));
+              fd.append("File", this.siteFileForm.controls["File"].value);
+              
               //then POST fileParts (Services populate PATH)
-              // this.siteEditService.uploadFile(fileSubmission)
-              //   .subscribe(
-              //       (data) => {
-              //         console.log(data)
-                        // this.returnData.files = data;
-              //               // Update file list in files tab
-              //       }
-              //   );
+              this.siteEditService.uploadFile(fd)
+                .subscribe(
+                    (data) => {
+                      if(data !== []){
+                        this.returnData.files.push(data);
+                        this.returnData.files.forEach(function(file){
+                          let fileDate = file.file_date.split("T")[0];
+                          fileDate = fileDate.split("-");
+                          fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+                          file.format_file_date = fileDate;
+                        })
+                        this.initSiteFiles = this.returnData.files;
+                        this.initSiteFiles = [...this.initSiteFiles];
+                      }
+                        this.showFileForm = false;
+                        this.loading = false;
+                    }
+                );
             }
             else{
-              fileSubmission.site_id = this.data.site_id;
+              fileSubmission.site_id = this.data.site.site_id;
               // Link FileTypes
-              delete fileSubmission.File;
-              console.log(fileSubmission);
+              delete fileSubmission.File; delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd;
+              delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.photo_direction; delete fileSubmission.path;
+              
+              fileSubmission.photo_date = fileSubmission.file_date;
               this.siteEditService.saveFile(fileSubmission)
                 .subscribe(
                     (data) => {
-                      console.log(data)
-                      this.returnData.files = data;
+                      this.returnData.files.push(data);
+                      this.returnData.files.forEach(function(file){
+                        let fileDate = file.file_date.split("T")[0];
+                        fileDate = fileDate.split("-");
+                        fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+                        file.format_file_date = fileDate;
+                      })
+                      
+                      this.initSiteFiles = this.returnData.files;
+                      this.initSiteFiles = [...this.initSiteFiles];
+                      this.loading = false;
+                      this.showFileForm = false;
                             // Update file list in files tab
                     }
                 );
@@ -1280,6 +1436,7 @@ export class SiteEditComponent implements OnInit {
       );
     }else{
       this.fileValid = false;
+      this.loading = false;
       alert("Some required site file fields are missing or incorrect.  Please fix these fields before submitting.")
     }
   }
