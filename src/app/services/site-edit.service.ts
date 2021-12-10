@@ -36,7 +36,7 @@ export class SiteEditService {
   public putLandowner(landownerContactID, landowner): Observable<any> {
     // rootURL + '/LandOwners/:id.json'
     return this.httpClient
-        .put(APP_SETTINGS.SITES_URL + '/LandOwners/' + landownerContactID + '.json', landowner, {
+        .put(APP_SETTINGS.API_ROOT + 'LandOwners/' + landownerContactID + '.json', landowner, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(

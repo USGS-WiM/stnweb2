@@ -11,6 +11,7 @@ import { SiteEditComponent } from './site-edit.component';
 import { of } from 'rxjs';
 import { APP_SETTINGS } from '@app/app.settings';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { normalizeTickInterval } from 'highcharts';
 
 describe('SiteEditComponent', () => {
   let component: SiteEditComponent;
@@ -631,24 +632,7 @@ describe('SiteEditComponent', () => {
     expect(window.alert).toHaveBeenCalledWith("Some required site fields are missing or incorrect.  Please fix these fields before submitting.");
   });
 
-  it('should call put site if no landowner', () => {
-    component.siteForm.get("site_description").setValue("test");
-    component.siteForm.get("county").setValue("Dane");
-    component.siteForm.get("hcollect_method_id").setValue(2);
-    component.siteForm.get("hdatum_id").setValue(2);
-    component.siteForm.get("state").setValue("WI");
-    component.siteForm.get("waterbody").setValue("test");
-
-    let putSiteSpy = spyOn(component, 'putSite');
-
-    component.submitSiteForm();
-    fixture.detectChanges();
-    expect(component.valid).toBeTrue();
-    expect(component.loading).toBeTrue();
-    expect(putSiteSpy).toHaveBeenCalled();
-  });
-
-  it('should call putSite and show alert if landowner invalid', () => {
+  it('should not call putSite and show alert if landowner invalid', () => {
     component.siteForm.get("site_description").setValue("test");
     component.siteForm.get("county").setValue("Dane");
     component.siteForm.get("hcollect_method_id").setValue(2);
@@ -665,8 +649,9 @@ describe('SiteEditComponent', () => {
     fixture.detectChanges();
 
     expect(component.landownerValid).toBeFalse();
-    expect(putSiteSpy).toHaveBeenCalled();
-    expect(window.alert).toHaveBeenCalledWith("Error creating landowner contact.");
+    expect(putSiteSpy).not.toHaveBeenCalled();
+    expect(component.loading).toBeFalse();
+    expect(window.alert).toHaveBeenCalledWith("Some required landowner contact fields are missing or incorrect.  Please fix these fields before submitting.");
   });
 
   it('should call putSite and post landowner form', () => {
@@ -866,7 +851,7 @@ describe('SiteEditComponent', () => {
     expect(returnValue).toEqual("photo");
   });
 
-  it('should convert lat/lng and submit new site info', () => {
+  it('should submit new site info', (done) => {
     component.latLngUnit = "decdeg";
     component.siteForm.get("site_id").setValue(24224);
     component.siteForm.get("site_description").setValue("test");
@@ -875,12 +860,14 @@ describe('SiteEditComponent', () => {
     component.siteForm.get("hdatum_id").setValue(2);
     component.siteForm.get("state").setValue("WI");
     component.siteForm.get("waterbody").setValue("test");
-    component.siteForm.get("siteHousings").value = (new FormArray([new FormGroup({housingType: new FormControl("test"), housing_type_id: new FormControl(1)})]));
+    component.siteForm.controls["siteHousings"] = new FormArray([new FormGroup({housingType: new FormControl("test"), housing_type_id: new FormControl(1)})]);
     component.housingTypeArray = ["test"]
     component.data.networkName = undefined;
     component.data.networkType = undefined;
     component.networkTypes = [];
     component.networkNames = [];
+    component.siteForm.get("siteHousings").markAsDirty();
+    component.siteHousingLookup = [{housing_type_id: 1, type_name: "test"}, {housing_type_id: 2, type_name: "testHousing"}]
 
     let siteResponse = {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", file_id: 9999};
     spyOn(component.siteEditService, 'putSite').and.returnValue(
@@ -891,10 +878,65 @@ describe('SiteEditComponent', () => {
       of([])
     );
 
-    component.putSite();
-    fixture.detectChanges();
+    spyOn(component.siteEditService, 'postSiteHousings').and.returnValue(
+      of({housing_type_id: 1})
+    );
 
-    expect(component.returnData.site).toEqual(siteResponse);
+    component.putSite().then(() => {
+      fixture.detectChanges();
+
+      expect(component.returnData.site).toEqual(siteResponse);
+      done();
+    });
+  });
+
+  it('should convert lat/lng and submit new site info', (done) => {
+    component.siteForm.get("site_id").setValue(24224);
+    component.siteForm.get("site_description").setValue("test");
+    component.siteForm.get("county").setValue("Dane");
+    component.siteForm.get("hcollect_method_id").setValue(2);
+    component.siteForm.get("hdatum_id").setValue(2);
+    component.siteForm.get("state").setValue("WI");
+    component.siteForm.get("waterbody").setValue("test");
+    component.siteForm.controls["siteHousings"] = new FormArray([new FormGroup({housingType: new FormControl("test"), housing_type_id: new FormControl(1)})]);
+    component.housingTypeArray = ["test"]
+    component.data.networkType = "testNetwork";
+    component.data.networkName = "testName";
+    component.networkTypes = [{network_type_name: "networkTypeName2", selected: true}];
+    component.networkNames = [{name: "testName2", selected: true}];
+    component.selectedNetworkTypes = ["networkTypeName2"];
+    component.selectedNetworkNames = ["networkname2"];
+    component.siteForm.get("siteHousings").markAsDirty();
+    component.siteHousingLookup = [{housing_type_id: 1, type_name: "test"}, {housing_type_id: 2, type_name: "testHousing"}]
+
+    let siteResponse = {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", file_id: 9999};
+    spyOn(component.siteEditService, 'putSite').and.returnValue(
+      of(siteResponse)
+    );
+    component.data.siteHousing = [{amount: 1, housing_type_id: 2, housingType: "testHousing", site_housing_id: 1}];
+    spyOn(component.siteEditService, 'deleteSiteHousings').and.returnValue(
+      of([])
+    );
+
+    spyOn(component.siteEditService, 'postSiteHousings').and.returnValue(
+      of({housing_type_id: 1})
+    );
+
+    spyOn(component.siteEditService, 'deleteNetworkNames').and.returnValue(
+      of([])
+    );
+
+    spyOn(component.siteEditService, 'postNetworkNames').and.returnValue(
+      of([{network_name_id: 2, name: "networkname2"}])
+    );
+
+    spyOn(component.siteEditService, 'deleteNetworkTypes').and.returnValue(
+      of([])
+    );
+
+    spyOn(component.siteEditService, 'postNetworkTypes').and.returnValue(
+      of([{network_type_id: 2, network_type_name: "networkTypeName2"}])
+    );
 
     component.latLngUnit = "dms";
     
@@ -905,128 +947,16 @@ describe('SiteEditComponent', () => {
     component.siteForm.get('lonmin').setValue('44');
     component.siteForm.get('lonsec').setValue('30.012');
 
-    component.putSite();
-    fixture.detectChanges();
+    component.putSite().then(() => {
+      fixture.detectChanges();
 
-    expect(component.returnData.site).toEqual(siteResponse);
-    expect(component.siteForm.get('latitude_dd').value).toEqual('47.44167');
-    expect(component.siteForm.get('longitude_dd').value).toEqual('-91.74167');
-    expect(component.returnData.housings).toEqual([{amount: 1, housing_type_id: 1}]);
+      expect(component.returnData.site).toEqual(siteResponse);
+      expect(component.siteForm.get('latitude_dd').value).toEqual('47.44167');
+      expect(component.siteForm.get('longitude_dd').value).toEqual('-91.74167');
+      expect(component.returnData.housings).toEqual([{housing_type_id: 1, housingType: "test"}]);
+      expect(component.returnData.networkName).toEqual(["networkname2"]);
+      expect(component.returnData.networkType).toEqual(["networkTypeName2"]);
+      done();
+    });
   });
-
-  // it('should remove site housings', () => {
-  //   component.latLngUnit = "decdeg";
-  //   component.siteForm.get("site_id").setValue(24224);
-  //   component.siteForm.get("site_description").setValue("test");
-  //   component.siteForm.get("county").setValue("Dane");
-  //   component.siteForm.get("hcollect_method_id").setValue(2);
-  //   component.siteForm.get("hdatum_id").setValue(2);
-  //   component.siteForm.get("state").setValue("WI");
-  //   component.siteForm.get("waterbody").setValue("test");
-  //   component.siteForm.get("siteHousings").value = (new FormArray([new FormGroup({housingType: new FormControl("test"), housing_type_id: new FormControl(1)})]));
-  //   component.housingTypeArray = ["test"]
-  //   console.log(component.housingTypeArray)
-  //   component.data.siteHousing = [{amount: 1, housing_type_id: 2, housingType: "testHousing", site_housing_id: 1}];
-  //   spyOn(component.siteEditService, 'deleteSiteHousings').and.returnValue(
-  //     of([])
-  //   );
-  //   component.data.networkName = undefined;
-  //   component.data.networkType = undefined;
-  //   component.networkTypes = [];
-  //   component.networkNames = [];
-
-  //   component.putSite();
-  //   fixture.detectChanges();
-
-  //   expect(component.returnData.housings).toEqual([{amount: 1, housing_type_id: 1}]);
-  // });
-
-  // it('should validate lat dd value', () => {
-  //   component.siteForm.get('latitude_dd').setValue(47.44167);
-
-  //   component.checkLatValue();
-  //   fixture.detectChanges();
-  //   expect(component.siteForm.get('latitude_dd').valid).toBeTruthy();
-
-  //   component.siteForm.get("latitude_dd").setValue(-10);
-
-  //   component.checkLatValue();
-  //   fixture.detectChanges();
-  //   expect(component.siteForm.get('latitude_dd').valid).toBeFalsy();
-
-  //   component.siteForm.get("latitude_dd").setValue(null);
-
-  //   component.checkLatValue();
-  //   fixture.detectChanges();
-  //   expect(component.siteForm.get('latitude_dd').valid).toBeFalsy();
-  // });
-
-  // it('should validate lon dd value', () => {
-  //   component.siteForm.get('longitude_dd').setValue(-100);
-
-  //   component.checkLonValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('longitude_dd'))
-  //   expect(component.siteForm.get('longitude_dd').valid).toBeTruthy();
-
-  //   component.siteForm.get("longitude_dd").setValue(-180);
-
-  //   component.checkLonValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('longitude_dd'))
-  //   expect(component.siteForm.get('longitude_dd').valid).toBeFalsy();
-
-  //   component.siteForm.get("longitude_dd").setValue(null);
-
-  //   component.checkLonValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('longitude_dd'))
-  //   expect(component.siteForm.get('longitude_dd').valid).toBeFalsy();
-  // });
-
-  // it('should validate lon deg value', () => {
-  //   component.siteForm.get('londeg').setValue(-100);
-
-  //   component.checkDDLonDegValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('londeg'))
-  //   expect(component.siteForm.get('londeg').valid).toBeTruthy();
-
-  //   component.siteForm.get("londeg").setValue(-180);
-
-  //   component.checkDDLonDegValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('londeg'))
-  //   expect(component.siteForm.get('londeg').valid).toBeFalsy();
-
-  //   component.siteForm.get("londeg").setValue(undefined);
-
-  //   component.checkDDLonDegValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('londeg'))
-  //   expect(component.siteForm.get('londeg').valid).toBeFalsy();
-  // });
-
-  // it('should validate lat deg value', () => {
-  //   component.siteForm.get('latdeg').setValue(47.44167);
-
-  //   component.checkDDLatDegValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('latdeg'))
-  //   expect(component.siteForm.get('latdeg').valid).toBeTruthy();
-
-  //   component.siteForm.get("latdeg").setValue(-10);
-
-  //   component.checkDDLatDegValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('latdeg'))
-  //   expect(component.siteForm.get('latdeg').valid).toBeFalsy();
-
-  //   component.siteForm.get("latdeg").setValue(undefined);
-
-  //   component.checkDDLatDegValue();
-  //   fixture.detectChanges();
-  //   console.log(component.siteForm.get('latdeg'))
-  //   expect(component.siteForm.get('latdeg').valid).toBeFalsy();
-  // });
 });

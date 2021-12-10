@@ -946,12 +946,16 @@ export class SiteDetailsComponent implements OnInit {
                             console.log("network types changed")
                             this.networkType = result.networkType.join(', ');
                         }
+                    }else{
+                        this.networkType = '';
                     }
 
-                    if(result.networkType.length > 0){
+                    if(result.networkName.length > 0){
                         if(result.networkName.join(',') !== this.networkName){
                             this.networkName = result.networkName.join(', ');
                         }
+                    }else{
+                        this.networkName = '';
                     }
 
                     // Files
@@ -962,6 +966,7 @@ export class SiteDetailsComponent implements OnInit {
 
                     // Landowner
                     if(result.landowner !== null){
+                        this.landownerContact = result.landowner;
                         console.log(result.landowner);
                     }
                 }

@@ -62,7 +62,7 @@ describe('SiteEditService', () => {
         );
     });
     const req = httpTestingController.expectOne(
-      APP_SETTINGS.SITES_URL + '/LandOwners/9999.json',
+      APP_SETTINGS.API_ROOT + 'LandOwners/9999.json',
     );
     req.flush(mockLandowner);
   });
