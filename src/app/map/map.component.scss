@@ -356,14 +356,16 @@ $borderRadius: 4px;
 
 .extentBtn {
     position: absolute;
-    padding: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    text-align: center;
     top: 10px !important;
     left: 50px;
     z-index: 1000;
     background-color: white;
     border-radius: 4px;
-    width: 23px;
-    height: 23px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
 }
 
