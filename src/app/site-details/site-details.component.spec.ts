@@ -117,16 +117,17 @@ describe('SiteDetailsComponent', () => {
         let networkTypeSpy = spyOn(component.siteService, 'getNetworkType').and.returnValue(of([]));
         let opSpy = spyOn(component.siteService, 'getObjectivePoints').and.returnValue(of([]));
         let peakSpy = spyOn(component.siteService, 'getPeakSummaryView').and.returnValue(of([]));
-        component.getData();
-        fixture.detectChanges();
-        expect(component.site).toEqual(response);
-        expect(component.noSiteInfo).toBeFalse;
-        expect(hDatumSpy).toHaveBeenCalled();
-        expect(hCollectionMethodSpy).toHaveBeenCalled();
-        expect(networkNameSpy).toHaveBeenCalled();
-        expect(networkTypeSpy).toHaveBeenCalled();
-        expect(opSpy).toHaveBeenCalled();
-        expect(peakSpy).toHaveBeenCalled();
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.site).toEqual(response);
+            expect(component.noSiteInfo).toBeFalse;
+            expect(hDatumSpy).toHaveBeenCalled();
+            expect(hCollectionMethodSpy).toHaveBeenCalled();
+            expect(networkNameSpy).toHaveBeenCalled();
+            expect(networkTypeSpy).toHaveBeenCalled();
+            expect(opSpy).toHaveBeenCalled();
+            expect(peakSpy).toHaveBeenCalled();
+        })
     });
 
     it('if getSingleSite response length = 0, noSiteInfo should be true', () => {
@@ -154,9 +155,10 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(component.hdatum).toEqual("testDatum");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.hdatum).toEqual("testDatum");
+        });
     });
 
     it('should call getHCollectionMethod and set hmethod to method name', () => {
@@ -171,9 +173,10 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(component.hmethod).toEqual("testMethod");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.hmethod).toEqual("testMethod");
+        });
     });
 
     it('should call getNetworkType and set networkType to network type name if response length > 0', () => {
@@ -188,9 +191,10 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(component.networkType).toEqual("Test Network Type");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.networkType).toEqual("Test Network Type");
+        });
     });
 
     it('should call getNetworkName and set networkName to network name if response length > 0', () => {
@@ -205,9 +209,10 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(component.networkName).toEqual("Test Network");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.networkName).toEqual("Test Network");
+        });
     });
 
     it('should call getObjectivePoints and set referenceMarks to response', () => {
@@ -222,9 +227,10 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(component.referenceMarks.length).toEqual(3);
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.referenceMarks.length).toEqual(3);
+        });
     });
 
     it('should call getLandownerContact if site has landownercontact_id', () => {
@@ -239,11 +245,12 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(landownerSpy).toHaveBeenCalled();
-        expect(component.landownerContact.fname).toEqual("John");
-        expect(component.landownerContact.lname).toEqual("Smith");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(landownerSpy).toHaveBeenCalled();
+            expect(component.landownerContact.fname).toEqual("John");
+            expect(component.landownerContact.lname).toEqual("Smith");
+        });
     });
 
     it('should call getMemberName if site has member_id', () => {
@@ -258,10 +265,11 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(memberSpy).toHaveBeenCalled();
-        expect(component.memberName).toEqual("John Smith");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(memberSpy).toHaveBeenCalled();
+            expect(component.memberName).toEqual("John Smith");
+        });
     });
 
     it('peaks should be populated if peak results are returned', () => {
@@ -276,11 +284,12 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(peakSpy).toHaveBeenCalled();
-        expect(component.peaks.length).toEqual(1);
-        expect(component.peaks[0].peak_date).toEqual("09/16/2020");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(peakSpy).toHaveBeenCalled();
+            expect(component.peaks.length).toEqual(1);
+            expect(component.peaks[0].peak_date).toEqual("09/16/2020");
+        });
     });
 
     it('siteHousing should be populated if site housing results are returned', () => {
@@ -295,10 +304,11 @@ describe('SiteDetailsComponent', () => {
             of(housingTypeResponse)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(component.siteHousing.length).toEqual(1);
-        expect(component.siteHousing[0].housingType).toEqual("bracket");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.siteHousing.length).toEqual(1);
+            expect(component.siteHousing[0].housingType).toEqual("bracket")
+        });
     });
 
     it('should call services for all site info if no event selected', () => {
@@ -332,15 +342,16 @@ describe('SiteDetailsComponent', () => {
         let siteFilesSpy = spyOn(component.siteService, 'getSiteFiles').and.returnValue(
             of(responseSiteFiles)
         );
-        component.getData();
-        fixture.detectChanges();
-        expect(siteSensorSpy).toHaveBeenCalled();
-        expect(component.siteFullInstruments.length).toEqual(3);
-        expect(component.siteFullInstruments[0].statusType).not.toEqual(undefined);
-        expect(hwmSpy).toHaveBeenCalled();
-        expect(component.hwm.length).toEqual(3);
-        expect(component.hwm[0].flag_date).toContain("/");
-        expect(component.fileLength).toEqual(responseSiteFiles.length);
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(siteSensorSpy).toHaveBeenCalled();
+            expect(component.siteFullInstruments.length).toEqual(3);
+            expect(component.siteFullInstruments[0].statusType).not.toEqual(undefined);
+            expect(hwmSpy).toHaveBeenCalled();
+            expect(component.hwm.length).toEqual(3);
+            expect(component.hwm[0].flag_date).toContain("/");
+            expect(component.fileLength).toEqual(responseSiteFiles.length);
+        });
     });
 
     it('should call getSiteFiles and separate values into new arrays for sensor, hwm, site and rm', () => {
@@ -366,16 +377,17 @@ describe('SiteDetailsComponent', () => {
         let siteFilesSpy = spyOn(component.siteService, 'getSiteFiles').and.returnValue(
             of(responseSiteFiles)
         );
-        component.getData();
-        fixture.detectChanges();
-        expect(component.siteFiles.length).toEqual(1);
-        expect(component.hwmFiles.length).toEqual(1);
-        expect(component.datumLocFiles.length).toEqual(1);
-        expect(component.sensorFiles.length).toEqual(1);
-        expect(component.sensorFilesDone).toBeTrue;
-        expect(siteFilesSpy).toHaveBeenCalled();
-        expect(component.files[0].format_file_date).toContain("/");
-        expect(component.files[2].details).not.toEqual(undefined);
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.siteFiles.length).toEqual(1);
+            expect(component.hwmFiles.length).toEqual(1);
+            expect(component.datumLocFiles.length).toEqual(1);
+            expect(component.sensorFiles.length).toEqual(1);
+            expect(component.sensorFilesDone).toBeTrue;
+            expect(siteFilesSpy).toHaveBeenCalled();
+            expect(component.files[0].format_file_date).toContain("/");
+            expect(component.files[2].details).not.toEqual(undefined);
+        });
     });
 
     it('should call services for event site info if an event is selected', () => {
@@ -413,16 +425,17 @@ describe('SiteDetailsComponent', () => {
         let siteEventFilesSpy = spyOn(component.siteService, 'getSiteEventFiles').and.returnValue(
             of(responseSiteFiles)
         );
-        component.getData();
-        fixture.detectChanges();
-        expect(siteSensorSpy).toHaveBeenCalled();
-        expect(component.siteFullInstruments.length).toEqual(3);
-        expect(hwmSpy).toHaveBeenCalled();
-        expect(component.hwm.length).toEqual(3);
-        expect(component.hwm[0].flag_date).toContain("/");
-        expect(siteFilesSpy).toHaveBeenCalled();
-        expect(siteEventFilesSpy).toHaveBeenCalled();
-        expect(component.fileLength).toEqual(responseSiteFiles.length);
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(siteSensorSpy).toHaveBeenCalled();
+            expect(component.siteFullInstruments.length).toEqual(3);
+            expect(hwmSpy).toHaveBeenCalled();
+            expect(component.hwm.length).toEqual(3);
+            expect(component.hwm[0].flag_date).toContain("/");
+            expect(siteFilesSpy).toHaveBeenCalled();
+            expect(siteEventFilesSpy).toHaveBeenCalled();
+            expect(component.fileLength).toEqual(responseSiteFiles.length);
+        });
     });
 
     it('should get deployment and status types if getSiteEventInstruments has length > 0', () => {
@@ -458,15 +471,16 @@ describe('SiteDetailsComponent', () => {
             of(statusResponse)
         );
 
-        component.getData();
-        fixture.detectChanges();
-        expect(siteSensorSpy).toHaveBeenCalled();
-        expect(component.siteFullInstruments.length).toEqual(1);
-        expect(deploymentTypeSpy).toHaveBeenCalled();
-        expect(component.siteFullInstruments[0].deploymentType).toEqual("test");
-        expect(statusTypeSpy).toHaveBeenCalled();
-        expect(statusSpy).toHaveBeenCalled();
-        expect(component.siteFullInstruments[0].statusType).toEqual("deployed");
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(siteSensorSpy).toHaveBeenCalled();
+            expect(component.siteFullInstruments.length).toEqual(1);
+            expect(deploymentTypeSpy).toHaveBeenCalled();
+            expect(component.siteFullInstruments[0].deploymentType).toEqual("test");
+            expect(statusTypeSpy).toHaveBeenCalled();
+            expect(statusSpy).toHaveBeenCalled();
+            expect(component.siteFullInstruments[0].statusType).toEqual("deployed");
+        });
     });
 
     it('should call getSiteEventFiles and separate values into new arrays for sensor and hwm', () => {
@@ -492,14 +506,15 @@ describe('SiteDetailsComponent', () => {
         let siteEventFilesSpy = spyOn(component.siteService, 'getSiteEventFiles').and.returnValue(
             of(responseSiteFiles)
         );
-        component.getData();
-        fixture.detectChanges();
-        expect(component.hwmFiles.length).toEqual(1);
-        expect(component.sensorFiles.length).toEqual(1);
-        expect(component.sensorFilesDone).toBeTrue;
-        expect(siteEventFilesSpy).toHaveBeenCalled();
-        expect(component.files[0].file_date).toContain("/");
-        expect(component.files[2].details).not.toEqual(undefined);
+        component.getData().then(() => {
+            fixture.detectChanges();
+            expect(component.hwmFiles.length).toEqual(1);
+            expect(component.sensorFiles.length).toEqual(1);
+            expect(component.sensorFilesDone).toBeTrue;
+            expect(siteEventFilesSpy).toHaveBeenCalled();
+            expect(component.files[0].file_date).toContain("/");
+            expect(component.files[2].details).not.toEqual(undefined);
+        });
     });
 
     it ('toggleSiteMap should change value to true', () => {

@@ -204,28 +204,34 @@ export class SiteDetailsComponent implements OnInit {
         this.siteFilesDataSource.sort = this.siteFilesSort;
     }
 
-    getData() {
+    async getData() {
         let self = this;
 
         this.siteService.getCurrentEvent().subscribe(result => this.currentEvent = result)
         // Get event name
-        this.siteService
+        const getEvent = await new Promise(resolve => this.siteService
             .getSiteEvents(this.siteID)
             .subscribe((results) => {
                 if(self.currentEvent === 0){
                     this.event = "All Events";
+                    resolve(getEvent);
                 }else{
                     if(results.length > 0){
                         results.forEach(function(result){
                             if (self.currentEvent == result.event_id){
                                 self.event = result.event_name;
+                                resolve(getEvent);
                             }
                         })
+                    }else{
+                        resolve(getEvent);
                     }
                 }
 
-            });
+            })
+        );
 
+        Promise.all([getEvent]).then(() => {
         this.siteService
             .getSingleSite(this.siteID)
             .subscribe((results) => {
@@ -574,6 +580,7 @@ export class SiteDetailsComponent implements OnInit {
                     this.noSiteInfo = true;
                 }
             });
+        });
 
         // Get data for housing type table
         this.siteService
