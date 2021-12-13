@@ -1,0 +1,349 @@
+.mat-expansion-panel-header {
+    background-color: #03274B;
+}
+
+.mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
+    color: #FFF;
+    background-color: #03274B; 
+}
+
+.mat-expansion-panel-header:hover {
+    background-color: #03274B !important;
+    color: #FFF !important;
+}
+
+.mat-expansion-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
+    color: #FFF;
+    font-weight: 500;
+}
+.table-container {
+    display: inline-block;
+    margin: auto;
+    width: 50%;
+    vertical-align: top;
+}
+
+.outer-content{
+    display: table;
+    margin: auto;
+}
+
+.content-right {
+    display: table-cell;
+    width: 50%;
+    text-align: left;
+}
+
+.content-left {
+    display: table-cell;
+    width: 50%;
+    padding-right: 5px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.cell-container {
+    display: table-row;
+}
+
+.cell-container label{
+    padding: 5px;
+    font-size: 15px;
+}
+
+.cell-container input{
+    padding: 5px;
+    font-size: 15px;
+}
+
+.mat-form-field {
+    display: block;
+}
+
+ul {
+    list-style-type: none;
+}
+
+#sensorAppropriate {
+    margin-bottom: 15px;
+}
+
+#latLngUnit {
+    margin: 15px;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.radio-button {
+    margin: 5px;
+}
+
+.mat-form-field {
+    margin: 15px;
+}
+
+.info-icon {
+    font-size: 20px;
+    color: #03274B;
+}
+
+.info-header-icon {
+    font-size: 20px;
+    color: #FFF;
+    text-align: right;
+}
+
+.tableContainer {
+    width: 100%;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-column-HousingType{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: middle;
+    align-self: stretch;
+}
+
+.mat-column-HousingLength{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: middle;
+    align-self: stretch;
+} 
+
+.mat-column-HousingMaterial{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: middle;
+    align-self: stretch;
+}
+
+.mat-column-Amount{
+    padding: 10px;
+    vertical-align: middle;
+    border-right: 1px solid #e0e0e0;
+    align-self: stretch;
+}
+
+.mat-column-Notes{
+    padding: 10px;
+    vertical-align: middle;
+    align-self: stretch;
+}
+
+.mat-column-FileName{
+    padding: 10px;
+    vertical-align: middle;
+    border-right: 1px solid #e0e0e0;
+    align-self: stretch;
+}
+
+.mat-column-FileDate{
+    padding: 10px;
+    vertical-align: middle;
+    align-self: stretch;
+}
+
+.mat-header-cell {
+    font-weight: bold;
+    text-transform: uppercase;
+    color:rgba(0, 0, 0, 0.87);
+    font-size: 12px;
+    vertical-align: middle;
+    background-color: #f7f7f7;
+}
+
+.mat-cell, .mat-header-cell, .mat-footer-cell {
+    overflow: auto;
+    column-width: 170px;
+}
+
+.disabled {
+    color: #000;
+}
+
+#siteFileTable {
+    .mat-cell, .mat-header-cell, .mat-footer-cell {
+        overflow: auto;
+        column-width: 150px;
+    }
+}
+
+.file-table {
+    cursor: pointer;
+}
+
+.mat-expansion-panel-header-description {
+    flex-basis: 0;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.add-button {
+    margin: 10px;
+    background-color: #008248;
+    color: #F4F4F4;
+    border: 1px solid #2B7059;
+}
+
+.remove-button {
+    margin-bottom: 10px;
+    background-color: #E70000;
+    color: #F4F4F4;
+    border: 1px solid #ce0000;
+}
+
+.form-header {
+    font-weight: bold;
+}
+
+.event-alert {
+    margin: 10px;
+    border: solid 1px #ee992a;
+}
+
+.event-alert p{
+    display: inline;
+    vertical-align: middle;
+    color: #ee992a;
+    margin: 0px;
+}
+
+.warning-icon {
+    padding-right: 10px;
+    color: #ee992a;
+    display: inline;
+    vertical-align: middle;
+}
+
+.alert.alert-danger {
+    color: #f44336;
+}
+
+.site-button-group {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.save-btn {
+    background-color: #008248;
+    color: #F4F4F4;
+    border: 1px solid #2B7059;
+}
+
+.cancel-btn {
+    margin-left: 10px;
+}
+
+.delete-btn {
+    background-color: #E70000;
+    color: #F4F4F4;
+    border: 1px solid #ce0000;
+    margin-left: 10px;
+}
+
+.file-button-group {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.upload-file {
+    margin-left: 20px;
+}
+
+.invalid {
+    padding: 15px;
+}
+
+.custom-file-input::-webkit-file-upload-button, .custom-file-inputChange::-webkit-file-upload-button, .custom-file-input-add::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+.custom-file-input-add::before {
+    content: 'Choose File';
+    display: inline-block;
+    background: #FFF;
+    border: none;
+    border-radius: 4px;
+    padding: 0px 16px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.20), 0px 2px 2px 0px rgba(0, 0, 0, .14), 0px 1px 5px 0px rgba(0, 0, 0, .12);
+    line-height: 36px;
+    margin-top: 10px;
+}
+
+.custom-file-input::before {
+    content: 'Re-Upload File';
+    display: inline-block;
+    background: #FFF;
+    border: none;
+    border-radius: 4px;
+    padding: 0px 16px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.20), 0px 2px 2px 0px rgba(0, 0, 0, .14), 0px 1px 5px 0px rgba(0, 0, 0, .12);
+    line-height: 36px;
+    margin-top: 10px;
+}
+
+.custom-file-inputChange::before {
+    content: 'Replace Associated File';
+    display: inline-block;
+    background: #FFF;
+    border: none;
+    border-radius: 4px;
+    padding: 0px 16px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.20), 0px 2px 2px 0px rgba(0, 0, 0, .14), 0px 1px 5px 0px rgba(0, 0, 0, .12);
+    line-height: 36px;
+    margin-top: 10px;
+}
+
+.required {
+    margin-left: 5px !important;
+    color: #E70000 !important;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: top;
+    line-height: 36px !important;
+    height: 36px;
+}
+
+.file-upload-span {
+    padding-top: 10px;
+}
+
+.loading {
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(255,255,255,0.8);
+    z-index:9999;
+}
+
+.close-button {
+    float: right;
+}

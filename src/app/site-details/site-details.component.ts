@@ -6,6 +6,7 @@ import {
     NavigationEnd,
 } from '@angular/router';
 import { SiteService } from '@services/site.service';
+import { CurrentUserService } from '@services/current-user.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -15,11 +16,13 @@ import { SensorDialogComponent } from '@app/sensor-dialog/sensor-dialog.componen
 import { HwmDialogComponent } from '@app/hwm-dialog/hwm-dialog.component';
 import { FileDetailsDialogComponent } from '@app/file-details-dialog/file-details-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 declare let L: any;
 import 'leaflet';
 import { DateTime } from "luxon";
 import { marker } from 'leaflet';
+import { SiteEditComponent } from '@app/site-edit/site-edit.component';
+import { ResultDetailsComponent } from '@app/result-details/result-details.component';
+import { networkInterfaces } from 'os';
 
 @Component({
     selector: 'app-site-details',
@@ -50,6 +53,8 @@ export class SiteDetailsComponent implements OnInit {
     public noSiteInfo;
     public hdatum;
     public hmethod;
+    public hdatumList = [];
+    public hmethodList = [];
     public housingType;
     public networkType;
     public networkName;
@@ -101,12 +106,16 @@ export class SiteDetailsComponent implements OnInit {
     public otherSensorVisible = false;
     public nearbySitesVisible = false;
     public nearbyToggled = false;
+    public priority;
     public nearbySites = L.featureGroup([]);
     public markers = L.markerClusterGroup({
         spiderfyOnMaxZoom: false,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: false
     });
+    public currentUser;
+    // Disable edit button for some roles
+    editDisabled = localStorage.role !== '3' && localStorage.role !== '2' && localStorage.role !== '1';
 
     displayedColumns: string[] = [
         'HousingType',
@@ -167,8 +176,13 @@ export class SiteDetailsComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         public siteService: SiteService,
+        public currentUserService: CurrentUserService,
         public dialog: MatDialog,
-    ) {}
+    ) {
+        currentUserService.currentUser.subscribe((user) => {
+            this.currentUser = user;
+        });
+    }
 
     ngOnInit(): void {
         this.route.params.subscribe(routeParams => {
@@ -223,6 +237,7 @@ export class SiteDetailsComponent implements OnInit {
                     this.siteService
                         .getHDatum()
                         .subscribe((results) => {
+                            this.hdatumList = results;
                             results.forEach(function(result){
                                 if (result.datum_id === self.site.hdatum_id){
                                     self.hdatum = result.datum_name;
@@ -234,6 +249,7 @@ export class SiteDetailsComponent implements OnInit {
                     this.siteService
                         .getHCollectionMethod()
                         .subscribe((results) => {
+                            this.hmethodList = results;
                             results.forEach(function(result){
                                 if (result.hcollect_method_id === self.site.hcollect_method_id){
                                     self.hmethod = result.hcollect_method;
@@ -246,8 +262,12 @@ export class SiteDetailsComponent implements OnInit {
                     this.siteService
                         .getNetworkType(this.siteID)
                         .subscribe((results) => {
+                            let networkTypeArray = [];
                             if(results.length > 0){
-                                this.networkType = results[0].network_type_name;
+                                results.forEach(function(result){
+                                    networkTypeArray.push(result.network_type_name)
+                                })
+                                this.networkType = networkTypeArray.join(", ");
                             }
 
                         });
@@ -256,8 +276,12 @@ export class SiteDetailsComponent implements OnInit {
                     this.siteService
                         .getNetworkName(this.siteID)
                         .subscribe((results) => {
+                            let networkNameArray = [];
                             if(results.length > 0){
-                                this.networkName = results[0].name
+                                results.forEach(function(result){
+                                    networkNameArray.push(result.name)
+                                })
+                                this.networkName = networkNameArray.join(", ");
                             }
 
                         });
@@ -274,6 +298,13 @@ export class SiteDetailsComponent implements OnInit {
                             this.refMarkDataSource.paginator = this.paginator;
                         }
 
+                    });
+
+                    // Get deployment priority
+                    this.siteService
+                    .getDepPriority(this.siteID)
+                    .subscribe((results) => {
+                        this.priority = results;
                     });
 
                     // If no event selected
@@ -344,7 +375,7 @@ export class SiteDetailsComponent implements OnInit {
                                 let fileDate = file.file_date.split("T")[0];
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.file_date = fileDate;
+                                file.format_file_date = fileDate;
                                 if(file.instrument_id !== undefined){
                                     self.siteService.getFileSensor(file.file_id).subscribe((results) => {
                                         file.details = results;
@@ -480,7 +511,7 @@ export class SiteDetailsComponent implements OnInit {
                                 let fileDate = file.file_date.split("T")[0];
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.file_date = fileDate;
+                                file.format_file_date = fileDate;
                                 if (file.objective_point_id !== undefined){
                                     self.datumLocFiles.push(file);
                                     self.fileLength ++;
@@ -523,6 +554,7 @@ export class SiteDetailsComponent implements OnInit {
                             .getLandownerContact(this.siteID)
                             .subscribe((results) => {
                                 this.landownerContact = results;
+                                console.log(this.landownerContact);
                             });
                     }
 
@@ -531,9 +563,7 @@ export class SiteDetailsComponent implements OnInit {
                         this.siteService
                             .getMemberName(this.site.member_id)
                             .subscribe((results) => {
-                                if(results.length > 0){
-                                    this.memberName = results[0].fname + " " + results[0].lname;
-                                }
+                                this.memberName = results.fname + " " + results.lname;
                                 
                             });
                     }else{
@@ -840,7 +870,7 @@ export class SiteDetailsComponent implements OnInit {
             let photoDate = row.photo_date.split("T")[0];
             photoDate = photoDate.split("-");
             photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
-            row.photo_date = photoDate;
+            row.format_photo_date = photoDate;
         }
 
         let dialogWidth;
@@ -862,6 +892,89 @@ export class SiteDetailsComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {});
     }
 
+    openEditDialog(){
+        let siteHousing = JSON.parse(JSON.stringify(this.siteHousing));
+
+        if(localStorage.role === '3' || localStorage.role === '2' || localStorage.role === '1'){
+            const dialogRef = this.dialog.open(SiteEditComponent, {
+                data: {
+                    site: this.site,
+                    networkType: this.networkType,
+                    networkName: this.networkName,
+                    hdatumList: this.hdatumList,
+                    hmethodList: this.hmethodList,
+                    siteFiles: this.siteFiles,
+                    siteHousing: siteHousing,
+                    memberName: this.memberName,
+                    priority: this.priority,
+                    landowner: this.landownerContact,
+                },
+                disableClose: true,
+            });
+            dialogRef.afterClosed().subscribe((result) => {
+                if(result){
+                    console.log(result)
+                    if(result.site !== null){
+                        // Update site details page with any edits
+                        let siteResultCopy = JSON.parse(JSON.stringify(result.site));
+                        let currentSiteCopy = JSON.parse(JSON.stringify(this.site));
+                        delete siteResultCopy.last_updated; delete siteResultCopy.last_updated_by; delete currentSiteCopy.last_updated; delete currentSiteCopy.last_updated_by;
+                        // copy and remove last updated info to compare
+                        // Site info changed
+                        if(siteResultCopy !== currentSiteCopy){
+                            this.site = result.site;
+                        }
+                    }
+                    
+                    if(result.housings.length > 0){
+                        // Update housing
+                        let housingResultCopy = JSON.parse(JSON.stringify(result.housings));
+                        let currentHousingCopy = JSON.parse(JSON.stringify(this.siteHousing));
+                        delete housingResultCopy.last_updated; delete housingResultCopy.last_updated_by; delete currentHousingCopy.last_updated; delete currentHousingCopy.last_updated_by;
+                        if(currentHousingCopy !== housingResultCopy){                     
+                            this.siteHousing = result.housings;
+                        }
+                    }
+
+                    if(result.networkType.length > 0){
+                        // Update network types
+                        // let netTypeResultCopy = JSON.parse(JSON.stringify(result.networkType));
+                        // let currentNetTypeCopy = JSON.parse(JSON.stringify(this.networkType));
+                        // console.log(netTypeResultCopy, currentNetTypeCopy)
+                        // delete netTypeResultCopy.last_updated; delete netTypeResultCopy.last_updated_by; delete currentNetTypeCopy.last_updated; delete currentNetTypeCopy.last_updated_by;
+                        if(result.networkType.join(',') !== this.networkType){
+                            console.log("network types changed")
+                            this.networkType = result.networkType.join(', ');
+                        }
+                    }else{
+                        this.networkType = '';
+                    }
+
+                    if(result.networkName.length > 0){
+                        if(result.networkName.join(',') !== this.networkName){
+                            this.networkName = result.networkName.join(', ');
+                        }
+                    }else{
+                        this.networkName = '';
+                    }
+
+                    // Files
+                    if(result.files.length > 0){
+                        this.siteFilesDataSource.data = result.files;
+                        this.fileLength = this.siteFilesDataSource.data.length + this.hwmFilesDataSource.data.length + this.refMarkFilesDataSource.data.length + this.sensorFilesDataSource.data.length;
+                    }
+
+                    // Landowner
+                    if(result.landowner !== null){
+                        this.landownerContact = result.landowner;
+                        console.log(result.landowner);
+                    }
+                }
+            });
+        }
+
+    }
+    
     // fired when user clicks a sortable header
     sortSensorData(sort: Sort) {
         const data = this.sensorDataSource.data.slice();

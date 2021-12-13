@@ -14,11 +14,19 @@
                 <mat-tab label="Site">
                     <div class="basic-site-info">
                         <div id="siteMap">
-                            <button mat-button class="map-button" (click)="toggleSiteMap()">
-                                <span *ngIf="siteMapHidden">View site on map <mat-icon class="expand-icon">expand_more</mat-icon></span>
-                                <span *ngIf="!siteMapHidden">Hide map <mat-icon class="expand-icon">expand_less</mat-icon></span>
-                            </button>
+                                <div class="left">
+                                    <button mat-raised-button class="edit-button" [disabled]="editDisabled" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
+                                </div>
+                                <div class="right">
+                                    <button mat-raised-button disabled class="delete-button"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                                    <mat-icon class="info-icon" matTooltip="To delete a site, please contact a STN administrator." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </div>
                         </div>
+                        <button mat-raised-button class="map-button" (click)="toggleSiteMap()">
+                            <span *ngIf="siteMapHidden">View site on map <mat-icon class="expand-icon">expand_more</mat-icon></span>
+                            <span *ngIf="!siteMapHidden">Hide map <mat-icon class="expand-icon">expand_less</mat-icon></span>
+                        </button>
                         <div id="mapContainer">
                             <mat-accordion id="legend">
                                 <mat-expansion-panel id="legend-expansion" expanded="true">
@@ -172,6 +180,11 @@
                                 <p class="content-right" *ngIf="site.other_sid !== '' && site.noaa_sid !== undefined; else nullOther">{{site.other_sid}}</p>
                                 <ng-template #nullOther><p class="content-right">---</p></ng-template>
                             </div>
+                            <div class="cell-container">
+                                <p class="content-left">Priority</p>
+                                <p class="content-right" *ngIf="priority !== '' && priority !== undefined && priority !== null; else nullPriority">{{priority.priority_name}}</p>
+                                <ng-template #nullPriority><p class="content-right">---</p></ng-template>
+                            </div>
                         </div>
                     </div>
                     <mat-accordion multi="true">
@@ -215,12 +228,12 @@
                                 <div class="outer-content" *ngIf="site !== undefined">
                                     <div class="cell-container">
                                         <p class="content-left">Latitude</p>
-                                        <p class="content-right" *ngIf="site.latitude_dd !== '' && site.latitude_dd !== undefined; else nullLat">{{site.latitude_dd.toFixed(2)}}</p>
+                                        <p class="content-right" *ngIf="site.latitude_dd !== '' && site.latitude_dd !== undefined; else nullLat">{{site.latitude_dd}}</p>
                                         <ng-template #nullLat><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
                                         <p class="content-left">Longitude</p>
-                                        <p class="content-right" *ngIf="site.longitude_dd !== '' && site.longitude_dd !== undefined; else nullLon">{{site.longitude_dd.toFixed(2)}}</p>
+                                        <p class="content-right" *ngIf="site.longitude_dd !== '' && site.longitude_dd !== undefined; else nullLon">{{site.longitude_dd}}</p>
                                         <ng-template #nullLon><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
@@ -349,12 +362,12 @@
                                 <div class="outer-content" *ngIf="site !== undefined">
                                     <div class="cell-container">
                                         <p class="content-left">Network Type</p>
-                                        <p class="content-right" *ngIf="networkType !== undefined; else nullNetworkType">{{networkType}}</p>
+                                        <p class="content-right" *ngIf="networkType !== undefined && networkType !== ''; else nullNetworkType">{{networkType}}</p>
                                         <ng-template #nullNetworkType><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
                                         <p class="content-left">Network</p>
-                                        <p class="content-right" *ngIf="networkName !== undefined; else nullNetwork">{{networkName}}</p>
+                                        <p class="content-right" *ngIf="networkName !== undefined && networkName !== ''; else nullNetwork">{{networkName}}</p>
                                         <ng-template #nullNetwork><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
@@ -770,11 +783,11 @@
                                     <ng-container matColumnDef="FileDate">
                                         <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                         <td mat-cell *matCellDef="let file">
-                                            <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySiteFileDate">
+                                            <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displaySiteFileDate">
                                                 ---
                                             </div>
                                             <ng-template #displaySiteFileDate>
-                                                {{ file.file_date }}
+                                                {{ file.format_file_date }}
                                             </ng-template>
                                         </td>
                                     </ng-container>
