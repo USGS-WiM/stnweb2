@@ -288,7 +288,7 @@ export class SiteService {
             );
     }
 
-    //Get site events
+    //Get sensor events
     public getSensorEvents(sensorID): Observable<any> {
         return this.httpClient
             .get(APP_SETTINGS.API_ROOT + 'Instruments/' + sensorID + '/Event.json', {
@@ -302,6 +302,21 @@ export class SiteService {
                     return response;
                 }),
                 catchError(this.handleError<any>('getSensorEvents', []))
+            );
+    }
+
+    //Get full sensor
+    public getFullSensor(sensorID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/Instruments/' + sensorID + '/FullInstrument.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getFullSensor response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getFullSensor', []))
             );
     }
 
