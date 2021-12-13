@@ -35,7 +35,7 @@ export class FileDetailsDialogComponent implements OnInit {
         this.setSource();
       }
 
-      this.associatedFileUrl = APP_SETTINGS.API_ROOT + '/Files/' + this.data.row_data.file_id + '/Item';
+      this.associatedFileUrl = APP_SETTINGS.API_ROOT + 'Files/' + this.data.row_data.file_id + '/Item';
       let associatedFile = document.querySelector("#associatedFile");
       if(associatedFile !== null){
         associatedFile.setAttribute('href', this.associatedFileUrl);
