@@ -51,6 +51,11 @@ export class APP_UTILITIES {
             );
         }
     }
+
+    public static COMPARE(a: number | string, b: number | string, isAsc: boolean) {
+        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    }
+    
     public static FILTER_EVENT(event_name: any, events: Event[]): Event[] {
         if (typeof event_name == 'string') {
             const filterValue = event_name.toLowerCase();

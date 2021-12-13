@@ -66,6 +66,7 @@ import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
 import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
 import { FileDetailsDialogComponent } from './file-details-dialog/file-details-dialog.component';
 import { UserManagementComponent } from './user-management/user-management.component';
+import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 
 @NgModule({
     declarations: [
@@ -89,6 +90,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
         PeakDialogComponent,
         FileDetailsDialogComponent,
         UserManagementComponent,
+        AddUserDialogComponent,
     ],
     imports: [
         BrowserModule,

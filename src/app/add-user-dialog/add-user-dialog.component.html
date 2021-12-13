@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Add a New User</h2>
+<mat-dialog-content class="mat-typography">
+    <div id="addNewUserForm">
+        <form class="form" [formGroup]="newUserForm">
+            <div class="entryField">
+                <mat-form-field appearance="fill">
+                    <mat-label>First Name</mat-label>
+                    <input matInput placeholder="Placeholder">
+                    <mat-icon matSuffix>face</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput placeholder="Placeholder">
+                    <mat-icon matSuffix>face</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill">
+                    <mat-label>Username</mat-label>
+                    <input matInput placeholder="Placeholder">
+                    <mat-icon matSuffix>perm_identity</mat-icon>
+                    <mat-hint>Use your USGS username</mat-hint>
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill">
+                    <mat-label>Enter your email</mat-label>
+                    <mat-icon matSuffix>email</mat-icon>
+                    <input matInput placeholder="jdoe@usgs.gov" [formControl]="email" required>
+                    <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+                </mat-form-field>
+            </div>
+            <!-- <div class="entryField">
+                <mat-form-field appearance="fill">
+                    <mat-label>Agency</mat-label>
+                    <mat-select>
+                        <mat-option *ngFor="let food of foods" [value]="food.value">
+                          {{agency.ag}}
+                        </mat-option>
+                    <mat-icon matSuffix>face</mat-icon>
+                    <mat-hint>Hint</mat-hint>
+                </mat-form-field>
+            </div> -->
+        </form>
+    </div>
+</mat-dialog-content>
