@@ -393,6 +393,7 @@ describe('SiteDetailsComponent', () => {
             {file_date: "2020-09-16T16:05:04.931548"}
         ]
         const siteResponse = [{site: 7}]
+        const fullSensorResponse = [{sensorBrand: "test", sensorType: "test", instrument_status: []}]
         const currentEvent = 4;
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(currentEvent)
@@ -402,6 +403,9 @@ describe('SiteDetailsComponent', () => {
         );
         let siteSensorSpy = spyOn(component.siteService, 'getSiteEventInstruments').and.returnValue(
             of(responseSensor)
+        );
+        let fullSensorSpy = spyOn(component.siteService, 'getFullSensor').and.returnValue(
+            of(fullSensorResponse)
         );
         let hwmSpy = spyOn(component.siteService, 'getEventHWM').and.returnValue(
             of(responseHWM)
@@ -422,6 +426,7 @@ describe('SiteDetailsComponent', () => {
         expect(component.hwm[0].flag_date).toContain("/");
         expect(siteFilesSpy).toHaveBeenCalled();
         expect(siteEventFilesSpy).toHaveBeenCalled();
+        expect(fullSensorSpy).toHaveBeenCalled();
         expect(component.fileLength).toEqual(responseSiteFiles.length);
     });
 

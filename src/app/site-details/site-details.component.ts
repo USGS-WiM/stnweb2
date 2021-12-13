@@ -23,6 +23,7 @@ import { marker } from 'leaflet';
 import { SiteEditComponent } from '@app/site-edit/site-edit.component';
 import { ResultDetailsComponent } from '@app/result-details/result-details.component';
 import { networkInterfaces } from 'os';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 @Component({
     selector: 'app-site-details',
@@ -416,10 +417,13 @@ export class SiteDetailsComponent implements OnInit {
                                 // Deployment type lookup
                                 .getDeploymentTypes()
                                 .subscribe((deploymentResults) => {
+                                    console.log(deploymentResults)
                                     this.siteFullInstruments.forEach(function(result){
+                                        console.log(result)
                                         deploymentResults.forEach(function(type){
                                             if (result.deployment_type_id === type.deployment_type_id){
                                                 result.deploymentType = type.method;
+                                                console.log(result.deploymentType)
                                             }
                                         });
 
@@ -452,6 +456,18 @@ export class SiteDetailsComponent implements OnInit {
                                     this.sensorDataSource.data = this.siteFullInstruments;
                                     this.sensorDataSource.paginator = this.sensorPaginator;
                                 })
+                                // Full instrument info
+                                this.siteFullInstruments.forEach(function(result){
+                                    self.siteService
+                                    .getFullSensor(result.instrument_id)
+                                    .subscribe((sensorResults) => {
+                                        result.sensorBrand = sensorResults.sensorBrand;
+                                        result.sensorType = sensorResults.sensorType;
+                                        result.instrument_status = sensorResults.instrument_status;
+                                    })
+                                });
+                                this.sensorDataSource.data = this.siteFullInstruments;
+                                this.sensorDataSource.paginator = this.sensorPaginator;
                             }
 
                         });
