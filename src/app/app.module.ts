@@ -23,7 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatOptionModule } from '@angular/material/core';
+import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -36,6 +36,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { HighchartsChartModule } from 'highcharts-angular';
 
@@ -60,6 +61,9 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { ResultDetailsComponent } from './result-details/result-details.component';
 import { SensorService } from './services/sensor.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SiteEditComponent } from './site-edit/site-edit.component';
+import * as angular from 'angular';
 import { ReferenceMarkDialogComponent } from './reference-mark-dialog/reference-mark-dialog.component';
 import { HwmDialogComponent } from './hwm-dialog/hwm-dialog.component';
 import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
@@ -88,6 +92,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
         SensorDialogComponent,
         PeakDialogComponent,
         FileDetailsDialogComponent,
+        SiteEditComponent,
         UserManagementComponent,
     ],
     imports: [
@@ -127,6 +132,9 @@ import { UserManagementComponent } from './user-management/user-management.compo
         HighchartsChartModule,
         MatProgressSpinnerModule,
         BrowserAnimationsModule,
+        MatTooltipModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
     ],
     providers: [
         CurrentUserService,

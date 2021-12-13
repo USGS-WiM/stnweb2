@@ -207,6 +207,36 @@ export class SiteService {
             );
     }
 
+    //Get network types
+    public getNetworkTypesList(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/NetworkTypes.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getNetworkTypesList response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getNetworkTypesList', []))
+            );
+    }
+
+    //Get network names
+    public getNetworkNamesList(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + '/NetworkNames.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getNetworkNamesList response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getNetworkNamesList', []))
+            );
+    }
+
     //Get landowner contact
     public getLandownerContact(siteID): Observable<any> {
         return this.httpClient
@@ -642,6 +672,21 @@ export class SiteService {
             );
     }
 
+    //Get File Type Lookup
+    public getFileTypeLookup(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'FileTypes/.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getFileTypeLookup response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getFileTypeLookup', []))
+            );
+    }
+
     //Get File Source
     public getFileSource(sourceID): Observable<any> {
         return this.httpClient
@@ -656,6 +701,23 @@ export class SiteService {
                     return response;
                 }),
                 catchError(this.handleError<any>('getFileSource', []))
+            );
+    }
+
+    //Get all agencies
+    public getAgencyLookup(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'Agencies.json', {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getAgencyLookup response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getAgencyLookup', []))
             );
     }
 
@@ -727,10 +789,99 @@ export class SiteService {
             );
     }
 
+    // Get all counties in state
+    public getAllCounties(state_id): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'States/' + state_id + '/Counties.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getAllCounties response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getAllCounties', []))
+            );
+    }
+
+    // Get all states
+    public getAllStates(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'States.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getAllStates response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getAllStates', []))
+            );
+    }
+
+    // Get all housing types
+    public getAllHousingTypes(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'HousingTypes.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getAllHousingTypes response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getAllHousingTypes', []))
+            );
+    }
+
+    // Get Site Deployment Priority
+    public getDepPriority(site_id): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.SITES_URL + '/' + site_id + '/DeploymentPriorities.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getDepPriority response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getDepPriority', []))
+            );
+    }
+
+    // Get Site Deployment Priority
+    public getPriorities(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'DeploymentPriorities.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getPriorities response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getPriorities', []))
+            );
+    }
+
+    // Get File Item
+    public getFileItem(file_id): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'Files/' + file_id + '/item', {headers: APP_SETTINGS.AUTH_JSON_HEADERS},)
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getFileItem response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getFileItem', []))
+            );
+    }
 
     public setCurrentEvent(currentEvent: number) {
         this.event.next(currentEvent);
-    }  
+    }
     
     //Get site events
     public getCurrentEvent(): Observable<any> {
