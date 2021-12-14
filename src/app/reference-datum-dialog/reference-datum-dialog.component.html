@@ -1,14 +1,14 @@
 <h2 mat-dialog-title>
-    Reference Mark
+    Reference Datum
     <!-- <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button> -->
 </h2>
 <mat-dialog-content *ngIf="data.row_data">
-  <!-- Reference Mark Dialog -->
+  <!-- Reference Datum Dialog -->
     <mat-accordion multi="true">
         <mat-expansion-panel hideToggle expanded="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Reference Mark Information
+              Reference Datum Information
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="table-container">
@@ -95,7 +95,7 @@
         <mat-expansion-panel hideToggle expanded="false">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Reference Mark File Information
+              Reference Datum File Information
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="tableContainer" *ngIf="datumFiles !== undefined; else noDatumFileTable">
@@ -142,7 +142,7 @@
             </table>
         </div>
         <ng-template #noDatumFileTable>
-            <p class="tableContainer">No Reference Mark Files listed.</p>
+            <p class="tableContainer">No Reference Datum Files listed.</p>
         </ng-template>
         <mat-paginator [hidden]="datumFiles === undefined || datumFiles.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>

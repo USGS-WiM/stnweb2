@@ -210,7 +210,7 @@ describe('SiteDetailsComponent', () => {
         expect(component.networkName).toEqual("Test Network");
     });
 
-    it('should call getObjectivePoints and set referenceMarks to response', () => {
+    it('should call getObjectivePoints and set referenceDatums to response', () => {
         const siteResponse = [{site: 7}]
         const response: any[] = [1, 2, 3];
 
@@ -224,7 +224,7 @@ describe('SiteDetailsComponent', () => {
 
         component.getData();
         fixture.detectChanges();
-        expect(component.referenceMarks.length).toEqual(3);
+        expect(component.referenceDatums.length).toEqual(3);
     });
 
     it('should call getLandownerContact if site has landownercontact_id', () => {
@@ -710,7 +710,7 @@ describe('SiteDetailsComponent', () => {
         expect(component.peaksDataSource.data).toEqual([{peak_date: "02/20/2020"}, {peak_date: "01/21/2021"}]);
     });
 
-    it('should sort reference marks', () => {
+    it('should sort reference datums', () => {
         fixture.detectChanges();
         const sort: Sort = {active: 'name', direction: 'asc'};
         component.refMarkDataSource.data = [{name: "test.jpg"}, {name: "datumloctest.png"}]
@@ -725,7 +725,7 @@ describe('SiteDetailsComponent', () => {
         expect(component.refMarkDataSource.data).toEqual([{elev_ft: 5.4}, {elev_ft: 18}]);
     });
 
-    it('should sort reference mark files', () => {
+    it('should sort reference datum files', () => {
         fixture.detectChanges();
         const sort: Sort = {active: 'name', direction: 'asc'};
         component.refMarkFilesDataSource.data = [{name: "test.jpg"}, {name: "datumloctest.png"}]

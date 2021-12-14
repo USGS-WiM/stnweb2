@@ -476,9 +476,9 @@
                         </mat-expansion-panel>
                     </mat-accordion>
                 </mat-tab>
-                <mat-tab label="Reference Marks ({{referenceMarks.length}})">
-                    <div class="tableContainer" *ngIf="referenceMarks !== undefined; else noRMTable">
-                        <table *ngIf="referenceMarks.length > 0; else noRMTable"
+                <mat-tab label="Reference Datum ({{referenceDatums.length}})">
+                    <div class="tableContainer" *ngIf="referenceDatums !== undefined; else noRMTable">
+                        <table *ngIf="referenceDatums.length > 0; else noRMTable"
                             mat-table
                             id="datumLocTable"
                             [dataSource]="refMarkDataSource"
@@ -487,14 +487,14 @@
                             matSort
                         >
 
-                            <!-- reference mark name column -->
+                            <!-- reference datum name column -->
                             <ng-container matColumnDef="RefMarkName">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header="name">Name</th>
                                 <td mat-cell *matCellDef="let rm">
-                                    <div *ngIf="rm.name === '' || rm.name === undefined; else displayReferenceMark">
+                                    <div *ngIf="rm.name === '' || rm.name === undefined; else displayReferenceDatum">
                                         ---
                                     </div>
-                                    <ng-template #displayReferenceMark>
+                                    <ng-template #displayReferenceDatum>
                                         {{ rm.name }}
                                     </ng-template>
                                 </td>
@@ -504,12 +504,23 @@
                             <ng-container matColumnDef="RefMarkEl">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header="elev_ft">Elevation (ft)</th>
                                 <td mat-cell *matCellDef="let rm">
-                                    <div *ngIf="rm.elev_ft === '' || rm.elev_ft === undefined; else displayReferenceMarkEl">
+                                    <div *ngIf="rm.elev_ft === '' || rm.elev_ft === undefined; else displayReferenceDatumEl">
                                         ---
                                     </div>
-                                    <ng-template #displayReferenceMarkEl>
+                                    <ng-template #displayReferenceDatumEl>
                                         {{ rm.elev_ft }}
                                     </ng-template>
+                                </td>
+                            </ng-container>
+
+                            <!-- Button Column -->
+                            <ng-container matColumnDef="button">
+                                <th mat-header-cell *matHeaderCellDef>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                <button mat-raised-button (click)="openRefMarkDetailsDialog(row)"
+                                    aria-label="Edit">View Details
+                                </button>
                                 </td>
                             </ng-container>
 
@@ -517,15 +528,14 @@
                             <tr
                                 mat-row
                                 *matRowDef="let row; columns: displayedRMColumns"
-                                (click)="openRefMarkDetailsDialog(row)"
                                 class="results-row"
                             ></tr>
                         </table>
                         <ng-template #noRMTable>
-                            <p class="tableContainer">No Reference Marks listed.</p>
+                            <p class="tableContainer">No Reference Datums listed.</p>
                         </ng-template>
                     </div>
-                    <mat-paginator [hidden]="referenceMarks === undefined || referenceMarks.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
+                    <mat-paginator [hidden]="referenceDatums === undefined || referenceDatums.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Sensors ({{siteFullInstruments.length}})">
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
@@ -605,11 +615,21 @@
                                 </td>
                             </ng-container>
 
+                            <!-- Button Column -->
+                            <ng-container matColumnDef="button">
+                                <th mat-header-cell *matHeaderCellDef>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                <button mat-raised-button (click)="openSensorDetailsDialog(row)"
+                                    aria-label="Edit">View Details
+                                </button>
+                                </td>
+                            </ng-container>
+
                             <tr mat-header-row *matHeaderRowDef="displayedSensorColumns"></tr>
                             <tr
                                 mat-row
                                 *matRowDef="let row; columns: displayedSensorColumns"
-                                (click)="openSensorDetailsDialog(row)"
                                 class="results-row"
                             ></tr>
                         </table>
@@ -683,11 +703,21 @@
                                 </td>
                             </ng-container>
 
+                            <!-- Button Column -->
+                            <ng-container matColumnDef="button">
+                                <th mat-header-cell *matHeaderCellDef>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                <button mat-raised-button (click)="openHWMDetailsDialog(row)"
+                                    aria-label="Edit">View Details
+                                </button>
+                                </td>
+                            </ng-container>
+
                             <tr mat-header-row *matHeaderRowDef="displayedHWMColumns"></tr>
                             <tr
                                 mat-row
                                 *matRowDef="let row; columns: displayedHWMColumns"
-                                (click)="openHWMDetailsDialog(row)"
                                 class="results-row"
                             ></tr>
                         </table>
@@ -747,11 +777,21 @@
                                 </td>
                             </ng-container>
 
+                            <!-- Button Column -->
+                            <ng-container matColumnDef="button">
+                                <th mat-header-cell *matHeaderCellDef>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                <button mat-raised-button (click)="openPeaksDetailsDialog(row, 'Peak')"
+                                    aria-label="Edit">View Details
+                                </button>
+                                </td>
+                            </ng-container>
+
                             <tr mat-header-row *matHeaderRowDef="displayedPeakColumns"></tr>
                             <tr
                                 mat-row
                                 *matRowDef="let row; columns: displayedPeakColumns"
-                                (click)="openPeaksDetailsDialog(row, 'Peak')"
                                 class="results-noclick-row"
                             ></tr>
                         </table>
@@ -805,11 +845,21 @@
                                         </td>
                                     </ng-container>
 
+                                    <!-- Button Column -->
+                                    <ng-container matColumnDef="button">
+                                        <th mat-header-cell *matHeaderCellDef>
+                                        </th>
+                                        <td mat-cell *matCellDef="let row">
+                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Site File')"
+                                            aria-label="Edit">View Details
+                                        </button>
+                                        </td>
+                                    </ng-container>
+
                                     <tr mat-header-row *matHeaderRowDef="displayedSiteFileColumns"></tr>
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedSiteFileColumns"
-                                        (click)="openFileDetailsDialog(row, 'Site File')"
                                         class="results-row"
                                     ></tr>
                                 </table>
@@ -822,7 +872,7 @@
                         <mat-expansion-panel hideToggle>
                             <mat-expansion-panel-header class="panel-headers">
                                 <mat-panel-title>
-                                    Reference Mark Files ({{datumLocFiles.length}})
+                                    Reference Datum Files ({{datumLocFiles.length}})
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="tableContainer" *ngIf="datumLocFiles !== undefined; else noDatumFileTable">
@@ -862,7 +912,7 @@
 
                                     <!-- datum file datum column -->
                                     <ng-container matColumnDef="FileDatum">
-                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="datum_name">Reference Mark</th>
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header="datum_name">Reference Datum</th>
                                         <td mat-cell *matCellDef="let file">
                                             <div *ngIf="file.datum_name === '' || file.datum_name === undefined; else displayDatumFileDatum">
                                                 ---
@@ -873,17 +923,27 @@
                                         </td>
                                     </ng-container>
 
+                                    <!-- Button Column -->
+                                    <ng-container matColumnDef="button">
+                                        <th mat-header-cell *matHeaderCellDef>
+                                        </th>
+                                        <td mat-cell *matCellDef="let row">
+                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Reference Mark File')"
+                                            aria-label="Edit">View Details
+                                        </button>
+                                        </td>
+                                    </ng-container>
+
                                     <tr mat-header-row *matHeaderRowDef="displayedDatumFileColumns"></tr>
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedDatumFileColumns"
-                                        (click)="openFileDetailsDialog(row, 'Reference Mark File')"
                                         class="results-row"
                                     ></tr>
                                 </table>
                             </div>
                             <ng-template #noDatumFileTable>
-                                <p class="tableContainer">No Reference Mark Files listed.</p>
+                                <p class="tableContainer">No Reference Datum Files listed.</p>
                             </ng-template>
                             <mat-paginator [hidden]="datumLocFiles === undefined || datumLocFiles.length === 0" #refMarkFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
@@ -941,11 +1001,21 @@
                                         </td>
                                     </ng-container>
 
+                                    <!-- Button Column -->
+                                    <ng-container matColumnDef="button">
+                                        <th mat-header-cell *matHeaderCellDef>
+                                        </th>
+                                        <td mat-cell *matCellDef="let row">
+                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Sensor File')"
+                                            aria-label="Edit">View Details
+                                        </button>
+                                        </td>
+                                    </ng-container>
+
                                     <tr mat-header-row *matHeaderRowDef="displayedSensorFileColumns"></tr>
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedSensorFileColumns"
-                                        (click)="openFileDetailsDialog(row, 'Sensor File')"
                                         class="results-row"
                                     ></tr>
                                 </table>
@@ -996,11 +1066,21 @@
                                         </td>
                                     </ng-container>
 
+                                    <!-- Button Column -->
+                                    <ng-container matColumnDef="button">
+                                        <th mat-header-cell *matHeaderCellDef>
+                                        </th>
+                                        <td mat-cell *matCellDef="let row">
+                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'HWM File')"
+                                            aria-label="Edit">View Details
+                                        </button>
+                                        </td>
+                                    </ng-container>
+
                                     <tr mat-header-row *matHeaderRowDef="displayedHWMFileColumns"></tr>
                                     <tr
                                         mat-row
                                         *matRowDef="let row; columns: displayedHWMFileColumns"
-                                        (click)="openFileDetailsDialog(row, 'HWM File')"
                                         class="results-row"
                                     ></tr>
                                 </table>

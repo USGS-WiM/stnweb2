@@ -61,7 +61,8 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { ResultDetailsComponent } from './result-details/result-details.component';
 import { SensorService } from './services/sensor.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ReferenceMarkDialogComponent } from './reference-mark-dialog/reference-mark-dialog.component';
+import * as angular from 'angular';
+import { ReferenceDatumDialogComponent } from './reference-datum-dialog/reference-datum-dialog.component';
 import { HwmDialogComponent } from './hwm-dialog/hwm-dialog.component';
 import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
 import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
@@ -87,7 +88,7 @@ import { SiteEditComponent } from './site-edit/site-edit.component';
         BulkHwmComponent,
         HwmUploadComponent,
         ResultDetailsComponent,
-        ReferenceMarkDialogComponent,
+        ReferenceDatumDialogComponent,
         HwmDialogComponent,
         SensorDialogComponent,
         PeakDialogComponent,

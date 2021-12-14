@@ -47,9 +47,9 @@
                         class="mat-elevation-z5"
                         matSort
                     >
-                        <!-- Reference Mark name column -->
-                        <ng-container matColumnDef="ReferenceMark">
-                            <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                        <!-- Reference Datum name column -->
+                        <ng-container matColumnDef="ReferenceDatum">
+                            <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
                             <td mat-cell *matCellDef="let tapedown">
                                 <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
                                     ---
@@ -216,7 +216,7 @@
                 </div>
                 <div class="cell-container">
                     <p class="content-left">Deploy Member</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullMember">
+                    <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
                         <div *ngFor="let item of members">
                             <p class="content-right" *ngIf="item.status === 'Deployed' && item.name !== undefined && item.name !== ''">{{item.name}}</p>
                             <p class="content-right" *ngIf="item.status === 'Deployed' && item.name === undefined || item.name === ''">---</p>
@@ -283,9 +283,9 @@
                         class="mat-elevation-z5"
                         matSort
                     >
-                        <!-- Reference Mark name column -->
-                        <ng-container matColumnDef="ReferenceMark">
-                            <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                        <!-- Reference Datum name column -->
+                        <ng-container matColumnDef="ReferenceDatum">
+                            <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
                             <td mat-cell *matCellDef="let tapedown">
                                 <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
                                     ---
@@ -391,7 +391,7 @@
                 </div>
                 <div class="cell-container">
                     <p class="content-left">Member</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullMember">
+                    <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
                         <div *ngFor="let item of members">
                             <p class="content-right" *ngIf="item.status === 'Retrieved' && (item.name !== undefined && item.name !== '')">{{item.name}}</p>
                             <p class="content-right" *ngIf="item.status === 'Retrieved' && (item.name === undefined || item.name === '')">---</p>
@@ -456,9 +456,9 @@
                     class="mat-elevation-z5"
                     matSort
                 >
-                    <!-- Reference Mark name column -->
-                    <ng-container matColumnDef="ReferenceMark">
-                        <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                    <!-- Reference Datu name column -->
+                    <ng-container matColumnDef="ReferenceDatum">
+                        <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
                         <td mat-cell *matCellDef="let tapedown">
                             <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
                                 ---
@@ -564,7 +564,7 @@
             </div>
             <div class="cell-container">
                 <p class="content-left">Member</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0; else nullMember">
+                <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
                     <div *ngFor="let item of members">
                         <p class="content-right" *ngIf="item.status === 'Lost' && (item.name !== undefined && item.name !== '')">{{item.name}}</p>
                         <p class="content-right" *ngIf="item.status === 'Lost' && (item.name === undefined || item.name === '')">---</p>

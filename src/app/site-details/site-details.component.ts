@@ -11,7 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
-import { ReferenceMarkDialogComponent } from '@app/reference-mark-dialog/reference-mark-dialog.component';
+import { ReferenceDatumDialogComponent } from '@app/reference-datum-dialog/reference-datum-dialog.component';
 import { SensorDialogComponent } from '@app/sensor-dialog/sensor-dialog.component';
 import { HwmDialogComponent } from '@app/hwm-dialog/hwm-dialog.component';
 import { FileDetailsDialogComponent } from '@app/file-details-dialog/file-details-dialog.component';
@@ -63,7 +63,7 @@ export class SiteDetailsComponent implements OnInit {
     public memberName;
     public event;
     public currentEvent;
-    public referenceMarks = [];
+    public referenceDatums = [];
     public siteFullInstruments = [];
     public hwm = [];
     public siteFiles = [];
@@ -132,6 +132,7 @@ export class SiteDetailsComponent implements OnInit {
         'deploymentType',
         'sensorType',
         'statusType',
+        'button',
     ];
 
     displayedHWMColumns: string[] = [
@@ -139,39 +140,46 @@ export class SiteDetailsComponent implements OnInit {
         'hwm_label',
         'flag_date',
         'elev_ft',
+        'button',
     ];
 
     displayedPeakColumns: string[] = [
         'PeakStage',
         'PeakEventName',
         'PeakDate',
+        'button',
     ];
 
     displayedSiteFileColumns: string[] = [
         'FileDate',
         'FileName',
+        'button',
     ];
 
     displayedDatumFileColumns: string[] = [
         'FileDate',
         'FileName',
         'FileDatum',
+        'button',
     ];
 
     displayedSensorFileColumns: string[] = [
         'FileDate',
         'FileName',
         'FileSerialNum',
+        'button',
     ];
 
     displayedHWMFileColumns: string[] = [
         'FileDate',
         'FileName',
+        'button',
     ];
 
     displayedRMColumns: string[] = [
         'RefMarkName',
         'RefMarkEl',
+        'button',
     ];
 
     constructor(
@@ -287,15 +295,15 @@ export class SiteDetailsComponent implements OnInit {
 
                         });
 
-                    // Get reference marks
+                    // Get reference datums
                     this.siteService
                     .getObjectivePoints(this.siteID)
                     .subscribe((results) => {
                         if(results.length > 0){
                             results.forEach(function(result){
-                                self.referenceMarks.push(result);
+                                self.referenceDatums.push(result);
                             })
-                            this.refMarkDataSource.data = this.referenceMarks;
+                            this.refMarkDataSource.data = this.referenceDatums;
                             this.refMarkDataSource.paginator = this.paginator;
                         }
 
@@ -803,7 +811,7 @@ export class SiteDetailsComponent implements OnInit {
             dialogWidth = '30%';
         }
 
-        const dialogRef = this.dialog.open(ReferenceMarkDialogComponent, {
+        const dialogRef = this.dialog.open(ReferenceDatumDialogComponent, {
             data: {
                 row_data: row
             },

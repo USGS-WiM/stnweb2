@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { ReferenceMarkDialogComponent } from './reference-mark-dialog.component';
+import { ReferenceDatumDialogComponent } from './reference-datum-dialog.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -11,9 +11,9 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { of } from 'rxjs';
 
-describe('ReferenceMarkDialogComponent', () => {
-  let component: ReferenceMarkDialogComponent;
-  let fixture: ComponentFixture<ReferenceMarkDialogComponent>;
+describe('ReferenceDatumDialogComponent', () => {
+  let component: ReferenceDatumDialogComponent;
+  let fixture: ComponentFixture<ReferenceDatumDialogComponent>;
 
   const data = 
     {  
@@ -29,7 +29,7 @@ describe('ReferenceMarkDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReferenceMarkDialogComponent ],
+      declarations: [ ReferenceDatumDialogComponent ],
       providers: [
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: data },
@@ -47,7 +47,7 @@ describe('ReferenceMarkDialogComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ReferenceMarkDialogComponent);
+    fixture = TestBed.createComponent(ReferenceDatumDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

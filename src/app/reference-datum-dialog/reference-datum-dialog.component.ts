@@ -7,11 +7,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, Sort } from '@angular/material/sort';
 
 @Component({
-  selector: 'app-reference-mark-dialog',
-  templateUrl: './reference-mark-dialog.component.html',
-  styleUrls: ['./reference-mark-dialog.component.scss']
+  selector: 'app-reference-datum-dialog',
+  templateUrl: './reference-datum-dialog.component.html',
+  styleUrls: ['./reference-datum-dialog.component.scss']
 })
-export class ReferenceMarkDialogComponent implements OnInit {
+export class ReferenceDatumDialogComponent implements OnInit {
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild('refMarkFilesSort', { static: false }) refMarkFilesSort: MatSort;
   public opType;
@@ -31,7 +31,7 @@ export class ReferenceMarkDialogComponent implements OnInit {
   ];
 
   constructor(
-    private dialogRef: MatDialogRef<ReferenceMarkDialogComponent>,
+    private dialogRef: MatDialogRef<ReferenceDatumDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public siteService: SiteService,
   ) { }
