@@ -5,9 +5,12 @@
 <mat-dialog-content *ngIf="data.row_data">
   <!-- Reference Datum Dialog -->
     <mat-accordion multi="true">
-        <mat-expansion-panel hideToggle expanded="true">
+        <mat-expansion-panel hideToggle [expanded]="infoExpanded" (opened)="infoExpanded = true" (closed)="infoExpanded = false">
           <mat-expansion-panel-header>
-            <mat-panel-title>
+            <mat-panel-title *ngIf="!infoExpanded" style="color: grey; font-weight: 500">
+              Reference Datum Information
+            </mat-panel-title>
+            <mat-panel-title *ngIf="infoExpanded" style="color: #FFF; font-weight: 550">
               Reference Datum Information
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -92,9 +95,12 @@
             </div>
           </div>
         </mat-expansion-panel>
-        <mat-expansion-panel hideToggle expanded="false">
+        <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
           <mat-expansion-panel-header>
-            <mat-panel-title>
+            <mat-panel-title *ngIf="!filesExpanded" style="color: grey; font-weight: 500">
+              Reference Datum File Information
+            </mat-panel-title>
+            <mat-panel-title *ngIf="filesExpanded" style="color: #FFF; font-weight: 550">
               Reference Datum File Information
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -140,11 +146,11 @@
                     class="results-row"
                 ></tr>
             </table>
-        </div>
-        <ng-template #noDatumFileTable>
-            <p class="tableContainer">No Reference Datum Files listed.</p>
-        </ng-template>
-        <mat-paginator [hidden]="datumFiles === undefined || datumFiles.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
+          </div>
+          <ng-template #noDatumFileTable>
+              <p class="tableContainer">No Reference Datum Files listed.</p>
+          </ng-template>
+          <mat-paginator [hidden]="datumFiles === undefined || datumFiles.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
       </mat-accordion>
 </mat-dialog-content>
