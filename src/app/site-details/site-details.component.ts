@@ -132,6 +132,7 @@ export class SiteDetailsComponent implements OnInit {
         'deploymentType',
         'sensorType',
         'statusType',
+        'button',
     ];
 
     displayedHWMColumns: string[] = [
@@ -139,39 +140,46 @@ export class SiteDetailsComponent implements OnInit {
         'hwm_label',
         'flag_date',
         'elev_ft',
+        'button',
     ];
 
     displayedPeakColumns: string[] = [
         'PeakStage',
         'PeakEventName',
         'PeakDate',
+        'button',
     ];
 
     displayedSiteFileColumns: string[] = [
         'FileDate',
         'FileName',
+        'button',
     ];
 
     displayedDatumFileColumns: string[] = [
         'FileDate',
         'FileName',
         'FileDatum',
+        'button',
     ];
 
     displayedSensorFileColumns: string[] = [
         'FileDate',
         'FileName',
         'FileSerialNum',
+        'button',
     ];
 
     displayedHWMFileColumns: string[] = [
         'FileDate',
         'FileName',
+        'button',
     ];
 
     displayedRMColumns: string[] = [
         'RefMarkName',
         'RefMarkEl',
+        'button',
     ];
 
     constructor(

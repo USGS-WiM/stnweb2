@@ -134,7 +134,9 @@ export class SensorDialogComponent implements OnInit {
       self.siteService
       .getMemberName(instrument.member_id)
       .subscribe((results) => {
-        self.members.push({name: results.fname + " " + results.lname, status: instrument.status});
+        if(results.length > 0 || results.length === undefined){
+          self.members.push({name: results.fname + " " + results.lname, status: instrument.status});
+        }
       })
     })
   }
