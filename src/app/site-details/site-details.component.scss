@@ -207,6 +207,15 @@ table {
     align-self: stretch;
 } 
 
+.mat-column-button{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    width: 20px;
+    text-align: center;
+    align-self: stretch;
+} 
+
 .mat-header-cell {
     font-weight: bold;
     text-transform: uppercase;
@@ -346,10 +355,6 @@ table {
     display: inline;
     vertical-align: middle;
     color:rgba(0, 0, 0, 0.2);
-}
-
-.results-row {
-    cursor: pointer;
 }
 
 .close-button {
