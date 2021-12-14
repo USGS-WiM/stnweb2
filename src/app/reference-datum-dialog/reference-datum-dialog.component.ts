@@ -30,6 +30,9 @@ export class ReferenceDatumDialogComponent implements OnInit {
     'FileName',
   ];
 
+  infoExpanded = true;
+  filesExpanded = false;
+
   constructor(
     private dialogRef: MatDialogRef<ReferenceDatumDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,

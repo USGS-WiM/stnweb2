@@ -5,10 +5,13 @@
 <mat-dialog-content *ngIf="data.row_data">
     <!-- Sensor Dialog -->
     <mat-accordion multi="true">
-        <mat-expansion-panel hideToggle [expanded]="deployedExpanded">
+        <mat-expansion-panel hideToggle [expanded]="deployedExpanded" (opened)="deployedExpanded = true" (closed)="deployedExpanded = false">
         <mat-expansion-panel-header>
-            <mat-panel-title>
-            Deployed Sensor Information
+            <mat-panel-title *ngIf="!deployedExpanded" style="color: grey; font-weight: 500">
+                Deployed Sensor Information
+            </mat-panel-title>
+            <mat-panel-title *ngIf="deployedExpanded" style="color: #FFF; font-weight: 550">
+                Deployed Sensor Information
             </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="table-container">
@@ -227,10 +230,13 @@
             </div>
         </div>
         </mat-expansion-panel>
-        <mat-expansion-panel hideToggle [expanded]="retrievedExpanded" *ngIf="data.row_data.statusType === 'Retrieved'">
+        <mat-expansion-panel hideToggle [expanded]="retrievedExpanded" (opened)="retrievedExpanded = true" (closed)="retreivedExpanded = false" *ngIf="data.row_data.statusType === 'Retrieved'">
             <mat-expansion-panel-header>
-                <mat-panel-title>
-                Retrieved Sensor Information
+                <mat-panel-title *ngIf="!retrievedExpanded" style="color: grey; font-weight: 500">
+                    Retrieved Sensor Information
+                </mat-panel-title>
+                <mat-panel-title *ngIf="retrievedExpanded" style="color: #FFF; font-weight: 550">
+                    Retrieved Sensor Information
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="cell-container">
@@ -401,11 +407,14 @@
                 </div>
             </div>
         </mat-expansion-panel>
-        <mat-expansion-panel hideToggle [expanded]="lostExpanded" *ngIf="data.row_data.statusType === 'Lost'">
+        <mat-expansion-panel hideToggle [expanded]="lostExpanded" (opened)="lostExpanded = true" (closed)="lostExpanded = false" *ngIf="data.row_data.statusType === 'Lost'">
             <mat-expansion-panel-header>
-                <mat-panel-title>
+                <mat-panel-title *ngIf="!lostExpanded" style="color: grey; font-weight: 500">
                 Lost Sensor Information
                 </mat-panel-title>
+                <mat-panel-title *ngIf="lostExpanded" style="color: #FFF; font-weight: 550">
+                    Lost Sensor Information
+                    </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="cell-container">
                 <p class="content-left">Status</p>
@@ -573,10 +582,13 @@
                 <ng-template #nullMember><p class="content-right">---</p></ng-template>
             </div>
         </mat-expansion-panel>
-        <mat-expansion-panel hideToggle expanded="false">
+        <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
             <mat-expansion-panel-header>
-                <mat-panel-title>
-                Sensor File Information
+                <mat-panel-title *ngIf="!filesExpanded" style="color: grey; font-weight: 500">
+                    Sensor File Information
+                </mat-panel-title>
+                <mat-panel-title *ngIf="filesExpanded" style="color: #FFF; font-weight: 550">
+                    Sensor File Information
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="tableContainer">
@@ -627,10 +639,13 @@
             </ng-template>
             <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
-        <mat-expansion-panel hideToggle expanded="false" *ngIf="data.row_data.statusType === 'Deployed'">
+        <mat-expansion-panel hideToggle [expanded]="nwisExpanded"  (opened)="nwisExpanded = true" (closed)="nwisExpanded = false" *ngIf="data.row_data.statusType === 'Deployed'">
         <mat-expansion-panel-header>
-            <mat-panel-title>
-            NWIS Connection
+            <mat-panel-title *ngIf="!nwisExpanded" style="color: grey; font-weight: 500">
+                NWIS Connection
+            </mat-panel-title>
+            <mat-panel-title *ngIf="nwisExpanded" style="color: #FFF; font-weight: 550">
+                NWIS Connection
             </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="tableContainer">

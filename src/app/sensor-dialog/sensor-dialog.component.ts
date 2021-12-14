@@ -30,6 +30,8 @@ export class SensorDialogComponent implements OnInit {
   public deployedExpanded = false;
   public retrievedExpanded = false;
   public lostExpanded = false;
+  public filesExpanded = false;
+  public nwisExpanded = false;
 
   nwisFilesDataSource = new MatTableDataSource<any>();
   sensorFilesDataSource = new MatTableDataSource<any>();

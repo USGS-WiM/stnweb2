@@ -26,6 +26,9 @@ export class HwmDialogComponent implements OnInit {
   public stillwater;
   public surveyMember;
 
+  infoExpanded = true;
+  filesExpanded = false;
+
   filesDataSource = new MatTableDataSource<any>();
   sortedFilesData = [];
   
