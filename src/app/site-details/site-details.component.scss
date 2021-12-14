@@ -211,7 +211,7 @@ table {
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
-    width: 20px;
+    width: 30%;
     text-align: center;
     align-self: stretch;
 } 
@@ -259,6 +259,13 @@ table {
     margin: 5px 5px;
 }
 
+.delete-btn {
+    background-color: #E70000;
+    color: #F4F4F4;
+    border: 1px solid #ce0000;
+    margin: 5px 5px;
+}
+
 .table-container {
     display: inline-block;
     margin: auto;
@@ -286,6 +293,12 @@ table {
 }
 
 .edit-button {
+    margin: 5px 5px;
+}
+
+.edit-btn {
+    background-color: #03274B;
+    color: #F4F4F4;
     margin: 5px 5px;
 }
 

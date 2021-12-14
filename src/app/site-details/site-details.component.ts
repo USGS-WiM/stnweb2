@@ -24,6 +24,7 @@ import { SiteEditComponent } from '@app/site-edit/site-edit.component';
 import { ResultDetailsComponent } from '@app/result-details/result-details.component';
 import { networkInterfaces } from 'os';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
 
 @Component({
     selector: 'app-site-details',
@@ -814,6 +815,42 @@ export class SiteDetailsComponent implements OnInit {
         const dialogRef = this.dialog.open(ReferenceDatumDialogComponent, {
             data: {
                 row_data: row
+            },
+            width: dialogWidth,
+        });
+        dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openRefDatumEditDialog(row): void {
+        // Format date established
+        if(row.date_established !== undefined && !row.date_established.includes("/")){
+            let estDate = row.date_established.split("T")[0];
+            estDate = estDate.split("-");
+            estDate = estDate[1] + "/" + estDate[2] + "/" + estDate[0];
+            row.date_established = estDate;
+        }
+
+        // Format date recovered
+        if(row.date_recovered !== undefined && !row.date_recovered.includes("/")){
+            let recoveredDate = row.date_recovered.split("T")[0];
+            recoveredDate = recoveredDate.split("-");
+            recoveredDate = recoveredDate[1] + "/" + recoveredDate[2] + "/" + recoveredDate[0];
+            row.date_recovered = recoveredDate;
+        }
+
+        let dialogWidth;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            dialogWidth = '80%';
+        }
+        else {
+            dialogWidth = '30%';
+        }
+
+        const dialogRef = this.dialog.open(RefDatumEditComponent, {
+            data: {
+                rd: row,
+                hdatumList: this.hdatumList,
+                hmethodList: this.hmethodList,
             },
             width: dialogWidth,
         });

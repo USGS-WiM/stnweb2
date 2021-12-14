@@ -1,0 +1,129 @@
+<h2 mat-dialog-title>
+    Reference Datum
+    <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
+</h2>
+<div [hidden]="!loading" class="loading">
+    <mat-spinner style="margin:0 auto; top: 50%" mode="indeterminate" diameter="20"></mat-spinner>
+</div>
+<form [formGroup]="form">
+    <mat-dialog-content>
+        <mat-accordion multi="true">
+            <mat-expansion-panel hideToggle expanded="false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                    Reference Datum Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-form-field appearance="fill">
+                    <mat-label>Type</mat-label>
+                    <mat-select required aria-label="Type" formControlName="type" [(value)]="rd.type">
+                        <mat-option *ngFor="let type of types" [value]="type">
+                        {{type}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Name</mat-label>
+                    <input aria-label="Name" matInput formControlName="name" required [value]="rd.name"/>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label for="description">Description</mat-label>
+                    <textarea aria-label="description" matInput formControlName="description" required id="description" [value]="rd.description"></textarea>
+                    <mat-icon matSuffix class="info-icon" matTooltip="Please describe location and type of mark ie. chiseled square on third sidewalk block on the south side of the street." 
+                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                </mat-form-field>
+                <!-- <mat-form-field appearance="fill">
+                    <mat-label>Control Identifier</mat-label>
+                    <button aria-label="Control Identifier">Add New Identifier</button>
+                    <mat-icon matSuffix class="info-icon" matTooltip="National Geodetic Survey permanent identifier. See: ngs.noaa.gov/NGSDataExplorer/ for more information.">info</mat-icon>
+                </mat-form-field> -->
+                <mat-form-field appearance="fill">
+                    <mat-label>Latitude</mat-label>
+                    <input aria-label="Latitude" matInput formControlName="latitude_dd" [value]="rd.latitude_dd"/>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Longitude</mat-label>
+                    <input aria-label="longitude" matInput formControlName="longitude_dd" [value]="rd.longitude_dd"/>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Horizontal Datum</mat-label>
+                    <mat-select aria-label="Horizontal Datum" formControlName="hdatum_id">
+                        <mat-option *ngFor="let datum of hdatums" [value]="datum.datum_id">
+                        {{datum.datum_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Horizontal Collection Method</mat-label>
+                    <mat-select aria-label="Horizontal Collection Method" formControlName="hcollect_method_id" [(value)]="rd.hcollect_method_id">
+                        <mat-option *ngFor="let method of hmethods" [value]="method.hcollect_method_id">
+                        {{method.hcollect_method}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label for="elevation">Elevation</mat-label>
+                    <input aria-label="Elevation" matInput formControlName="elev_ft" [value]="rd.elev_ft"/>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Vertical Datum</mat-label>
+                    <mat-select aria-label="Vertical Datum" required formControlName="vdatum_id">
+                        <mat-option *ngFor="let datum of vdatums" [value]="datum.datum_id">
+                        {{datum.datum_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Vertical Collection Method</mat-label>
+                    <mat-select aria-label="Vertical Collection Method" formControlName="vcollect_method_id" [(value)]="rd.vcollect_method_id">
+                        <mat-option *ngFor="let method of vmethods" [value]="method.vcollect_method_id">
+                        {{method.vcollect_method}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Quality</mat-label>
+                    <mat-select aria-label="Quality" formControlName="op_quality_id" [(value)]="rd.op_quality_id">
+                        <mat-option *ngFor="let quality of opQualities" [value]="quality.op_quality_id">
+                        {{quality.quality}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Reference Datum Notes</mat-label>
+                    <textarea aria-label="Reference Datum Notes" matInput formControlName="op_notes" required [value]="rd.op_notes"></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Date Established</mat-label>
+                    <input aria-label="Date Established" matInput formControlName="date_established" [value]="rd.date_established" [matDatepicker]="estDatePicker" required placeholder="Choose a date">
+                    <mat-datepicker-toggle matSuffix [for]="estDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker [value]="rd.date_established" #estDatePicker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Date Recovered</mat-label>
+                    <input aria-label="Date Recovered" matInput formControlName="date_recovered" [value]="rd.date_recovered" [matDatepicker]="recDatePicker" placeholder="Choose a date">
+                    <mat-datepicker-toggle matSuffix [for]="recDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker [value]="rd.date_recovered" #recDatePicker></mat-datepicker>
+                </mat-form-field>
+            </mat-expansion-panel>
+            <mat-expansion-panel hideToggle expanded="false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                    Reference Datum Files
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        <mat-icon class="info-header-icon" matTooltip="Files uploaded to Reference Datum are not tied to an event.  To associate a file with an event, please upload through a sensor or hwm instead of here.">info</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <div class="detail-section-buttons centered">
+            <button mat-raised-button [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Close">Close</button>
+            <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+        </div>
+    </mat-dialog-actions>
+</form>
+
+

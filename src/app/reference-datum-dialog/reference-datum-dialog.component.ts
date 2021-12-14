@@ -92,8 +92,6 @@ export class ReferenceDatumDialogComponent implements OnInit {
   }
 
   setVDatum() {
-    let self = this;
-
     this.siteService
     .getVDatum(this.data.row_data.vdatum_id)
     .subscribe((results) => {
@@ -102,8 +100,6 @@ export class ReferenceDatumDialogComponent implements OnInit {
   }
 
   setVCollectionMethod() {
-    let self = this;
-
     this.siteService
     .getVCollectionMethod(this.data.row_data.vcollect_method_id)
     .subscribe((results) => {

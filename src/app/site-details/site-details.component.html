@@ -519,7 +519,13 @@
                                 </th>
                                 <td mat-cell *matCellDef="let row">
                                 <button mat-raised-button (click)="openRefMarkDetailsDialog(row)"
-                                    aria-label="Edit">View Details
+                                    aria-label="View Details">View Details
+                                </button>
+                                <button mat-raised-button class="edit-btn" (click)="openRefDatumEditDialog(row)"
+                                    aria-label="Edit">Edit
+                                </button>
+                                <button mat-raised-button class="delete-btn"
+                                    aria-label="Delete">Delete
                                 </button>
                                 </td>
                             </ng-container>
