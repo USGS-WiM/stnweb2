@@ -48,7 +48,7 @@ export class SensorDialogComponent implements OnInit {
   ];
 
   displayedTapedownColumns: string[] = [
-    'ReferenceMark',
+    'ReferenceDatum',
     'Elevation',
     'OffsetCorrection',
     'WaterSurface',
@@ -159,7 +159,7 @@ export class SensorDialogComponent implements OnInit {
             }
             tapedownArray[0].water_surface = results[0].water_surface;
             tapedownArray[0].offset_correction = results[0].offset_correction;
-            // get reference mark info using objective_point_id
+            // get reference datum info using objective_point_id
             self.siteService
             .getOPInfo(results[0].objective_point_id)
             .subscribe((objectivePoints) => {

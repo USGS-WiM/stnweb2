@@ -339,7 +339,7 @@ describe('SiteService', () => {
         req.flush(mockStatusList);
     });
 
-    it('#getObjectivePoints() should retrieve a reference mark list from the data API', () => {
+    it('#getObjectivePoints() should retrieve a reference datum list from the data API', () => {
         let mockOPList = [
             {
                 objective_point_id: 9169,
@@ -666,7 +666,7 @@ describe('SiteService', () => {
         req.flush(mockPeaksList);
     });
 
-    it('#getDatumLocFiles() should retrieve reference marks for an objective point ID', () => {
+    it('#getDatumLocFiles() should retrieve reference datums for an objective point ID', () => {
         let mockDatumLocFilesList = [
             {
                 objective_point_id: 1687,
