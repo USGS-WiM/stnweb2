@@ -64,7 +64,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SiteEditComponent } from './site-edit/site-edit.component';
 import * as angular from 'angular';
-import { ReferenceMarkDialogComponent } from './reference-mark-dialog/reference-mark-dialog.component';
+import { ReferenceDatumDialogComponent } from './reference-datum-dialog/reference-datum-dialog.component';
 import { HwmDialogComponent } from './hwm-dialog/hwm-dialog.component';
 import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
 import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
@@ -87,7 +87,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
         BulkHwmComponent,
         HwmUploadComponent,
         ResultDetailsComponent,
-        ReferenceMarkDialogComponent,
+        ReferenceDatumDialogComponent,
         HwmDialogComponent,
         SensorDialogComponent,
         PeakDialogComponent,
