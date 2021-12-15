@@ -209,7 +209,8 @@ export class UserManagementComponent implements OnInit {
   openNewUserDialog(): void {
     const dialogRef = this.dialog.open(AddUserDialogComponent, {
       data: {
-        agencies: this.agencies
+        agencies: this.agencies,
+        roles: this.roles
       }
     });
     dialogRef.afterClosed().subscribe((result) => { });

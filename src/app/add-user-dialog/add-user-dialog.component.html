@@ -3,48 +3,90 @@
     <div id="addNewUserForm">
         <form class="form" [formGroup]="newUserForm">
             <div class="entryField">
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill" class="form-control">
                     <mat-label>First Name</mat-label>
-                    <input matInput placeholder="Placeholder">
+                    <input matInput placeholder="Placeholder" aria-required="true" formControlName="fname" required >
                     <mat-icon matSuffix>face</mat-icon>
                     <mat-hint>Hint</mat-hint>
                 </mat-form-field>
             </div>
             <div class="entryField">
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Last Name</mat-label>
-                    <input matInput placeholder="Placeholder">
+                    <input matInput placeholder="Placeholder" aria-required="true" required formControlName="lname">
                     <mat-icon matSuffix>face</mat-icon>
                     <mat-hint>Hint</mat-hint>
                 </mat-form-field>
             </div>
             <div class="entryField">
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Username</mat-label>
-                    <input matInput placeholder="Placeholder">
+                    <input matInput placeholder="Placeholder" aria-required="true" required formControlName="username">
                     <mat-icon matSuffix>perm_identity</mat-icon>
                     <mat-hint>Use your USGS username</mat-hint>
                 </mat-form-field>
             </div>
             <div class="entryField">
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Enter your email</mat-label>
                     <mat-icon matSuffix>email</mat-icon>
-                    <input matInput placeholder="jdoe@usgs.gov" [formControl]="email" required>
-                    <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+                    <input matInput placeholder="jdoe@usgs.gov" formControlName="email" aria-required="true" required>
+                    <!-- <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error> -->
                 </mat-form-field>
             </div>
-            <!-- <div class="entryField">
-                <mat-form-field appearance="fill">
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Agency</mat-label>
-                    <mat-select>
-                        <mat-option *ngFor="let food of foods" [value]="food.value">
-                          {{agency.ag}}
-                        </mat-option>
-                    <mat-icon matSuffix>face</mat-icon>
+                    <input type="text"
+                           placeholder="Select one"
+                           aria-label="Agency"
+                           matInput
+                           formControlName="agency"
+                           [matAutocomplete]="auto"
+                           aria-required="true"
+                           required>
+                           <mat-icon matSuffix>domain</mat-icon>
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{option}}                    
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Role</mat-label>
+                    <mat-select formControlName="role" aria-required="true" required>
+                      <mat-option *ngFor="let role of roles" [value]="role.role_id">
+                        {{role.role_name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Phone</mat-label>
+                    <input matInput placeholder="Placeholder" aria-required="true" required formControlName="phone">
+                    <mat-icon matSuffix>phone</mat-icon>
+                    <mat-error>Invalid phone format</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Emergency Contact Fullname</mat-label>
+                    <input matInput placeholder="Placeholder" aria-required="true" formControlName="emergencyContact" required>
+                    <mat-icon matSuffix>portrait</mat-icon>
                     <mat-hint>Hint</mat-hint>
                 </mat-form-field>
-            </div> -->
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Emergency Contact Phone</mat-label>
+                    <input matInput placeholder="Placeholder" aria-required="true" formControlName="emergencyContactPhone">
+                    <mat-icon matSuffix>contact_phone</mat-icon>
+                    <mat-error>Invalid phone format</mat-error>
+                </mat-form-field>
+            </div>
         </form>
     </div>
 </mat-dialog-content>
