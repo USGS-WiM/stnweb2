@@ -87,6 +87,11 @@ export class SiteDetailsComponent implements OnInit {
     hwmFilesDataSource = new MatTableDataSource<any>();
     siteFilesDataSource = new MatTableDataSource<any>();
 
+    siteFilesExpanded = false;
+    hwmFilesExpanded = false;
+    refDatumFilesExpanded = false;
+    sensorFilesExpanded = false;
+
     sortedSensorData = [];
     sortedHWMData = [];
     sortedPeaksData = [];
