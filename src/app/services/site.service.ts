@@ -446,6 +446,21 @@ export class SiteService {
             );
     }
 
+    //Get OP Type Lookup
+    public getOPTypeLookup(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'OPTypes.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPTypeLookup response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPTypeLookup', []))
+            );
+    }
+
     //Get OP Quality
     public getOPQuality(opQualityID): Observable<any> {
     return this.httpClient

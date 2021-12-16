@@ -432,7 +432,6 @@ export class SiteDetailsComponent implements OnInit {
                                         deploymentResults.forEach(function(type){
                                             if (result.deployment_type_id === type.deployment_type_id){
                                                 result.deploymentType = type.method;
-                                                console.log(result.deploymentType)
                                             }
                                         });
 
@@ -822,39 +821,23 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openRefDatumEditDialog(row): void {
-        // Format date established
-        if(row.date_established !== undefined && !row.date_established.includes("/")){
-            let estDate = row.date_established.split("T")[0];
-            estDate = estDate.split("-");
-            estDate = estDate[1] + "/" + estDate[2] + "/" + estDate[0];
-            row.date_established = estDate;
-        }
-
-        // Format date recovered
-        if(row.date_recovered !== undefined && !row.date_recovered.includes("/")){
-            let recoveredDate = row.date_recovered.split("T")[0];
-            recoveredDate = recoveredDate.split("-");
-            recoveredDate = recoveredDate[1] + "/" + recoveredDate[2] + "/" + recoveredDate[0];
-            row.date_recovered = recoveredDate;
-        }
-
-        let dialogWidth;
-        if (window.matchMedia('(max-width: 768px)').matches) {
-            dialogWidth = '80%';
-        }
-        else {
-            dialogWidth = '30%';
-        }
-
         const dialogRef = this.dialog.open(RefDatumEditComponent, {
             data: {
                 rd: row,
                 hdatumList: this.hdatumList,
                 hmethodList: this.hmethodList,
+                files: this.refMarkFilesDataSource.data,
+                site_id: this.site.site_id,
             },
-            width: dialogWidth,
+            width: '100%',
         });
-        dialogRef.afterClosed().subscribe((result) => {});
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result){
+                if(result.referenceDatums !== null){
+                    this.refMarkDataSource.data = result.referenceDatums;
+                }
+            }
+        });
     }
 
     openHWMDetailsDialog(row): void {
@@ -974,7 +957,6 @@ export class SiteDetailsComponent implements OnInit {
             });
             dialogRef.afterClosed().subscribe((result) => {
                 if(result){
-                    console.log(result)
                     if(result.site !== null){
                         // Update site details page with any edits
                         let siteResultCopy = JSON.parse(JSON.stringify(result.site));
