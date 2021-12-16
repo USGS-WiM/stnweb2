@@ -71,6 +71,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SiteEditComponent } from './site-edit/site-edit.component';
+import { CreatePasswordComponent } from './create-password/create-password.component';
 
 @NgModule({
     declarations: [
@@ -96,6 +97,7 @@ import { SiteEditComponent } from './site-edit/site-edit.component';
         SiteEditComponent,
         UserManagementComponent,
         AddUserDialogComponent,
+        CreatePasswordComponent,
     ],
     imports: [
         BrowserModule,
