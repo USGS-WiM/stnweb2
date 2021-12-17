@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SiteService } from '@app/services/site.service';
 import { OpEditService } from '@app/services/op-edit.service';
@@ -23,10 +23,12 @@ export class RefDatumEditComponent implements OnInit {
   public unquantified = false;
   public elev_unit = "ft";
   public uncertainty_unit = "ft";
-  public controlID;
+  public controlObj = {op_control_identifier_id: null, objective_point_id: null, identifier: null, identifier_type: null, last_updated: null, last_updated_by: null};
+  public controlID = [];
+  public controlsToAdd = [];
+  public controlsToRemove = [];
   public latLngUnit = "decdeg";
   public incorrectDMS = false;
-  public addControlIdentifier = false;
   public dms = {
     latdeg: null,
     latmin: null,
@@ -37,12 +39,18 @@ export class RefDatumEditComponent implements OnInit {
   }
   public initDatumFiles = [];
   public loading = false;
-  public returnData;
+  public returnData = {
+    referenceDatums: null,
+    opControlID: [],
+  };
 
   displayedFileColumns: string[] = [
     'FileName',
     'FileDate',
   ];
+
+  infoExpanded = true;
+  filesExpanded = false;
 
   constructor(
     private dialogRef: MatDialogRef<RefDatumEditComponent>,
@@ -55,7 +63,6 @@ export class RefDatumEditComponent implements OnInit {
     this.rd = this.data.rd;
     this.hmethods = this.data.hmethodList;
     this.hdatums = this.data.hdatumList;
-    console.log(this.rd)
 
     if(this.rd.unquantified === "1"){
       this.unquantified = true;
@@ -66,6 +73,7 @@ export class RefDatumEditComponent implements OnInit {
     this.getOPTypes();
     this.getVDatums();
     this.getVMethods();
+    this.getControlID();
     this.initForm();
   }
 
@@ -103,6 +111,22 @@ export class RefDatumEditComponent implements OnInit {
     });
   }
 
+  getControlID() {
+    let self = this;
+
+    this.siteService
+    .getOPControlID(this.rd.objective_point_id)
+    .subscribe((results) => {
+      if(results.length > 0){
+        results.forEach(function(control){
+          self.controlID.push(control);
+          self.controlsToAdd.push(control);
+        });
+        this.form.controls["op_control_identifier"] = new FormArray(this.controlsToAdd.map((control) => new FormGroup(this.createControlArray(control))));
+      }
+    });
+  }
+
   getInitFiles() {
     let self = this;
     this.data.files.forEach(function(file){
@@ -117,10 +141,11 @@ export class RefDatumEditComponent implements OnInit {
       op_type_id: new FormControl(this.rd.op_type_id !== undefined && this.rd.op_type_id !== "" ? this.rd.op_type_id : null, Validators.required),
       name: new FormControl(this.rd.name !== undefined && this.rd.name !== "" ? this.rd.name : null, Validators.required),
       description: new FormControl(this.rd.description !== undefined && this.rd.description !== "" ? this.rd.description : null, Validators.required),
-      op_control_identifier: new FormControl(this.rd.op_control_identifier !== undefined && this.rd.op_control_identifier !== "" ? this.rd.op_control_identifier : null),
+      op_control_identifier: new FormArray(this.controlsToAdd.map((control) => new FormGroup(this.createControlArray(control)))),
       op_is_destroyed: new FormControl(this.rd.op_is_destroyed !== undefined && this.rd.op_is_destroyed !== "" ? this.rd.op_is_destroyed : null),
       latitude_dd: new FormControl(this.rd.latitude_dd !== undefined && this.rd.latitude_dd !== "" ? this.rd.latitude_dd : null),
       longitude_dd: new FormControl(this.rd.longitude_dd !== undefined && this.rd.longitude_dd !== "" ? this.rd.longitude_dd : null),
+      objective_point_id: new FormControl(this.rd.objective_point_id),
       latdeg: new FormControl(this.dms.latdeg),
       latmin: new FormControl(this.dms.latmin),
       latsec: new FormControl(this.dms.latsec),
@@ -132,14 +157,25 @@ export class RefDatumEditComponent implements OnInit {
       elev_ft: new FormControl(this.rd.elev_ft !== undefined && this.rd.elev_ft !== "" ? this.rd.elev_ft : null),
       vdatum_id: new FormControl(this.rd.vdatum_id !== undefined && this.rd.vdatum_id !== "" ? this.rd.vdatum_id : null, Validators.required),
       vcollect_method_id: new FormControl(this.rd.vcollect_method_id !== undefined && this.rd.vcollect_method_id !== "" ? this.rd.vcollect_method_id : null),
-      uncertainty: new FormControl({value: this.rd.uncertainty, disabled: this.unquantified}),
-      unquantified: new FormControl({value: this.rd.unquantified}),
+      uncertainty: new FormControl({value: this.rd.uncertainty !== undefined ? this.rd.uncertainty : null, disabled: this.unquantified}),
+      unquantified: new FormControl(this.rd.unquantified),
       op_quality_id: new FormControl(this.rd.op_quality_id !== undefined && this.rd.op_quality_id !== "" ? this.rd.op_quality_id : null),
       op_notes: new FormControl(this.rd.op_notes !== undefined && this.rd.op_notes !== "" ? this.rd.op_notes : null),
       date_established: new FormControl(this.rd.date_established !== undefined && this.rd.date_established !== "" ? this.rd.date_established : null, Validators.required),
       date_recovered: new FormControl(this.rd.date_recovered !== undefined && this.rd.date_recovered !== "" ? this.rd.date_recovered : null),
       site_id: new FormControl(this.data.site_id !== undefined && this.data.site_id !== "" ? this.data.site_id : null)
     })
+  }
+
+  createControlArray(control) {
+    return {
+      objective_point_id: new FormControl(control.objective_point_id ? control.objective_point_id: null),
+      identifier: new FormControl(control.identifier ? control.identifier : null),
+      identifier_type: new FormControl(control.identifier_type ? control.identifier_type : null),
+      op_control_identifier_id: new FormControl(control.op_control_identifier_id ? control.op_control_identifier_id: null),
+      last_updated: new FormControl(control.last_updated ? control.last_updated : null),
+      last_updated_by: new FormControl(control.last_updated_by ? control.last_updated_by : null),
+    } as FormArray["value"];
   }
 
   unquantifiedChanged(event) {
@@ -171,21 +207,31 @@ export class RefDatumEditComponent implements OnInit {
   }
 
   addControl() {
-    this.addControlIdentifier = !this.addControlIdentifier;
+    this.controlsToAdd.push(JSON.parse(JSON.stringify(this.controlObj)));
+    this.form.controls["op_control_identifier"] = new FormArray(this.controlsToAdd.map((control) => new FormGroup(this.createControlArray(control))));
   }
 
-  removeControlIdentifier() {
-    this.addControlIdentifier = !this.addControlIdentifier;
-    this.form.controls.op_control_identifier.setValue(null);
-    this.controlID = null;
-  }
-
-  changeControlID(event) {
-    if(event.value === "PID"){
-      this.controlID = "PID";
-    }else if (event.value === "Other") {
-      this.controlID = "Other";
+  removeControlIdentifier(control, i) {
+    if (control.op_control_identifier_id !== undefined) {
+        this.controlsToRemove.push(control);
+        this.controlsToAdd.splice(i, 1);
+    } else {
+        this.controlsToAdd.splice(i, 1);
     }
+    this.form.controls["op_control_identifier"] = new FormArray(this.controlsToAdd.map((control) => new FormGroup(this.createControlArray(control))));
+  }
+
+  changeControlID(event, i, control) {
+    this.form.controls["op_control_identifier"].controls[i].controls.identifier_type.setValue(control.identifier_type);
+    this.controlsToAdd[i].identifier_type = control.identifier_type;
+  }
+
+  addControlToList(i) {
+    let self = this;
+    this.controlsToAdd = [];
+    this.form.controls["op_control_identifier"].controls.forEach(function(control){
+      self.controlsToAdd.push({op_control_identifier_id: control.controls.op_control_identifier_id.value, objective_point_id: control.controls.objective_point_id.value, identifier: control.controls.identifier.value, identifier_type: control.controls.identifier_type.value, last_updated: control.controls.last_updated.value, last_updated_by: control.controls.last_updated_by.value});
+    });
   }
 
   setLatLngValidators() {
@@ -367,27 +413,95 @@ export class RefDatumEditComponent implements OnInit {
   }
 
   async sendRequests() {
+    let self = this;
     let promises = [];
 
     // Copy form value object and delete extra fields, include disabled form values in submission
     let rdSubmission = JSON.parse(JSON.stringify(this.form.getRawValue()));
     delete rdSubmission.latdeg; delete rdSubmission.latmin; delete rdSubmission.latsec; delete rdSubmission.londeg; delete rdSubmission.lonmin; delete rdSubmission.lonsec;
+    delete rdSubmission.op_control_identifier;
 
     console.log(rdSubmission);
+    // Get list of initial objective points
+    let initOPs = [];
+    self.controlID.forEach(function(control){
+      initOPs.push(control.op_control_identifier_id);
+    })
     // Add control identifier array
+    if(this.controlsToAdd.length > 0){
+      for(let newControl of this.controlsToAdd){
+        if((newControl.op_control_identifier_id !== null) && (initOPs.join(',').includes(newControl.op_control_identifier_id.toString()))){
+          // Existing control was changed - put
+          let changed = false;
+          for(let control of self.controlID){
+            if(control.op_control_identifier_id === newControl.op_control_identifier_id){
+              if(JSON.stringify(control) !== JSON.stringify(newControl)){
+                changed = true;
+              }
+            }
+          }
+          if(changed){
+            const updateOPControl = await new Promise<string>(resolve => this.opEditService.updateControlID(newControl.op_control_identifier_id, newControl)
+                .subscribe(
+                    (data) => {
+                        this.returnData.opControlID.push(data);
+                        resolve(updateOPControl);
+                    }
+                )
+              )
+
+            promises.push(updateOPControl);
+          }else{
+            // Initial id was not changed or removed
+            self.returnData.opControlID.push(newControl);
+          }
+        }else{
+          delete newControl.last_updated; delete newControl.last_updated_by; delete newControl.op_control_identifier_id;
+          // Add new control - post
+          newControl.objective_point_id = rdSubmission.objective_point_id;
+          const addOPControl = await new Promise<string>(resolve => this.opEditService.postControlID(newControl)
+              .subscribe(
+                  (data) => {
+                      this.returnData.opControlID.push(data);
+                      resolve(addOPControl);
+                  }
+              )
+            )
+
+          promises.push(addOPControl);
+        }
+      };
+    }
 
     // Remove control identitier array
+    if(this.controlsToRemove.length > 0){
+      // Only send new controls
+      for(let control of this.controlsToRemove){
+        if(control.op_control_identifier_id !== null){
+        // delete control
+        const deleteOPControl = await new Promise<string>(resolve => this.opEditService.deleteControlID(control.op_control_identifier_id)
+          .subscribe(
+              (data) => {
+                  resolve(deleteOPControl);
+              }
+          )
+        )
 
-    // const updateRD = await new Promise<string>(resolve => this.opEditService.putReferenceDatum(rdSubmission.objective_point_id, rdSubmission)
-    //   .subscribe(
-    //       (data) => {
-    //           this.returnData. = data;
-    //           resolve(updateRD);
-    //       }
-    //   )
-    // )
+        promises.push(deleteOPControl);
+        }
+      };
+    }
 
-    // promises.push(updateRD)
+    const updateRD = await new Promise<string>(resolve => this.opEditService.putReferenceDatum(rdSubmission.objective_point_id, rdSubmission)
+      .subscribe(
+          (data) => {
+              this.returnData.referenceDatums = data;
+              resolve(updateRD);
+          }
+      )
+    )
+
+    promises.push(updateRD)
 
     Promise.all(promises).then(() => {
       this.dialogRef.close(this.returnData);

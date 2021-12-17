@@ -16,6 +16,7 @@ import { of } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { not } from '@angular/compiler/src/output/output_ast';
 import { CurrentUserService } from '@services/current-user.service';
+import { MatMenuModule } from '@angular/material/menu';
 
 declare let L: any;
 import 'leaflet';
@@ -51,6 +52,7 @@ describe('SiteDetailsComponent', () => {
                 NoopAnimationsModule,
                 MatSortModule,
                 MatPaginatorModule,
+                MatMenuModule,
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();

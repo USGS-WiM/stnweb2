@@ -476,7 +476,7 @@ export class SiteService {
         );
     }
 
-    //Get OP Quality
+    //Get OP Quality Lookup
     public getOPQualityLookup(): Observable<any> {
         return this.httpClient
             .get(APP_SETTINGS.API_ROOT + 'ObjectivePointQualities.json')
@@ -488,6 +488,21 @@ export class SiteService {
                     return response;
                 }),
                 catchError(this.handleError<any>('getOPQualityLookup', []))
+            );
+        }
+
+    //Get OP Control ID
+    public getOPControlID(opID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'ObjectivePoints/' + opID + '/OPControls.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPControlID response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPControlID', []))
             );
         }
 

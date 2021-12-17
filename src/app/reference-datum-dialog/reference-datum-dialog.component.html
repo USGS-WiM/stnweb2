@@ -32,6 +32,17 @@
                   <ng-template #nullDesc><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
+                  <p class="content-left">Control Identifier</p>
+                  <div *ngIf="controlID !== undefined; else nullControlID">
+                    <div *ngFor="let control of controlID">
+                      <p class="content-right">
+                          {{control.identifier}} ({{control.identifier_type}})
+                      </p>
+                    </div>
+                  </div>
+                  <ng-template #nullControlID><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
                   <p class="content-left">Latitude</p>
                   <p class="content-right" *ngIf="data.row_data.latitude_dd !== undefined && data.row_data.latitude_dd !== ''; else nullLat">{{data.row_data.latitude_dd}}</p>
                   <ng-template #nullLat><p class="content-right">---</p></ng-template>
@@ -84,12 +95,12 @@
                 </div>
                 <div class="cell-container">
                   <p class="content-left">Date Established</p>
-                  <p class="content-right" *ngIf="data.row_data.date_established !== undefined && data.row_data.date_established !== ''; else nullEstDate">{{data.row_data.date_established}}</p>
+                  <p class="content-right" *ngIf="data.row_data.date_established_format !== undefined && data.row_data.date_established_format !== ''; else nullEstDate">{{data.row_data.date_established_format}}</p>
                   <ng-template #nullEstDate><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
                   <p class="content-left">Date Recovered</p>
-                  <p class="content-right" *ngIf="data.row_data.date_recovered !== undefined && data.row_data.date_recovered !== ''; else nullRecovDate">{{data.row_data.date_recovered}}</p>
+                  <p class="content-right" *ngIf="data.row_data.date_recovered_format !== undefined && data.row_data.date_recovered_format !== ''; else nullRecovDate">{{data.row_data.date_recovered_format}}</p>
                   <ng-template #nullRecovDate><p class="content-right">---</p></ng-template>
                 </div>
             </div>

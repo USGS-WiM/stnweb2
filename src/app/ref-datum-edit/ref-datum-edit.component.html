@@ -8,10 +8,13 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
     <mat-dialog-content>
         <mat-accordion multi="true">
-            <mat-expansion-panel hideToggle expanded="false">
+            <mat-expansion-panel hideToggle [expanded]="infoExpanded" (opened)="infoExpanded = true" (closed)="infoExpanded = false">
                 <mat-expansion-panel-header>
-                    <mat-panel-title>
-                    Reference Datum Information
+                    <mat-panel-title *ngIf="!infoExpanded" style="color: grey; font-weight: 500">
+                        Reference Datum Information
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="infoExpanded" style="color: #FFF; font-weight: 550">
+                        Reference Datum Information
                     </mat-panel-title>
                 </mat-expansion-panel-header>
                 <mat-form-field appearance="fill">
@@ -35,18 +38,20 @@
                 <div>
                     <label class="form-header">Control Identifier</label>
                 </div>
-                <button class="ctrl-btn" mat-raised-button aria-label="Control Identifier" (click)="addControl()">Add New Identifier</button>
+                <button type="button" class="ctrl-btn" mat-raised-button aria-label="Control Identifier" (click)="addControl()">Add New Identifier</button>
                 <mat-icon matSuffix class="info-icon" matTooltip="National Geodetic Survey permanent identifier. See: ngs.noaa.gov/NGSDataExplorer/ for more information.">info</mat-icon>
-                <div [hidden]="!addControlIdentifier" class="container">
-                    <mat-radio-group class="radio-btn-group" [(ngModel)]="controlID" [ngModelOptions]="{standalone: true}" (change)="changeControlID($event)">
+                <div class="container" *ngFor="let control of controlsToAdd; let i = index" formArrayName="op_control_identifier">
+                    <mat-radio-group class="radio-btn-group" [(ngModel)]="controlsToAdd[i].identifier_type" [ngModelOptions]="{standalone: true}" (change)="changeControlID($event, i, control)">
                         <mat-radio-button class="radio-button" value="PID">PID</mat-radio-button>
                         <mat-radio-button class="radio-button" value="Other">Other</mat-radio-button>
                     </mat-radio-group>
-                    <mat-form-field id="controlID" appearance="fill">
-                        <mat-label>Control Identifier</mat-label>
-                        <input aria-label="Control Identifier" matInput formControlName="op_control_identifier" [value]="rd.op_control_identifier"/>
-                    </mat-form-field>
-                    <button mat-button aria-label="Remove Control Identifier" (click)="removeControlIdentifier()"><mat-icon>close</mat-icon></button>
+                    <div [formGroupName]="i">
+                        <mat-form-field class="controlID" appearance="fill">
+                            <mat-label>Control Identifier</mat-label>
+                            <input aria-label="Control Identifier" matInput formControlName="identifier" [value]="control.identifier" (change)="addControlToList(i)"/>
+                        </mat-form-field>
+                    </div>
+                    <button type="button" mat-button aria-label="Remove Control Identifier" (click)="removeControlIdentifier(control, i)"><mat-icon>close</mat-icon></button>
                 </div>
                 <div>
                     <mat-radio-group class="radio-btn-group" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
@@ -261,10 +266,13 @@
                     <button class="cancel-btn" mat-raised-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
                 </div>
             </mat-expansion-panel>
-            <mat-expansion-panel hideToggle expanded="false">
+            <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
                 <mat-expansion-panel-header>
-                    <mat-panel-title>
-                    Reference Datum Files
+                    <mat-panel-title *ngIf="!filesExpanded" style="color: grey; font-weight: 500">
+                        Reference Datum File Information
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="filesExpanded" style="color: #FFF; font-weight: 550">
+                        Reference Datum File Information
                     </mat-panel-title>
                     <mat-panel-description>
                         <mat-icon class="info-header-icon" matTooltip="Files uploaded to Reference Datum are not tied to an event.  To associate a file with an event, please upload through a sensor or hwm instead of here.">info</mat-icon>

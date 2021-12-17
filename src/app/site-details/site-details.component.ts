@@ -797,7 +797,7 @@ export class SiteDetailsComponent implements OnInit {
             let estDate = row.date_established.split("T")[0];
             estDate = estDate.split("-");
             estDate = estDate[1] + "/" + estDate[2] + "/" + estDate[0];
-            row.date_established = estDate;
+            row.date_established_format = estDate;
         }
 
         // Format date recovered
@@ -805,7 +805,7 @@ export class SiteDetailsComponent implements OnInit {
             let recoveredDate = row.date_recovered.split("T")[0];
             recoveredDate = recoveredDate.split("-");
             recoveredDate = recoveredDate[1] + "/" + recoveredDate[2] + "/" + recoveredDate[0];
-            row.date_recovered = recoveredDate;
+            row.date_recovered_format = recoveredDate;
         }
 
         let dialogWidth;
@@ -826,6 +826,7 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openRefDatumEditDialog(row): void {
+        let self = this;
         const dialogRef = this.dialog.open(RefDatumEditComponent, {
             data: {
                 rd: row,
@@ -835,11 +836,17 @@ export class SiteDetailsComponent implements OnInit {
                 site_id: this.site.site_id,
             },
             width: '100%',
+            autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result){
                 if(result.referenceDatums !== null){
-                    this.refMarkDataSource.data = result.referenceDatums;
+                    this.refMarkDataSource.data.forEach(function(row, i){
+                        if(row.objective_point_id === result.referenceDatums.objective_point_id){
+                            // replace row with new info
+                            self.refMarkDataSource.data = [result.referenceDatums];
+                        }
+                    });
                 }
             }
         });
@@ -1015,7 +1022,6 @@ export class SiteDetailsComponent implements OnInit {
                     // Landowner
                     if(result.landowner !== null){
                         this.landownerContact = result.landowner;
-                        console.log(result.landowner);
                     }
                 }
             });
