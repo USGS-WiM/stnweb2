@@ -519,9 +519,21 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-raised-button (click)="openRefMarkDetailsDialog(row)"
-                                    aria-label="Edit">View Details
+                                <button mat-stroked-button class="view-details-btn" (click)="openRefMarkDetailsDialog(row)"
+                                    aria-label="View Details"><mat-icon>search</mat-icon> View Details
                                 </button>
+                                <button mat-stroked-button class="edit-details-btn" (click)="openRefDatumEditDialog(row)"
+                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                </button>
+                                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                    <mat-icon>more_vert</mat-icon>
+                                  </button>
+                                  <mat-menu #menu="matMenu">
+                                    <button mat-menu-item
+                                        aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <span>Delete</span>
+                                    </button>
+                                  </mat-menu>
                                 </td>
                             </ng-container>
 
@@ -622,7 +634,7 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-raised-button (click)="openSensorDetailsDialog(row)"
+                                <button mat-stroked-button class="view-details-btn" (click)="openSensorDetailsDialog(row)"
                                     aria-label="Edit">View Details
                                 </button>
                                 </td>
@@ -711,7 +723,7 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-raised-button (click)="openHWMDetailsDialog(row)"
+                                <button mat-stroked-button class="view-details-btn" (click)="openHWMDetailsDialog(row)"
                                     aria-label="Edit">View Details
                                 </button>
                                 </td>
@@ -786,7 +798,7 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-raised-button (click)="openPeaksDetailsDialog(row, 'Peak')"
+                                <button mat-stroked-button class="view-details-btn" (click)="openPeaksDetailsDialog(row, 'Peak')"
                                     aria-label="Edit">View Details
                                 </button>
                                 </td>
@@ -857,7 +869,7 @@
                                         <th mat-header-cell *matHeaderCellDef>
                                         </th>
                                         <td mat-cell *matCellDef="let row">
-                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Site File')"
+                                        <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Site File')"
                                             aria-label="Edit">View Details
                                         </button>
                                         </td>
@@ -938,7 +950,7 @@
                                         <th mat-header-cell *matHeaderCellDef>
                                         </th>
                                         <td mat-cell *matCellDef="let row">
-                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Reference Datum File')"
+                                        <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Reference Datum File')"
                                             aria-label="Edit">View Details
                                         </button>
                                         </td>
@@ -1019,7 +1031,7 @@
                                         <th mat-header-cell *matHeaderCellDef>
                                         </th>
                                         <td mat-cell *matCellDef="let row">
-                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Sensor File')"
+                                        <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Sensor File')"
                                             aria-label="Edit">View Details
                                         </button>
                                         </td>
@@ -1087,7 +1099,7 @@
                                         <th mat-header-cell *matHeaderCellDef>
                                         </th>
                                         <td mat-cell *matCellDef="let row">
-                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'HWM File')"
+                                        <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'HWM File')"
                                             aria-label="Edit">View Details
                                         </button>
                                         </td>

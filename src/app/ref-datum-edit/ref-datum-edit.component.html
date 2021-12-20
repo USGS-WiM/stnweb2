@@ -1,0 +1,343 @@
+<h2 mat-dialog-title>
+    Reference Datum
+    <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
+</h2>
+<div [hidden]="!loading" class="loading">
+    <mat-spinner style="margin:0 auto; top: 50%" mode="indeterminate" diameter="20"></mat-spinner>
+</div>
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-dialog-content>
+        <mat-accordion multi="true">
+            <mat-expansion-panel hideToggle [expanded]="infoExpanded" (opened)="infoExpanded = true" (closed)="infoExpanded = false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title *ngIf="!infoExpanded" style="color: grey; font-weight: 500">
+                        Reference Datum Information
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="infoExpanded" style="color: #FFF; font-weight: 550">
+                        Reference Datum Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-form-field appearance="fill">
+                    <mat-label>Type</mat-label>
+                    <mat-select required aria-label="Type" formControlName="op_type_id">
+                        <mat-option *ngFor="let type of types" [value]="type.objective_point_type_id">
+                        {{type.op_type}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Name</mat-label>
+                    <input aria-label="Name" matInput formControlName="name" required [value]="rd.name"/>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label for="description">Description</mat-label>
+                    <textarea aria-label="description" matInput formControlName="description" required id="description" [value]="rd.description"></textarea>
+                    <mat-icon matSuffix class="info-icon" matTooltip="Please describe location and type of mark ie. chiseled square on third sidewalk block on the south side of the street." 
+                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                </mat-form-field>
+                <div>
+                    <label class="form-header">Control Identifier</label>
+                </div>
+                <button type="button" class="ctrl-btn" mat-stroked-button aria-label="Control Identifier" (click)="addControl()">Add New Identifier</button>
+                <mat-icon matSuffix class="info-icon" matTooltip="National Geodetic Survey permanent identifier. See: ngs.noaa.gov/NGSDataExplorer/ for more information.">info</mat-icon>
+                <div class="container" *ngFor="let control of controlsToAdd; let i = index" formArrayName="op_control_identifier">
+                    <mat-radio-group class="radio-btn-group" [(ngModel)]="controlsToAdd[i].identifier_type" [ngModelOptions]="{standalone: true}" (change)="changeControlID($event, i, control)">
+                        <mat-radio-button class="radio-button" value="PID">PID</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="Other">Other</mat-radio-button>
+                    </mat-radio-group>
+                    <div [formGroupName]="i">
+                        <mat-form-field class="controlID" appearance="fill">
+                            <mat-label>Control Identifier</mat-label>
+                            <input aria-label="Control Identifier" matInput formControlName="identifier" [value]="control.identifier" (change)="addControlToList(i)"/>
+                        </mat-form-field>
+                    </div>
+                    <button type="button" mat-button aria-label="Remove Control Identifier" (click)="removeControlIdentifier(control, i)"><mat-icon>close</mat-icon></button>
+                </div>
+                <div>
+                    <mat-radio-group class="radio-btn-group" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
+                        <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
+                    </mat-radio-group>   
+                </div>
+                <div *ngIf="latLngUnit === 'decdeg'">            
+                    <mat-form-field appearance="fill">
+                        <mat-label>Latitude</mat-label>
+                        <input aria-label="Latitude" matInput formControlName="latitude_dd" [value]="rd.latitude_dd"/>
+                    </mat-form-field>
+                    <!-- LatDD Validator -->
+                    <div *ngIf="form.controls.latitude_dd.invalid && (form.controls.latitude_dd.dirty || form.controls.latitude_dd.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.latitude_dd.errors?.['incorrectValue']">
+                            The latitude must be between 0 and 73.0.
+                        </div>
+                    </div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Longitude</mat-label>
+                        <input aria-label="longitude" matInput formControlName="longitude_dd" [value]="rd.longitude_dd"/>
+                    </mat-form-field>
+                    <!-- LonDD Validator -->
+                    <div *ngIf="form.controls.longitude_dd.invalid && (form.controls.longitude_dd.dirty || form.controls.longitude_dd.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.longitude_dd.errors?.['incorrectValue']">
+                            The longitude must be between -175.0 and -60.0.
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="latLngUnit === 'dms'">
+                    <table>
+                        <tr>
+                            <td>
+                                <label>Latitude</label>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Degree</mat-label>
+                                    <input aria-label="Degree" required formControlName="latdeg" matInput [value]="dms.latdeg"/>
+                                </mat-form-field>
+                            </td>
+                            <td>°</td>
+                            <td>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Minute</mat-label>
+                                    <input aria-label="Minute" required formControlName="latmin" matInput [value]="dms.latmin"/>
+                                </mat-form-field>
+                            </td>
+                            <td>′</td>
+                            <td>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Second</mat-label>
+                                    <input aria-label="Second" required formControlName="latsec" matInput [value]="dms.latsec"/>
+                                </mat-form-field>
+                            </td>
+                            <td>″</td>
+                        </tr>
+                    </table>
+                    <!-- LatDD Validator -->
+                    <div *ngIf="form.controls.latdeg.invalid && (form.controls.latdeg.dirty || form.controls.latdeg.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.latdeg.errors?.['incorrectValue']">
+                            The latitude must be between -175.0 and -60.0.
+                        </div>
+                    </div>
+                    <div *ngIf="form.controls.latmin.invalid && (form.controls.latmin.dirty || form.controls.latmin.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.latmin.errors?.['incorrectValue']">
+                            The latitude must be between 0 and 73.
+                        </div>
+                    </div>
+                    <div *ngIf="form.controls.latsec.invalid && (form.controls.latsec.dirty || form.controls.latsec.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.latsec.errors?.['incorrectValue']">
+                            The latitude must be between 0 and 73.
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <label>Longitude</label>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Degree</mat-label>
+                                    <input aria-label="Degree" required formControlName="londeg" matInput [value]="dms.londeg"/>
+                                </mat-form-field>
+                            </td>
+                            <td>°</td>
+                            <td>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Minute</mat-label>
+                                    <input aria-label="Minute" required formControlName="lonmin" matInput [value]="dms.lonmin"/>
+                                </mat-form-field>
+                            </td>
+                            <td>′</td>
+                            <td>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Second</mat-label>
+                                    <input aria-label="Second" required formControlName="lonsec" matInput [value]="dms.lonsec"/>
+                                </mat-form-field>
+                            </td>
+                            <td>″</td>
+                        </tr>
+                    </table>
+                    <!-- LonDD Validator -->
+                    <div *ngIf="form.controls.londeg.invalid && (form.controls.londeg.dirty || form.controls.londeg.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.londeg.errors?.['incorrectValue']">
+                            The longitude must be between -175.0 and -60.0.
+                        </div>
+                    </div>
+                    <div *ngIf="form.controls.lonmin.invalid && (form.controls.lonmin.dirty || form.controls.lonmin.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.lonmin.errors?.['incorrectValue']">
+                            The longitude must be between -175.0 and -60.0.
+                        </div>
+                    </div>
+                    <div *ngIf="form.controls.lonsec.invalid && (form.controls.lonsec.dirty || form.controls.lonsec.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.lonsec.errors?.['incorrectValue']">
+                            The longitude must be between -175.0 and -60.0.
+                        </div>
+                    </div>
+                </div>
+                <mat-form-field appearance="fill">
+                    <mat-label>Horizontal Datum</mat-label>
+                    <mat-select aria-label="Horizontal Datum" formControlName="hdatum_id">
+                        <mat-option *ngFor="let datum of hdatums" [value]="datum.datum_id">
+                        {{datum.datum_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Horizontal Collection Method</mat-label>
+                    <mat-select aria-label="Horizontal Collection Method" formControlName="hcollect_method_id">
+                        <mat-option *ngFor="let method of hmethods" [value]="method.hcollect_method_id">
+                        {{method.hcollect_method}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-radio-group class="radio-btn-group" [(value)]="elev_unit" (change)="elevUnitChange($event)">
+                    <mat-radio-button class="radio-button" value="ft">ft</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="m">meter</mat-radio-button>
+                </mat-radio-group>
+                <mat-form-field appearance="fill">
+                    <mat-label for="elevation">Elevation</mat-label>
+                    <input aria-label="Elevation" matInput formControlName="elev_ft" [value]="rd.elev_ft"/>
+                </mat-form-field>
+                <!-- Elevation Validator -->
+                <div *ngIf="form.controls.elev_ft.invalid && (form.controls.elev_ft.dirty || form.controls.elev_ft.touched)"
+                    class="alert alert-danger">
+                    <div *ngIf="form.controls.elev_ft.errors?.['incorrectValue']">
+                        Elevation must be a numeric value.
+                    </div>
+                </div>
+                <mat-form-field appearance="fill">
+                    <mat-label>Vertical Datum</mat-label>
+                    <mat-select aria-label="Vertical Datum" required formControlName="vdatum_id">
+                        <mat-option *ngFor="let datum of vdatums" [value]="datum.datum_id">
+                        {{datum.datum_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Vertical Collection Method</mat-label>
+                    <mat-select aria-label="Vertical Collection Method" formControlName="vcollect_method_id" [(value)]="rd.vcollect_method_id">
+                        <mat-option *ngFor="let method of vmethods" [value]="method.vcollect_method_id">
+                        {{method.vcollect_method}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <label class="form-header">Uncertainty</label>
+                <div class="container">
+                    <mat-radio-group class="radio-btn-group" [(value)]="uncertainty_unit" (change)="uncertaintyUnitChange($event)">
+                        <mat-radio-button class="radio-button" value="ft">ft</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="cm">cm</mat-radio-button>
+                    </mat-radio-group>
+                    <mat-form-field id="uncertainty" appearance="fill">
+                        <mat-label for="uncertainty">Uncertainty</mat-label>
+                        <input aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="rd.uncertainty"/>
+                        <mat-icon matSuffix class="info-icon" matTooltip="From GNSS or OPUS solution.">info</mat-icon>
+                    </mat-form-field>
+                    <mat-checkbox id="unquantified" [value]="unquantified" [checked]="unquantified" (change)="unquantifiedChanged($event)">
+                        Unquantified
+                    </mat-checkbox>
+                    <!-- Uncertainty Validator -->
+                    <div *ngIf="form.controls.uncertainty.invalid && (form.controls.uncertainty.dirty || form.controls.uncertainty.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.uncertainty.errors?.['incorrectValue']">
+                            Uncertainty must be a numeric value.
+                        </div>
+                    </div>
+                </div>
+                <mat-form-field appearance="fill">
+                    <mat-label>Quality</mat-label>
+                    <mat-select aria-label="Quality" formControlName="op_quality_id" [(value)]="rd.op_quality_id">
+                        <mat-option *ngFor="let quality of opQualities" [value]="quality.op_quality_id">
+                        {{quality.quality}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Reference Datum Notes</mat-label>
+                    <textarea aria-label="Reference Datum Notes" matInput formControlName="op_notes" [value]="rd.op_notes"></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Date Established</mat-label>
+                    <input aria-label="Date Established" matInput formControlName="date_established" [value]="rd.date_established" [matDatepicker]="estDatePicker" required placeholder="Choose a date">
+                    <mat-datepicker-toggle matSuffix [for]="estDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker [value]="rd.date_established" #estDatePicker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Date Recovered</mat-label>
+                    <input aria-label="Date Recovered" matInput formControlName="date_recovered" [value]="rd.date_recovered" [matDatepicker]="recDatePicker" placeholder="Choose a date">
+                    <mat-datepicker-toggle matSuffix [for]="recDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker [value]="rd.date_recovered" #recDatePicker></mat-datepicker>
+                    <mat-icon matSuffix class="info-icon" matTooltip="Enter the date the location was recently found in good condition.">info</mat-icon>
+                </mat-form-field>
+                <div class="ref-button-group">
+                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                    <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title *ngIf="!filesExpanded" style="color: grey; font-weight: 500">
+                        Reference Datum File Information
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="filesExpanded" style="color: #FFF; font-weight: 550">
+                        Reference Datum File Information
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        <mat-icon class="info-header-icon" matTooltip="Files uploaded to Reference Datum are not tied to an event.  To associate a file with an event, please upload through a sensor or hwm instead of here.">info</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <button mat-stroked-button class="add-button" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <div class="tableContainer" [hidden]="initDatumFiles?.length === 0">
+                    <table
+                        mat-table
+                        id="datumFileTable"
+                        [dataSource]="initDatumFiles"
+                        class="mat-elevation-z5"
+                        matSort
+                    >
+
+                        <!-- file name column -->
+                        <ng-container matColumnDef="FileName">
+                            <th mat-header-cell *matHeaderCellDef>File Name</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div>
+                                    {{file.name}}
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <!-- file date column -->
+                        <ng-container matColumnDef="FileDate">
+                            <th mat-header-cell *matHeaderCellDef>File Date</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div>
+                                    {{file.format_file_date}}
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedFileColumns"></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: displayedFileColumns"
+                            class="file-table"
+                            (click)="showFileEdit(row)"
+                        ></tr>
+                    </table>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <div class="detail-section-buttons centered">
+            <button mat-stroked-button class="close-btn" [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Close">Close</button>
+            <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+        </div>
+    </mat-dialog-actions>
+</form>
+
+

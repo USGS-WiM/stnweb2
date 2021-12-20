@@ -24,6 +24,7 @@ import { SiteEditComponent } from '@app/site-edit/site-edit.component';
 import { ResultDetailsComponent } from '@app/result-details/result-details.component';
 import { networkInterfaces } from 'os';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
 
 @Component({
     selector: 'app-site-details',
@@ -432,11 +433,9 @@ export class SiteDetailsComponent implements OnInit {
                                 .subscribe((deploymentResults) => {
                                     console.log(deploymentResults)
                                     this.siteFullInstruments.forEach(function(result){
-                                        console.log(result)
                                         deploymentResults.forEach(function(type){
                                             if (result.deployment_type_id === type.deployment_type_id){
                                                 result.deploymentType = type.method;
-                                                console.log(result.deploymentType)
                                             }
                                         });
 
@@ -797,7 +796,7 @@ export class SiteDetailsComponent implements OnInit {
             let estDate = row.date_established.split("T")[0];
             estDate = estDate.split("-");
             estDate = estDate[1] + "/" + estDate[2] + "/" + estDate[0];
-            row.date_established = estDate;
+            row.date_established_format = estDate;
         }
 
         // Format date recovered
@@ -805,7 +804,7 @@ export class SiteDetailsComponent implements OnInit {
             let recoveredDate = row.date_recovered.split("T")[0];
             recoveredDate = recoveredDate.split("-");
             recoveredDate = recoveredDate[1] + "/" + recoveredDate[2] + "/" + recoveredDate[0];
-            row.date_recovered = recoveredDate;
+            row.date_recovered_format = recoveredDate;
         }
 
         let dialogWidth;
@@ -823,6 +822,33 @@ export class SiteDetailsComponent implements OnInit {
             width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openRefDatumEditDialog(row): void {
+        let self = this;
+        const dialogRef = this.dialog.open(RefDatumEditComponent, {
+            data: {
+                rd: row,
+                hdatumList: this.hdatumList,
+                hmethodList: this.hmethodList,
+                files: this.refMarkFilesDataSource.data,
+                site_id: this.site.site_id,
+            },
+            width: '100%',
+            autoFocus: false
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result){
+                if(result.referenceDatums !== null){
+                    this.refMarkDataSource.data.forEach(function(row, i){
+                        if(row.objective_point_id === result.referenceDatums.objective_point_id){
+                            // replace row with new info
+                            self.refMarkDataSource.data = [result.referenceDatums];
+                        }
+                    });
+                }
+            }
+        });
     }
 
     openHWMDetailsDialog(row): void {
@@ -942,7 +968,6 @@ export class SiteDetailsComponent implements OnInit {
             });
             dialogRef.afterClosed().subscribe((result) => {
                 if(result){
-                    console.log(result)
                     if(result.site !== null){
                         // Update site details page with any edits
                         let siteResultCopy = JSON.parse(JSON.stringify(result.site));
@@ -996,7 +1021,6 @@ export class SiteDetailsComponent implements OnInit {
                     // Landowner
                     if(result.landowner !== null){
                         this.landownerContact = result.landowner;
-                        console.log(result.landowner);
                     }
                 }
             });

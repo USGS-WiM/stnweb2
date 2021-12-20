@@ -162,6 +162,36 @@ export class SiteService {
             );
     }
 
+        //Get vertical datum lookup
+        public getVDatumLookup(): Observable<any> {
+            return this.httpClient
+                .get(APP_SETTINGS.API_ROOT + 'VerticalDatums.json')
+                .pipe(
+                    tap((response) => {
+                        console.log(
+                            'getVDatumLookup response received'
+                        );
+                        return response;
+                    }),
+                    catchError(this.handleError<any>('getVDatumLookup', []))
+                );
+        }
+    
+        //Get vertical collection method lookup
+        public getVMethodLookup(): Observable<any> {
+            return this.httpClient
+                .get(APP_SETTINGS.API_ROOT + 'VerticalMethods.json')
+                .pipe(
+                    tap((response) => {
+                        console.log(
+                            'getVMethodLookup response received'
+                        );
+                        return response;
+                    }),
+                    catchError(this.handleError<any>('getVMethodLookup', []))
+                );
+        }
+
     //Get housing type
     public getHousingType(housing_type_id): Observable<any> {
         return this.httpClient
@@ -416,6 +446,21 @@ export class SiteService {
             );
     }
 
+    //Get OP Type Lookup
+    public getOPTypeLookup(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'OPTypes.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPTypeLookup response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPTypeLookup', []))
+            );
+    }
+
     //Get OP Quality
     public getOPQuality(opQualityID): Observable<any> {
     return this.httpClient
@@ -430,6 +475,36 @@ export class SiteService {
             catchError(this.handleError<any>('getOPQuality', []))
         );
     }
+
+    //Get OP Quality Lookup
+    public getOPQualityLookup(): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'ObjectivePointQualities.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPQualityLookup response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPQualityLookup', []))
+            );
+        }
+
+    //Get OP Control ID
+    public getOPControlID(opID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'ObjectivePoints/' + opID + '/OPControls.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPControlID response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPControlID', []))
+            );
+        }
 
     //Get Site Sensors
     public getSiteFullInstruments(siteID): Observable<any> {

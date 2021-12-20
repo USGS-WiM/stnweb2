@@ -234,8 +234,8 @@ table {
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
-    width: 20px;
-    text-align: center;
+    width: 25%;
+    text-align: right;
     align-self: stretch;
 } 
 
@@ -279,7 +279,28 @@ table {
 }
 
 .delete-button {
+    margin-left: 5px;
+}
+
+.delete-btn {
+    background-color: #E70000;
+    color: #F4F4F4;
+    border: 1px solid #ce0000;
     margin: 5px 5px;
+}
+
+.view-details-btn {
+    margin: 5px 5px;
+    border: 1px solid #404040;
+}
+
+.edit-details-btn {
+    margin: 5px 5px;
+    border: 1px solid #404040;
+}
+
+.edit-icon {
+    font-size: 22px;
 }
 
 .table-container {
@@ -306,10 +327,6 @@ table {
     padding-right: 5px;
     text-align: right;
     font-weight: bold;
-}
-
-.edit-button {
-    margin: 5px 5px;
 }
 
 .left {
