@@ -107,6 +107,10 @@ table {
     float: right;
 }
 
+.close-btn {
+    border: 1px solid #404040;
+}
+
 .controlID.mat-form-field {
     margin: 0px 0px 0px 15px;
     display: block;
@@ -119,17 +123,21 @@ table {
 }
 
 .save-btn {
-    background-color: #008248;
     color: #F4F4F4;
-    border: 1px solid #2B7059;
+}
+
+.add-button {
+    border: 1px solid #404040;
 }
 
 .cancel-btn {
     margin-left: 10px;
+    border: 1px solid #404040;
 }
 
 .ctrl-btn {
     margin: 10px;
+    border: 1px solid #404040;
 }
 
 .form-header {

@@ -117,6 +117,7 @@ export class RefDatumEditComponent implements OnInit {
     this.siteService
     .getOPControlID(this.rd.objective_point_id)
     .subscribe((results) => {
+      console.log(results)
       if(results.length > 0){
         results.forEach(function(control){
           self.controlID.push(control);
@@ -165,6 +166,9 @@ export class RefDatumEditComponent implements OnInit {
       date_recovered: new FormControl(this.rd.date_recovered !== undefined && this.rd.date_recovered !== "" ? this.rd.date_recovered : null),
       site_id: new FormControl(this.data.site_id !== undefined && this.data.site_id !== "" ? this.data.site_id : null)
     })
+
+    this.form.controls.uncertainty.setValidators([this.isNum()]);
+    this.form.controls.elev_ft.setValidators([this.isNum()]);
   }
 
   createControlArray(control) {
@@ -262,6 +266,14 @@ export class RefDatumEditComponent implements OnInit {
 
   checkNaN = function(x){
     return isNaN(x);
+  }
+
+  // Validate elevation and uncertainty
+  isNum() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const incorrect = this.checkNaN(control.value);
+      return incorrect ? {incorrectValue: {value: control.value}} : null;
+    };
   }
 
   // Validate lat/lngs
@@ -421,25 +433,32 @@ export class RefDatumEditComponent implements OnInit {
     delete rdSubmission.latdeg; delete rdSubmission.latmin; delete rdSubmission.latsec; delete rdSubmission.londeg; delete rdSubmission.lonmin; delete rdSubmission.lonsec;
     delete rdSubmission.op_control_identifier;
 
-    console.log(rdSubmission);
     // Get list of initial objective points
     let initOPs = [];
     self.controlID.forEach(function(control){
       initOPs.push(control.op_control_identifier_id);
     })
+    console.log(this.controlsToAdd)
     // Add control identifier array
     if(this.controlsToAdd.length > 0){
       for(let newControl of this.controlsToAdd){
+        console.log(newControl.op_control_identifier_id)
+        console.log(initOPs.join(','))
+        console.log((newControl.op_control_identifier_id !== null) && (initOPs.join(',').includes(newControl.op_control_identifier_id.toString())))
         if((newControl.op_control_identifier_id !== null) && (initOPs.join(',').includes(newControl.op_control_identifier_id.toString()))){
           // Existing control was changed - put
           let changed = false;
+          console.log(newControl)
           for(let control of self.controlID){
+            console.log(control.op_control_identifier_id)
+            console.log(newControl.op_control_identifier_id)
             if(control.op_control_identifier_id === newControl.op_control_identifier_id){
               if(JSON.stringify(control) !== JSON.stringify(newControl)){
                 changed = true;
               }
             }
           }
+          console.log(changed)
           if(changed){
             const updateOPControl = await new Promise<string>(resolve => this.opEditService.updateControlID(newControl.op_control_identifier_id, newControl)
                 .subscribe(

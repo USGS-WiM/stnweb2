@@ -38,7 +38,7 @@
                 <div>
                     <label class="form-header">Control Identifier</label>
                 </div>
-                <button type="button" class="ctrl-btn" mat-raised-button aria-label="Control Identifier" (click)="addControl()">Add New Identifier</button>
+                <button type="button" class="ctrl-btn" mat-stroked-button aria-label="Control Identifier" (click)="addControl()">Add New Identifier</button>
                 <mat-icon matSuffix class="info-icon" matTooltip="National Geodetic Survey permanent identifier. See: ngs.noaa.gov/NGSDataExplorer/ for more information.">info</mat-icon>
                 <div class="container" *ngFor="let control of controlsToAdd; let i = index" formArrayName="op_control_identifier">
                     <mat-radio-group class="radio-btn-group" [(ngModel)]="controlsToAdd[i].identifier_type" [ngModelOptions]="{standalone: true}" (change)="changeControlID($event, i, control)">
@@ -195,16 +195,21 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <!-- <div> -->
-                    <mat-radio-group class="radio-btn-group" [(value)]="elev_unit" (change)="elevUnitChange($event)">
-                        <mat-radio-button class="radio-button" value="ft">ft</mat-radio-button>
-                        <mat-radio-button class="radio-button" value="m">meter</mat-radio-button>
-                    </mat-radio-group>
-                <!-- </div> -->
+                <mat-radio-group class="radio-btn-group" [(value)]="elev_unit" (change)="elevUnitChange($event)">
+                    <mat-radio-button class="radio-button" value="ft">ft</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="m">meter</mat-radio-button>
+                </mat-radio-group>
                 <mat-form-field appearance="fill">
                     <mat-label for="elevation">Elevation</mat-label>
                     <input aria-label="Elevation" matInput formControlName="elev_ft" [value]="rd.elev_ft"/>
                 </mat-form-field>
+                <!-- Elevation Validator -->
+                <div *ngIf="form.controls.elev_ft.invalid && (form.controls.elev_ft.dirty || form.controls.elev_ft.touched)"
+                    class="alert alert-danger">
+                    <div *ngIf="form.controls.elev_ft.errors?.['incorrectValue']">
+                        Elevation must be a numeric value.
+                    </div>
+                </div>
                 <mat-form-field appearance="fill">
                     <mat-label>Vertical Datum</mat-label>
                     <mat-select aria-label="Vertical Datum" required formControlName="vdatum_id">
@@ -235,6 +240,13 @@
                     <mat-checkbox id="unquantified" [value]="unquantified" [checked]="unquantified" (change)="unquantifiedChanged($event)">
                         Unquantified
                     </mat-checkbox>
+                    <!-- Uncertainty Validator -->
+                    <div *ngIf="form.controls.uncertainty.invalid && (form.controls.uncertainty.dirty || form.controls.uncertainty.touched)"
+                        class="alert alert-danger">
+                        <div *ngIf="form.controls.uncertainty.errors?.['incorrectValue']">
+                            Uncertainty must be a numeric value.
+                        </div>
+                    </div>
                 </div>
                 <mat-form-field appearance="fill">
                     <mat-label>Quality</mat-label>
@@ -262,8 +274,8 @@
                     <mat-icon matSuffix class="info-icon" matTooltip="Enter the date the location was recently found in good condition.">info</mat-icon>
                 </mat-form-field>
                 <div class="ref-button-group">
-                    <button class="save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
-                    <button class="cancel-btn" mat-raised-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                    <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
                 </div>
             </mat-expansion-panel>
             <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
@@ -278,7 +290,7 @@
                         <mat-icon class="info-header-icon" matTooltip="Files uploaded to Reference Datum are not tied to an event.  To associate a file with an event, please upload through a sensor or hwm instead of here.">info</mat-icon>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
-                <button mat-raised-button class="add-button" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <button mat-stroked-button class="add-button" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
                 <div class="tableContainer" [hidden]="initDatumFiles?.length === 0">
                     <table
                         mat-table
@@ -322,7 +334,7 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
-            <button mat-raised-button [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Close">Close</button>
+            <button mat-stroked-button class="close-btn" [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Close">Close</button>
             <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
         </div>
     </mat-dialog-actions>

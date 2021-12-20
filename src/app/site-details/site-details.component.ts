@@ -433,7 +433,6 @@ export class SiteDetailsComponent implements OnInit {
                                 .subscribe((deploymentResults) => {
                                     console.log(deploymentResults)
                                     this.siteFullInstruments.forEach(function(result){
-                                        console.log(result)
                                         deploymentResults.forEach(function(type){
                                             if (result.deployment_type_id === type.deployment_type_id){
                                                 result.deploymentType = type.method;

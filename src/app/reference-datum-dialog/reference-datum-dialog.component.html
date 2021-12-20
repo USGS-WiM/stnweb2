@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>
     Reference Datum
-    <!-- <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button> -->
+    <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <mat-dialog-content *ngIf="data.row_data">
   <!-- Reference Datum Dialog -->
@@ -167,7 +167,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <div class="detail-section-buttons centered">
-        <button mat-button mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
+        <button mat-stroked-button class="close-btn" mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
         <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
     </div>
 </mat-dialog-actions>
