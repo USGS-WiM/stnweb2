@@ -4,10 +4,13 @@
 </h2>
 <mat-dialog-content *ngIf="data.row_data">
     <mat-accordion multi="true">
-        <mat-expansion-panel hideToggle expanded="true">
+        <mat-expansion-panel hideToggle [expanded]="infoExpanded" (opened)="infoExpanded = true" (closed)="infoExpanded = false">
         <mat-expansion-panel-header>
-            <mat-panel-title>
-            HWM Information
+            <mat-panel-title *ngIf="!infoExpanded" style="color: grey; font-weight: 500">
+                HWM Information
+            </mat-panel-title>
+            <mat-panel-title *ngIf="infoExpanded" style="color: #FFF; font-weight: 550">
+                HWM Information
             </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="table-container">
@@ -140,10 +143,13 @@
             </div>
         </div>
         </mat-expansion-panel>
-        <mat-expansion-panel hideToggle expanded="false">
+        <mat-expansion-panel hideToggle [expanded]="filesExpanded"  (opened)="filesExpanded = true" (closed)="filesExpanded = false">
         <mat-expansion-panel-header>
-            <mat-panel-title>
-            HWM File Information
+            <mat-panel-title *ngIf="!filesExpanded" style="color: grey; font-weight: 500">
+                HWM File Information
+            </mat-panel-title>
+            <mat-panel-title *ngIf="filesExpanded" style="color: #FFF; font-weight: 550">
+                HWM File Information
             </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="tableContainer">

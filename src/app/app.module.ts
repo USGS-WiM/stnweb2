@@ -67,11 +67,12 @@ import { HwmDialogComponent } from './hwm-dialog/hwm-dialog.component';
 import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
 import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
 import { FileDetailsDialogComponent } from './file-details-dialog/file-details-dialog.component';
-import { UserManagementComponent } from './user-management/user-management.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SiteEditComponent } from './site-edit/site-edit.component';
 import { CreatePasswordComponent } from './create-password/create-password.component';
+import { UserManagementComponent } from './user-management/user-management.component';
+import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component';
 
 @NgModule({
     declarations: [
@@ -98,6 +99,7 @@ import { CreatePasswordComponent } from './create-password/create-password.compo
         UserManagementComponent,
         AddUserDialogComponent,
         CreatePasswordComponent,
+        RefDatumEditComponent,
     ],
     imports: [
         BrowserModule,

@@ -7,13 +7,11 @@
                     <mat-label>First Name</mat-label>
                     <input matInput placeholder="Placeholder" aria-required="true" formControlName="fname" required >
                     <mat-icon matSuffix>face</mat-icon>
-                    <mat-hint>Hint</mat-hint>
                 </mat-form-field>
                 <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Last Name</mat-label>
                     <input matInput placeholder="Placeholder" aria-required="true" required formControlName="lname">
                     <mat-icon matSuffix>face</mat-icon>
-                    <mat-hint>Hint</mat-hint>
                 </mat-form-field>
             </div>
             <div class="entryField">
@@ -26,6 +24,9 @@
                 <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Enter your email</mat-label>
                     <mat-icon matSuffix>email</mat-icon>
+                    <mat-error>
+                      Invalid email format
+                    </mat-error>
                     <input matInput placeholder="jdoe@usgs.gov" formControlName="email" aria-required="true" required>
                     <!-- <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error> -->
                 </mat-form-field>
@@ -37,20 +38,20 @@
                            placeholder="Select one"
                            aria-label="Agency"
                            matInput
-                           formControlName="agency"
+                           formControlName="agency_id"
                            [matAutocomplete]="auto"
                            aria-required="true"
                            required>
                            <mat-icon matSuffix>domain</mat-icon>
-                    <mat-autocomplete #auto="matAutocomplete">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="display">
                         <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                            {{option}}                    
+                            {{ option.a_n }}                    
                       </mat-option>
                     </mat-autocomplete>
                   </mat-form-field>
                 <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Role</mat-label>
-                    <mat-select formControlName="roleID" aria-required="true" required>
+                    <mat-select formControlName="role_id" aria-required="true" required>
                       <mat-option *ngFor="let role of roles" [value]="role.role_id">
                         {{role.role_name}}
                       </mat-option>
@@ -60,15 +61,17 @@
             <div class="entryField">
                 <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Phone</mat-label>
-                    <input matInput placeholder="Placeholder" aria-required="true" required formControlName="phone">
+                    <input matInput (keydown)="this.phoneNumberFormatter($event)" id="phone-number" placeholder="Placeholder" aria-required="true" required formControlName="phone">
                     <mat-icon matSuffix>phone</mat-icon>
-                    <mat-error>Invalid phone format</mat-error>
+                    <mat-error>
+                      Invalid phone format
+                    </mat-error>
                 </mat-form-field>
             </div>
             <div class="entryField">
                 <mat-form-field appearance="fill" class="form-control" style="width: 325px;">
                     <mat-label>Emergency Contact Fullname</mat-label>
-                    <input matInput placeholder="Placeholder" aria-required="true" formControlName="emergencyContact" required>
+                    <input matInput placeholder="Placeholder" formControlName="emergencyContact">
                     <mat-icon matSuffix>portrait</mat-icon>
                     <mat-hint>Hint</mat-hint>
                 </mat-form-field>

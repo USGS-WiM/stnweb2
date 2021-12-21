@@ -187,7 +187,7 @@
                             </div>
                         </div>
                     </div>
-                    <mat-accordion multi="true">
+                    <mat-accordion multi="true" id="site">
                         <!-- Location Information -->
                         <mat-expansion-panel hideToggle expanded="true">
                             <mat-expansion-panel-header class="panel-headers">
@@ -476,7 +476,8 @@
                         </mat-expansion-panel>
                     </mat-accordion>
                 </mat-tab>
-                <mat-tab label="Reference Datum ({{referenceDatums.length}})">
+                <mat-tab label="Reference Datums ({{referenceDatums.length}})">
+                    <mat-card class="mat-elevation-z0 header-card"><p>Reference Datums ({{referenceDatums.length}})</p></mat-card>
                     <div class="tableContainer" *ngIf="referenceDatums !== undefined; else noRMTable">
                         <table *ngIf="referenceDatums.length > 0; else noRMTable"
                             mat-table
@@ -518,9 +519,21 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-raised-button (click)="openRefMarkDetailsDialog(row)"
-                                    aria-label="Edit">View Details
+                                <button mat-stroked-button class="view-details-btn" (click)="openRefMarkDetailsDialog(row)"
+                                    aria-label="View Details"><mat-icon>search</mat-icon> View Details
                                 </button>
+                                <button mat-stroked-button class="edit-details-btn" (click)="openRefDatumEditDialog(row)"
+                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                </button>
+                                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                    <mat-icon>more_vert</mat-icon>
+                                  </button>
+                                  <mat-menu #menu="matMenu">
+                                    <button mat-menu-item
+                                        aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <span>Delete</span>
+                                    </button>
+                                  </mat-menu>
                                 </td>
                             </ng-container>
 
@@ -538,6 +551,7 @@
                     <mat-paginator [hidden]="referenceDatums === undefined || referenceDatums.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Sensors ({{siteFullInstruments.length}})">
+                    <mat-card class="mat-elevation-z0 header-card"><p>Sensors ({{siteFullInstruments.length}})</p></mat-card>
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
                     <div class="tableContainer" *ngIf="siteFullInstruments !== undefined; else noSensorTable">
                         <table *ngIf="siteFullInstruments.length > 0; else noSensorTable"
@@ -620,7 +634,7 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-raised-button (click)="openSensorDetailsDialog(row)"
+                                <button mat-stroked-button class="view-details-btn" (click)="openSensorDetailsDialog(row)"
                                     aria-label="Edit">View Details
                                 </button>
                                 </td>
@@ -640,6 +654,7 @@
                     <mat-paginator [hidden]="siteFullInstruments === undefined || siteFullInstruments.length === 0" #sensorPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="High Water Marks ({{hwm.length}})">
+                    <mat-card class="mat-elevation-z0 header-card"><p>High Water Marks ({{hwm.length}})</p></mat-card>
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To create a HWM, first choose an Event above.</p></mat-card>
                     <div class="tableContainer" *ngIf="hwm !== undefined; else noHWMTable">
                         <table *ngIf="hwm.length > 0; else noHWMTable"
@@ -708,7 +723,7 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-raised-button (click)="openHWMDetailsDialog(row)"
+                                <button mat-stroked-button class="view-details-btn" (click)="openHWMDetailsDialog(row)"
                                     aria-label="Edit">View Details
                                 </button>
                                 </td>
@@ -728,6 +743,7 @@
                     <mat-paginator [hidden]="hwm === undefined || hwm.length === 0" #hwmPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Peaks ({{peaks.length}})">
+                    <mat-card class="mat-elevation-z0 header-card"><p>Peaks ({{peaks.length}})</p></mat-card>
                     <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To view details about a Peak Summary, first choose an Event above.</p></mat-card>
                     <div class="tableContainer" *ngIf="peaks !== undefined; else noPeakTable">
                         <table *ngIf="peaks.length > 0; else noPeakTable"
@@ -782,7 +798,7 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-raised-button (click)="openPeaksDetailsDialog(row, 'Peak')"
+                                <button mat-stroked-button class="view-details-btn" (click)="openPeaksDetailsDialog(row, 'Peak')"
                                     aria-label="Edit">View Details
                                 </button>
                                 </td>
@@ -804,9 +820,12 @@
                 <mat-tab label="Files ({{fileLength}})">
                     <mat-accordion multi="true">
                         <!-- Files -->
-                        <mat-expansion-panel hideToggle>
+                        <mat-expansion-panel hideToggle [expanded]="siteFilesExpanded" (opened)="siteFilesExpanded = true" (closed)="siteFilesExpanded = false">
                             <mat-expansion-panel-header class="panel-headers">
-                                <mat-panel-title>
+                                <mat-panel-title *ngIf="!siteFilesExpanded" style="color: grey; font-weight: 500">
+                                    Site Files ({{siteFiles.length}})
+                                </mat-panel-title>
+                                <mat-panel-title *ngIf="siteFilesExpanded" style="color: #FFF; font-weight: 550">
                                     Site Files ({{siteFiles.length}})
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
@@ -850,7 +869,7 @@
                                         <th mat-header-cell *matHeaderCellDef>
                                         </th>
                                         <td mat-cell *matCellDef="let row">
-                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Site File')"
+                                        <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Site File')"
                                             aria-label="Edit">View Details
                                         </button>
                                         </td>
@@ -869,9 +888,12 @@
                             </ng-template>
                             <mat-paginator [hidden]="siteFiles === undefined || siteFiles.length === 0" #siteFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
-                        <mat-expansion-panel hideToggle>
+                        <mat-expansion-panel hideToggle [expanded]="refDatumFilesExpanded" (opened)="refDatumFilesExpanded = true" (closed)="refDatumFilesExpanded = false">
                             <mat-expansion-panel-header class="panel-headers">
-                                <mat-panel-title>
+                                <mat-panel-title *ngIf="!refDatumFilesExpanded" style="color: grey; font-weight: 500">
+                                    Reference Datum Files ({{datumLocFiles.length}})
+                                </mat-panel-title>
+                                <mat-panel-title *ngIf="refDatumFilesExpanded" style="color: #FFF; font-weight: 550">
                                     Reference Datum Files ({{datumLocFiles.length}})
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
@@ -928,7 +950,7 @@
                                         <th mat-header-cell *matHeaderCellDef>
                                         </th>
                                         <td mat-cell *matCellDef="let row">
-                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Reference Mark File')"
+                                        <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Reference Datum File')"
                                             aria-label="Edit">View Details
                                         </button>
                                         </td>
@@ -947,9 +969,12 @@
                             </ng-template>
                             <mat-paginator [hidden]="datumLocFiles === undefined || datumLocFiles.length === 0" #refMarkFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
-                        <mat-expansion-panel hideToggle>
+                        <mat-expansion-panel hideToggle [expanded]="sensorFilesExpanded" (opened)="sensorFilesExpanded = true" (closed)="sensorFilesExpanded = false">
                             <mat-expansion-panel-header class="panel-headers">
-                                <mat-panel-title>
+                                <mat-panel-title *ngIf="!sensorFilesExpanded" style="color: grey; font-weight: 500">
+                                    Sensor Files ({{sensorFiles.length}})
+                                </mat-panel-title>
+                                <mat-panel-title *ngIf="sensorFilesExpanded" style="color: #FFF; font-weight: 550">
                                     Sensor Files ({{sensorFiles.length}})
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
@@ -1006,7 +1031,7 @@
                                         <th mat-header-cell *matHeaderCellDef>
                                         </th>
                                         <td mat-cell *matCellDef="let row">
-                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'Sensor File')"
+                                        <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Sensor File')"
                                             aria-label="Edit">View Details
                                         </button>
                                         </td>
@@ -1025,9 +1050,12 @@
                             </ng-template>
                             <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
-                        <mat-expansion-panel hideToggle>
+                        <mat-expansion-panel hideToggle [expanded]="hwmFilesExpanded" (opened)="hwmFilesExpanded = true" (closed)="hwmFilesExpanded = false">
                             <mat-expansion-panel-header class="panel-headers">
-                                <mat-panel-title>
+                                <mat-panel-title *ngIf="!hwmFilesExpanded" style="color: grey; font-weight: 500">
+                                    HWM Files ({{hwmFiles.length}})
+                                </mat-panel-title>
+                                <mat-panel-title *ngIf="hwmFilesExpanded" style="color: #FFF; font-weight: 550">
                                     HWM Files ({{hwmFiles.length}})
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
@@ -1071,7 +1099,7 @@
                                         <th mat-header-cell *matHeaderCellDef>
                                         </th>
                                         <td mat-cell *matCellDef="let row">
-                                        <button mat-raised-button (click)="openFileDetailsDialog(row, 'HWM File')"
+                                        <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'HWM File')"
                                             aria-label="Edit">View Details
                                         </button>
                                         </td>

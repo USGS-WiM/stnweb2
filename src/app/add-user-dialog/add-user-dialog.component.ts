@@ -18,7 +18,7 @@ export class AddUserDialogComponent implements OnInit {
   newUserForm: FormGroup;
   options = [];
   agencies;
-  filteredOptions: Observable<string[]>;
+  filteredOptions: Observable<any[]>;
   roles;
   submitLoading = false;
 
@@ -30,12 +30,12 @@ export class AddUserDialogComponent implements OnInit {
       fname: '',
       lname: '',
       username:  '',
-      email: ['', Validators.required, Validators.email],
-      phone: [null, Validators.required, Validators.pattern(this.phonePattern)],
+      email: ['', Validators.email],
+      phone: [null, Validators.pattern(this.phonePattern)],
       emergencyContact: null,
       emergencyContactPhone: [null, Validators.pattern(this.phonePattern)],
-      agency: null,
-      roleID: null, 
+      agency_id: '', 
+      role_id: null, 
       password: this.formBuilder.group({
         password: [''],
         confirmPassword: ['']
@@ -46,23 +46,24 @@ export class AddUserDialogComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<AddUserDialogComponent>,
+    private addUserdialogRef: MatDialogRef<AddUserDialogComponent>,
     private userService: UserService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) { this.buildAddNewUserForm() }
 
   ngOnInit(): void {
-    
+    console.log(this.newUserForm.get('agency_id').setValue("test"))
     this.agencies = this.data.agencies;
     this.roles = this.data.roles;
 
     for (let a in this.agencies) {
-      this.options.push(this.agencies[a].agency_name)
+      this.options.push({ a_n: this.agencies[a].agency_name, a_id: this.agencies[a].agency_id})
     }
-    this.filteredOptions = this.newUserForm.get('agency').valueChanges.pipe(
+    this.filteredOptions = this.newUserForm.get('agency_id').valueChanges.pipe(
       startWith(''),
-      map(value => this._filter(value)),
+      map(value => typeof value === 'string' ? value : value.agency_name),
+      map(agencyname => agencyname ? this._filter(agencyname) : this.options.slice())
     );
   }
 
@@ -76,11 +77,37 @@ export class AddUserDialogComponent implements OnInit {
     }
   }
 
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.options.filter(option => option.toLowerCase().includes(filterValue));
+  private _filter(value: string) {
+    return this.options.filter(option => option.a_n.toLowerCase().includes(value.toLowerCase()));
   }
 
+  display(selectedoption){
+    return selectedoption ? selectedoption.a_n : undefined;
+   }
+
+   // formats phone number to display as (111) 111 1111
+   formatPhoneNumber(value) {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    }
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
+      3,
+      6
+    )}-${phoneNumber.slice(6, 9)}`;
+  }
+
+  // On key down gets value of phone input, sends it to formatter, and then replaces input with formatted value
+  phoneNumberFormatter(event: any) {
+    const inputField = (<HTMLInputElement>document.getElementById('phone-number'));
+    const formattedInputValue = this.formatPhoneNumber((<HTMLInputElement>document.getElementById('phone-number')).value);
+    inputField.value = formattedInputValue;
+  }
+
+  // snack bar message displayed on service failure
   openSnackBar(message: string, action: string, duration: number) {
     this.snackBar.open(message, action, {
       duration: duration,
@@ -97,25 +124,27 @@ export class AddUserDialogComponent implements OnInit {
 
   onSubmit(formValue) {
 
-    // delete the confirm fields for the actual submission
-    delete formValue.confirmEmail;
-    delete formValue.terms;
     // Copy password to top level
     const password = btoa(formValue.password.password);
-    console.log(password);
     delete formValue.password;
     formValue.password = password;
 
+    // copy agency id value to top level
+    const agency_id = formValue.agency_id.a_id;
+    delete formValue.agency_id;
+    formValue.agency_id = agency_id;
+    console.log(formValue);
     this.userService.addNewUser(formValue)
       .subscribe(
         (event) => {
           this.submitLoading = false;
+          this.addUserdialogRef.close();
           this.dialog.open(ConfirmComponent, {
             data: {
-              title: "User Registration Request Successful",
+              title: "Successfully created User: " + formValue.username,
               titleIcon: "check",
               message:
-              `Thank you for registering.`,
+              `Please ask them to change their password after logging in the first time.`,
               confirmButtonText: "OK",
               showCancelButton: false,
             },

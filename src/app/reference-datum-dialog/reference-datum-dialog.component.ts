@@ -21,6 +21,7 @@ export class ReferenceDatumDialogComponent implements OnInit {
   public vmethod;
   public opQuality;
   public datumFiles;
+  public controlID;
 
   refMarkFilesDataSource = new MatTableDataSource<any>();
   sortedRefMarkFilesData = [];
@@ -29,6 +30,9 @@ export class ReferenceDatumDialogComponent implements OnInit {
     'FileDate',
     'FileName',
   ];
+
+  infoExpanded = true;
+  filesExpanded = false;
 
   constructor(
     private dialogRef: MatDialogRef<ReferenceDatumDialogComponent>,
@@ -43,6 +47,7 @@ export class ReferenceDatumDialogComponent implements OnInit {
       this.setHCollectionMethod();
       this.setVDatum();
       this.setVCollectionMethod();
+      this.getControlID();
       if(this.data.row_data.op_quality_id !== undefined){
         this.setOPQuality();
       }
@@ -92,8 +97,6 @@ export class ReferenceDatumDialogComponent implements OnInit {
   }
 
   setVDatum() {
-    let self = this;
-
     this.siteService
     .getVDatum(this.data.row_data.vdatum_id)
     .subscribe((results) => {
@@ -102,8 +105,6 @@ export class ReferenceDatumDialogComponent implements OnInit {
   }
 
   setVCollectionMethod() {
-    let self = this;
-
     this.siteService
     .getVCollectionMethod(this.data.row_data.vcollect_method_id)
     .subscribe((results) => {
@@ -118,6 +119,21 @@ export class ReferenceDatumDialogComponent implements OnInit {
     .getOPQuality(this.data.row_data.op_quality_id)
     .subscribe((results) => {
       this.opQuality = results.quality;
+    });
+  }
+
+  getControlID() {
+    let self = this;
+
+    this.siteService
+    .getOPControlID(this.data.row_data.objective_point_id)
+    .subscribe((results) => {
+      if(results.length > 0){
+        self.controlID = [];
+        results.forEach(function(control){
+          self.controlID.push(control);
+        });
+      }
     });
   }
 

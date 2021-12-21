@@ -116,6 +116,7 @@ describe('SiteEditComponent', () => {
 
   it('should set the networkNames lookup', () => {
     const response: any[] = [{name: "test"}];
+    component.data.networkName = null;
 
     spyOn(component.siteService, 'getNetworkNamesList').and.returnValue(
         of(response)

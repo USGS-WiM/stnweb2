@@ -19,21 +19,44 @@
 
 .mat-expansion-panel-header {
     background-color: #03274B;
+    height: 70px;
 }
 
 .mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
-    color: #FFF;
+    color: grey;
     background-color: #03274B; 
 }
 
 .mat-expansion-panel-header:hover {
     background-color: #03274B !important;
-    color: #FFF !important;
+    color: grey !important;
 }
 
 .mat-expansion-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
+    color: grey;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+#site .mat-expansion-panel-header {
+    background-color: #03274B;
+    height: 70px;
+}
+
+#site .mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
+    color: #FFF;
+    background-color: #03274B; 
+}
+
+#site .mat-expansion-panel-header:hover {
+    background-color: #03274B !important;
+    color: #FFF !important;
+}
+
+#site .mat-expansion-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
     color: #FFF;
     font-weight: 500;
+    font-size: 20px;
 }
 
 // Tables
@@ -211,8 +234,8 @@ table {
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
-    width: 20px;
-    text-align: center;
+    width: 25%;
+    text-align: right;
     align-self: stretch;
 } 
 
@@ -256,7 +279,28 @@ table {
 }
 
 .delete-button {
+    margin-left: 5px;
+}
+
+.delete-btn {
+    background-color: #E70000;
+    color: #F4F4F4;
+    border: 1px solid #ce0000;
     margin: 5px 5px;
+}
+
+.view-details-btn {
+    margin: 5px 5px;
+    border: 1px solid #404040;
+}
+
+.edit-details-btn {
+    margin: 5px 5px;
+    border: 1px solid #404040;
+}
+
+.edit-icon {
+    font-size: 22px;
 }
 
 .table-container {
@@ -283,10 +327,6 @@ table {
     padding-right: 5px;
     text-align: right;
     font-weight: bold;
-}
-
-.edit-button {
-    margin: 5px 5px;
 }
 
 .left {
@@ -323,6 +363,17 @@ table {
 .cell-container p{
     padding: 5px;
     font-size: 15px
+}
+
+.header-card {
+    background-color: #03274B;
+    height: 70px;
+    padding: 25px;
+}
+
+.header-card p {
+    color: #FFF;
+    font-size: 20px;
 }
 
 .event-alert {
@@ -380,6 +431,7 @@ table {
 
 #legend .mat-expansion-panel-header {
     background-color: #FFF;
+    height: 50px;
 }
 
 #legend .mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
@@ -395,6 +447,7 @@ table {
 #legend .mat-expansion-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
     color: #000;
     font-weight: 500;
+    font-size: 15px;
 }
 
 #legend .mat-expansion-panel {
