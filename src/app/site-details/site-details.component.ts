@@ -685,7 +685,7 @@ export class SiteDetailsComponent implements OnInit {
             .getSiteHousing(this.siteID)
             .subscribe((results) => {
                 this.siteHousing = results;
-                // Get collection method lookup
+                // Get collection method lookup 
                 if(this.siteHousing.length > 0){
                     this.siteHousing.forEach(function(housing){
                         if (housing.housing_type_id !== undefined){
