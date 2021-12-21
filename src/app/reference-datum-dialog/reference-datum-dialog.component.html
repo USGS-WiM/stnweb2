@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>
     Reference Datum
-    <!-- <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button> -->
+    <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <mat-dialog-content *ngIf="data.row_data">
   <!-- Reference Datum Dialog -->
@@ -30,6 +30,17 @@
                   <p class="content-left">Description</p>
                   <p class="content-right" *ngIf="data.row_data.description !== undefined && data.row_data.description !== undefined; else nullDesc">{{data.row_data.description}}</p>
                   <ng-template #nullDesc><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                  <p class="content-left">Control Identifier</p>
+                  <div *ngIf="controlID !== undefined; else nullControlID">
+                    <div *ngFor="let control of controlID">
+                      <p class="content-right">
+                          {{control.identifier}} ({{control.identifier_type}})
+                      </p>
+                    </div>
+                  </div>
+                  <ng-template #nullControlID><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
                   <p class="content-left">Latitude</p>
@@ -84,12 +95,12 @@
                 </div>
                 <div class="cell-container">
                   <p class="content-left">Date Established</p>
-                  <p class="content-right" *ngIf="data.row_data.date_established !== undefined && data.row_data.date_established !== ''; else nullEstDate">{{data.row_data.date_established}}</p>
+                  <p class="content-right" *ngIf="data.row_data.date_established_format !== undefined && data.row_data.date_established_format !== ''; else nullEstDate">{{data.row_data.date_established_format}}</p>
                   <ng-template #nullEstDate><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
                   <p class="content-left">Date Recovered</p>
-                  <p class="content-right" *ngIf="data.row_data.date_recovered !== undefined && data.row_data.date_recovered !== ''; else nullRecovDate">{{data.row_data.date_recovered}}</p>
+                  <p class="content-right" *ngIf="data.row_data.date_recovered_format !== undefined && data.row_data.date_recovered_format !== ''; else nullRecovDate">{{data.row_data.date_recovered_format}}</p>
                   <ng-template #nullRecovDate><p class="content-right">---</p></ng-template>
                 </div>
             </div>
@@ -156,7 +167,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <div class="detail-section-buttons centered">
-        <button mat-button mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
+        <button mat-stroked-button class="close-btn" mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
         <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
     </div>
 </mat-dialog-actions>
