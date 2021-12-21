@@ -37,6 +37,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 import { HighchartsChartModule } from 'highcharts-angular';
 
@@ -137,6 +138,7 @@ import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component
         MatTooltipModule,
         MatDatepickerModule,
         MatNativeDateModule,
+        MatGridListModule,
     ],
     providers: [
         CurrentUserService,

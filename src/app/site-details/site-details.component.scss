@@ -65,9 +65,8 @@ table {
 }
 
 .tableContainer {
-    width: 100%;
-    margin-bottom: 20px;
-    margin-top: 10px;
+    overflow-x: auto;
+    margin-bottom: 10px;
 }
 
 .mat-column-HousingType{
@@ -263,11 +262,20 @@ table {
     display: table-row;
 }
 
+.site-buttons{
+    margin-right: 0px;
+    margin-left: auto;
+}
+
 #mapContainer {
     width: 100%;
     height: 350px;
     display: none;
     margin-bottom: 20px;
+}
+
+.map-button-container {
+    text-align: center;
 }
 
 .map-button {
@@ -306,8 +314,12 @@ table {
 .table-container {
     display: inline-block;
     margin: auto;
-    width: 50%;
     vertical-align: top;
+}
+
+.landowner {
+    background-color: #f7f7f7;
+    padding: 30px; 
 }
 
 .outer-content{
@@ -346,6 +358,7 @@ table {
 
 #landownerTitle {
     font-weight: bold;
+    font-size: 15px;
 }
 
 .file-title {
@@ -354,6 +367,10 @@ table {
 
 .cell-container {
     display: table-row;
+}
+
+.landowner {
+    background-color: #f7f7f7;
 }
 
 .ul {
@@ -485,4 +502,3 @@ table {
     line-height: 25px;
     margin: 0px !important;
 }
-  

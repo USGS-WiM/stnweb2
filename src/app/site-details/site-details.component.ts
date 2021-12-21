@@ -101,6 +101,13 @@ export class SiteDetailsComponent implements OnInit {
     sortedHWMFilesData = [];
     sortedSiteFilesData = [];
     
+    gridListWidth;
+    lowerColumns;
+    innerWidth;
+    rowHeight;
+    lowerHeight;
+    rowspan;
+    
     public baroSensorVisible = false;
     public rdgSensorVisible = false;
     public airTempSensorVisible = false;
@@ -123,6 +130,7 @@ export class SiteDetailsComponent implements OnInit {
     public currentUser;
     // Disable edit button for some roles
     editDisabled = localStorage.role !== '3' && localStorage.role !== '2' && localStorage.role !== '1';
+    deleteDisabled = localStorage.role !== '1';
 
     displayedColumns: string[] = [
         'HousingType',
@@ -200,6 +208,40 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // Breakpoints for mat-grid-tile columns/rows
+        this.innerWidth = window.innerWidth;
+        if(window.innerWidth <= 768){
+            this.gridListWidth = 1;
+            this.lowerColumns = 1;
+            this.rowHeight = "1:0.8";
+            this.rowspan = "2";
+            this.lowerHeight = "1:1";
+        }else if(window.innerWidth > 768 && window.innerWidth <= 875){
+            this.gridListWidth = 1;
+            this.lowerColumns = 1;
+            this.rowHeight = "1:1";
+            this.rowspan = "2";
+            this.lowerHeight = "1:0.8";
+        }else if(window.innerWidth > 875 && window.innerWidth <= 1050){
+            this.gridListWidth = 1;
+            this.lowerColumns = 2;
+            this.rowHeight = "1:0.3";
+            this.rowspan = "2";
+            this.lowerHeight = "1:0.4";
+        }else if(window.innerWidth > 875 && window.innerWidth <= 1485){
+            this.gridListWidth = 2;
+            this.lowerColumns = 2;
+            this.rowHeight = "1:0.8";
+            this.rowspan = "2";
+            this.lowerHeight = "1:0.4";
+        }else{
+            this.gridListWidth = 2;
+            this.lowerColumns = 3;
+            this.rowHeight = "2:0.8";
+            this.rowspan = "1";
+            this.lowerHeight = "1:0.75";
+        }
+
         this.route.params.subscribe(routeParams => {
             this.siteID = routeParams.id
         })
@@ -217,6 +259,43 @@ export class SiteDetailsComponent implements OnInit {
         this.sensorFilesDataSource.sort = this.sensorFilesSort;
         this.hwmFilesDataSource.sort = this.hwmFilesSort;
         this.siteFilesDataSource.sort = this.siteFilesSort;
+    }
+
+    onResize(event) {
+        if(event.target.innerWidth !== this.innerWidth){
+            this.innerWidth = event.target.innerWidth;
+            if(this.innerWidth <= 768){
+                this.gridListWidth = 1;
+                this.lowerColumns = 1;
+                this.rowHeight = "1:0.8";
+                this.rowspan = "2";
+                this.lowerHeight = "1:1";
+            }else if(this.innerWidth > 768 && this.innerWidth <= 875){
+                this.gridListWidth = 1;
+                this.lowerColumns = 1;
+                this.rowHeight = "1:1";
+                this.rowspan = "2";
+                this.lowerHeight = "1:0.8";
+            }else if(this.innerWidth > 875 && this.innerWidth <= 1050){
+                this.gridListWidth = 1;
+                this.lowerColumns = 2;
+                this.rowHeight = "1:0.3";
+                this.rowspan = "2";
+                this.lowerHeight = "1:0.4";
+            }else if(this.innerWidth > 875 && this.innerWidth <= 1485){
+                this.gridListWidth = 2;
+                this.lowerColumns = 2;
+                this.rowHeight = "1:0.8";
+                this.rowspan = "2";
+                this.lowerHeight = "1:0.4";
+            }else{
+                this.gridListWidth = 2;
+                this.lowerColumns = 3;
+                this.rowHeight = "2:0.8";
+                this.rowspan = "1";
+                this.lowerHeight = "1:0.75";
+            }
+        }
     }
 
     getData() {
@@ -431,7 +510,6 @@ export class SiteDetailsComponent implements OnInit {
                                 // Deployment type lookup
                                 .getDeploymentTypes()
                                 .subscribe((deploymentResults) => {
-                                    console.log(deploymentResults)
                                     this.siteFullInstruments.forEach(function(result){
                                         deploymentResults.forEach(function(type){
                                             if (result.deployment_type_id === type.deployment_type_id){
@@ -582,7 +660,6 @@ export class SiteDetailsComponent implements OnInit {
                             .getLandownerContact(this.siteID)
                             .subscribe((results) => {
                                 this.landownerContact = results;
-                                console.log(this.landownerContact);
                             });
                     }
 
@@ -608,7 +685,7 @@ export class SiteDetailsComponent implements OnInit {
             .getSiteHousing(this.siteID)
             .subscribe((results) => {
                 this.siteHousing = results;
-                // Get collection method lookup
+                // Get collection method lookup 
                 if(this.siteHousing.length > 0){
                     this.siteHousing.forEach(function(housing){
                         if (housing.housing_type_id !== undefined){
@@ -821,7 +898,6 @@ export class SiteDetailsComponent implements OnInit {
             },
             width: dialogWidth,
         });
-        dialogRef.afterClosed().subscribe((result) => {});
     }
 
     openRefDatumEditDialog(row): void {
