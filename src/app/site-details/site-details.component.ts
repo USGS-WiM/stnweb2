@@ -264,25 +264,25 @@ export class SiteDetailsComponent implements OnInit {
     onResize(event) {
         if(event.target.innerWidth !== this.innerWidth){
             this.innerWidth = event.target.innerWidth;
-            if(window.innerWidth <= 768){
+            if(this.innerWidth <= 768){
                 this.gridListWidth = 1;
                 this.lowerColumns = 1;
                 this.rowHeight = "1:0.8";
                 this.rowspan = "2";
                 this.lowerHeight = "1:1";
-            }else if(window.innerWidth > 768 && window.innerWidth <= 875){
+            }else if(this.innerWidth > 768 && this.innerWidth <= 875){
                 this.gridListWidth = 1;
                 this.lowerColumns = 1;
                 this.rowHeight = "1:1";
                 this.rowspan = "2";
                 this.lowerHeight = "1:0.8";
-            }else if(window.innerWidth > 875 && window.innerWidth <= 1050){
+            }else if(this.innerWidth > 875 && this.innerWidth <= 1050){
                 this.gridListWidth = 1;
                 this.lowerColumns = 2;
                 this.rowHeight = "1:0.3";
                 this.rowspan = "2";
                 this.lowerHeight = "1:0.4";
-            }else if(window.innerWidth > 875 && window.innerWidth <= 1485){
+            }else if(this.innerWidth > 875 && this.innerWidth <= 1485){
                 this.gridListWidth = 2;
                 this.lowerColumns = 2;
                 this.rowHeight = "1:0.8";
@@ -510,7 +510,6 @@ export class SiteDetailsComponent implements OnInit {
                                 // Deployment type lookup
                                 .getDeploymentTypes()
                                 .subscribe((deploymentResults) => {
-                                    console.log(deploymentResults)
                                     this.siteFullInstruments.forEach(function(result){
                                         deploymentResults.forEach(function(type){
                                             if (result.deployment_type_id === type.deployment_type_id){
@@ -661,7 +660,6 @@ export class SiteDetailsComponent implements OnInit {
                             .getLandownerContact(this.siteID)
                             .subscribe((results) => {
                                 this.landownerContact = results;
-                                console.log(this.landownerContact);
                             });
                     }
 
@@ -900,7 +898,6 @@ export class SiteDetailsComponent implements OnInit {
             },
             width: dialogWidth,
         });
-        dialogRef.afterClosed().subscribe((result) => {});
     }
 
     openRefDatumEditDialog(row): void {

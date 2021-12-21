@@ -223,7 +223,7 @@
                                     Additional Information
                                 </mat-panel-title> 
                             </mat-expansion-panel-header> 
-                            <div class="tableContainer" *ngIf="site !== undefined && siteHousing !== undefined; else noTable">
+                            <div class="tableContainer" *ngIf="site !== undefined && siteHousing !== undefined">
                                 <table *ngIf="siteHousing.length > 0; else noTable"
                                     mat-table
                                     id="siteHousingTable"
@@ -315,7 +315,7 @@
                                     ></tr>
                                 </table>
                             </div>
-                            <ng-template #noTable>
+                            <!-- <ng-template #noTable>
                                 <div class="table-container">
                                     <div class="outer-content">
                                         <div class="cell-container">
@@ -324,10 +324,14 @@
                                         </div>
                                     </div>
                                 </div>
-                            </ng-template>
+                            </ng-template> -->
                                 <mat-grid-list [cols]="lowerColumns" [rowHeight]="lowerHeight">
                                     <mat-grid-tile [rowspan]="rowspan">
                                         <div class="table-container">
+                                            <div *ngIf="site === undefined || siteHousing === undefined || siteHousing.length === 0" class="cell-container">
+                                                <p class="content-left">Housing Type Information</p>
+                                                <p class="content-right">---</p>
+                                            </div>
                                             <div class="cell-container">
                                                 <p class="content-left">Created By</p>
                                                 <p class="content-right" *ngIf="site.member_id !== '' && site.member_id !== undefined && memberName !== undefined; else nullMember">{{memberName}}</p>
