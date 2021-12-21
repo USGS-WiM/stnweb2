@@ -13,7 +13,6 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
-
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -142,6 +141,7 @@ import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component
         MatDatepickerModule,
         MatNativeDateModule,
     ],
+    exports: [ MatFormFieldModule, MatInputModule ],
     providers: [
         CurrentUserService,
         AuthenticationService,

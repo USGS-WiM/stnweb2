@@ -20,6 +20,9 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import {
+  MatAutocompleteModule
+} from '@angular/material/autocomplete';
 
 describe('AddUserDialogComponent', () => {
   let component: AddUserDialogComponent;
@@ -34,6 +37,10 @@ describe('AddUserDialogComponent', () => {
             AppRoutingModule,
             FormsModule,
             ReactiveFormsModule,
+            MatAutocompleteModule,
+            MatInputModule,
+            MatFormFieldModule,
+            MatSelectModule,
             HttpClientTestingModule,
             OverlayModule,
             MatDialogModule,
@@ -49,6 +56,7 @@ describe('AddUserDialogComponent', () => {
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
+    component = TestBed.inject(AddUserDialogComponent);
 });
 
   beforeEach(() => {

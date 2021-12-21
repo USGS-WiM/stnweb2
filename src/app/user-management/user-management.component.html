@@ -4,30 +4,31 @@
     <form [formGroup]="searchForm" class="search__form">
         <mat-form-field class="search__form_field" appearance="outline">
           <mat-label>Filter by Username</mat-label>
-          <input type="text"
-                 aria-label="Filter by Username"
+          <input 
                  matInput
+                 type="text"
+                 aria-label="Filter by Username"
                  formControlName="username"
                  (keyup)="applyFilter()"
-          >
+          />
         </mat-form-field>
     
         <mat-form-field class="search__form_field" appearance="outline">
           <mat-label>Filter by First Name</mat-label>
-          <input type="text"
+          <input matInput
+                 type="text"
                  aria-label="Filter by First Name"
-                 matInput
                  formControlName="fname"
                  (keyup)="applyFilter()"
-          >
+          />
         </mat-form-field>
     
         <mat-form-field class="search__form_field" appearance="outline">
           <mat-label>Filter by Last Name</mat-label>
-          <input 
-          aria-label="Filter by Last Name"matInput
+          <input matInput
+          aria-label="Filter by Last Name" 
                  formControlName="lname"
-                 (keyup)="applyFilter()">
+                 (keyup)="applyFilter()" />
         </mat-form-field>
         <div class="topOfTableButton">
             <button color="accent" mat-stroked-button aria-label="Add new user"
