@@ -24,6 +24,13 @@
                             <mat-label>Internal Notes</mat-label>
                             <textarea aria-label="Internal Notes" matInput formControlName="site_notes" [value]="site.internal_notes"></textarea>
                         </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Waterbody</mat-label>
+                            <input aria-label="Waterbody" formControlName="waterbody" required matInput [value]="site.waterbody"/>
+                            <mat-icon matSuffix class="info-icon" matTooltip="Required by NWIS.  Can be listed as 'Unknown' or 'Atlantic Ocean'" 
+                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                            <mat-hint>e.g. Atlantic Ocean</mat-hint>
+                        </mat-form-field>
                         <mat-radio-group id="latLngUnit" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
                             <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
                             <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
@@ -165,34 +172,6 @@
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field appearance="fill">
-                            <mat-label>Waterbody</mat-label>
-                            <input aria-label="Waterbody" formControlName="waterbody" required matInput [value]="site.waterbody"/>
-                            <mat-icon matSuffix class="info-icon" matTooltip="Required by NWIS.  Can be listed as 'Unknown' or 'Atlantic Ocean'" 
-                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                            <mat-hint>e.g. Atlantic Ocean</mat-hint>
-                        </mat-form-field>
-                        <mat-form-field appearance="fill">
-                            <mat-label>Drainage Area</mat-label>
-                            <input aria-label="Drainage Area" formControlName="drainage_area_sqmi" matInput [value]="site.drainage_area"/>
-                        </mat-form-field>
-                        <mat-form-field appearance="fill">
-                            <mat-label>Station ID for USGS Gage</mat-label>
-                            <input aria-label="Station ID for USGS Gage" matInput formControlName="usgs_sid" [value]="site.usgs_id"/>
-                        </mat-form-field>
-                        <mat-form-field appearance="fill">
-                            <mat-label>Station ID for NOAA Gage</mat-label>
-                            <input aria-label="Station ID for NOAA Gage" matInput formControlName="noaa_sid" [value]="site.noaa_id"/>
-                        </mat-form-field>
-                        <mat-form-field appearance="fill">
-                            <mat-label>Other Station ID</mat-label>
-                            <input aria-label="Other Station ID" matInput formControlName="other_sid" [value]="site.other_id"/>
-                            <mat-hint>Please add details in the Site Description</mat-hint>
-                        </mat-form-field>
-                        <mat-form-field appearance="fill">
-                            <mat-label>Safety Notes</mat-label>
-                            <textarea aria-label="Safety Notes" matInput formControlName="safety_notes" [value]="site.safety_notes"></textarea>
-                        </mat-form-field>
-                        <mat-form-field appearance="fill">
                             <mat-label>Address</mat-label>
                             <input aria-label="Address" matInput formControlName="address" [value]="site.address"/>
                         </mat-form-field>
@@ -229,6 +208,30 @@
                                 Additional Information
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
+                                    <div>
+                                        <label class="form-header">Site Creator:</label> {{site.memberName}}
+                                    </div>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Drainage Area</mat-label>
+                                        <input aria-label="Drainage Area" formControlName="drainage_area_sqmi" matInput [value]="site.drainage_area"/>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Station ID for USGS Gage</mat-label>
+                                        <input aria-label="Station ID for USGS Gage" matInput formControlName="usgs_sid" [value]="site.usgs_id"/>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Station ID for NOAA Gage</mat-label>
+                                        <input aria-label="Station ID for NOAA Gage" matInput formControlName="noaa_sid" [value]="site.noaa_id"/>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Other Station ID</mat-label>
+                                        <input aria-label="Other Station ID" matInput formControlName="other_sid" [value]="site.other_id"/>
+                                        <mat-hint>Please add details in the Site Description</mat-hint>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Safety Notes</mat-label>
+                                        <textarea aria-label="Safety Notes" matInput formControlName="safety_notes" [value]="site.safety_notes"></textarea>
+                                    </mat-form-field>
                                     <mat-form-field appearance="fill">
                                         <mat-label>Priority</mat-label>
                                         <mat-select aria-label="Priority" formControlName="priority_id">
@@ -237,6 +240,14 @@
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
+                                    <div>
+                                        <label class="form-header">Access Permission Granted</label>
+                                        <mat-radio-group class="radio-group" [(value)]="accessGranted" formControlName="access_granted">
+                                            <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
+                                            <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
+                                            <mat-radio-button class="radio-button" value="Not Needed">Not Needed</mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
                                     <div class="form-header">Site Location Type in the Network</div>
                                     <ul>
                                         <li *ngFor="let type of networkTypes">
@@ -266,9 +277,6 @@
                                             <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
                                             <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
                                         </mat-radio-group>
-                                    </div>
-                                    <div>
-                                        <label class="form-header">Site Creator:</label> {{site.memberName}}
                                     </div>
                                     <div>
                                         <div>
@@ -332,105 +340,90 @@
                                             </mat-expansion-panel>
                                         </form>
                                     </div>
-                                    <div>
-                                        <label class="form-header">Access Permission Granted</label>
-                                        <mat-radio-group class="radio-group" [(value)]="accessGranted" formControlName="access_granted">
-                                            <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
-                                            <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
-                                            <mat-radio-button class="radio-button" value="Not Needed">Not Needed</mat-radio-button>
-                                        </mat-radio-group>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Site Housing(s)</mat-label>
+                                        <mat-select aria-label="Site Housings" formControlName="housingType" (selectionChange)="changeTableValue($event.value)" multiple>
+                                            <mat-option *ngFor="let option of siteHousingLookup" [value]="option.type_name">
+                                                {{option.type_name}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="tableContainer">
+                                        <table
+                                            mat-table
+                                            id="siteHousingTable"
+                                            [dataSource]="siteForm.controls.siteHousings.controls"
+                                            formArrayName="siteHousings"
+                                            class="mat-elevation-z5"
+                                            matSort
+                                        >
+
+                                            <!-- housing type column -->
+                                            <ng-container matColumnDef="HousingType">
+                                                <th mat-header-cell *matHeaderCellDef>Housing Type</th>
+                                                <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
+                                                    <mat-form-field>
+                                                        <input matInput formControlName="housingType" [value]="housing.housingType" class="disabled"/>
+                                                    </mat-form-field>
+                                                </td>
+                                            </ng-container>
+
+                                            <!-- housing length column -->
+                                            <ng-container matColumnDef="HousingLength">
+                                                <th mat-header-cell *matHeaderCellDef>Housing Length (ft)</th>
+                                                <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
+                                                    <mat-form-field appearance="fill">
+                                                        <input matInput formControlName="length" [value]="housing.length"/>
+                                                    </mat-form-field>
+                                                </td>
+                                            </ng-container>
+
+                                            <!-- housing material column -->
+                                            <ng-container matColumnDef="HousingMaterial">
+                                                <th mat-header-cell *matHeaderCellDef>Housing Material</th>
+                                                <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
+                                                    <mat-form-field appearance="fill">
+                                                        <input matInput formControlName="material" [value]="housing.material"/>
+                                                    </mat-form-field>
+                                                </td>
+                                            </ng-container>
+
+                                            <!-- amount column -->
+                                            <ng-container matColumnDef="Amount">
+                                                <th
+                                                    mat-header-cell
+                                                    *matHeaderCellDef
+                                                >
+                                                    Amount
+                                                </th>
+                                                <td
+                                                    mat-cell
+                                                    *matCellDef="let housing; let i = index" [formGroupName]="i"
+                                                >
+                                                    <mat-form-field appearance="fill">
+                                                        <input formControlName="amount" matInput [value]="housing.amount"/>
+                                                    </mat-form-field>
+                                                </td>
+                                            </ng-container>
+
+                                            <!-- housing notes column -->
+                                            <ng-container matColumnDef="Notes">
+                                                <th mat-header-cell *matHeaderCellDef>Notes</th>
+                                                <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
+                                                    <mat-form-field appearance="fill">
+                                                        <input formControlName="notes" matInput [value]="housing.notes"/>
+                                                    </mat-form-field>
+                                                </td>
+                                            </ng-container>
+
+                                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                            <tr
+                                                mat-row
+                                                *matRowDef="let row; columns: displayedColumns"
+                                                class="results-noclick-row"
+                                            ></tr>
+                                        </table>
                                     </div>
-                            <!-- </mat-expansion-panel>
-                            <mat-expansion-panel hideToggle>
-                                <mat-expansion-panel-header>
-                                    <mat-panel-title>
-                                    Housing Information
-                                    </mat-panel-title>
-                                </mat-expansion-panel-header> -->
-                                        <mat-form-field appearance="fill">
-                                            <mat-label>Site Housing(s)</mat-label>
-                                            <mat-select aria-label="Site Housings" formControlName="housingType" (selectionChange)="changeTableValue($event.value)" multiple>
-                                                <mat-option *ngFor="let option of siteHousingLookup" [value]="option.type_name">
-                                                    {{option.type_name}}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
-                                        <div class="tableContainer">
-                                            <table
-                                                mat-table
-                                                id="siteHousingTable"
-                                                [dataSource]="siteForm.controls.siteHousings.controls"
-                                                formArrayName="siteHousings"
-                                                class="mat-elevation-z5"
-                                                matSort
-                                            >
-
-                                                <!-- housing type column -->
-                                                <ng-container matColumnDef="HousingType">
-                                                    <th mat-header-cell *matHeaderCellDef>Housing Type</th>
-                                                    <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
-                                                        <mat-form-field>
-                                                            <input matInput formControlName="housingType" [value]="housing.housingType" class="disabled"/>
-                                                        </mat-form-field>
-                                                    </td>
-                                                </ng-container>
-
-                                                <!-- housing length column -->
-                                                <ng-container matColumnDef="HousingLength">
-                                                    <th mat-header-cell *matHeaderCellDef>Housing Length (ft)</th>
-                                                    <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
-                                                        <mat-form-field appearance="fill">
-                                                            <input matInput formControlName="length" [value]="housing.length"/>
-                                                        </mat-form-field>
-                                                    </td>
-                                                </ng-container>
-
-                                                <!-- housing material column -->
-                                                <ng-container matColumnDef="HousingMaterial">
-                                                    <th mat-header-cell *matHeaderCellDef>Housing Material</th>
-                                                    <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
-                                                        <mat-form-field appearance="fill">
-                                                            <input matInput formControlName="material" [value]="housing.material"/>
-                                                        </mat-form-field>
-                                                    </td>
-                                                </ng-container>
-
-                                                <!-- amount column -->
-                                                <ng-container matColumnDef="Amount">
-                                                    <th
-                                                        mat-header-cell
-                                                        *matHeaderCellDef
-                                                    >
-                                                        Amount
-                                                    </th>
-                                                    <td
-                                                        mat-cell
-                                                        *matCellDef="let housing; let i = index" [formGroupName]="i"
-                                                    >
-                                                        <mat-form-field appearance="fill">
-                                                            <input formControlName="amount" matInput [value]="housing.amount"/>
-                                                        </mat-form-field>
-                                                    </td>
-                                                </ng-container>
-
-                                                <!-- housing notes column -->
-                                                <ng-container matColumnDef="Notes">
-                                                    <th mat-header-cell *matHeaderCellDef>Notes</th>
-                                                    <td mat-cell *matCellDef="let housing; let i = index" [formGroupName]="i">
-                                                        <mat-form-field appearance="fill">
-                                                            <input formControlName="notes" matInput [value]="housing.notes"/>
-                                                        </mat-form-field>
-                                                    </td>
-                                                </ng-container>
-
-                                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                                                <tr
-                                                    mat-row
-                                                    *matRowDef="let row; columns: displayedColumns"
-                                                    class="results-noclick-row"
-                                                ></tr>
-                                            </table>
-                                        </div>
                             </mat-expansion-panel>
                             <div class="site-button-group">
                                 <button class="save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>

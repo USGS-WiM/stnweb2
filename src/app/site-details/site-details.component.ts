@@ -100,6 +100,13 @@ export class SiteDetailsComponent implements OnInit {
     sortedHWMFilesData = [];
     sortedSiteFilesData = [];
     
+    gridListWidth;
+    lowerColumns;
+    innerWidth;
+    rowHeight;
+    lowerHeight;
+    rowspan;
+    
     public baroSensorVisible = false;
     public rdgSensorVisible = false;
     public airTempSensorVisible = false;
@@ -122,6 +129,7 @@ export class SiteDetailsComponent implements OnInit {
     public currentUser;
     // Disable edit button for some roles
     editDisabled = localStorage.role !== '3' && localStorage.role !== '2' && localStorage.role !== '1';
+    deleteDisabled = localStorage.role !== '1';
 
     displayedColumns: string[] = [
         'HousingType',
@@ -199,6 +207,28 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // Breakpoints for mat-grid-tile columns/rows
+        this.innerWidth = window.innerWidth;
+        if(window.innerWidth <= 768){
+            this.gridListWidth = 1;
+            this.lowerColumns = 1;
+            this.rowHeight = "1:0.8";
+            this.rowspan = "2";
+            this.lowerHeight = "1:1.5";
+        }else if(window.innerWidth > 768 && window.innerWidth <= 875){
+            this.gridListWidth = 1;
+            this.lowerColumns = 1;
+            this.rowHeight = "1:1";
+            this.rowspan = "2";
+            this.lowerHeight = "1:1";
+        }else{
+            this.gridListWidth = 2;
+            this.lowerColumns = 3;
+            this.rowHeight = "2:1";
+            this.rowspan = "1";
+            this.lowerHeight = "1:1";
+        }
+
         this.route.params.subscribe(routeParams => {
             this.siteID = routeParams.id
         })
@@ -216,6 +246,31 @@ export class SiteDetailsComponent implements OnInit {
         this.sensorFilesDataSource.sort = this.sensorFilesSort;
         this.hwmFilesDataSource.sort = this.hwmFilesSort;
         this.siteFilesDataSource.sort = this.siteFilesSort;
+    }
+
+    onResize(event) {
+        if(event.target.innerWidth !== this.innerWidth){
+            if(window.innerWidth <= 768){
+                this.gridListWidth = 1;
+                this.lowerColumns = 1;
+                this.rowHeight = "1:0.8";
+                this.rowspan = "2";
+                this.lowerHeight = "1:1.5";
+            }else if(window.innerWidth > 768 && window.innerWidth <= 875){
+                this.gridListWidth = 1;
+                this.lowerColumns = 1;
+                this.rowHeight = "1:1";
+                this.rowspan = "2";
+                this.lowerHeight = "1:1";
+            }else{
+                this.gridListWidth = 2;
+                this.lowerColumns = 3;
+                this.rowHeight = "2:1";
+                this.rowspan = "1";
+                this.lowerHeight = "1:1";
+            }
+            this.innerWidth = event.target.innerWidth;
+        }
     }
 
     getData() {
