@@ -215,19 +215,31 @@ export class SiteDetailsComponent implements OnInit {
             this.lowerColumns = 1;
             this.rowHeight = "1:0.8";
             this.rowspan = "2";
-            this.lowerHeight = "1:1.5";
+            this.lowerHeight = "1:1";
         }else if(window.innerWidth > 768 && window.innerWidth <= 875){
             this.gridListWidth = 1;
             this.lowerColumns = 1;
             this.rowHeight = "1:1";
             this.rowspan = "2";
-            this.lowerHeight = "1:1";
+            this.lowerHeight = "1:0.8";
+        }else if(window.innerWidth > 875 && window.innerWidth <= 1050){
+            this.gridListWidth = 1;
+            this.lowerColumns = 2;
+            this.rowHeight = "1:0.3";
+            this.rowspan = "2";
+            this.lowerHeight = "1:0.4";
+        }else if(window.innerWidth > 875 && window.innerWidth <= 1485){
+            this.gridListWidth = 2;
+            this.lowerColumns = 2;
+            this.rowHeight = "1:0.8";
+            this.rowspan = "2";
+            this.lowerHeight = "1:0.4";
         }else{
             this.gridListWidth = 2;
             this.lowerColumns = 3;
-            this.rowHeight = "2:1";
+            this.rowHeight = "2:0.8";
             this.rowspan = "1";
-            this.lowerHeight = "1:1";
+            this.lowerHeight = "1:0.75";
         }
 
         this.route.params.subscribe(routeParams => {
@@ -251,26 +263,38 @@ export class SiteDetailsComponent implements OnInit {
 
     onResize(event) {
         if(event.target.innerWidth !== this.innerWidth){
+            this.innerWidth = event.target.innerWidth;
             if(window.innerWidth <= 768){
                 this.gridListWidth = 1;
                 this.lowerColumns = 1;
                 this.rowHeight = "1:0.8";
                 this.rowspan = "2";
-                this.lowerHeight = "1:1.5";
+                this.lowerHeight = "1:1";
             }else if(window.innerWidth > 768 && window.innerWidth <= 875){
                 this.gridListWidth = 1;
                 this.lowerColumns = 1;
                 this.rowHeight = "1:1";
                 this.rowspan = "2";
-                this.lowerHeight = "1:1";
+                this.lowerHeight = "1:0.8";
+            }else if(window.innerWidth > 875 && window.innerWidth <= 1050){
+                this.gridListWidth = 1;
+                this.lowerColumns = 2;
+                this.rowHeight = "1:0.3";
+                this.rowspan = "2";
+                this.lowerHeight = "1:0.4";
+            }else if(window.innerWidth > 875 && window.innerWidth <= 1485){
+                this.gridListWidth = 2;
+                this.lowerColumns = 2;
+                this.rowHeight = "1:0.8";
+                this.rowspan = "2";
+                this.lowerHeight = "1:0.4";
             }else{
                 this.gridListWidth = 2;
                 this.lowerColumns = 3;
-                this.rowHeight = "2:1";
+                this.rowHeight = "2:0.8";
                 this.rowspan = "1";
-                this.lowerHeight = "1:1";
+                this.lowerHeight = "1:0.75";
             }
-            this.innerWidth = event.target.innerWidth;
         }
     }
 
