@@ -25,6 +25,7 @@ import { ResultDetailsComponent } from '@app/result-details/result-details.compo
 import { networkInterfaces } from 'os';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
+import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
 
 @Component({
     selector: 'app-site-details',
@@ -913,6 +914,31 @@ export class SiteDetailsComponent implements OnInit {
             width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openSensorEditDialog(row): void {
+        let self = this;
+        const dialogRef = this.dialog.open(SensorEditComponent, {
+            data: {
+                sensor: row,
+                files: this.sensorFilesDataSource.data,
+                site_id: this.site.site_id,
+            },
+            width: '100%',
+            autoFocus: false
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result){
+                if(result.referenceDatums !== null){
+                    this.refMarkDataSource.data.forEach(function(row, i){
+                        if(row.objective_point_id === result.referenceDatums.objective_point_id){
+                            // replace row with new info
+                            self.refMarkDataSource.data = [result.referenceDatums];
+                        }
+                    });
+                }
+            }
+        });
     }
 
     openPeaksDetailsDialog(row): void {

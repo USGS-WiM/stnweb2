@@ -71,6 +71,7 @@ import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
 import { FileDetailsDialogComponent } from './file-details-dialog/file-details-dialog.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component';
+import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
 
 @NgModule({
     declarations: [
@@ -96,6 +97,7 @@ import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component
         SiteEditComponent,
         UserManagementComponent,
         RefDatumEditComponent,
+        SensorEditComponent,
     ],
     imports: [
         BrowserModule,

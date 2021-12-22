@@ -230,7 +230,7 @@
             </div>
         </div>
         </mat-expansion-panel>
-        <mat-expansion-panel hideToggle [expanded]="retrievedExpanded" (opened)="retrievedExpanded = true" (closed)="retreivedExpanded = false" *ngIf="data.row_data.statusType === 'Retrieved'">
+        <mat-expansion-panel hideToggle [expanded]="retrievedExpanded" (opened)="retrievedExpanded = true" (closed)="retrievedExpanded = false" *ngIf="data.row_data.statusType === 'Retrieved'">
             <mat-expansion-panel-header>
                 <mat-panel-title *ngIf="!retrievedExpanded" style="color: grey; font-weight: 500">
                     Retrieved Sensor Information

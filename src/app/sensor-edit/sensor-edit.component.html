@@ -1,0 +1,472 @@
+<h2 mat-dialog-title>
+    Edit Sensor
+    <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
+</h2>
+<div [hidden]="!loading" class="loading">
+    <mat-spinner style="margin:0 auto; top: 50%" mode="indeterminate" diameter="20"></mat-spinner>
+</div>
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-dialog-content>
+        <mat-accordion multi="true">
+            <mat-expansion-panel hideToggle [expanded]="deployedExpanded" (opened)="deployedExpanded = true" (closed)="deployedExpanded = false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title *ngIf="!deployedExpanded" style="color: grey; font-weight: 500">
+                        Deployed Sensor Information
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="deployedExpanded" style="color: #FFF; font-weight: 550">
+                        Deployed Sensor Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div>
+                    <label class="form-header">Event: </label> {{this.sensor.eventName}}
+                </div>
+                <mat-form-field appearance="fill">
+                    <mat-label>Sensor Type</mat-label>
+                    <mat-select required aria-label="Sensor Type" formControlName="sensor_type_id">
+                        <mat-option *ngFor="let type of sensorTypes" [value]="type.sensor_type_id">
+                        {{type.sensor}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Sensor Brand</mat-label>
+                    <mat-select required aria-label="Sensor Brand" formControlName="sensor_brand_id">
+                        <mat-option *ngFor="let brand of sensorBrands" [value]="brand.sensor_brand_id">
+                        {{brand.brand_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Serial Number</mat-label>
+                    <input aria-label="Serial Number" matInput formControlName="serial_number" required [value]="sensor.serial_number"/>
+                    <mat-icon matSuffix class="info-icon" matTooltip="Will be used in netCDF metadata." 
+                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Housing Serial Number</mat-label>
+                    <input aria-label="Housing Serial Number" matInput formControlName="serial_number" [value]="sensor.serial_number"/>
+                    <mat-icon matSuffix class="info-icon" matTooltip="Required for DOI WATCH OFFICE 800 number." 
+                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Housing Type</mat-label>
+                    <mat-select aria-label="Housing Type" formControlName="housing_type_id">
+                        <mat-option *ngFor="let type of housingTypes" [value]="type.housing_type_id">
+                        {{type.type_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <label class="form-header">Tapedowns: </label>
+                <div *ngIf="sensor.instrument_status.length > 0">
+                    <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
+                        <div *ngIf="instrument.status === 'Deployed'">
+                            <div [formGroupName]="i">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Sensor Elevation</mat-label>
+                                    <input aria-label="Sensor Elevation" matInput formControlName="sensor_elevation" [value]="instrument.sensor_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the offset correction, elevation of the sensor orifice." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Water Surface Elevation</mat-label>
+                                    <input aria-label="Water Surface Elevation" matInput formControlName="ws_elevation" [value]="instrument.ws_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the water surface tape down, elevation of the water surface." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Ground Elevation</mat-label>
+                                    <input aria-label="Ground Elevation" matInput formControlName="gs_elevation" [value]="instrument.gs_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the ground surface tape down, elevation of the ground surface." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>In Feet Above</mat-label>
+                                    <mat-select aria-label="In Feet Above" formControlName="vdatum_id">
+                                        <mat-option *ngFor="let datum of vDatumList" [value]="datum.datum_id">
+                                        {{datum.datum_name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <mat-radio-group class="radio-btn-group" [(value)]="vented" (change)="ventedChange($event)">
+                    <mat-label>Vented</mat-label>
+                    <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
+                </mat-radio-group>
+                <mat-form-field appearance="fill">
+                    <mat-label>Deployment Type</mat-label>
+                    <mat-select aria-label="Deployment Type" formControlName="deployment_type_id">
+                        <mat-option *ngFor="let type of deploymentTypes" [value]="type.deployment_type_id">
+                        {{type.method}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label for="description">Location Description</mat-label>
+                    <textarea aria-label="Location Description" matInput formControlName="location_description" [value]="sensor.location_description"></textarea>
+                    <mat-icon matSuffix class="info-icon" matTooltip="Please be specific so others can find this sensor later. This field is public." 
+                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                </mat-form-field>
+                <mat-radio-group class="radio-btn-group" [(value)]="interval_unit" (change)="intervalUnitChange($event)">
+                    <mat-radio-button class="radio-button" value="min">Minutes</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="sec">Seconds</mat-radio-button>
+                </mat-radio-group>
+                <mat-form-field appearance="fill">
+                    <mat-label for="elevation">Interval</mat-label>
+                    <input aria-label="Interval" matInput formControlName="interval" [value]="sensor.interval"/>
+                </mat-form-field>
+                <!-- Interval Validator -->
+                <div *ngIf="form.controls.interval.invalid && (form.controls.interval.dirty || form.controls.interval.touched)"
+                    class="alert alert-danger">
+                    <div *ngIf="form.controls.interval.errors?.['incorrectValue']">
+                        Interval must be a numeric value.
+                    </div>
+                </div>
+                <div *ngIf="sensor.instrument_status.length > 0">
+                    <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
+                        <div *ngIf="instrument.status === 'Deployed'">
+                            <div [formGroupName]="i" (click)="previewUTC(instrument)">
+                                <div class="dateFields">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Deploy Date</mat-label>
+                                        <input aria-label="Deploy Date" matInput formControlName="time_stamp" [value]="instrument.time_stamp" [matDatepicker]="deployDatePicker" required placeholder="Choose a date">
+                                        <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
+                                    </mat-form-field>
+                                    <input class="date-input" aria-label="Deploy Hour" [value]="(instrument.time_stamp.split('T')[1]).split(':')[0]" required placeholder="00"> : 
+                                    <input class="date-input" aria-label="Deploy Minute" [value]="(instrument.time_stamp.split('T')[1].split(':')[1])" required placeholder="00">
+                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime()" value="(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'">{{(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'}}</button>
+                                </div>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Time Zone</mat-label>
+                                    <mat-select aria-label="Time Zone" required formControlName="time_zone">
+                                        <mat-option *ngFor="let zone of timeZones" [value]="zone">
+                                        {{zone}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Date/Time will be stored in UTC."
+                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <div>
+                                    <label class="form-header">Preview time in UTC: </label> {{instrument.time_stamp}} {{instrument.time_zone}}
+                                </div>
+                                <mat-form-field appearance="fill">
+                                    <mat-label for="description">Note</mat-label>
+                                    <textarea aria-label="Note" matInput formControlName="notes" [value]="instrument.notes"></textarea>
+                                </mat-form-field>
+                                <div>
+                                    <label class="form-header">Deploy Member: </label> {{instrument.member_name}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ref-button-group">
+                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                    <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel hideToggle [expanded]="retrievedExpanded" (opened)="retrievedExpanded = true" (closed)="retrievedExpanded = false" *ngIf="sensor.statusType === 'Retrieved'">
+                <mat-expansion-panel-header>
+                    <mat-panel-title *ngIf="!retrievedExpanded" style="color: grey; font-weight: 500">
+                        Retrieved Sensor Information
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="retrievedExpanded" style="color: #FFF; font-weight: 550">
+                        Retrieved Sensor Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div *ngIf="sensor.instrument_status.length > 0">
+                    <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
+                        <div *ngIf="instrument.status === 'Retrieved'">
+                            <div [formGroupName]="i">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Status</mat-label>
+                                    <mat-select required aria-label="Status" formControlName="status_type_id">
+                                        <mat-option *ngFor="let type of statusTypes" [value]="type.status_type_id">
+                                        {{type.status}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Collection Conditions</mat-label>
+                                    <mat-select required aria-label="Collection Conditions" formControlName="status">
+                                        <mat-option *ngFor="let condition of collectConds" [value]="condition.id">
+                                        {{condition.condition}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label for="description">Note</mat-label>
+                                    <textarea aria-label="Note" matInput formControlName="notes" [value]="instrument.notes"></textarea>
+                                </mat-form-field>
+                                <div class="dateFields">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Retrieve Date</mat-label>
+                                        <input aria-label="Retrieve Date" matInput formControlName="time_stamp" [value]="instrument.time_stamp" [matDatepicker]="deployDatePicker" required placeholder="Choose a date">
+                                        <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
+                                    </mat-form-field>
+                                    <input class="date-input" aria-label="Deploy Hour" [value]="(instrument.time_stamp.split('T')[1]).split(':')[0]" required placeholder="00"> : 
+                                    <input class="date-input" aria-label="Deploy Minute" [value]="(instrument.time_stamp.split('T')[1].split(':')[1])" required placeholder="00">
+                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime()" value="(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'">{{(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'}}</button>
+                                </div>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Time Zone</mat-label>
+                                    <mat-select aria-label="Time Zone" required formControlName="time_zone">
+                                        <mat-option *ngFor="let zone of timeZones" [value]="zone">
+                                        {{zone}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Date/Time will be stored in UTC."
+                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <div>
+                                    <label class="form-header">Preview time in UTC: </label> {{instrument.time_stamp}} {{instrument.time_zone}}
+                                </div>
+                                <label class="form-header">Tapedowns: </label>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Sensor Elevation</mat-label>
+                                    <input aria-label="Sensor Elevation" matInput formControlName="sensor_elevation" [value]="instrument.sensor_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the offset correction, elevation of the sensor orifice." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Water Surface Elevation</mat-label>
+                                    <input aria-label="Water Surface Elevation" matInput formControlName="ws_elevation" [value]="instrument.ws_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the water surface tape down, elevation of the water surface." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Ground Elevation</mat-label>
+                                    <input aria-label="Ground Elevation" matInput formControlName="gs_elevation" [value]="instrument.gs_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the ground surface tape down, elevation of the ground surface." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>In Feet Above</mat-label>
+                                    <mat-select aria-label="In Feet Above" formControlName="vdatum_id">
+                                        <mat-option *ngFor="let datum of vDatumList" [value]="datum.datum_id">
+                                        {{datum.datum_name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div>
+                                    <label class="form-header">Member: </label> {{instrument.member_name}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ref-button-group">
+                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                    <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel hideToggle [expanded]="lostExpanded" (opened)="lostExpanded = true" (closed)="lostExpanded = false" *ngIf="sensor.statusType === 'Lost'">
+                <mat-expansion-panel-header>
+                    <mat-panel-title *ngIf="!lostExpanded" style="color: grey; font-weight: 500">
+                    Lost Sensor Information
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="lostExpanded" style="color: #FFF; font-weight: 550">
+                        Lost Sensor Information
+                        </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div *ngIf="sensor.instrument_status.length > 0">
+                    <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
+                        <div *ngIf="instrument.status === 'Lost'">
+                            <div [formGroupName]="i">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Status</mat-label>
+                                    <mat-select required aria-label="Status" formControlName="status_type_id">
+                                        <mat-option *ngFor="let type of statusTypes" [value]="type.status_type_id">
+                                        {{type.status}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Collection Conditions</mat-label>
+                                    <mat-select required aria-label="Collection Conditions" formControlName="status">
+                                        <mat-option *ngFor="let condition of collectConds" [value]="condition.id">
+                                        {{condition.condition}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label for="description">Note</mat-label>
+                                    <textarea aria-label="Note" matInput formControlName="notes" [value]="instrument.notes"></textarea>
+                                </mat-form-field>
+                                <div class="dateFields">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Retrieve Date</mat-label>
+                                        <input aria-label="Retrieve Date" matInput formControlName="time_stamp" [value]="instrument.time_stamp" [matDatepicker]="deployDatePicker" required placeholder="Choose a date">
+                                        <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
+                                    </mat-form-field>
+                                    <input class="date-input" aria-label="Deploy Hour" [value]="(instrument.time_stamp.split('T')[1]).split(':')[0]" required placeholder="00"> : 
+                                    <input class="date-input" aria-label="Deploy Minute" [value]="(instrument.time_stamp.split('T')[1].split(':')[1])" required placeholder="00">
+                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime()" value="(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'">{{(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'}}</button>
+                                </div>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Time Zone</mat-label>
+                                    <mat-select aria-label="Time Zone" required formControlName="time_zone">
+                                        <mat-option *ngFor="let zone of timeZones" [value]="zone">
+                                        {{zone}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Date/Time will be stored in UTC."
+                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <div>
+                                    <label class="form-header">Preview time in UTC: </label> {{instrument.time_stamp}} {{instrument.time_zone}}
+                                </div>
+                                <label class="form-header">Tapedowns: </label>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Sensor Elevation</mat-label>
+                                    <input aria-label="Sensor Elevation" matInput formControlName="sensor_elevation" [value]="instrument.sensor_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the offset correction, elevation of the sensor orifice." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Water Surface Elevation</mat-label>
+                                    <input aria-label="Water Surface Elevation" matInput formControlName="ws_elevation" [value]="instrument.ws_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the water surface tape down, elevation of the water surface." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Ground Elevation</mat-label>
+                                    <input aria-label="Ground Elevation" matInput formControlName="gs_elevation" [value]="instrument.gs_elevation">
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the ground surface tape down, elevation of the ground surface." 
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                </mat-form-field>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>In Feet Above</mat-label>
+                                    <mat-select aria-label="In Feet Above" formControlName="vdatum_id">
+                                        <mat-option *ngFor="let datum of vDatumList" [value]="datum.datum_id">
+                                        {{datum.datum_name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div>
+                                    <label class="form-header">Member: </label> {{instrument.member_name}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ref-button-group">
+                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                    <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title *ngIf="!filesExpanded" style="color: grey; font-weight: 500">
+                        Sensor File Information
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="filesExpanded" style="color: #FFF; font-weight: 550">
+                        Sensor File Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <div class="tableContainer" [hidden]="initSensorFiles?.length === 0">
+                    <table
+                        mat-table
+                        id="sensorFileTable"
+                        [dataSource]="initSensorFiles"
+                        class="mat-elevation-z5"
+                        matSort
+                    >
+
+                        <!-- file name column -->
+                        <ng-container matColumnDef="FileName">
+                            <th mat-header-cell *matHeaderCellDef>File Name</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div>
+                                    {{file.name}}
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <!-- file date column -->
+                        <ng-container matColumnDef="FileDate">
+                            <th mat-header-cell *matHeaderCellDef>File Date</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div>
+                                    {{file.format_file_date}}
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedFileColumns"></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: displayedFileColumns"
+                            class="file-table"
+                        ></tr>
+                    </table>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel hideToggle [expanded]="nwisExpanded"  (opened)="nwisExpanded = true" (closed)="nwisExpanded = false" *ngIf="sensor.statusType === 'Deployed'">
+                <mat-expansion-panel-header>
+                    <mat-panel-title *ngIf="!nwisExpanded" style="color: grey; font-weight: 500">
+                        NWIS Connection
+                    </mat-panel-title>
+                    <mat-panel-title *ngIf="nwisExpanded" style="color: #FFF; font-weight: 550">
+                        NWIS Connection
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <div class="tableContainer">
+                    <table *ngIf="initNWISFiles.length > 0"
+                        mat-table
+                        id="initNWISFilesTable"
+                        [dataSource]="initNWISFiles"
+                        class="mat-elevation-z5"
+                    >
+                        <!-- NWIS file date column -->
+                        <ng-container matColumnDef="FileDate">
+                            <th mat-header-cell *matHeaderCellDef>File Date</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayNWISFileDate">
+                                    ---
+                                </div>
+                                <ng-template #displayNWISFileDate>
+                                    {{ file.file_date }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+        
+                        <!-- NWIS file name column -->
+                        <ng-container matColumnDef="FileName">
+                            <th mat-header-cell *matHeaderCellDef>File Name</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div *ngIf="file.name === '' || file.name === undefined; else displayNWISFileName">
+                                    ---
+                                </div>
+                                <ng-template #displayNWISFileName>
+                                    {{ file.name }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+        
+                        <tr mat-header-row *matHeaderRowDef="displayedNWISFileColumns"></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: displayedNWISFileColumns"
+                            class="file-table"
+                        ></tr>
+                    </table>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <div class="detail-section-buttons centered">
+            <button mat-stroked-button class="close-btn" [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Close">Close</button>
+            <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+        </div>
+    </mat-dialog-actions>
+</form>
+
+
+
