@@ -56,7 +56,102 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <label class="form-header">Tapedowns: </label>
+                <mat-divider></mat-divider>
+                <div class="tapedown-header">
+                    <label class="form-header">Tapedowns: </label>
+                </div>
+                <div class="tapedowns" [hidden]="!opsPresent">
+                    <!-- <div *ngFor="let tapedown of deployedTapedowns; let i = index" formArrayName="deployedTapedowns"> -->
+                        <mat-form-field appearance="fill">
+                            <mat-label>Reference Marks</mat-label>
+                                <!-- <div [formGroupName]="i"> -->
+                                    <mat-select aria-label="Reference Marks" formControlName="refMarks" (selectionChange)="changeTableValue($event.value, 'Deployed')" multiple>
+                                        <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
+                                        {{refmark.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                <!-- </div> -->
+                                <mat-icon matSuffix class="info-icon" matTooltip="These elevations and tapedown data are used for both field activities and final products. Please pay attention to how your data is entered." 
+                                aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                        </mat-form-field>
+                    <!-- </div> -->
+                </div>
+                <div class="tapedowns" [hidden]="opsPresent">
+                    <label>
+                        No Datum Locations have been added to this site yet to use for a tape down
+                    </label>
+                </div>
+                <div class="cell-container">
+                    <table *ngIf="deployedTapedowns.length > 0"
+                        mat-table
+                        id="tapedownsTable"
+                        [dataSource]="deployedTapedowns"
+                        formArrayName="deployedTapedowns"
+                        class="mat-elevation-z5"
+                        matSort
+                    >
+
+                        <!-- Reference Datum name column -->
+                        <ng-container matColumnDef="ReferenceMark">
+                            <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                <mat-form-field>
+                                    <input matInput formControlName="rmName" [value]="tapedown.rmName" class="disabled"/>
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+    
+                        <!-- Elevation column -->
+                        <ng-container matColumnDef="Elevation">
+                            <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                <mat-form-field>
+                                    <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <!-- Offset correction column -->
+                        <ng-container matColumnDef="OffsetCorrection">
+                            <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
+                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                <mat-form-field appearance="fill">
+                                    <input matInput formControlName="offset_correction" [value]="tapedown.offset_correction"/>
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <!-- WS column -->
+                        <ng-container matColumnDef="WaterSurface">
+                            <th mat-header-cell *matHeaderCellDef>Water Surface</th>
+                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                <mat-form-field appearance="fill">
+                                    <input matInput formControlName="water_surface" [value]="tapedown.water_surface"/>
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <!-- GS column -->
+                        <ng-container matColumnDef="GroundSurface">
+                            <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
+                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                <mat-form-field appearance="fill">
+                                    <input matInput formControlName="ground_surface" [value]="tapedown.ground_surface"/>
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+    
+                        <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let row; columns: displayedTapedownColumns"
+                            class="results-row"
+                        ></tr>
+                    </table>
+                </div>
+                <div class="note">
+                    <label>Note: these are not used for any calculations but are to facilitate field activities.</label>
+                </div>
                 <div *ngIf="sensor.instrument_status.length > 0">
                     <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
                         <div *ngIf="instrument.status === 'Deployed'">
@@ -91,6 +186,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="note">
+                    <label>Note: these elevations are used in the sensor processing and the final products.</label>
+                </div>
+                <mat-divider></mat-divider>
                 <mat-radio-group class="radio-btn-group" [(value)]="vented" (change)="ventedChange($event)">
                     <mat-label>Vented</mat-label>
                     <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
@@ -189,14 +288,20 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field appearance="fill">
-                                    <mat-label>Collection Conditions</mat-label>
-                                    <mat-select required aria-label="Collection Conditions" formControlName="status">
-                                        <mat-option *ngFor="let condition of collectConds" [value]="condition.id">
-                                        {{condition.condition}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Collection Conditions</mat-label>
+                        <mat-select required aria-label="Collection Conditions" formControlName="inst_collection_id">
+                            <mat-option *ngFor="let condition of collectConds" [value]="condition.id">
+                            {{condition.condition}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
+                        <div *ngIf="instrument.status === 'Retrieved'">
+                            <div [formGroupName]="i">
                                 <mat-form-field appearance="fill">
                                     <mat-label for="description">Note</mat-label>
                                     <textarea aria-label="Note" matInput formControlName="notes" [value]="instrument.notes"></textarea>
@@ -224,7 +329,109 @@
                                 <div>
                                     <label class="form-header">Preview time in UTC: </label> {{instrument.time_stamp}} {{instrument.time_zone}}
                                 </div>
-                                <label class="form-header">Tapedowns: </label>
+                            </div>
+                        </div>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <div class="tapedown-header">
+                        <label class="form-header">Tapedowns: </label>
+                    </div>
+                    <div class="tapedowns" [hidden]="!opsPresent">
+                        <!-- <div *ngFor="let tapedown of retrievedTapedowns; let i = index" formArrayName="retrievedTapedowns"> -->
+                            <mat-form-field appearance="fill">
+                                <mat-label>Reference Marks</mat-label>
+                                    <!-- <div [formGroupName]="i"> -->
+                                        <mat-select aria-label="Reference Marks" formControlName="refMarks" (selectionChange)="changeTableValue($event.value, 'Retrieved')" multiple>
+                                            <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
+                                            {{refmark.name}}
+                                            </mat-option>
+                                        </mat-select>
+                                    <!-- </div> -->
+                                    <mat-icon matSuffix class="info-icon" matTooltip="Date/Time will be stored in UTC."
+                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                            </mat-form-field>
+                        <!-- </div> -->
+                    </div>
+                    <div class="tapedowns" [hidden]="opsPresent">
+                        <label>
+                            No Datum Locations have been added to this site yet to use for a tape down
+                        </label>
+                    </div>
+                    <div class="cell-container">
+                        <table *ngIf="retrievedTapedowns.length > 0"
+                            mat-table
+                            id="tapedownsTable"
+                            [dataSource]="retrievedTapedowns"
+                            formArrayName="retrievedTapedowns"
+                            class="mat-elevation-z5"
+                            matSort
+                        >
+    
+                            <!-- Reference Datum name column -->
+                            <ng-container matColumnDef="ReferenceMark">
+                                <th mat-header-cell *matHeaderCellDef>Reference Mark</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field>
+                                        <input matInput formControlName="rmName" [value]="tapedown.rmName" class="disabled"/>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+        
+                            <!-- Elevation column -->
+                            <ng-container matColumnDef="Elevation">
+                                <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field>
+                                        <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+    
+                            <!-- Offset correction column -->
+                            <ng-container matColumnDef="OffsetCorrection">
+                                <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field appearance="fill">
+                                        <input matInput formControlName="offset_correction" [value]="tapedown.offset_correction"/>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+    
+                            <!-- WS column -->
+                            <ng-container matColumnDef="WaterSurface">
+                                <th mat-header-cell *matHeaderCellDef>Water Surface</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field appearance="fill">
+                                        <input matInput formControlName="water_surface" [value]="tapedown.water_surface"/>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+    
+                            <!-- GS column -->
+                            <ng-container matColumnDef="GroundSurface">
+                                <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field appearance="fill">
+                                        <input matInput formControlName="ground_surface" [value]="tapedown.ground_surface"/>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+        
+                            <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
+                            <tr
+                                mat-row
+                                *matRowDef="let row; columns: displayedTapedownColumns"
+                                class="results-row"
+                            ></tr>
+                        </table>
+                    </div>
+                    <div class="note">
+                        <label>Note: these are not used for any calculations but are to facilitate field activities.</label>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
+                        <div *ngIf="instrument.status === 'Retrieved'">
+                            <div [formGroupName]="i">
                                 <mat-form-field appearance="fill">
                                     <mat-label>Sensor Elevation</mat-label>
                                     <input aria-label="Sensor Elevation" matInput formControlName="sensor_elevation" [value]="instrument.sensor_elevation">
@@ -251,8 +458,12 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
+                                <div class="note">
+                                    <label>Note: these elevations are used in the sensor processing and the final products.</label>
+                                </div>
+                                <mat-divider></mat-divider>
                                 <div>
-                                    <label class="form-header">Member: </label> {{instrument.member_name}}
+                                    <label class="form-header">Member: </label><p class="required">*</p>{{instrument.member_name}}
                                 </div>
                             </div>
                         </div>
@@ -284,14 +495,20 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field appearance="fill">
-                                    <mat-label>Collection Conditions</mat-label>
-                                    <mat-select required aria-label="Collection Conditions" formControlName="status">
-                                        <mat-option *ngFor="let condition of collectConds" [value]="condition.id">
-                                        {{condition.condition}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Collection Conditions</mat-label>
+                        <mat-select required aria-label="Collection Conditions" formControlName="inst_collection_id">
+                            <mat-option *ngFor="let condition of collectConds" [value]="condition.id">
+                            {{condition.condition}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
+                        <div *ngIf="instrument.status === 'Lost'">
+                            <div [formGroupName]="i">
                                 <mat-form-field appearance="fill">
                                     <mat-label for="description">Note</mat-label>
                                     <textarea aria-label="Note" matInput formControlName="notes" [value]="instrument.notes"></textarea>
@@ -319,7 +536,102 @@
                                 <div>
                                     <label class="form-header">Preview time in UTC: </label> {{instrument.time_stamp}} {{instrument.time_zone}}
                                 </div>
-                                <label class="form-header">Tapedowns: </label>
+                                <mat-divider></mat-divider>
+                                <div class="tapedown-header">
+                                    <label class="form-header">Tapedowns: </label>
+                                </div>
+                                <div class="tapedowns" [hidden]="!opsPresent">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Reference Marks</mat-label>
+                                        <div formArrayName="lostTapedowns">
+                                            <!-- <div [formGroupName]="i"> -->
+                                                <mat-select aria-label="Reference Marks" formControlName="refMarks" (selectionChange)="changeTableValue($event.value, 'Lost')" multiple>
+                                                    <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
+                                                    {{refmark.name}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            <!-- </div>   -->
+                                            <mat-icon matSuffix class="info-icon" matTooltip="Date/Time will be stored in UTC."
+                                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="tapedowns" [hidden]="opsPresent">
+                                    <label>
+                                        No Datum Locations have been added to this site yet to use for a tape down
+                                    </label>
+                                </div>
+                                <div class="cell-container">
+                                    <table *ngIf="lostTapedowns.length > 0"
+                                        mat-table
+                                        id="tapedownsTable"
+                                        [dataSource]="lostTapedowns"
+                                        formArrayName="lostTapedowns"
+                                        class="mat-elevation-z5"
+                                        matSort
+                                    >
+                
+                                        <!-- Reference Datum name column -->
+                                        <ng-container matColumnDef="ReferenceDatum">
+                                            <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
+                                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                                <mat-form-field>
+                                                    <input matInput formControlName="rmName" [value]="tapedown.rmName" class="disabled"/>
+                                                </mat-form-field>
+                                            </td>
+                                        </ng-container>
+                    
+                                        <!-- Elevation column -->
+                                        <ng-container matColumnDef="Elevation">
+                                            <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                                <mat-form-field>
+                                                    <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                                </mat-form-field>
+                                            </td>
+                                        </ng-container>
+                
+                                        <!-- Offset correction column -->
+                                        <ng-container matColumnDef="OffsetCorrection">
+                                            <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
+                                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                                <mat-form-field appearance="fill">
+                                                    <input matInput formControlName="offset_correction" [value]="tapedown.offset_correction"/>
+                                                </mat-form-field>
+                                            </td>
+                                        </ng-container>
+                
+                                        <!-- WS column -->
+                                        <ng-container matColumnDef="WaterSurface">
+                                            <th mat-header-cell *matHeaderCellDef>Water Surface</th>
+                                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                                <mat-form-field appearance="fill">
+                                                    <input matInput formControlName="water_surface" [value]="tapedown.water_surface"/>
+                                                </mat-form-field>
+                                            </td>
+                                        </ng-container>
+                
+                                        <!-- GS column -->
+                                        <ng-container matColumnDef="GroundSurface">
+                                            <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
+                                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                                <mat-form-field appearance="fill">
+                                                    <input matInput formControlName="ground_surface" [value]="tapedown.ground_surface"/>
+                                                </mat-form-field>
+                                            </td>
+                                        </ng-container>
+                    
+                                        <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
+                                        <tr
+                                            mat-row
+                                            *matRowDef="let row; columns: displayedTapedownColumns"
+                                            class="results-row"
+                                        ></tr>
+                                    </table>
+                                </div>
+                                <div class="note">
+                                    <label>Note: these are not used for any calculations but are to facilitate field activities.</label>
+                                </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Sensor Elevation</mat-label>
                                     <input aria-label="Sensor Elevation" matInput formControlName="sensor_elevation" [value]="instrument.sensor_elevation">
@@ -346,8 +658,12 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
+                                <div class="note">
+                                    <label>Note: these elevations are used in the sensor processing and the final products.</label>
+                                </div>
+                                <mat-divider></mat-divider>
                                 <div>
-                                    <label class="form-header">Member: </label> {{instrument.member_name}}
+                                    <label class="form-header">Member: </label> <p class="required">*</p>{{instrument.member_name}}
                                 </div>
                             </div>
                         </div>

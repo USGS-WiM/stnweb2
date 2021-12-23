@@ -37,6 +37,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import {MatDividerModule} from '@angular/material/divider';
 
 import { HighchartsChartModule } from 'highcharts-angular';
 
@@ -139,6 +140,7 @@ import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
         MatTooltipModule,
         MatDatepickerModule,
         MatNativeDateModule,
+        MatDividerModule,
     ],
     providers: [
         CurrentUserService,

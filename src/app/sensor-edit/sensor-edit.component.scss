@@ -40,6 +40,41 @@ table {
     align-self: stretch;
 }
 
+.mat-column-ReferenceMark{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-Elevation{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-OffsetCorrection{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-WaterSurface{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-GroundSurface{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
 .mat-header-cell {
     font-weight: bold;
     text-transform: uppercase;
@@ -71,6 +106,10 @@ table {
 
 .dateFields {
     display: inline-flex;
+}
+
+.disabled {
+    color: #000;
 }
 
 .date-input {
@@ -115,4 +154,26 @@ table {
 
 .add-button {
     border: 1px solid #404040;
+}
+
+.required {
+    margin-right: 10px !important;
+    color: #E70000 !important;
+    font-weight: bold;
+    display: inline-block;
+    line-height: 36px !important;
+    height: 36px;
+}
+
+.note {
+    font-style: italic;
+    margin: 5px;
+}
+
+.tapedowns {
+    margin-left: 30px;
+}
+
+.tapedown-header {
+    margin: 5px;
 }

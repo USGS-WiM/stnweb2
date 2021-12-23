@@ -923,6 +923,7 @@ export class SiteDetailsComponent implements OnInit {
                 sensor: row,
                 files: this.sensorFilesDataSource.data,
                 site_id: this.site.site_id,
+                siteRefMarks: this.refMarkDataSource.data,
             },
             width: '100%',
             autoFocus: false
