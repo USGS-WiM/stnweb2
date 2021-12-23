@@ -72,6 +72,8 @@ import { SiteEditComponent } from './site-edit/site-edit.component';
 import { CreatePasswordComponent } from './create-password/create-password.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component';
+import { RoleService } from './services/role.service';
+import { AgencyService } from './services/agency.service';
 
 @NgModule({
     declarations: [
@@ -141,7 +143,6 @@ import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component
         MatDatepickerModule,
         MatNativeDateModule,
     ],
-    exports: [ MatFormFieldModule, MatInputModule ],
     providers: [
         CurrentUserService,
         AuthenticationService,
@@ -149,6 +150,8 @@ import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component
         EventService,
         UserService,
         SiteService,
+        AgencyService,
+        RoleService,
         FiltersService,
         DisplayValuePipe,
         MatSnackBar,
@@ -159,6 +162,8 @@ import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component
         LoginComponent,
         ConfirmComponent,
         ResultDetailsComponent,
+        AddUserDialogComponent,
+        CreatePasswordComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

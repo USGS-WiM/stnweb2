@@ -61,7 +61,6 @@ describe('MapComponent', () => {
             declarations: [MapComponent],
             imports: [
                 NoopAnimationsModule,
-                MatAutocompleteModule,
                 HttpClientTestingModule,
                 FormsModule,
                 ReactiveFormsModule,

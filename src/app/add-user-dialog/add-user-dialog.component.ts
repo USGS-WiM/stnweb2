@@ -27,15 +27,15 @@ export class AddUserDialogComponent implements OnInit {
 
   buildAddNewUserForm() {
     this.newUserForm = this.formBuilder.group({
-      fname: '',
-      lname: '',
-      username:  '',
-      email: ['', Validators.email],
-      phone: [null, Validators.pattern(this.phonePattern)],
+      fname: ['', Validators.required],
+      lname: ['', Validators.required],
+      username:  ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: [null, [Validators.required, Validators.pattern(this.phonePattern)]],
       emergencyContact: null,
       emergencyContactPhone: [null, Validators.pattern(this.phonePattern)],
-      agency_id: '', 
-      role_id: null, 
+      agency_id: [null, Validators.required], 
+      role_id: [null, Validators.required], 
       password: this.formBuilder.group({
         password: [''],
         confirmPassword: ['']
@@ -53,7 +53,6 @@ export class AddUserDialogComponent implements OnInit {
   ) { this.buildAddNewUserForm() }
 
   ngOnInit(): void {
-    console.log(this.newUserForm.get('agency_id').setValue("test"))
     this.agencies = this.data.agencies;
     this.roles = this.data.roles;
 
@@ -65,16 +64,6 @@ export class AddUserDialogComponent implements OnInit {
       map(value => typeof value === 'string' ? value : value.agency_name),
       map(agencyname => agencyname ? this._filter(agencyname) : this.options.slice())
     );
-  }
-
-  openDetailsDialog(row): void {
-    let dialogWidth;
-    if (window.matchMedia('(max-width: 768px)').matches) {
-      dialogWidth = '80%';
-    }
-    else {
-      dialogWidth = '30%';
-    }
   }
 
   private _filter(value: string) {
@@ -122,46 +111,58 @@ export class AddUserDialogComponent implements OnInit {
     return this.newUserForm.get('email').hasError('email') ? 'Not a valid email' : '';
   }
 
-  onSubmit(formValue) {
-
+  encryptPassword(formValue) {
     // Copy password to top level
     const password = btoa(formValue.password.password);
     delete formValue.password;
     formValue.password = password;
+  }
 
+  setAgencyinForm(formValue) {
     // copy agency id value to top level
     const agency_id = formValue.agency_id.a_id;
     delete formValue.agency_id;
     formValue.agency_id = agency_id;
-    console.log(formValue);
-    this.userService.addNewUser(formValue)
-      .subscribe(
-        (event) => {
-          this.submitLoading = false;
-          this.addUserdialogRef.close();
-          this.dialog.open(ConfirmComponent, {
-            data: {
-              title: "Successfully created User: " + formValue.username,
-              titleIcon: "check",
-              message:
-              `Please ask them to change their password after logging in the first time.`,
-              confirmButtonText: "OK",
-              showCancelButton: false,
-            },
-          });
-        },
-        error => {
+  }
 
-          let parsedError = null;
-          try {
-            parsedError = JSON.parse(error);
-          } catch (error) {
-            // Ignore JSON parsing error
-          }
-          this.submitLoading = false;
-          this.openSnackBar('Error. User registration failed. Error message: ' + error, 'OK', 8000);
+  postUser(formValue) {
+    this.userService.addNewUser(formValue)
+    .subscribe(
+      (event) => {
+        this.submitLoading = false;
+        this.addUserdialogRef.close();
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Successfully created User: " + formValue.username,
+            titleIcon: "check",
+            message:
+            `Please ask them to change their password after logging in the first time.`,
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+      },
+      error => {
+
+        let parsedError = null;
+        try {
+          parsedError = JSON.parse(error);
+        } catch (error) {
+          // Ignore JSON parsing error
         }
-      );
+        this.submitLoading = false;
+        this.openSnackBar('Error. User registration failed. Error message: ' + error, 'OK', 8000);
+      }
+    );
+  }
+
+  onSubmit(formValue) {
+
+    // reformatting password and agencies sections in form
+    this.encryptPassword(formValue);
+    this.setAgencyinForm(formValue)
+    this.postUser(formValue);
+    
   }
 
 }
