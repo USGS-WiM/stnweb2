@@ -21,6 +21,7 @@
     width: 100%;
     margin-bottom: 20px;
     margin-top: 10px;
+    overflow-x: auto;
 }
 
 table {
@@ -176,4 +177,8 @@ table {
 
 .tapedown-header {
     margin: 5px;
+}
+
+.inline-fields {
+    display: inline-flex;
 }

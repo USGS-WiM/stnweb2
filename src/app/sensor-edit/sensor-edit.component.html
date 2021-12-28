@@ -44,7 +44,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="fill">
                     <mat-label>Housing Serial Number</mat-label>
-                    <input aria-label="Housing Serial Number" matInput formControlName="serial_number" [value]="sensor.serial_number"/>
+                    <input aria-label="Housing Serial Number" matInput formControlName="housing_serial_number" [value]="sensor.housing_serial_number"/>
                     <mat-icon matSuffix class="info-icon" matTooltip="Required for DOI WATCH OFFICE 800 number." 
                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                 </mat-form-field>
@@ -61,28 +61,24 @@
                     <label class="form-header">Tapedowns: </label>
                 </div>
                 <div class="tapedowns" [hidden]="!opsPresent">
-                    <!-- <div *ngFor="let tapedown of deployedTapedowns; let i = index" formArrayName="deployedTapedowns"> -->
                         <mat-form-field appearance="fill">
                             <mat-label>Reference Marks</mat-label>
-                                <!-- <div [formGroupName]="i"> -->
-                                    <mat-select aria-label="Reference Marks" formControlName="refMarks" (selectionChange)="changeTableValue($event.value, 'Deployed')" multiple>
+                                    <mat-select aria-label="Reference Marks" formControlName="deployedRefMarks" (selectionChange)="changeTableValue($event.value, 'Deployed')" multiple>
                                         <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
                                         {{refmark.name}}
                                         </mat-option>
                                     </mat-select>
-                                <!-- </div> -->
                                 <mat-icon matSuffix class="info-icon" matTooltip="These elevations and tapedown data are used for both field activities and final products. Please pay attention to how your data is entered." 
                                 aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                         </mat-form-field>
-                    <!-- </div> -->
                 </div>
                 <div class="tapedowns" [hidden]="opsPresent">
                     <label>
                         No Datum Locations have been added to this site yet to use for a tape down
                     </label>
                 </div>
-                <div class="cell-container">
-                    <table *ngIf="deployedTapedowns.length > 0"
+                <div class="tableContainer">
+                    <table *ngIf="form.controls.deployedTapedowns.length > 0"
                         mat-table
                         id="tapedownsTable"
                         [dataSource]="deployedTapedowns"
@@ -106,7 +102,12 @@
                             <th mat-header-cell *matHeaderCellDef>Elevation</th>
                             <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                 <mat-form-field>
-                                    <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                    <div class="inline-fields">
+                                        <div *ngIf="tapedown.elevation !== undefined">
+                                            <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                        </div>
+                                        <input matInput formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>
+                                    </div>
                                 </mat-form-field>
                             </td>
                         </ng-container>
@@ -227,20 +228,20 @@
                 <div *ngIf="sensor.instrument_status.length > 0">
                     <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
                         <div *ngIf="instrument.status === 'Deployed'">
-                            <div [formGroupName]="i" (click)="previewUTC(instrument)">
+                            <div [formGroupName]="i" (change)="previewUTC(instrument)">
                                 <div class="dateFields">
                                     <mat-form-field appearance="fill">
                                         <mat-label>Deploy Date</mat-label>
                                         <input aria-label="Deploy Date" matInput formControlName="time_stamp" [value]="instrument.time_stamp" [matDatepicker]="deployDatePicker" required placeholder="Choose a date">
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                     </mat-form-field>
-                                    <input class="date-input" aria-label="Deploy Hour" [value]="(instrument.time_stamp.split('T')[1]).split(':')[0]" required placeholder="00"> : 
-                                    <input class="date-input" aria-label="Deploy Minute" [value]="(instrument.time_stamp.split('T')[1].split(':')[1])" required placeholder="00">
-                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime()" value="(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'">{{(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'}}</button>
+                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" [value]="instrument.hour" required placeholder="00"> : 
+                                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" [value]="instrument.minute" required placeholder="00">
+                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Time Zone</mat-label>
-                                    <mat-select aria-label="Time Zone" required formControlName="time_zone">
+                                    <mat-select aria-label="Time Zone" required formControlName="time_zone" (selectionChange)="setTimeZone(instrument)">
                                         <mat-option *ngFor="let zone of timeZones" [value]="zone">
                                         {{zone}}
                                         </mat-option>
@@ -249,7 +250,7 @@
                                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                 </mat-form-field>
                                 <div>
-                                    <label class="form-header">Preview time in UTC: </label> {{instrument.time_stamp}} {{instrument.time_zone}}
+                                    <label class="form-header">Preview time in UTC: </label> {{instrument.utc_preview}} GMT
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label for="description">Note</mat-label>
@@ -312,9 +313,9 @@
                                         <input aria-label="Retrieve Date" matInput formControlName="time_stamp" [value]="instrument.time_stamp" [matDatepicker]="deployDatePicker" required placeholder="Choose a date">
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                     </mat-form-field>
-                                    <input class="date-input" aria-label="Deploy Hour" [value]="(instrument.time_stamp.split('T')[1]).split(':')[0]" required placeholder="00"> : 
-                                    <input class="date-input" aria-label="Deploy Minute" [value]="(instrument.time_stamp.split('T')[1].split(':')[1])" required placeholder="00">
-                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime()" value="(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'">{{(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'}}</button>
+                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" [value]="instrument.hour" required placeholder="00"> : 
+                                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" [value]="instrument.minute" required placeholder="00">
+                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Time Zone</mat-label>
@@ -327,7 +328,7 @@
                                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                 </mat-form-field>
                                 <div>
-                                    <label class="form-header">Preview time in UTC: </label> {{instrument.time_stamp}} {{instrument.time_zone}}
+                                    <label class="form-header">Preview time in UTC: </label> {{instrument.utc_preview}} GMT
                                 </div>
                             </div>
                         </div>
@@ -337,28 +338,24 @@
                         <label class="form-header">Tapedowns: </label>
                     </div>
                     <div class="tapedowns" [hidden]="!opsPresent">
-                        <!-- <div *ngFor="let tapedown of retrievedTapedowns; let i = index" formArrayName="retrievedTapedowns"> -->
                             <mat-form-field appearance="fill">
                                 <mat-label>Reference Marks</mat-label>
-                                    <!-- <div [formGroupName]="i"> -->
-                                        <mat-select aria-label="Reference Marks" formControlName="refMarks" (selectionChange)="changeTableValue($event.value, 'Retrieved')" multiple>
+                                        <mat-select aria-label="Reference Marks" formControlName="retrievedRefMarks" (selectionChange)="changeTableValue($event.value, 'Retrieved')" multiple>
                                             <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
                                             {{refmark.name}}
                                             </mat-option>
                                         </mat-select>
-                                    <!-- </div> -->
                                     <mat-icon matSuffix class="info-icon" matTooltip="Date/Time will be stored in UTC."
                                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                             </mat-form-field>
-                        <!-- </div> -->
                     </div>
                     <div class="tapedowns" [hidden]="opsPresent">
                         <label>
                             No Datum Locations have been added to this site yet to use for a tape down
                         </label>
                     </div>
-                    <div class="cell-container">
-                        <table *ngIf="retrievedTapedowns.length > 0"
+                    <div class="tableContainer">
+                        <table *ngIf="form.controls.retrievedTapedowns.length > 0"
                             mat-table
                             id="tapedownsTable"
                             [dataSource]="retrievedTapedowns"
@@ -382,7 +379,12 @@
                                 <th mat-header-cell *matHeaderCellDef>Elevation</th>
                                 <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                     <mat-form-field>
-                                        <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                        <div class="inline-fields">
+                                            <div *ngIf="tapedown.elevation !== undefined">
+                                                <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                            </div>
+                                            <input matInput formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>
+                                        </div>
                                     </mat-form-field>
                                 </td>
                             </ng-container>
@@ -519,9 +521,9 @@
                                         <input aria-label="Retrieve Date" matInput formControlName="time_stamp" [value]="instrument.time_stamp" [matDatepicker]="deployDatePicker" required placeholder="Choose a date">
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                     </mat-form-field>
-                                    <input class="date-input" aria-label="Deploy Hour" [value]="(instrument.time_stamp.split('T')[1]).split(':')[0]" required placeholder="00"> : 
-                                    <input class="date-input" aria-label="Deploy Minute" [value]="(instrument.time_stamp.split('T')[1].split(':')[1])" required placeholder="00">
-                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime()" value="(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'">{{(instrument.time_stamp.split('T')[1]).split(':')[0] > 12 ? 'PM' : 'AM'}}</button>
+                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" [value]="instrument.hour" required placeholder="00"> : 
+                                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" [value]="instrument.minute" required placeholder="00">
+                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Time Zone</mat-label>
@@ -545,8 +547,8 @@
                                         <mat-label>Reference Marks</mat-label>
                                         <div formArrayName="lostTapedowns">
                                             <!-- <div [formGroupName]="i"> -->
-                                                <mat-select aria-label="Reference Marks" formControlName="refMarks" (selectionChange)="changeTableValue($event.value, 'Lost')" multiple>
-                                                    <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
+                                                <mat-select aria-label="Reference Marks" formControlName="lostRefMarks" (selectionChange)="changeTableValue($event.value, 'Lost')" multiple>
+                                                    <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.vdatum_id">
                                                     {{refmark.name}}
                                                     </mat-option>
                                                 </mat-select>
@@ -561,8 +563,8 @@
                                         No Datum Locations have been added to this site yet to use for a tape down
                                     </label>
                                 </div>
-                                <div class="cell-container">
-                                    <table *ngIf="lostTapedowns.length > 0"
+                                <div class="tableContainer">
+                                    <table *ngIf="form.controls.lostTapedowns.length > 0"
                                         mat-table
                                         id="tapedownsTable"
                                         [dataSource]="lostTapedowns"
@@ -586,7 +588,12 @@
                                             <th mat-header-cell *matHeaderCellDef>Elevation</th>
                                             <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                                 <mat-form-field>
-                                                    <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                                    <div class="inline-fields">
+                                                        <div *ngIf="tapedown.elevation !== undefined">
+                                                            <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                                        </div>
+                                                        <input matInput formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>
+                                                    </div>
                                                 </mat-form-field>
                                             </td>
                                         </ng-container>
@@ -739,18 +746,6 @@
                         [dataSource]="initNWISFiles"
                         class="mat-elevation-z5"
                     >
-                        <!-- NWIS file date column -->
-                        <ng-container matColumnDef="FileDate">
-                            <th mat-header-cell *matHeaderCellDef>File Date</th>
-                            <td mat-cell *matCellDef="let file">
-                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayNWISFileDate">
-                                    ---
-                                </div>
-                                <ng-template #displayNWISFileDate>
-                                    {{ file.file_date }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
         
                         <!-- NWIS file name column -->
                         <ng-container matColumnDef="FileName">
@@ -761,6 +756,19 @@
                                 </div>
                                 <ng-template #displayNWISFileName>
                                     {{ file.name }}
+                                </ng-template>
+                            </td>
+                        </ng-container>
+
+                        <!-- NWIS file date column -->
+                        <ng-container matColumnDef="FileDate">
+                            <th mat-header-cell *matHeaderCellDef>File Date</th>
+                            <td mat-cell *matCellDef="let file">
+                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayNWISFileDate">
+                                    ---
+                                </div>
+                                <ng-template #displayNWISFileDate>
+                                    {{ file.format_file_date }}
                                 </ng-template>
                             </td>
                         </ng-container>

@@ -510,7 +510,7 @@ export class SiteDetailsComponent implements OnInit {
                                 let fileDate = file.file_date.split("T")[0];
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.file_date = fileDate;
+                                file.format_file_date = fileDate;
                                 if(file.instrument_id !== undefined){
                                     self.siteService.getFileSensor(file.file_id).subscribe((results) => {
                                         file.details = results;
@@ -894,7 +894,7 @@ export class SiteDetailsComponent implements OnInit {
                 time = time.split (':')
                 timestamp = timestamp.split("-");
                 timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + time[0] + ":" + time[1];
-                instrument.time_stamp = timestamp;
+                instrument.format_time_stamp = timestamp;
             }
         })
 
