@@ -26,6 +26,7 @@ import { networkInterfaces } from 'os';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
 import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
+import { TimezonesService } from '@app/services/timezones.service';
 
 @Component({
     selector: 'app-site-details',
@@ -193,6 +194,7 @@ export class SiteDetailsComponent implements OnInit {
         private route: ActivatedRoute,
         public siteService: SiteService,
         public currentUserService: CurrentUserService,
+        public timezonesService: TimezonesService,
         public dialog: MatDialog,
     ) {
         currentUserService.currentUser.subscribe((user) => {
@@ -880,20 +882,29 @@ export class SiteDetailsComponent implements OnInit {
 
     openSensorDetailsDialog(row): void {
         // Format dates
+        let self = this;
         let utcPreview;
         row.instrument_status.forEach(function(instrument){
             if(instrument.time_stamp !== undefined && !instrument.time_stamp.includes("/")){
+                let hour = (instrument.time_stamp.split('T')[1]).split(':')[0];
+                let ampm;
+                if(hour > 12){
+                    hour = String(hour - 12).padStart(2, '0');
+                    ampm = "PM";
+                }else{
+                    hour = hour;
+                    ampm = "AM";
+                }
                 if(instrument.status === 'Deployed'){
-                    if(instrument.time_zone !== 'UTC'){
-                        let localTime = DateTime.fromISO(instrument.time_stamp, {zone: instrument.time_zone})
-                        utcPreview = localTime.setZone("UTC").toString();
-                    }
-                  }
+                    let minute = ((instrument.time_stamp.split('T')[1]).split(":")[1]).split(":")[0];
+                    utcPreview = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
+                    utcPreview = utcPreview.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
+                }
                 let timestamp = instrument.time_stamp.split("T")[0];
                 let time = instrument.time_stamp.split("T")[1];
-                time = time.split (':')
+                time = time.split(':');
                 timestamp = timestamp.split("-");
-                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + time[0] + ":" + time[1];
+                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + time[1] + " " + ampm;
                 instrument.format_time_stamp = timestamp;
             }
         })
@@ -917,6 +928,7 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openSensorEditDialog(row): void {
+        console.log(row)
         let self = this;
         const dialogRef = this.dialog.open(SensorEditComponent, {
             data: {
@@ -930,14 +942,18 @@ export class SiteDetailsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result){
-                if(result.referenceDatums !== null){
-                    this.refMarkDataSource.data.forEach(function(row, i){
-                        if(row.objective_point_id === result.referenceDatums.objective_point_id){
-                            // replace row with new info
-                            self.refMarkDataSource.data = [result.referenceDatums];
+                console.log(result)
+                console.log(this.sensorDataSource.data);
+                this.sensorDataSource.data.forEach(function(sensor, i){
+                    if(sensor.instrument_id === result.instrument_id){
+                        console.log((JSON.stringify(sensor)))
+                        console.log((JSON.stringify(result)))
+                        if(JSON.parse(JSON.stringify(result)) !== JSON.parse(JSON.stringify(sensor))){
+                            console.log(self.sensorDataSource.data[i])
+                            // this.sensorDataSource.data[i] = result;
                         }
-                    });
-                }
+                    }
+                })
             }
         });
     }

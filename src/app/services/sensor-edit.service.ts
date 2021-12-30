@@ -58,6 +58,91 @@ export class SensorEditService {
         );
   }
 
+  //Update instrument
+  public putInstrument(instrumentID: string, instrument): Observable<any> {
+    return this.httpClient
+        .put(APP_SETTINGS.API_ROOT + 'Instruments/' +instrumentID + '.json', instrument, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'putInstrument response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('putInstrument', []))
+        );
+  }
+
+  //Update instrument status
+  public putInstrumentStatus(instrumentStatusID: string, instrumentStatus): Observable<any> {
+    return this.httpClient
+        .put(APP_SETTINGS.API_ROOT + 'InstrumentStatus/' + instrumentStatusID + '.json', instrumentStatus, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'putInstrumentStatus response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('putInstrumentStatus', []))
+        );
+  }
+
+  // Delete OP Measure (tapedown)
+  public deleteOPMeasure(opMeasurementID: string): Observable<any> {
+    return this.httpClient
+        .delete(APP_SETTINGS.API_ROOT + 'OPMeasurements/' + opMeasurementID + '.json', {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteOPMeasure response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteOPMeasure', []))
+        );
+  }
+
+  // Update OP Measure (tapedown)
+  public updateOPMeasure(opMeasurementID: string, opMeasurement): Observable<any> {
+    return this.httpClient
+        .put(APP_SETTINGS.API_ROOT + 'OPMeasurements/' + opMeasurementID + '.json', opMeasurement, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'updateOPMeasure response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('updateOPMeasure', []))
+        );
+  }
+
+  // Add OP Measure (tapedown)
+  public addOPMeasure(opMeasurement): Observable<any> {
+    return this.httpClient
+        .put(APP_SETTINGS.API_ROOT + 'OPMeasurements.json', opMeasurement, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'addOPMeasure response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('addOPMeasure', []))
+        );
+  }
+
   /**
      * Handle Http operation that failed.
      * Let the app continue.

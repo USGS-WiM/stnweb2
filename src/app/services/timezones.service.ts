@@ -10,7 +10,6 @@ export class TimezonesService {
 
   public convertTimezone(timezone, date, minute) {
     let timePreview;
-    let utcPreview;
 
     //check and see if they are not using UTC
     if (timezone == "UTC") {
