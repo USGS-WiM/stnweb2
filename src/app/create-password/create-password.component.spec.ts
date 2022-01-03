@@ -15,10 +15,6 @@ import { NG_VALIDATORS, AbstractControl,
 describe('CreatePasswordComponent', () => {
   let component: CreatePasswordComponent;
   let fixture: ComponentFixture<CreatePasswordComponent>;
-  let mockFormGroup = {
-    password:"YmF0dGxlUGFzc3BvcnQ4Iw==",
-    confirmPassword:"VVNHUyBIZWFkcXVhcnRlcnM="
-  }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
