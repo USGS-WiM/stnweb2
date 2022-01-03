@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { AddUserDialogComponent } from './add-user-dialog.component';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -19,11 +18,26 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { By } from '@angular/platform-browser';
+import { Overlay } from '@angular/cdk/overlay';
+import { of } from 'rxjs';
+import { ConfirmComponent } from '@app/confirm/confirm.component';
 
 
 describe('AddUserDialogComponent', () => {
   let component: AddUserDialogComponent;
   let fixture: ComponentFixture<AddUserDialogComponent>;
+  let debugElement: DebugElement;
+  let mockForm = {fname:"test",
+    lname:"test",
+    username:"test456",
+    email:"ret@gmail.com",
+    phone:null,
+    emergencyContact:null,
+    emergencyContactPhone:null,
+    roleID:1,
+    password:"YmF0dGxlUGFzc3BvcnQ4Iw==",
+    agency: 34}
   const dialogMock = {
     close: () => { },
   };
@@ -49,6 +63,7 @@ describe('AddUserDialogComponent', () => {
         FormBuilder,
         MatDialog,
         MatSnackBar,
+        Overlay,
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: MatDialogRef, useValue: dialogMock }],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -58,6 +73,7 @@ describe('AddUserDialogComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AddUserDialogComponent);
     component = fixture.componentInstance;
+    debugElement = fixture.debugElement;
     fixture.detectChanges();
   });
 
@@ -72,7 +88,7 @@ describe('AddUserDialogComponent', () => {
   it('fname field validity', () => {
     let errors = {};
     let fname = component.newUserForm.controls['fname'];
-    errors = fname.errors || {}; 
+    errors = fname.errors || {};
     expect(errors['required']).toBeTruthy();
   });
 
@@ -133,7 +149,7 @@ describe('AddUserDialogComponent', () => {
   it('username field validity', () => {
     let errors = {};
     let username = component.newUserForm.controls['username'];
-    errors = username.errors || {};  
+    errors = username.errors || {};
     expect(errors['required']).toBeTruthy();
   });
 
@@ -154,21 +170,19 @@ describe('AddUserDialogComponent', () => {
     expect(component.newUserForm.controls.email.status).toBe("INVALID");
   });
 
-  /* it('should return an agency id', () => {
-    expect(component).toBeTruthy();
-  }); */
+  it('displays an error message for required email field', () => {
+    let message = component.getErrorMessage();
+    expect(message).toBe("You must enter a value");
+  });
 
-  /* it("should emit when state autocomplete option selected", () => {
-    spyOn(component.selectState, 'emit');
-    let state = "Alabama";
-
-    component.stateSelected(state);
-    fixture.detectChanges();
-    expect(component.selectState.emit).toHaveBeenCalled();
-  }); */
+  it('displays an error message for invalid text entered in email field', () => {
+    component.newUserForm.get("email").setValue("deleteme");
+    let message = component.getErrorMessage();
+    expect(message).toBe("Not a valid email");
+  });
 
   it('get agency name', () => {
-    let data = { 
+    let data = {
       a_n: 'test agency',
       a_id: 100
     }
@@ -178,14 +192,41 @@ describe('AddUserDialogComponent', () => {
     expect(filter).toEqual('test agency');
   });
 
-  /* it('format phone number', () => {
-    let number = 2345436767;
-
-    let formattedNumber = component.formatPhoneNumber(number)
+  it('format phone number', () => {
+    let numberDebug = fixture.debugElement.query(By.css('#phone-number'));
+    let numberInput = numberDebug.nativeElement as HTMLInputElement;
+    let formattedNumber = ''
+    let num: string = '234543676';
+    let result: string = '';
+    for (let char of num) {
+      let eventMock = createKeyDownEvent(char);
+      numberInput.dispatchEvent(eventMock);
+      if (eventMock.defaultPrevented) {
+        // invalid char
+      } else {
+        result = result.concat(char);
+        formattedNumber = component.formatPhoneNumber(result)
+      }
+    }
+    numberInput.value = result;
+    numberInput.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    console.log(formattedNumber)
-    expect(formattedNumber).toEqual('(234) 543 6767');
-  }); */
+    expect(formattedNumber).toEqual('(234) 543-676');
+  });
+
+  it('gets input value for phone input and formats first 4 digits', () => {
+    const inputField = (<HTMLInputElement>document.getElementById('phone-number'));
+    inputField.value = '1234';
+    fixture.detectChanges();
+
+    const event = new KeyboardEvent('keydown'); 
+    spyOn(event, 'preventDefault');
+
+    inputField.dispatchEvent(event);
+    component.phoneNumberFormatter(event);
+    
+    expect(inputField.value).toEqual('(123) 4');
+  });
 
   it('newUserForm form should be VALID', () => {
     component.newUserForm.get("fname").setValue("Jane");
@@ -208,4 +249,51 @@ describe('AddUserDialogComponent', () => {
     component.newUserForm.get("email").setValue("deleteme@gmail.com");
     expect(component.newUserForm.status).toBe("INVALID");
   });
+
+  it('opens the snackbar', () => {
+    const message = 'test';
+    const action = 'OK';
+    const duration = 5000;
+    const snackSpy = spyOn(component, 'openSnackBar').and.callThrough();
+    component.openSnackBar(message, action, duration);
+    fixture.detectChanges();
+    expect(snackSpy).toHaveBeenCalled();
+  });
+
+  it('submits form', () => {
+    let encryptPassword = spyOn(component, 'encryptPassword');
+    let setAgencyinForm = spyOn(component, 'setAgencyinForm');
+    let postUser = spyOn(component, 'postUser');
+
+    component.onSubmit(mockForm);
+    fixture.detectChanges();
+    expect(encryptPassword).toHaveBeenCalled();
+    expect(setAgencyinForm).toHaveBeenCalled();
+    expect(postUser).toHaveBeenCalled();
+  });
+
+  it('post a new user', () => {
+    let response = {};
+    component.newUserForm.get("fname").setValue("Jane");
+    component.newUserForm.get("lname").setValue("Doe");
+    component.newUserForm.get("username").setValue("jdoe");
+    component.newUserForm.get("agency_id").setValue(100);
+    component.newUserForm.get("role_id").setValue(1);
+    component.newUserForm.get("phone").setValue("(111) 111-1111");
+    component.newUserForm.get("email").setValue("deleteme@gmail.com")
+
+    let postSpy = spyOn(component, 'postUser');
+
+    spyOn(component.userService, 'addNewUser').and.returnValue(
+      of(response)
+    );
+    component.postUser(component.newUserForm);
+    fixture.detectChanges();
+    expect(component.submitLoading).toBeFalse();
+    expect(postSpy).toHaveBeenCalled();
+  });
+
+  function createKeyDownEvent(value: string, cancelable = true) {
+    return new KeyboardEvent('keydown', { key: value, cancelable })
+  }
 });

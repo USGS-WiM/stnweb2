@@ -798,4 +798,14 @@ describe('SiteDetailsComponent', () => {
 
         expect(component.hwmFilesDataSource.data).toEqual([{file_date: "02/20/2020"}, {file_date: "01/21/2021"}]);
     });
+
+    it('should open the reference mark dialog', () => {
+        let dialogSpy = spyOn(component.dialog, 'open');
+
+        let row = {date_established: "2020-09-16T16:05:04.931548", date_recovered: "2020-09-17T16:05:04.931548"};
+        component.openRefMarkDetailsDialog(row);
+        fixture.detectChanges();
+
+        expect(dialogSpy).toHaveBeenCalled();
+    });
 });

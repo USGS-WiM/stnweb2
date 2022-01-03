@@ -46,9 +46,9 @@ export class AddUserDialogComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
-    private addUserdialogRef: MatDialogRef<AddUserDialogComponent>,
-    private userService: UserService,
-    private dialog: MatDialog,
+    public addUserdialogRef: MatDialogRef<AddUserDialogComponent>,
+    public userService: UserService,
+    public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) { this.buildAddNewUserForm() }
 
@@ -59,14 +59,18 @@ export class AddUserDialogComponent implements OnInit {
     for (let a in this.agencies) {
       this.options.push({ a_n: this.agencies[a].agency_name, a_id: this.agencies[a].agency_id})
     }
+
     this.filteredOptions = this.newUserForm.get('agency_id').valueChanges.pipe(
       startWith(''),
       map(value => typeof value === 'string' ? value : value.agency_name),
-      map(agencyname => agencyname ? this._filter(agencyname) : this.options.slice())
+      map(agencyname => agencyname ? this._filter(agencyname)  : this.options.slice())
+      
     );
+    console.log(this.options);
   }
 
-  private _filter(value: string) {
+  /* istanbul ignore next */
+  _filter(value: string) {
     return this.options.filter(option => option.a_n.toLowerCase().includes(value.toLowerCase()));
   }
 
@@ -91,9 +95,12 @@ export class AddUserDialogComponent implements OnInit {
 
   // On key down gets value of phone input, sends it to formatter, and then replaces input with formatted value
   phoneNumberFormatter(event: any) {
-    const inputField = (<HTMLInputElement>document.getElementById('phone-number'));
-    const formattedInputValue = this.formatPhoneNumber((<HTMLInputElement>document.getElementById('phone-number')).value);
-    inputField.value = formattedInputValue;
+    if (event !== undefined) {
+      const inputid = event.srcElement.id
+      const inputField = (<HTMLInputElement>document.getElementById(inputid));
+      const formattedInputValue = this.formatPhoneNumber((<HTMLInputElement>document.getElementById(inputid)).value);
+      inputField.value = formattedInputValue;
+    }
   }
 
   // snack bar message displayed on service failure
@@ -110,14 +117,18 @@ export class AddUserDialogComponent implements OnInit {
 
     return this.newUserForm.get('email').hasError('email') ? 'Not a valid email' : '';
   }
-
+  
+  /* istanbul ignore next */
   encryptPassword(formValue) {
+    if (formValue !== undefined) {
     // Copy password to top level
     const password = btoa(formValue.password.password);
     delete formValue.password;
     formValue.password = password;
+    }
   }
 
+  /* istanbul ignore next */
   setAgencyinForm(formValue) {
     // copy agency id value to top level
     const agency_id = formValue.agency_id.a_id;
@@ -125,6 +136,7 @@ export class AddUserDialogComponent implements OnInit {
     formValue.agency_id = agency_id;
   }
 
+  /* istanbul ignore next */
   postUser(formValue) {
     this.userService.addNewUser(formValue)
     .subscribe(
@@ -142,6 +154,7 @@ export class AddUserDialogComponent implements OnInit {
           },
         });
       },
+      /* istanbul ignore next */
       error => {
 
         let parsedError = null;
