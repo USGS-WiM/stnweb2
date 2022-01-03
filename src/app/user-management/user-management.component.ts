@@ -145,7 +145,6 @@ export class UserManagementComponent implements OnInit {
     }
 
     this.sortedData = data.sort((a, b) => {
-      console.log(sort);
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
         case 'username': return APP_UTILITIES.COMPARE(a.username, b.username, isAsc);

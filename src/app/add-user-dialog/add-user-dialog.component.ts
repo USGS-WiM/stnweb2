@@ -66,7 +66,6 @@ export class AddUserDialogComponent implements OnInit {
       map(agencyname => agencyname ? this._filter(agencyname)  : this.options.slice())
       
     );
-    console.log(this.options);
   }
 
   /* istanbul ignore next */
