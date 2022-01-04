@@ -129,7 +129,7 @@ export class SensorEditService {
   // Add OP Measure (tapedown)
   public addOPMeasure(opMeasurement): Observable<any> {
     return this.httpClient
-        .put(APP_SETTINGS.API_ROOT + 'OPMeasurements.json', opMeasurement, {
+        .post(APP_SETTINGS.API_ROOT + 'OPMeasurements.json', opMeasurement, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(

@@ -928,7 +928,6 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openSensorEditDialog(row): void {
-        console.log(row)
         let self = this;
         const dialogRef = this.dialog.open(SensorEditComponent, {
             data: {
@@ -943,15 +942,10 @@ export class SiteDetailsComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result){
                 console.log(result)
-                console.log(this.sensorDataSource.data);
                 this.sensorDataSource.data.forEach(function(sensor, i){
                     if(sensor.instrument_id === result.instrument_id){
-                        console.log((JSON.stringify(sensor)))
-                        console.log((JSON.stringify(result)))
-                        if(JSON.parse(JSON.stringify(result)) !== JSON.parse(JSON.stringify(sensor))){
-                            console.log(self.sensorDataSource.data[i])
-                            // this.sensorDataSource.data[i] = result;
-                        }
+                        self.sensorDataSource.data[i] = result; 
+                        self.sensorDataSource.data = [...self.sensorDataSource.data];
                     }
                 })
             }
