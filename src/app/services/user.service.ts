@@ -31,6 +31,20 @@ export class UserService {
             );
     }
 
+    // get all users
+    public addNewUser(formValue): Observable<any> {
+        return this.httpClient
+            .post(APP_SETTINGS.API_ROOT + 'Members.json', formValue, {
+                headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+            })
+            .pipe(
+                tap((response) => {
+                    return response;
+                }),
+                catchError(this.handleError<any>('addNewUser', []))
+            );
+    }
+
     // error handling
     private handleError<T>(operation = 'operation', result?: T) {
         return (error: any): Observable<T> => {

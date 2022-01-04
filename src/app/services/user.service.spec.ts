@@ -52,4 +52,22 @@ describe('UserService', () => {
     );
     req.flush(mockUserList);
   }, );
+
+  it('#addNewUser() should add a new user', () => {
+    let mockUserId = 
+        {
+            member_id: 0,
+        }
+
+    service.addNewUser(mockUserId).subscribe((results) => {
+        expect(results).not.toBe(null);
+        expect(JSON.stringify(results)).toEqual(
+            JSON.stringify(mockUserId)
+        );
+    });
+    const req = httpTestingController.expectOne(
+      APP_SETTINGS.API_ROOT + 'Members.json',
+    );
+    req.flush(mockUserId);
+  });
 });
