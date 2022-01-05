@@ -217,7 +217,13 @@ export class UserManagementComponent implements OnInit {
       },
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe((result) => { this.refreshTable(); });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'cancel') {
+        return;
+      } else {
+        this.refreshTable();
+      }
+    });
   }
 
 }
