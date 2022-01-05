@@ -78,6 +78,10 @@ export class UserManagementComponent implements OnInit {
       });
   }
 
+  refreshTable() {
+    this.getUserData()
+  }
+
   getUserData() {
     // get users
     this.userService
@@ -213,7 +217,7 @@ export class UserManagementComponent implements OnInit {
       },
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe((result) => { });
+    dialogRef.afterClosed().subscribe((result) => { this.refreshTable(); });
   }
 
 }

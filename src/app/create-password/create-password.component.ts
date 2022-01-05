@@ -9,7 +9,7 @@ import { FormGroup, Validators, AbstractControl, FormControl } from "@angular/fo
 export class CreatePasswordComponent implements OnInit {
   /* istanbul ignore next */
   passwordPattern: RegExp = /^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?\d)(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?\d)(?=.*?[^a-zA-Z0-9])).{12,}$/;
-  showText: boolean = false;
+  showText: boolean = true;
   constructor() {
   }
 
