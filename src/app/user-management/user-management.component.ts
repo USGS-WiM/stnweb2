@@ -210,7 +210,8 @@ export class UserManagementComponent implements OnInit {
       data: {
         agencies: this.agencies,
         roles: this.roles
-      }
+      },
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe((result) => { });
   }
