@@ -105,6 +105,7 @@ export class UserManagementComponent implements OnInit {
       this.userDataSource.data = this.users;
       this.userDataSource.paginator = this.paginator;
       this.userDataSource.sort = this.sort;
+      console.log(this.userDataSource.sort)
       this.userDataSource.filterPredicate = this.getFilterPredicate();
     }
   }
