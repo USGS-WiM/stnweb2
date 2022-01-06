@@ -78,6 +78,10 @@ export class UserManagementComponent implements OnInit {
       });
   }
 
+  refreshTable() {
+    this.getUserData()
+  }
+
   getUserData() {
     // get users
     this.userService
@@ -210,9 +214,16 @@ export class UserManagementComponent implements OnInit {
       data: {
         agencies: this.agencies,
         roles: this.roles
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'cancel') {
+        return;
+      } else {
+        this.refreshTable();
       }
     });
-    dialogRef.afterClosed().subscribe((result) => { });
   }
 
 }
