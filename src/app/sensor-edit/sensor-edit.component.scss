@@ -41,7 +41,7 @@ table {
     align-self: stretch;
 }
 
-.mat-column-ReferenceMark{
+.mat-column-ReferenceDatum{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
     vertical-align: top;
@@ -185,4 +185,14 @@ table {
 
 .inline-fields {
     display: inline-flex;
+}
+
+.loading {
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(255,255,255,0.8);
+    z-index:9999;
 }

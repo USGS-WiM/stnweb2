@@ -61,7 +61,7 @@ export class SensorEditService {
   //Update instrument
   public putInstrument(instrumentID: string, instrument): Observable<any> {
     return this.httpClient
-        .put(APP_SETTINGS.API_ROOT + 'Instruments/' +instrumentID + '.json', instrument, {
+        .put(APP_SETTINGS.API_ROOT + 'Instruments/' + instrumentID + '.json', instrument, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(

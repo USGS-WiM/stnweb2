@@ -25,7 +25,7 @@ export class SensorEditComponent implements OnInit {
   public initNWISFiles = [];
   public vDatumList;
   public interval_unit = "sec";
-  public timeZones = ['UTC', 'PST', 'MST', 'CST', 'EST', 'PDT', 'MDT', 'CDT', 'EDT'];
+  public timeZones = ['UTC', 'PST/PDT', 'MST/MDT', 'CST/CDT', 'EST/EDT'];
   public statusTypes = [{status: "Lost", status_type_id: 3}, {status: "Retrieved", status_type_id: 2}];
   public allStatusTypes = [{status: "Lost", status_type_id: 3}, {status: "Retrieved", status_type_id: 2}, {status: "Deployed", status_type_id: 1}];
   public opsPresent = false;
@@ -71,7 +71,7 @@ export class SensorEditComponent implements OnInit {
   ];
 
   displayedTapedownColumns: string[] = [
-    'ReferenceMark',
+    'ReferenceDatum',
     'Elevation',
     'OffsetCorrection',
     'WaterSurface',
@@ -212,79 +212,79 @@ export class SensorEditComponent implements OnInit {
     })
   }
 
+  getTapedowns(tapedownArray, instrument, controlName, initForm){
+    let self = this;
+    self.siteService
+    .getOPMeasurements(instrument.instrument_status_id)
+    .subscribe((results) => {
+      if(results.length > 0){
+        if (tapedownArray[0] !== undefined){
+          tapedownArray[0].ground_surface = results[0].ground_surface;
+        }else{
+          tapedownArray.push({ground_surface: results[0].ground_surface});
+        }
+        tapedownArray[0].water_surface = results[0].water_surface;
+        tapedownArray[0].offset_correction = results[0].offset_correction;
+        tapedownArray[0].op_measurements_id = results[0].op_measurements_id;
+        tapedownArray[0].objective_point_id = results[0].objective_point_id;
+        tapedownArray[0].instrument_status_id = instrument.instrument_status_id;
+        // get reference datum info using objective_point_id
+        self.siteService
+        .getOPInfo(results[0].objective_point_id)
+        .subscribe((objectivePoints) => {
+          tapedownArray[0].op_name = objectivePoints.name;
+          if(objectivePoints.elev_ft !== undefined){
+            tapedownArray[0].elevation = objectivePoints.elev_ft;
+          }
+          if(instrument.vdatum !== undefined && instrument.vdatum !== ''){
+            tapedownArray[0].vdatum = instrument.vdatum;
+          }     
+          if(controlName === "deployedTapedowns"){
+            tapedownArray.forEach(function(tapedown){
+              self.initDeployedRefMarks.push(tapedown.op_name);
+            })
+            self.form.controls.deployedRefMarks.setValue(self.initDeployedRefMarks);
+            self.initDeployedTapedowns = tapedownArray;
+          }else if(controlName === "retrievedTapedowns"){
+            tapedownArray.forEach(function(tapedown){
+              self.initRetrievedRefMarks.push(tapedown.op_name);
+            })
+            self.form.controls.retrievedRefMarks.setValue(self.initRetrievedRefMarks);
+            self.initRetrievedTapedowns = tapedownArray;
+          }else if(controlName === "lostTapedowns"){
+            tapedownArray.forEach(function(tapedown){
+              self.initLostRefMarks.push(tapedown.op_name);
+            })
+            self.form.controls.lostRefMarks.setValue(self.initLostRefMarks);
+            self.initLostTapedowns = tapedownArray;
+          }
+          self.form.controls[controlName] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
+          // save initial tapedown values in case of reset
+          self.form.controls[controlName].controls.forEach(function(formgroup, i){
+            initForm.push({formgroup: formgroup.getRawValue(), id: i});
+          })
+        })
+      }
+    });
+  }
+
   createTapedownTable(){
     let self = this;
 
-    function getTapedowns(tapedownArray, instrument, controlName, initForm){
-        self.siteService
-        .getOPMeasurements(instrument.instrument_status_id)
-        .subscribe((results) => {
-          if(results.length > 0){
-            if (tapedownArray[0] !== undefined){
-              tapedownArray[0].ground_surface = results[0].ground_surface;
-            }else{
-              tapedownArray.push({ground_surface: results[0].ground_surface});
-            }
-            tapedownArray[0].water_surface = results[0].water_surface;
-            tapedownArray[0].offset_correction = results[0].offset_correction;
-            tapedownArray[0].op_measurements_id = results[0].op_measurements_id;
-            tapedownArray[0].objective_point_id = results[0].objective_point_id;
-            tapedownArray[0].instrument_status_id = instrument.instrument_status_id;
-            // get reference datum info using objective_point_id
-            self.siteService
-            .getOPInfo(results[0].objective_point_id)
-            .subscribe((objectivePoints) => {
-              tapedownArray[0].op_name = objectivePoints.name;
-              if(objectivePoints.elev_ft !== undefined){
-                tapedownArray[0].elevation = objectivePoints.elev_ft;
-              }
-              if(instrument.vdatum !== undefined && instrument.vdatum !== ''){
-                tapedownArray[0].vdatum = instrument.vdatum;
-              }     
-              if(controlName === "deployedTapedowns"){
-                tapedownArray.forEach(function(tapedown){
-                  self.initDeployedRefMarks.push(tapedown.op_name);
-                })
-                self.form.controls.deployedRefMarks.setValue(self.initDeployedRefMarks);
-                self.initDeployedTapedowns = tapedownArray;
-              }else if(controlName === "retrievedTapedowns"){
-                tapedownArray.forEach(function(tapedown){
-                  self.initRetrievedRefMarks.push(tapedown.op_name);
-                })
-                self.form.controls.retrievedRefMarks.setValue(self.initRetrievedRefMarks);
-                self.initRetrievedTapedowns = tapedownArray;
-              }else if(controlName === "lostTapedowns"){
-                tapedownArray.forEach(function(tapedown){
-                  self.initLostRefMarks.push(tapedown.op_name);
-                })
-                self.form.controls.lostRefMarks.setValue(self.initLostRefMarks);
-                self.initLostTapedowns = tapedownArray;
-              }
-              self.form.controls[controlName] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
-              // save initial tapedown values in case of reset
-              self.form.controls[controlName].controls.forEach(function(formgroup, i){
-                initForm.push({formgroup: formgroup.getRawValue(), id: i});
-              })
-            })
-          }
-        });
-    }
-
     this.sensor.instrument_status.forEach(function(instrument){
       if(instrument.status === 'Deployed'){
-        getTapedowns(self.deployedTapedowns, instrument, "deployedTapedowns", self.initDeployedForm);
+        self.getTapedowns(self.deployedTapedowns, instrument, "deployedTapedowns", self.initDeployedForm);
       }
       else if (instrument.status === 'Retrieved'){
-        getTapedowns(self.retrievedTapedowns, instrument, "retrievedTapedowns", self.initRetrievedForm);
+        self.getTapedowns(self.retrievedTapedowns, instrument, "retrievedTapedowns", self.initRetrievedForm);
       }
       else if (instrument.status === 'Lost'){
-        getTapedowns(self.lostTapedowns, instrument, "lostTapedowns", self.initLostForm);
+        self.getTapedowns(self.lostTapedowns, instrument, "lostTapedowns", self.initLostForm);
       }
     })
   }
 
   initForm() {
-    let self = this;
     this.form = new FormGroup({
       event_id: new FormControl(this.sensor.event_id !== undefined && this.sensor.event_id !== "" ? this.sensor.event_id : null),
       instrument_id: new FormControl(this.sensor.instrument_id !== undefined && this.sensor.instrument_id !== "" ? this.sensor.instrument_id : null),
@@ -397,15 +397,18 @@ export class SensorEditComponent implements OnInit {
         newObject.op_name = value[0];
         self.data.siteRefMarks.forEach(function(mark){
           if(value[0] === mark.name){
-            newObject.elevation = mark.elev_ft;
+            if(mark.elevation){
+              newObject.elevation = mark.elev_ft;
+            }
             newObject.vdatum = mark.vdatum;
             newObject.objective_point_id = mark.objective_point_id;
             self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
               for(let statusType of self.allStatusTypes){
                 if(instrument.controls.status_type_id.value === statusType.status_type_id){
+                  statusType.status_type_id;
                   if(statusType.status === status){
                     self.form.controls["instrument_status"].controls[i].controls["vdatum_id"].setValue(mark.vdatum_id);
-                    newObject.instrument_status_id = instrument.controls["instrument_status_id"];
+                    newObject.instrument_status_id = instrument.controls["instrument_status_id"].value;
                   }
                 }
               }
@@ -436,7 +439,7 @@ export class SensorEditComponent implements OnInit {
                     if(instrument.controls.status_type_id.value === statusType.status_type_id){
                       if(statusType.status === status){
                         self.form.controls["instrument_status"].controls[i].controls["vdatum_id"].setValue(mark.vdatum_id);
-                        newObject.instrument_status_id = instrument.controls["instrument_status_id"];
+                        newObject.instrument_status_id = instrument.controls["instrument_status_id"].value;
                       }
                     }
                   }
@@ -560,7 +563,17 @@ export class SensorEditComponent implements OnInit {
           let hour = instrument_status.value.ampm === "PM" ? (Number(instrument_status.value.hour) + 12) : instrument_status.value.hour;
           hour = String(hour).padStart(2, '0');
           let minute = String(instrument_status.value.minute).padStart(2, '0');
-          let date = instrument_status.value.time_stamp.split('T')[0] + "T" + hour + ":" + minute + ":00";
+          let initDate;
+          try{
+            initDate = instrument_status.value.time_stamp.split('T')[0];
+          }
+          catch{
+            // If date changed using Datepicker, format will need to be changed
+            initDate = DateTime.fromJSDate(instrument_status.value.time_stamp).toString();
+            initDate = initDate.split('T')[0];
+          }
+
+          let date = initDate + "T" + hour + ":" + minute + ":00";
           // Convert to UTC
           let utcDate;
           utcDate = self.timezonesService.convertTimezone(instrument.time_zone, date, minute);
@@ -576,12 +589,12 @@ export class SensorEditComponent implements OnInit {
     });
   }
 
-  ventedChange(event){
-    this.form.controls.vented.setValue(event.value);
+  ventedChange(value){
+    this.form.controls.vented.setValue(value);
   }
 
-  intervalUnitChange(event) {
-    this.interval_unit = event.value;
+  intervalUnitChange(value) {
+    this.interval_unit = value;
   }
 
   // Reset canceled form to initial values
@@ -741,25 +754,33 @@ export class SensorEditComponent implements OnInit {
     // Put instrument
     delete sensorSubmission.lostRefMarks; delete sensorSubmission.deployedRefMarks; delete sensorSubmission.retrievedRefMarks; delete sensorSubmission.lostTapedowns; delete sensorSubmission.deployedTapedowns; delete sensorSubmission.retrievedTapedowns;
     delete sensorSubmission.instrument_status;
-    sensorStatusSubmission.forEach(function(instrument, i){
+    // Copy sensor status submission
+    let sensorStatusCopy = JSON.parse(JSON.stringify(sensorStatusSubmission));
+    let index;
+    sensorStatusCopy.forEach(function(instrument){
       if(statusID === "1"){
         if(String(instrument.status_type_id) !== statusID){
           // 1: deployed, 2: retrieved, 3: lost
-          sensorStatusSubmission.splice(i, 1);
+          index = sensorStatusSubmission.findIndex(j => j.status_type_id === instrument.status_type_id);
+          sensorStatusSubmission.splice(index, 1);
         }
       }else{
-          if(String(instrument.status_type_id) !== statusID && self.newStatusID === null && self.newStatusID !== statusID){
+        if(self.newStatusID !== null){
+          if(instrument.status_type_id !== self.newStatusID && String(self.newStatusID) !== statusID){
             // 1: deployed, 2: retrieved, 3: lost
-            sensorStatusSubmission.splice(i, 1);
-          }else if(self.newStatusID !== null){
-            if(instrument.status_type_id !== self.newStatusID && self.newStatusID === statusID){  
-              sensorStatusSubmission.splice(i, 1);
-            }
+            index = sensorStatusSubmission.findIndex(j => j.status_type_id === instrument.status_type_id);
+            sensorStatusSubmission.splice(index, 1);
           }
+        }else{
+          if(String(instrument.status_type_id) !== statusID && String(self.newStatusID) !== statusID){
+              // 1: deployed, 2: retrieved, 3: lost
+              index = sensorStatusSubmission.findIndex(j => j.status_type_id === instrument.status_type_id);
+              sensorStatusSubmission.splice(index, 1);
+            }
         }
+      }
     })
     sensorStatusSubmission = sensorStatusSubmission[0];
-    console.log(sensorStatusSubmission);
     const updateInstrument = new Promise<string>((resolve, reject) => this.sensorEditService.putInstrument(sensorSubmission.instrument_id, sensorSubmission).subscribe(results => {
       if(results.length !== 0){
         this.returnData = results;
@@ -772,23 +793,23 @@ export class SensorEditComponent implements OnInit {
         if(this.sensor.statusType === "Deployed"){
           this.returnData.statusType = this.sensor.statusType;
         }else if (this.sensor.statusType === "Lost" || this.sensor.statusType === "Retrieved"){
-          for(let statusType of self.allStatusTypes){
-            console.log(statusType)
-            console.log(sensorStatusSubmission.status_type_id)
-            if(statusType.status_type_id === sensorStatusSubmission.status_type_id) {
-              this.returnData.statusType = statusType.status;
-              console.log(this.returnData.statusType)
+          // If lost or retrieved form was submitted and status type changed
+          if(statusID !== "1"){
+            for(let statusType of self.allStatusTypes){
+              if(statusType.status_type_id === sensorStatusSubmission.status_type_id) {
+                this.returnData.statusType = statusType.status;
+              }
             }
+          }else{
+            this.returnData.statusType = this.sensor.statusType;
           }
         }
         this.returnData.eventName = this.sensor.eventName;
         // convert to UTC
         sensorStatusSubmission.time_stamp = this.timezonesService.convertTimezone(sensorStatusSubmission.time_zone, sensorStatusSubmission.time_stamp, sensorStatusSubmission.minute)
         delete sensorStatusSubmission.ampm; delete sensorStatusSubmission.hour; delete sensorStatusSubmission.minute; delete sensorStatusSubmission.utc_preview;
-        
         this.returnData.instrument_status = this.sensor.instrument_status;
         this.sensorEditService.putInstrumentStatus(sensorStatusSubmission.instrument_status_id, sensorStatusSubmission).subscribe(results => {
-          console.log(results);
           if(results.length !== 0){
             for(let statusType of self.allStatusTypes){
               if(statusType.status_type_id === results.status_type_id) {
@@ -836,12 +857,11 @@ export class SensorEditComponent implements OnInit {
     updateInstrument.then(() => {
       this.loading = false;
       // re-initialize form with new sensor data
+      this.newStatusID = null;
       this.sensor = this.returnData;
-      this.createTapedownTable;
       this.setTimeAndDate();
       this.setMembers();
       this.initForm();
-      console.log(this.sensor);
       // Add reference marks
       this.form.patchValue({
         deployedRefMarks: deployedRefMarks,
@@ -902,6 +922,9 @@ export class SensorEditComponent implements OnInit {
                 tapedownArray[i].op_name = tapedownToUpdate.op_name;
                 tapedownArray[i].elevation = tapedownToUpdate.elevation;
                 tapedownArray[i].vdatum = tapedownToUpdate.vdatum;
+                tapedownArray[i].water_surface = tapedownToUpdate.water_surface;
+                tapedownArray[i].ground_surface = tapedownToUpdate.ground_surface;
+                tapedownArray[i].offset_correction = tapedownToUpdate.offset_correction;
                 self.form.controls[tapedownControl].controls.forEach(function(control){
                     if(control.value.objective_point_id === tapedownArray[i].objective_point_id){
                       control.reset(tapedownArray[i]);

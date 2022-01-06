@@ -15,135 +15,92 @@ export class TimezonesService {
     if (timezone == "UTC") {
         let localTime = DateTime.fromISO(date, {zone: 'Etc/GMT'});
 
-        if(localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) + 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+        timePreview = localTime.setZone("UTC").toString();
+        let hour = timePreview.split('T')[1].split(":")[0];
+        let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+        timePreview = addDate;
+        return timePreview;
     }
-    if (timezone == "EST") {
+    if (timezone == "EST/EDT") {
         let localTime = DateTime.fromISO(date, {zone: 'America/New_York'});
 
-        if(localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) + 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+        timePreview = localTime.setZone("UTC").toString();
+        let hour = timePreview.split('T')[1].split(":")[0];
+        let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+        timePreview = addDate;
+        console.log(timePreview)
+        return timePreview;
 
-    } if (timezone == "PST") {
+    } if (timezone == "PST/PDT") {
         let localTime = DateTime.fromISO(date, {zone: 'America/Los_Angeles'});
 
-        if(localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) + 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+        timePreview = localTime.setZone("UTC").toString();
+        let hour = timePreview.split('T')[1].split(":")[0];
+        let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+        timePreview = addDate;
+        return timePreview;
 
-    } if (timezone == "CST") {
+    } if (timezone == "CST/CDT") {
 
         let localTime = DateTime.fromISO(date, {zone: 'America/Chicago'});
 
-        if(localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) + 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+        timePreview = localTime.setZone("UTC").toString();
+        let hour = timePreview.split('T')[1].split(":")[0];
+        let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+        timePreview = addDate;
+        return timePreview;
 
-    } if (timezone == "MST") {
+    } if (timezone == "MST/MDT") {
 
         let localTime = DateTime.fromISO(date, {zone: 'America/Denver'});
 
-        if(localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) + 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+        timePreview = localTime.setZone("UTC").toString();
+        let hour = timePreview.split('T')[1].split(":")[0];
+        let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+        timePreview = addDate;
+        return timePreview;
 
-    } if (timezone == "PDT") {
+    } 
+    // if (timezone == "PDT") {
 
-        let localTime = DateTime.fromISO(date, {zone: 'America/Los_Angeles'});
+    //     let localTime = DateTime.fromISO(date, {zone: 'America/Los_Angeles'});
 
-        if(!localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) - 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+    //     timePreview = localTime.setZone("UTC").toString();
+    //     let hour = timePreview.split('T')[1].split(":")[0];
+    //     let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+    //     timePreview = addDate;
+    //     return timePreview;
 
-    } if (timezone == "EDT") {
+    // } if (timezone == "EDT") {
 
-        let localTime = DateTime.fromISO(date, {zone: 'America/New_York'});
+    //     let localTime = DateTime.fromISO(date, {zone: 'America/New_York'});
 
-        if(!localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) - 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+    //     timePreview = localTime.setZone("UTC").toString();
+    //     let hour = timePreview.split('T')[1].split(":")[0];
+    //     let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+    //     timePreview = addDate;
+    //     return timePreview;
 
-    } if (timezone == "CDT") {
+    // } if (timezone == "CDT") {
 
-        let localTime = DateTime.fromISO(date, {zone: 'America/Chicago'});
+    //     let localTime = DateTime.fromISO(date, {zone: 'America/Chicago'});
 
-        if(!localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) - 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+    //     timePreview = localTime.setZone("UTC").toString();
+    //     let hour = timePreview.split('T')[1].split(":")[0];
+    //     let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+    //     timePreview = addDate;
+    //     return timePreview;
 
-    } if (timezone == "MDT") {
+    // } if (timezone == "MDT") {
 
-        let localTime = DateTime.fromISO(date, {zone: 'America/Denver'});
+    //     let localTime = DateTime.fromISO(date, {zone: 'America/Denver'});
 
-        if(!localTime.isInDST){
-            timePreview = localTime.setZone("UTC").toString();
-            let addHour = Number(timePreview.split('T')[1].split(":")[0]) - 1;
-            let addDate = (timePreview.split('T')[0]) + "T" + String(addHour).padStart(1, '0') + ":" + minute + ":00";
-            timePreview = addDate;
-            return timePreview;
-        }else{
-            timePreview = localTime.setZone("UTC").toString();
-            return timePreview;
-        }
+    //     timePreview = localTime.setZone("UTC").toString();
+    //     let hour = timePreview.split('T')[1].split(":")[0];
+    //     let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
+    //     timePreview = addDate;
+    //     return timePreview;
 
-    }
+    // }
   }
 }

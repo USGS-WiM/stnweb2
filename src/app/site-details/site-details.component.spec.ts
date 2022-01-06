@@ -505,7 +505,7 @@ describe('SiteDetailsComponent', () => {
         expect(component.sensorFiles.length).toEqual(1);
         expect(component.sensorFilesDone).toBeTrue;
         expect(siteEventFilesSpy).toHaveBeenCalled();
-        expect(component.files[0].file_date).toContain("/");
+        expect(component.files[0].format_file_date).toContain("/");
         expect(component.files[2].details).not.toEqual(undefined);
     });
 

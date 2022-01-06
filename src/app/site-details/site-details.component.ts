@@ -941,7 +941,6 @@ export class SiteDetailsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result){
-                console.log(result)
                 this.sensorDataSource.data.forEach(function(sensor, i){
                     if(sensor.instrument_id === result.instrument_id){
                         self.sensorDataSource.data[i] = result; 
