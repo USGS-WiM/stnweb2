@@ -356,23 +356,17 @@ describe('SensorEditComponent', () => {
     expect(component.sensor.instrument_status[0].utc_preview).toEqual("01/05/2022 06:05");
   });
 
-  // it('should set the utc preview value and change the timestamp', () => {
-  //   const response = "2022-05-05T07:05:00";
+  it('should set the utc preview value and change the timestamp', () => {
+    component.setTimeAndDate();
+    component.initForm();
+    component.previewUTC(component.sensor.instrument_status[0]);
+    fixture.detectChanges();
 
-  //   let timezoneSpy = spyOn(component.timezonesService, 'convertTimezone').and.returnValue(
-  //       of(response)
-  //   );
-
-  //   component.previewUTC(component.form.controls["instrument_status"].controls[0]);
-  //   fixture.detectChanges();
-
-    
-  //   expect(timezoneSpy).toHaveBeenCalled();
-  //   expect(
-  //     component.form.controls["instrument_status"].controls[0].controls["time_stamp"]).toEqual("2022-05-05T07:05:00");
-  //   expect(
-  //     component.form.controls["instrument_status"].controls[0].controls["utc_preview"]).toEqual("2022-05-05T07:05:00");
-  // });
+    expect(
+      component.form.controls["instrument_status"].controls[0].controls["time_stamp"].value).toEqual("2022-01-05T01:05:00");
+    expect(
+      component.sensor.instrument_status[0].utc_preview).toEqual("01/05/2022 01:05");
+  });
 
   it('should change vented form control value', () => {
     component.initForm();
@@ -388,5 +382,150 @@ describe('SensorEditComponent', () => {
     component.intervalUnitChange("min");
     fixture.detectChanges();
     expect(component.interval_unit).toEqual("min");
+  });
+
+  it('should reset the lost form to initial values', () => {
+    const opMeasurementResponse = [{ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
+    spyOn(component.siteService, 'getOPMeasurements').and.returnValue(
+      of(opMeasurementResponse)
+    );
+    const opInfoResponse = {name: "testOP", elev_ft: 1};
+    spyOn(component.siteService, 'getOPInfo').and.returnValue(
+      of(opInfoResponse)
+    );
+    component.createTapedownTable();
+    component.initForm();
+    component.form.controls.lostRefMarks.setValue("testRefMark");
+    component.form.controls["instrument_status"].controls[0].controls["notes"].setValue("test2");
+    component.form.controls["lostTapedowns"].controls[0].controls["ground_surface"].setValue("8");
+    component.cancelForm("Lost");
+
+    fixture.detectChanges();
+    expect(component.form.controls.lostRefMarks.value).toEqual(["testOP"]);
+    expect(component.form.controls["instrument_status"].controls[0].controls["notes"].value).toEqual("test");
+    expect(component.form.controls["lostTapedowns"].controls[0].controls["ground_surface"].value).toEqual(1);
+  });
+
+  it('should reset the deployed form to initial values', () => {
+    component.sensor.instrument_status[0].status_type_id = 1;
+    component.sensor.instrument_status[0].status = "Deployed";
+    component.sensor.statusType = "Deployed";
+
+    const opMeasurementResponse = [{ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
+    spyOn(component.siteService, 'getOPMeasurements').and.returnValue(
+      of(opMeasurementResponse)
+    );
+    const opInfoResponse = {name: "testOP", elev_ft: 1};
+    spyOn(component.siteService, 'getOPInfo').and.returnValue(
+      of(opInfoResponse)
+    );
+
+    component.createTapedownTable();
+    component.initForm();
+    component.form.controls.deployedRefMarks.setValue("testRefMark");
+    component.form.controls["instrument_status"].controls[0].controls["notes"].setValue("test2");
+    component.form.controls["deployedTapedowns"].controls[0].controls["ground_surface"].setValue("8");
+    component.cancelForm("Deployed");
+
+    fixture.detectChanges();
+    expect(component.form.controls.deployedRefMarks.value).toEqual(["testOP"]);
+    expect(component.form.controls["instrument_status"].controls[0].controls["notes"].value).toEqual("test");
+    expect(component.form.controls["deployedTapedowns"].controls[0].controls["ground_surface"].value).toEqual(1);
+  });
+
+  it('should reset the retrieved form to initial values', () => {
+    component.sensor.instrument_status[0].status_type_id = 2;
+    component.sensor.instrument_status[0].status = "Retrieved";
+
+    const opMeasurementResponse = [{ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
+    spyOn(component.siteService, 'getOPMeasurements').and.returnValue(
+      of(opMeasurementResponse)
+    );
+    const opInfoResponse = {name: "testOP", elev_ft: 1};
+    spyOn(component.siteService, 'getOPInfo').and.returnValue(
+      of(opInfoResponse)
+    );
+
+    component.createTapedownTable();
+    component.initForm();
+    component.form.controls.retrievedRefMarks.setValue("testRefMark");
+    component.form.controls["instrument_status"].controls[0].controls["notes"].setValue("test2");
+    component.form.controls["retrievedTapedowns"].controls[0].controls["ground_surface"].setValue("8");
+    component.cancelForm("Retrieved");
+
+    fixture.detectChanges();
+    expect(component.form.controls.retrievedRefMarks.value).toEqual(["testOP"]);
+    expect(component.form.controls["instrument_status"].controls[0].controls["notes"].value).toEqual("test");
+    expect(component.form.controls["retrievedTapedowns"].controls[0].controls["ground_surface"].value).toEqual(1);
+  });
+
+  it('should show alert and stop loading if instrument form is invalid', () => {
+    component.form.get("serial_number").setValue(null);
+    spyOn(window, 'alert');
+
+    component.submit("3");
+    fixture.detectChanges();
+    expect(component.form.valid).toBeFalse();
+    expect(component.loading).toBeFalse();
+    expect(window.alert).toHaveBeenCalledWith("Some required sensor fields are missing or incorrect.  Please fix these fields before submitting.");
+  });
+
+  it('should create an array of tapedowns to add', () => {
+    let initTapedowns = [{ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
+    let newTapedowns = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, objective_point_id: 2}, {ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
+
+    let tapedownsToAdd = component.addTapedowns(initTapedowns, newTapedowns);
+    fixture.detectChanges();
+    expect(tapedownsToAdd).toEqual([newTapedowns[0]]);
+  });
+
+  it('should create an array of tapedowns to remove', () => {
+    let initTapedowns = [{ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
+    let newTapedowns = [];
+
+    let tapedownsToRemove = component.deleteTapedowns(initTapedowns, newTapedowns);
+    fixture.detectChanges();
+    expect(tapedownsToRemove).toEqual([1]);
+  });
+
+  it('should create an array of tapedowns to update', () => {
+    let initTapedowns = [{ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
+    let newTapedowns = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 1, objective_point_id: 1}];
+
+    let tapedownsToUpdate = component.updateTapedowns(initTapedowns, newTapedowns);
+    fixture.detectChanges();
+    expect(tapedownsToUpdate).toEqual(newTapedowns);
+  });
+
+  it('should submit new and updated tapedowns and remove deleted tapedowns', () => {
+    component.form.controls["lostTapedowns"].controls = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, objective_point_id: 2, instrument_status_id: 2}, {ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1, instrument_status_id: 1}];
+    let tapedownsToAdd = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2}];
+    let tapedownsToUpdate = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 1, objective_point_id: 1, instrument_status_id: 1}];
+    let tapedownsToRemove = [3];
+    let tapedownArray = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, objective_point_id: 2, instrument_status_id: 2}, {ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1, instrument_status_id: 1}];
+    let tapedownControl = "lostTapedowns";
+
+    let tapedownUpdateResponse = tapedownsToUpdate[0];
+    let tapedownAddResponse = tapedownsToAdd[0];
+
+    spyOn(component.sensorEditService, 'addOPMeasure').and.returnValue(
+      of(tapedownAddResponse)
+    );
+
+    spyOn(component.sensorEditService, 'updateOPMeasure').and.returnValue(
+      of(tapedownUpdateResponse)
+    );
+
+    spyOn(component.sensorEditService, 'deleteOPMeasure').and.returnValue(
+      of(null)
+    );
+
+    component.createTapedownTable();
+    component.initForm();
+    // component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl);
+
+
+    expect(component.form.controls[tapedownControl].controls.length).toEqual(2);
+    console.log(component.form.controls[tapedownControl].controls)
   });
 });

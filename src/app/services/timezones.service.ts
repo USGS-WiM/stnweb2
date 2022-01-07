@@ -28,7 +28,6 @@ export class TimezonesService {
         let hour = timePreview.split('T')[1].split(":")[0];
         let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
         timePreview = addDate;
-        console.log(timePreview)
         return timePreview;
 
     } if (timezone == "PST/PDT") {
@@ -60,47 +59,6 @@ export class TimezonesService {
         timePreview = addDate;
         return timePreview;
 
-    } 
-    // if (timezone == "PDT") {
-
-    //     let localTime = DateTime.fromISO(date, {zone: 'America/Los_Angeles'});
-
-    //     timePreview = localTime.setZone("UTC").toString();
-    //     let hour = timePreview.split('T')[1].split(":")[0];
-    //     let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
-    //     timePreview = addDate;
-    //     return timePreview;
-
-    // } if (timezone == "EDT") {
-
-    //     let localTime = DateTime.fromISO(date, {zone: 'America/New_York'});
-
-    //     timePreview = localTime.setZone("UTC").toString();
-    //     let hour = timePreview.split('T')[1].split(":")[0];
-    //     let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
-    //     timePreview = addDate;
-    //     return timePreview;
-
-    // } if (timezone == "CDT") {
-
-    //     let localTime = DateTime.fromISO(date, {zone: 'America/Chicago'});
-
-    //     timePreview = localTime.setZone("UTC").toString();
-    //     let hour = timePreview.split('T')[1].split(":")[0];
-    //     let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
-    //     timePreview = addDate;
-    //     return timePreview;
-
-    // } if (timezone == "MDT") {
-
-    //     let localTime = DateTime.fromISO(date, {zone: 'America/Denver'});
-
-    //     timePreview = localTime.setZone("UTC").toString();
-    //     let hour = timePreview.split('T')[1].split(":")[0];
-    //     let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
-    //     timePreview = addDate;
-    //     return timePreview;
-
-    // }
+    }
   }
 }

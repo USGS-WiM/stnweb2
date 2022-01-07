@@ -103,6 +103,9 @@ export class SensorEditService {
                 console.log(
                     'deleteOPMeasure response received'
                 );
+                console.log(
+                    response
+                );
                 return response;
             }),
             catchError(this.handleError<any>('deleteOPMeasure', []))
