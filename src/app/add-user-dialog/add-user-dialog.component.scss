@@ -1,0 +1,25 @@
+#addNewUserForm {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.entryField {
+    margin: 15px;
+}
+
+.temporary-form-value-display {
+    border: 2px solid green;
+    border-radius: 5px;
+}
+
+.horizontal-form-container {
+    display: flex;
+    flex-direction: row;
+    @media (max-width: 400px) {
+        flex-direction: column;
+    }
+  }
+  
+  .form-control {
+    width: 16em;
+  }

@@ -18,7 +18,6 @@ describe('FilterComponent', () => {
       declarations: [ FilterComponent ],
       imports: [
         HttpClientTestingModule,
-        HttpClientTestingModule,
         MatAutocompleteModule,
     ], schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })

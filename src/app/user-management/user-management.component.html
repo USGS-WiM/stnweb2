@@ -1,78 +1,80 @@
 <div id="userManagement">
 <div id="tableFilters">
-    <h3>Find a User:</h3>
     <form [formGroup]="searchForm" class="search__form">
+        <h3 class="findUserTitle">Find User:</h3>
         <mat-form-field class="search__form_field" appearance="outline">
           <mat-label>Filter by Username</mat-label>
-          <input type="text"
-                 aria-label="Filter by Username"
+          <input 
                  matInput
+                 type="text"
+                 aria-label="Filter by Username"
                  formControlName="username"
                  (keyup)="applyFilter()"
-          >
+          />
         </mat-form-field>
     
         <mat-form-field class="search__form_field" appearance="outline">
           <mat-label>Filter by First Name</mat-label>
-          <input type="text"
+          <input matInput
+                 type="text"
                  aria-label="Filter by First Name"
-                 matInput
                  formControlName="fname"
                  (keyup)="applyFilter()"
-          >
+          />
         </mat-form-field>
     
         <mat-form-field class="search__form_field" appearance="outline">
           <mat-label>Filter by Last Name</mat-label>
-          <input 
-          aria-label="Filter by Last Name"matInput
+          <input matInput
+          aria-label="Filter by Last Name" 
                  formControlName="lname"
-                 (keyup)="applyFilter()">
+                 (keyup)="applyFilter()" />
         </mat-form-field>
         <div class="topOfTableButton">
-            <button color="accent" mat-raised-button><mat-icon class="icon">add</mat-icon> Add new User</button>
+            <button color="accent" mat-stroked-button aria-label="Add new user"
+            (click)="openNewUserDialog()"><mat-icon class="icon">person_add</mat-icon>&nbsp; Add New User</button>
         </div>
       </form>
 </div>
 
-<table mat-table [dataSource]="userDataSource" class="mat-elevation-z8">
+<table mat-table [dataSource]="userDataSource" matSort (matSortChange)="sortData($event)" class="mat-elevation-z8">
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
     <!-- username Column -->
     <ng-container matColumnDef="Username">
-        <th mat-header-cell *matHeaderCellDef>Username</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="username" sortActionDescription="Sort by username">Username</th>
         <td mat-cell *matCellDef="let element"> {{element.username}} </td>
     </ng-container>
 
     <!-- last name Column -->
     <ng-container matColumnDef="Last Name">
-        <th mat-header-cell *matHeaderCellDef> Last Name </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="lname" sortActionDescription="Sort by last name"> Last Name </th>
         <td mat-cell *matCellDef="let element"> {{element.lname}} </td>
     </ng-container>
 
     <!-- first name Column -->
     <ng-container matColumnDef="First Name">
-        <th mat-header-cell *matHeaderCellDef> First Name </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="fname" sortActionDescription="Sort by first name"> First Name </th>
         <td mat-cell *matCellDef="let element"> {{element.fname}} </td>
     </ng-container>
 
     <!-- email Column -->
     <ng-container matColumnDef="Email">
-        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="email" sortActionDescription="Sort by email"> Email </th>
         <td mat-cell *matCellDef="let element"> {{element.email}} </td>
     </ng-container>
 
     <!-- agency Column -->
     <ng-container matColumnDef="Agency">
-        <th mat-header-cell *matHeaderCellDef> Agency </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="agency_n" sortActionDescription="Sort by agency"> Agency </th>
         <td mat-cell *matCellDef="let element"> {{element.agency_n}} </td>
     </ng-container>
 
     <!-- role Column -->
     <ng-container matColumnDef="Role">
-        <th mat-header-cell *matHeaderCellDef> Role </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="role_n" sortActionDescription="Sort by role"> Role </th>
         <td mat-cell *matCellDef="let element"> {{element.role_n}} </td>
     </ng-container>
 

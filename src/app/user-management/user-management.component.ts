@@ -1,10 +1,14 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { APP_UTILITIES } from '@app/app.utilities';
 import { UserService } from '@services/user.service';
 import { AgencyService } from '@services/agency.service';
 import { RoleService } from '@services/role.service';
+import { AddUserDialogComponent } from '@app/add-user-dialog/add-user-dialog.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import {MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -23,6 +27,7 @@ export class UserManagementComponent implements OnInit {
   agencies = [];
   users = [];
   roles = [];
+  sortedData = [];
   isLoading = true;
   displayedColumns: string[] = [
     'Username',
@@ -34,16 +39,20 @@ export class UserManagementComponent implements OnInit {
   ];
 
   constructor(
-    private userService: UserService,
-    private agencyService: AgencyService,
-    private roleService: RoleService,
+    public userService: UserService,
+    public agencyService: AgencyService,
+    public roleService: RoleService,
+    public dialog: MatDialog,
   ) { }
+
+  @ViewChild(MatSort) sort: MatSort;
 
   ngOnInit(): void {
 
     // getting roles and initializing form
     this.getRoles()
     this.searchFormInit();
+    this.getAgencies();
   }
 
   searchFormInit() {
@@ -61,7 +70,18 @@ export class UserManagementComponent implements OnInit {
         this.getUserData();
       });
   }
-  /* istanbul ignore next */
+  getAgencies() {
+    this.agencyService
+      .getAllAgencies()
+      .subscribe((results) => {
+        this.agencies = results;
+      });
+  }
+
+  refreshTable() {
+    this.getUserData()
+  }
+
   getUserData() {
     // get users
     this.userService
@@ -69,48 +89,77 @@ export class UserManagementComponent implements OnInit {
       .toPromise()
       .then((results) => {
         // adding the agency and role names to the user object 
+        /* istanbul ignore next */
         if (results.length > 0) {
           this.users = results;
-          console.log(this.users)
           this.formatData()
         }
       },
         error => this.isLoading = false);
   }
+
   /* istanbul ignore next */
   formatData() {
     // identifies the agency name and attaches it to user object
-    for (const obj in this.users) {
-      let agencyName = '';
-      this.agencyService
-        .getAnAgency(this.users[obj].agency_id)
-        .toPromise()
-        .then((agency) => {
-          agencyName = agency.agency_name;
-          this.users[obj].agency_n = agencyName;
-        });
-
-      // set role name based on role id
-      const roleId = this.users[obj].role_id;
-      switch (roleId) {
-        case 1:
-          this.users[obj].role_n = "Admin";
-          break;
-        case 2:
-          this.users[obj].role_n = "Manager";
-          break;
-        case 3:
-          this.users[obj].role_n = "Field";
-          break;
-        case 4:
-          this.users[obj].role_n = "Public";
-          break;
+    if (this.users.length > 0) {
+      for (const obj in this.users) {
+        this.setAgency(obj)
       }
+      this.isLoading = false;
+      this.userDataSource.data = this.users;
+      this.userDataSource.paginator = this.paginator;
+      this.userDataSource.sort = this.sort;
+      this.userDataSource.filterPredicate = this.getFilterPredicate();
     }
-    this.isLoading = false;
-    this.userDataSource.data = this.users;
-    this.userDataSource.paginator = this.paginator;
-    this.userDataSource.filterPredicate = this.getFilterPredicate();
+  }
+  /* istanbul ignore next */
+  setAgency(obj) {
+    let agencyName = '';
+    this.agencyService
+      .getAnAgency(this.users[obj].agency_id)
+      .toPromise()
+      .then((agency) => {
+        agencyName = agency.agency_name;
+        this.users[obj].agency_n = agencyName;
+      });
+
+    const rolename = this.setRole(this.users[obj].role_id);
+    this.users[obj].role_n = rolename;
+  }
+
+  setRole(roleId) {
+    // set role name based on role id
+    switch (roleId) {
+      case 1:
+        return "Admin";
+      case 2:
+        return "Manager";
+      case 3:
+        return "Field";
+      case 4:
+        return "Public";
+    }
+  }
+
+  sortData(sort: Sort) {
+    const data = this.userDataSource.data.slice();
+    if (!sort.active || sort.direction === '') {
+      this.sortedData = data;
+      return;
+    }
+
+    this.sortedData = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'username': return APP_UTILITIES.COMPARE(a.username, b.username, isAsc);
+        case 'lname': return APP_UTILITIES.COMPARE(a.lname, b.lname, isAsc);
+        case 'fname': return APP_UTILITIES.COMPARE(a.fname, b.fname, isAsc);
+        case 'email': return APP_UTILITIES.COMPARE(a.email, b.email, isAsc);
+        case 'agency': return APP_UTILITIES.COMPARE(a.agency_n, b.agency_n, isAsc);
+        case 'role': return APP_UTILITIES.COMPARE(a.role_n, b.role_n, isAsc);
+        default: return 0;
+      }
+    });
   }
 
   /* this method well be called for each row in table  */
@@ -158,6 +207,23 @@ export class UserManagementComponent implements OnInit {
     // create string of our searching values and split if by '$'
     const filterValue = this.username + '$' + this.fname + '$' + this.lname;
     this.userDataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  openNewUserDialog(): void {
+    const dialogRef = this.dialog.open(AddUserDialogComponent, {
+      data: {
+        agencies: this.agencies,
+        roles: this.roles
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'cancel') {
+        return;
+      } else {
+        this.refreshTable();
+      }
+    });
   }
 
 }

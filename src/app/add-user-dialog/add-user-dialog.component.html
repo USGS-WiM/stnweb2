@@ -1,0 +1,120 @@
+<h2 mat-dialog-title>Add New User</h2>
+<mat-dialog-content class="mat-typography">
+    <div id="addNewUserForm">
+        <form class="form" [formGroup]="newUserForm">
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>First Name</mat-label>
+                    <input matInput placeholder="Placeholder" aria-required="true" formControlName="fname" required >
+                    <mat-icon matSuffix>face</mat-icon>
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput placeholder="Placeholder" aria-required="true" required formControlName="lname">
+                    <mat-icon matSuffix>face</mat-icon>
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Username</mat-label>
+                    <input matInput placeholder="Placeholder" aria-required="true" required formControlName="username">
+                    <mat-icon matSuffix>perm_identity</mat-icon>
+                    <mat-hint>Use your USGS username</mat-hint>
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Enter email</mat-label>
+                    <mat-icon matSuffix>email</mat-icon>
+                    <mat-error>
+                      Invalid email format
+                    </mat-error>
+                    <input matInput placeholder="jdoe@usgs.gov" formControlName="email" aria-required="true" required>
+                    <!-- <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error> -->
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Agency</mat-label>
+                    <input type="text"
+                           placeholder="Select one"
+                           aria-label="Agency"
+                           matInput
+                           formControlName="agency_id"
+                           [matAutocomplete]="auto"
+                           aria-required="true"
+                           required>
+                           <mat-icon matSuffix>domain</mat-icon>
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="display">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{ option.a_n }}                    
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Role</mat-label>
+                    <mat-select formControlName="role_id" aria-required="true" required>
+                      <mat-option *ngFor="let role of roles" [value]="role.role_id">
+                        {{role.role_name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control">
+                    <mat-label>Phone</mat-label>
+                    <input matInput (keydown)="this.phoneNumberFormatter($event)" id="phone-number" placeholder="Placeholder" aria-required="true" required formControlName="phone">
+                    <mat-icon matSuffix>phone</mat-icon>
+                    <mat-error>
+                      Invalid phone format
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control" style="width: 325px;">
+                    <mat-label>Emergency Contact Full name</mat-label>
+                    <input matInput placeholder="Placeholder" formControlName="emergencyContact">
+                    <mat-icon matSuffix>portrait</mat-icon>
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <mat-form-field appearance="fill" class="form-control" style="width: 325px;">
+                    <mat-label>Emergency Contact Phone</mat-label>
+                    <input matInput (keydown)="this.phoneNumberFormatter($event)" placeholder="Placeholder" aria-required="true" formControlName="emergencyContactPhone">
+                    <mat-icon matSuffix>contact_phone</mat-icon>
+                    <mat-error>Invalid phone format</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="entryField">
+                <create-password [formGroup]="this.newUserForm.get('password')">
+                </create-password>
+            </div>
+        </form>
+    </div>
+    <p>
+    <!-- <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Form data JSON
+          </mat-panel-title>
+          <mat-panel-description>
+            JSON format of this form entry, for debugging purposes
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="temporary-form-value-display">
+          <p>Form Status: {{newUserForm.status}}
+            <pre> {{newUserForm.value | json}} </pre>
+        </div>
+      </mat-expansion-panel> -->
+    </p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <div class="detail-section-buttons">
+      <button mat-stroked-button (click)="this.addUserdialogRef.close('cancel');">
+        Cancel
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="newUserForm.invalid"
+        (click)="onSubmit(newUserForm.value)">Submit
+        <mat-icon>output</mat-icon>
+      </button>
+      <mat-progress-bar mode="indeterminate" *ngIf="submitLoading"></mat-progress-bar>
+    </div>
+  </mat-dialog-actions>

@@ -6,257 +6,224 @@
     <ng-template #displaySiteContents>
         <div class=site-title>
             <div *ngIf="site !== undefined">
-                Site {{site.site_no}} ({{event}})
+                <div id="siteMap">
+                    Site {{site.site_no}} ({{event}})
+                    <div class="site-buttons">
+                        <button mat-raised-button class="edit-button" [disabled]="editDisabled" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
+                        <button *ngIf="!deleteDisabled" mat-raised-button class="delete-button"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                        <span *ngIf="deleteDisabled" matTooltip="To delete a site, please contact a STN administrator." 
+                        aria-label="Displays a tooltip when focused or hovered over">
+                            <button mat-raised-button disabled class="delete-button"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
         <div *ngIf="!noSiteInfo; else noSiteInfoAvailable">
             <mat-tab-group>
                 <mat-tab label="Site">
-                    <div class="basic-site-info">
-                        <div id="siteMap">
-                                <div class="left">
-                                    <button mat-raised-button class="edit-button" [disabled]="editDisabled" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
-                                </div>
-                                <div class="right">
-                                    <button mat-raised-button disabled class="delete-button"><mat-icon>delete_forever</mat-icon> Delete Site</button>
-                                    <mat-icon class="info-icon" matTooltip="To delete a site, please contact a STN administrator." 
-                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                </div>
-                        </div>
+                    <div class="map-button-container">
                         <button mat-raised-button class="map-button" (click)="toggleSiteMap()">
                             <span *ngIf="siteMapHidden">View site on map <mat-icon class="expand-icon">expand_more</mat-icon></span>
                             <span *ngIf="!siteMapHidden">Hide map <mat-icon class="expand-icon">expand_less</mat-icon></span>
                         </button>
-                        <div id="mapContainer">
-                            <mat-accordion id="legend">
-                                <mat-expansion-panel id="legend-expansion" expanded="true">
-                                    <mat-expansion-panel-header id="legend-header">
-                                        Legend
-                                    </mat-expansion-panel-header>
-                                    <div id="legend-content">
-                                        <div class="legend-row" *ngIf="nearbySitesVisible">
-                                            <mat-checkbox [(ngModel)]="nearbyToggled" (change)="toggleNearby()">
-                                                <div
-                                                class="
-                                                    legend-icon wmm-pin wmm-altblue wmm-icon-circle wmm-icon-altblue wmm-size-15
-                                                "
-                                                ></div>
-                                                <p>Nearby Sites</p>
-                                            </mat-checkbox>
-                                        </div>
-                                        <div class="legend-row" *ngIf="site !== undefined">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20
-                                                "
-                                            ></div>
-                                            <p>Site</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="hwm.length > 0">
+                    </div>
+                    <div id="mapContainer">
+                        <mat-accordion id="legend">
+                            <mat-expansion-panel id="legend-expansion" expanded="true">
+                                <mat-expansion-panel-header id="legend-header">
+                                    Legend
+                                </mat-expansion-panel-header>
+                                <div id="legend-content">
+                                    <div class="legend-row" *ngIf="nearbySitesVisible">
+                                        <mat-checkbox [(ngModel)]="nearbyToggled" (change)="toggleNearby()">
                                             <div
                                             class="
-                                                legend-icon wmm-diamond wmm-altred wmm-icon-noicon wmm-icon-red wmm-size-15
+                                                legend-icon wmm-pin wmm-altblue wmm-icon-circle wmm-icon-altblue wmm-size-15
                                             "
                                             ></div>
-                                            <p>High Water Mark</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="baroSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-square wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Barometric Pressure </p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="airTempSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-circle wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Air Temperature</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="waterTempSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-square wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Water Temperature</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="rdgSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-square wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Rapid Deployment</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="thermSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-circle wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Temperature</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="waveSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-square wmm-blue wmm-icon-noicon wmm-icon-blue wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Wave Height</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="stormSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-square wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Water Level</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="humiditySensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Humidity</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="windSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-circle wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>Windspeed</p>
-                                        </div>
-                                        <div class="legend-row" *ngIf="otherSensorVisible">
-                                            <div
-                                                class="
-                                                    legend-icon wmm-circle wmm-white wmm-icon-noicon wmm-icon-white wmm-size-15
-                                                "
-                                            ></div>
-                                            <p>No deployment type specified</p>
-                                        </div>
+                                            <p>Nearby Sites</p>
+                                        </mat-checkbox>
                                     </div>
-                                </mat-expansion-panel>
-                            </mat-accordion>
-                        </div>
-                        <div class="outer-content" *ngIf="site !== undefined">
-                            <div class="cell-container">
-                                <p class="content-left">Site Description</p>
-                                <p class="content-right" *ngIf="site.site_description !== '' && site.site_description !== undefined; else nullSiteDesc">{{site.site_description}}</p>
-                                <ng-template #nullSiteDesc><p class="content-right">---</p></ng-template>
-                            </div>
-                            <div class="cell-container">
-                                <p class="content-left">Created By</p>
-                                <p class="content-right" *ngIf="site.member_id !== '' && site.member_id !== undefined && memberName !== undefined; else nullMember">{{memberName}}</p>
-                                <ng-template #nullMember><p class="content-right">---</p></ng-template>
-                            </div>
-                            <div class="cell-container">
-                                <p class="content-left">Waterbody</p>
-                                <p class="content-right" *ngIf="site.waterbody !== '' && site.waterbody !== undefined; else nullWaterbody">{{site.waterbody}}</p>
-                                <ng-template #nullWaterbody><p class="content-right">---</p></ng-template>
-                            </div>
-                            <div class="cell-container">
-                                <p class="content-left">Drainage Area</p>
-                                <p class="content-right" *ngIf="site.drainage_area_sqmi !== '' && site.drainage_area_sqmi !== undefined; else nullDrainage">{{site.drainage_area_sqmi}}</p>
-                                <ng-template #nullDrainage><p class="content-right">---</p></ng-template>
-                            </div>
-                            <div class="cell-container">
-                                <p class="content-left">Station ID (USGS)</p>
-                                <p class="content-right" *ngIf="site.usgs_sid !== '' && site.usgs_sid !== undefined; else nullUSGS">{{site.usgs_sid}}</p>
-                                <ng-template #nullUSGS><p class="content-right">---</p></ng-template>
-                            </div>
-                            <div class="cell-container">
-                                <p class="content-left">Station ID (NOAA)</p>
-                                <p class="content-right" *ngIf="site.noaa_sid !== '' && site.noaa_sid !== undefined; else nullNOAA">{{site.noaa_sid}}</p>
-                                <ng-template #nullNOAA><p class="content-right">---</p></ng-template>
-                            </div>
-                            <div class="cell-container">
-                                <p class="content-left">Station ID (Other)</p>
-                                <p class="content-right" *ngIf="site.other_sid !== '' && site.noaa_sid !== undefined; else nullOther">{{site.other_sid}}</p>
-                                <ng-template #nullOther><p class="content-right">---</p></ng-template>
-                            </div>
-                            <div class="cell-container">
-                                <p class="content-left">Priority</p>
-                                <p class="content-right" *ngIf="priority !== '' && priority !== undefined && priority !== null; else nullPriority">{{priority.priority_name}}</p>
-                                <ng-template #nullPriority><p class="content-right">---</p></ng-template>
-                            </div>
-                        </div>
+                                    <div class="legend-row" *ngIf="site !== undefined">
+                                        <div
+                                            class="
+                                                legend-icon wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20
+                                            "
+                                        ></div>
+                                        <p>Site</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="hwm.length > 0">
+                                        <div
+                                        class="
+                                            legend-icon wmm-diamond wmm-altred wmm-icon-noicon wmm-icon-red wmm-size-15
+                                        "
+                                        ></div>
+                                        <p>High Water Mark</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="baroSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-square wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Barometric Pressure </p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="airTempSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-circle wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Air Temperature</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="waterTempSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-square wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Water Temperature</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="rdgSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-square wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Rapid Deployment</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="thermSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-circle wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Temperature</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="waveSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-square wmm-blue wmm-icon-noicon wmm-icon-blue wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Wave Height</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="stormSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-square wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Water Level</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="humiditySensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-circle wmm-green wmm-icon-noicon wmm-icon-green wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Humidity</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="windSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-circle wmm-purple wmm-icon-noicon wmm-icon-purple wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>Windspeed</p>
+                                    </div>
+                                    <div class="legend-row" *ngIf="otherSensorVisible">
+                                        <div
+                                            class="
+                                                legend-icon wmm-circle wmm-white wmm-icon-noicon wmm-icon-white wmm-size-15
+                                            "
+                                        ></div>
+                                        <p>No deployment type specified</p>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
                     </div>
+                    <mat-grid-list [cols]="gridListWidth" gutterSize="10px" [rowHeight]="rowHeight" (window:resize)="onResize($event)">
+                        <mat-grid-tile>
+                            <div class="table-container">
+                                <div class="cell-container">
+                                    <p class="content-left">Site Description</p>
+                                    <p class="content-right" *ngIf="site.site_description !== '' && site.site_description !== undefined; else nullSiteDesc">{{site.site_description}}</p>
+                                    <ng-template #nullSiteDesc><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Internal Notes</p>
+                                    <p class="content-right" *ngIf="site.site_notes !== '' && site.site_notes !== undefined; else nullSiteNotes">{{site.site_notes}}</p>
+                                    <ng-template #nullSiteNotes><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Waterbody</p>
+                                    <p class="content-right" *ngIf="site.waterbody !== '' && site.waterbody !== undefined; else nullWaterbody">{{site.waterbody}}</p>
+                                    <ng-template #nullWaterbody><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Latitude</p>
+                                    <p class="content-right" *ngIf="site.latitude_dd !== '' && site.latitude_dd !== undefined; else nullLat">{{site.latitude_dd}}</p>
+                                    <ng-template #nullLat><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Longitude</p>
+                                    <p class="content-right" *ngIf="site.longitude_dd !== '' && site.longitude_dd !== undefined; else nullLon">{{site.longitude_dd}}</p>
+                                    <ng-template #nullLon><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Horizontal Datum</p>
+                                    <p class="content-right" *ngIf="site.hdatum_id !== '' && site.hdatum_id !== undefined; else nullHdatum">{{hdatum}}</p>
+                                    <ng-template #nullHdatum><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Collection Method</p>
+                                    <p class="content-right" *ngIf="site.hcollect_method_id !== '' && site.hcollect_method_id !== undefined; else nullHcollect">{{hmethod}}</p>
+                                    <ng-template #nullHcollect><p class="content-right">---</p></ng-template>
+                                </div>
+                            </div>
+                        </mat-grid-tile>
+                        <mat-grid-tile>
+                            <div class="table-container">
+                                <div class="cell-container">
+                                    <p class="content-left">Address</p>
+                                    <p class="content-right" *ngIf="site.address !== '' && site.address !== undefined; else nullAddress">{{site.address}}</p>
+                                    <ng-template #nullAddress><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">City</p>
+                                    <p class="content-right" *ngIf="site.city !== '' && site.city !== undefined; else nullCity">{{site.city}}</p>
+                                    <ng-template #nullCity><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">State</p>
+                                    <p class="content-right" *ngIf="site.state !== '' && site.state !== undefined; else nullState">{{site.state}}</p>
+                                    <ng-template #nullState><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">County</p>
+                                    <p class="content-right" *ngIf="site.county !== '' && site.county !== undefined; else nullCounty">{{site.county}}</p>
+                                    <ng-template #nullCounty><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Zip</p>
+                                    <p class="content-right" *ngIf="site.zip !== '' && site.zip !== undefined; else nullZip">{{site.zip}}</p>
+                                    <ng-template #nullZip><p class="content-right">---</p></ng-template> 
+                                </div>
+                            </div>
+                        </mat-grid-tile>
+                    </mat-grid-list>
                     <mat-accordion multi="true" id="site">
                         <!-- Location Information -->
                         <mat-expansion-panel hideToggle expanded="true">
                             <mat-expansion-panel-header class="panel-headers">
                                 <mat-panel-title>
-                                    Location Information
+                                    Additional Information
                                 </mat-panel-title> 
                             </mat-expansion-panel-header> 
-                            <div class="table-container">
-                                <div class="outer-content" *ngIf="site !== undefined">
-                                    <div class="cell-container">
-                                        <p class="content-left">Address</p>
-                                        <p class="content-right" *ngIf="site.address !== '' && site.address !== undefined; else nullAddress">{{site.address}}</p>
-                                        <ng-template #nullAddress><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">City</p>
-                                        <p class="content-right" *ngIf="site.city !== '' && site.city !== undefined; else nullCity">{{site.city}}</p>
-                                        <ng-template #nullCity><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">State</p>
-                                        <p class="content-right" *ngIf="site.state !== '' && site.state !== undefined; else nullState">{{site.state}}</p>
-                                        <ng-template #nullState><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">County</p>
-                                        <p class="content-right" *ngIf="site.county !== '' && site.county !== undefined; else nullCounty">{{site.county}}</p>
-                                        <ng-template #nullCounty><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Zip</p>
-                                        <p class="content-right" *ngIf="site.zip !== '' && site.zip !== undefined; else nullZip">{{site.zip}}</p>
-                                        <ng-template #nullZip><p class="content-right">---</p></ng-template> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="table-container">
-                                <div class="outer-content" *ngIf="site !== undefined">
-                                    <div class="cell-container">
-                                        <p class="content-left">Latitude</p>
-                                        <p class="content-right" *ngIf="site.latitude_dd !== '' && site.latitude_dd !== undefined; else nullLat">{{site.latitude_dd}}</p>
-                                        <ng-template #nullLat><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Longitude</p>
-                                        <p class="content-right" *ngIf="site.longitude_dd !== '' && site.longitude_dd !== undefined; else nullLon">{{site.longitude_dd}}</p>
-                                        <ng-template #nullLon><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Horizontal Datum</p>
-                                        <p class="content-right" *ngIf="site.hdatum_id !== '' && site.hdatum_id !== undefined; else nullHdatum">{{hdatum}}</p>
-                                        <ng-template #nullHdatum><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Collection Method</p>
-                                        <p class="content-right" *ngIf="site.hcollect_method_id !== '' && site.hcollect_method_id !== undefined; else nullHcollect">{{hmethod}}</p>
-                                        <ng-template #nullHcollect><p class="content-right">---</p></ng-template>
-                                    </div>
-                                </div>
-                            </div>
-                        <!-- </mat-expansion-panel> -->
-                        <!-- Site Housing -->
-                        <!-- <mat-expansion-panel hideToggle expanded="true">
-                            <mat-expansion-panel-header class="panel-headers">
-                                <mat-panel-title>
-                                    Site Housing
-                                </mat-panel-title>
-                            </mat-expansion-panel-header> -->
-                            <div class="tableContainer" *ngIf="site !== undefined && siteHousing !== undefined; else noTable">
+                            <div class="tableContainer" *ngIf="site !== undefined && siteHousing !== undefined">
                                 <table *ngIf="siteHousing.length > 0; else noTable"
                                     mat-table
                                     id="siteHousingTable"
@@ -348,7 +315,7 @@
                                     ></tr>
                                 </table>
                             </div>
-                            <ng-template #noTable>
+                            <!-- <ng-template #noTable>
                                 <div class="table-container">
                                     <div class="outer-content">
                                         <div class="cell-container">
@@ -357,46 +324,88 @@
                                         </div>
                                     </div>
                                 </div>
-                            </ng-template>
-                            <div class="table-container">
-                                <div class="outer-content" *ngIf="site !== undefined">
-                                    <div class="cell-container">
-                                        <p class="content-left">Network Type</p>
-                                        <p class="content-right" *ngIf="networkType !== undefined && networkType !== ''; else nullNetworkType">{{networkType}}</p>
-                                        <ng-template #nullNetworkType><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Network</p>
-                                        <p class="content-right" *ngIf="networkName !== undefined && networkName !== ''; else nullNetwork">{{networkName}}</p>
-                                        <ng-template #nullNetwork><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Zone</p>
-                                        <p class="content-right" *ngIf="site.zone !== '' && site.zone !== undefined; else nullZone">{{site.zone}}</p>
-                                        <ng-template #nullZone><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Sensor Not Appropriate</p>
-                                        <p class="content-right" *ngIf="site.sensor_not_appropriate !== '' && site.sensor_not_appropriate !== undefined; else nullSensorApp">{{site.sensor__not_appropriate}}</p>
-                                        <ng-template #nullSensorApp><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Permanent Housing</p>
-                                        <p class="content-right" *ngIf="site.is_permanent_housing_installed !== '' && site.is_permanent_housing_installed !== undefined; else nullPermHousing">{{site.is_permanent_housing_installed}}</p>
-                                        <ng-template #nullPermHousing><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Safety Notes</p>
-                                        <p class="content-right" *ngIf="site.safety_notes !== '' && site.safety_notes !== undefined; else nullSafetyNotes">{{site.safety_notes}}</p>
-                                        <ng-template #nullSafetyNotes><p class="content-right">---</p></ng-template>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="table-container">
-                                <div class="outer-content" *ngIf="site !== undefined">
-                                    <mat-card class="cell-container" id="landowner">
-                                        <p id="landownerTitle">Land Owner Contact</p>
-                                        <div>
+                            </ng-template> -->
+                                <mat-grid-list [cols]="lowerColumns" [rowHeight]="lowerHeight">
+                                    <mat-grid-tile [rowspan]="rowspan">
+                                        <div class="table-container">
+                                            <div *ngIf="site === undefined || siteHousing === undefined || siteHousing.length === 0" class="cell-container">
+                                                <p class="content-left">Housing Type Information</p>
+                                                <p class="content-right">---</p>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Created By</p>
+                                                <p class="content-right" *ngIf="site.member_id !== '' && site.member_id !== undefined && memberName !== undefined; else nullMember">{{memberName}}</p>
+                                                <ng-template #nullMember><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Drainage Area</p>
+                                                <p class="content-right" *ngIf="site.drainage_area_sqmi !== '' && site.drainage_area_sqmi !== undefined; else nullDrainage">{{site.drainage_area_sqmi}}</p>
+                                                <ng-template #nullDrainage><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Station ID (USGS)</p>
+                                                <p class="content-right" *ngIf="site.usgs_sid !== '' && site.usgs_sid !== undefined; else nullUSGS">{{site.usgs_sid}}</p>
+                                                <ng-template #nullUSGS><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Station ID (NOAA)</p>
+                                                <p class="content-right" *ngIf="site.noaa_sid !== '' && site.noaa_sid !== undefined; else nullNOAA">{{site.noaa_sid}}</p>
+                                                <ng-template #nullNOAA><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Station ID (Other)</p>
+                                                <p class="content-right" *ngIf="site.other_sid !== '' && site.noaa_sid !== undefined; else nullOther">{{site.other_sid}}</p>
+                                                <ng-template #nullOther><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Safety Notes</p>
+                                                <p class="content-right" *ngIf="site.safety_notes !== '' && site.safety_notes !== undefined; else nullSafetyNotes">{{site.safety_notes}}</p>
+                                                <ng-template #nullSafetyNotes><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Priority</p>
+                                                <p class="content-right" *ngIf="priority !== '' && priority !== undefined && priority !== null; else nullPriority">{{priority.priority_name}}</p>
+                                                <ng-template #nullPriority><p class="content-right">---</p></ng-template>
+                                            </div>
+                                        </div>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [rowspan]="rowspan">
+                                        <div class="table-container">
+                                            <div class="cell-container">
+                                                <p class="content-left">Permission Granted</p>
+                                                <p class="content-right" *ngIf="site.access_granted !== '' && site.access_granted !== undefined; else nullPermission">{{site.access_granted}}</p>
+                                                <ng-template #nullPermission><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Network Type</p>
+                                                <p class="content-right" *ngIf="networkType !== undefined && networkType !== ''; else nullNetworkType">{{networkType}}</p>
+                                                <ng-template #nullNetworkType><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Network</p>
+                                                <p class="content-right" *ngIf="networkName !== undefined && networkName !== ''; else nullNetwork">{{networkName}}</p>
+                                                <ng-template #nullNetwork><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Zone</p>
+                                                <p class="content-right" *ngIf="site.zone !== '' && site.zone !== undefined; else nullZone">{{site.zone}}</p>
+                                                <ng-template #nullZone><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Sensor Not Appropriate</p>
+                                                <p class="content-right" *ngIf="site.sensor_not_appropriate !== '' && site.sensor_not_appropriate !== undefined; else nullSensorApp">{{site.sensor__not_appropriate}}</p>
+                                                <ng-template #nullSensorApp><p class="content-right">---</p></ng-template>
+                                            </div>
+                                            <div class="cell-container">
+                                                <p class="content-left">Permanent Housing</p>
+                                                <p class="content-right" *ngIf="site.is_permanent_housing_installed !== '' && site.is_permanent_housing_installed !== undefined; else nullPermHousing">{{site.is_permanent_housing_installed}}</p>
+                                                <ng-template #nullPermHousing><p class="content-right">---</p></ng-template>
+                                            </div>
+                                        </div>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [rowspan]="rowspan">
+                                        <div class="table-container landowner">
+                                            <p id="landownerTitle">Land Owner Contact</p>
                                             <div class="cell-container">
                                                 <p class="content-left">First Name</p>
                                                 <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.fname !== '' && landownerContact.fname !== undefined; else nullLandownerFname">{{landownerContact.fname}}</p>    
@@ -448,31 +457,8 @@
                                                 <ng-template #nullLandownerEmail><p class="content-right">---</p></ng-template>
                                             </div>
                                         </div>
-                                    </mat-card>
-                                </div> 
-                            </div>
-                        </mat-expansion-panel>
-                        <!-- Additional Information -->
-                        <mat-expansion-panel hideToggle expanded="true">
-                            <mat-expansion-panel-header class="panel-headers">
-                                <mat-panel-title>
-                                    Additional Information
-                                </mat-panel-title>
-                            </mat-expansion-panel-header>
-                            <div class="table-container">
-                                <div class="outer-content" *ngIf="site !== undefined">
-                                    <div class="cell-container">
-                                        <p class="content-left">Internal Notes</p>
-                                        <p class="content-right" *ngIf="site.site_notes !== '' && site.site_notes !== undefined; else nullSiteNotes">{{site.site_notes}}</p>
-                                        <ng-template #nullSiteNotes><p class="content-right">---</p></ng-template>
-                                    </div>
-                                    <div class="cell-container">
-                                        <p class="content-left">Permission Granted</p>
-                                        <p class="content-right" *ngIf="site.access_granted !== '' && site.access_granted !== undefined; else nullPermission">{{site.access_granted}}</p>
-                                        <ng-template #nullPermission><p class="content-right">---</p></ng-template>
-                                    </div>
-                                </div>
-                            </div>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
                         </mat-expansion-panel>
                     </mat-accordion>
                 </mat-tab>

@@ -13,7 +13,6 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
-
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -38,6 +37,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {MatDividerModule} from '@angular/material/divider';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 import { HighchartsChartModule } from 'highcharts-angular';
 
@@ -62,17 +62,21 @@ import { HwmUploadComponent } from './hwm-upload/hwm-upload.component';
 import { ResultDetailsComponent } from './result-details/result-details.component';
 import { SensorService } from './services/sensor.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { SiteEditComponent } from './site-edit/site-edit.component';
 import * as angular from 'angular';
 import { ReferenceDatumDialogComponent } from './reference-datum-dialog/reference-datum-dialog.component';
 import { HwmDialogComponent } from './hwm-dialog/hwm-dialog.component';
 import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
 import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
 import { FileDetailsDialogComponent } from './file-details-dialog/file-details-dialog.component';
+import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
+import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SiteEditComponent } from './site-edit/site-edit.component';
+import { CreatePasswordComponent } from './create-password/create-password.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component';
-import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
+import { RoleService } from './services/role.service';
+import { AgencyService } from './services/agency.service';
 
 @NgModule({
     declarations: [
@@ -97,6 +101,8 @@ import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
         FileDetailsDialogComponent,
         SiteEditComponent,
         UserManagementComponent,
+        AddUserDialogComponent,
+        CreatePasswordComponent,
         RefDatumEditComponent,
         SensorEditComponent,
     ],
@@ -141,6 +147,7 @@ import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
         MatDatepickerModule,
         MatNativeDateModule,
         MatDividerModule,
+        MatGridListModule,
     ],
     providers: [
         CurrentUserService,
@@ -149,6 +156,8 @@ import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
         EventService,
         UserService,
         SiteService,
+        AgencyService,
+        RoleService,
         FiltersService,
         DisplayValuePipe,
         MatSnackBar,
@@ -159,6 +168,8 @@ import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
         LoginComponent,
         ConfirmComponent,
         ResultDetailsComponent,
+        AddUserDialogComponent,
+        CreatePasswordComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
