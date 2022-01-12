@@ -6,6 +6,8 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { SensorEditComponent } from './sensor-edit.component';
 import { of } from 'rxjs';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { FormArray, FormGroup } from '@angular/forms';
 
 describe('SensorEditComponent', () => {
   let component: SensorEditComponent;
@@ -43,7 +45,7 @@ describe('SensorEditComponent', () => {
       location_description: "Test",
       sensorBrand: "Hobo",
       sensorType: "Pressure Transducer",
-      sensor_brand_id: 5,
+      sensor_brand_id: 1,
       sensor_type_id: 1,
       serial_number: "000",
       site_id: 11111,
@@ -90,7 +92,7 @@ describe('SensorEditComponent', () => {
         { provide: MatDialogRef, useValue: dialogMock },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
-      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule],      
+      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule,],      
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
@@ -470,6 +472,21 @@ describe('SensorEditComponent', () => {
     expect(window.alert).toHaveBeenCalledWith("Some required sensor fields are missing or incorrect.  Please fix these fields before submitting.");
   });
 
+  it('should convert interval and send requests if instrument form is valid', () => {
+    component.interval_unit = "min";    
+    component.form.get("interval").setValue("1");
+
+    let requestSpy = spyOn(component, 'sendRequests');
+
+    component.submit("3");
+    fixture.detectChanges();
+    expect(component.form.valid).toBeTrue();
+    expect(component.loading).toBeTrue();
+    expect(requestSpy).toHaveBeenCalled();
+    expect(component.form.get("interval").value).toEqual(60);
+  });
+
+
   it('should create an array of tapedowns to add', () => {
     let initTapedowns = [{ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
     let newTapedowns = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, objective_point_id: 2}, {ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1}];
@@ -497,24 +514,14 @@ describe('SensorEditComponent', () => {
     expect(tapedownsToUpdate).toEqual(newTapedowns);
   });
 
-  it('should submit new and updated tapedowns and remove deleted tapedowns', () => {
-    component.form.controls["lostTapedowns"].controls = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, objective_point_id: 2, instrument_status_id: 2}, {ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1, instrument_status_id: 1}];
-    let tapedownsToAdd = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2}];
-    let tapedownsToUpdate = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 1, objective_point_id: 1, instrument_status_id: 1}];
+  it('should remove deleted tapedowns', () => {
+    component.form.controls["lostTapedowns"].controls = [];
+    let tapedownsToAdd = [];
+    let tapedownsToUpdate = [];
     let tapedownsToRemove = [3];
-    let tapedownArray = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, objective_point_id: 2, instrument_status_id: 2}, {ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1, instrument_status_id: 1}];
+    let tapedownArray = [];
     let tapedownControl = "lostTapedowns";
-
-    let tapedownUpdateResponse = tapedownsToUpdate[0];
-    let tapedownAddResponse = tapedownsToAdd[0];
-
-    spyOn(component.sensorEditService, 'addOPMeasure').and.returnValue(
-      of(tapedownAddResponse)
-    );
-
-    spyOn(component.sensorEditService, 'updateOPMeasure').and.returnValue(
-      of(tapedownUpdateResponse)
-    );
+    let createTapedownTableSpy = spyOn(component, 'createTapedownTable');
 
     spyOn(component.sensorEditService, 'deleteOPMeasure').and.returnValue(
       of(null)
@@ -522,10 +529,170 @@ describe('SensorEditComponent', () => {
 
     component.createTapedownTable();
     component.initForm();
-    // component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl);
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl);
+    fixture.detectChanges();
 
+    expect(createTapedownTableSpy).toHaveBeenCalled();
+    expect(component.opDeleted).toBeTrue();
+  });
 
-    expect(component.form.controls[tapedownControl].controls.length).toEqual(2);
-    console.log(component.form.controls[tapedownControl].controls)
+  it('should submit updated tapedowns', () => {
+    let tapedownsToUpdate = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2, objective_point_id: 2}];
+    let tapedownsToAdd = [];
+    let tapedownsToRemove = [];
+    let tapedownArray = [{ground_surface: 1, water_surface: 1, offset_correction: 1, instrument_status_id: 2, objective_point_id: 2, op_measurements_id: 2}];
+    let tapedownControl = "lostTapedowns";
+    component.form.controls[tapedownControl] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(component.createTapedownArray(tapedown))));
+
+    let createTapedownTableSpy = spyOn(component, 'createTapedownTable');
+
+    let tapedownUpdateResponse = tapedownsToUpdate[0];
+
+    spyOn(component.sensorEditService, 'updateOPMeasure').and.returnValue(
+      of(tapedownUpdateResponse)
+    );
+
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl);
+    fixture.detectChanges();
+
+    expect(component.form.controls[tapedownControl].controls[0].controls.ground_surface.value).toEqual(2);
+    expect(createTapedownTableSpy).toHaveBeenCalled();
+    expect(component.opUpdated).toBeTrue();
+  });
+
+  it('should submit new tapedowns', () => {
+    let tapedownsToAdd = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: null, instrument_status_id: 2, objective_point_id: 2}];
+    let tapedownsToUpdate = [];
+    let tapedownsToRemove = [];
+    let tapedownArray = [{ground_surface: 2, water_surface: 2, offset_correction: 2, instrument_status_id: 2, op_measurements_id: null, objective_point_id: 2}, {ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1, instrument_status_id: 1}];
+    let tapedownControl = "lostTapedowns";
+    component.form.controls[tapedownControl] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(component.createTapedownArray(tapedown))));
+
+    let tapedownAddResponse = {ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2, objective_point_id: 2};
+
+    spyOn(component.sensorEditService, 'addOPMeasure').and.returnValue(
+      of(tapedownAddResponse)
+    );
+    
+    let createTapedownTableSpy = spyOn(component, 'createTapedownTable');
+
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl);
+    fixture.detectChanges();
+
+    expect(component.form.controls[tapedownControl].controls[0].controls.op_measurements_id.value).toEqual(2);
+    expect(createTapedownTableSpy).toHaveBeenCalled();
+  });
+
+  it('should send requests and set return data to results', () => {
+    let response = {
+      instrument_id:1,
+      sensor_type_id:1,
+      deployment_type_id:1,
+      location_description: "Test",
+      serial_number:0,
+      interval:0,
+      site_id:0,
+      event_id:0,
+      inst_collection_id:1,
+      housing_type_id:1,
+      sensor_brand_id:1,
+      instrument_status:[],
+      data_files:[],
+      files:[]
+    };
+    let statusResponse = {
+      instrument_id: 1111,
+        instrument_status_id: 11001,
+        member_id: 1,
+        notes: "test",
+        status_type_id: 3,
+        time_stamp: "2022-01-05T01:05:00",
+        time_zone: "UTC",
+    }
+    let returnData = {
+      instrument_id:1,
+      sensor_type_id:1,
+      deployment_type_id:1,
+      location_description: "Test",
+      serial_number:0,
+      interval:0,
+      site_id:0,
+      event_id:0,
+      eventName:"Test Event",
+      inst_collection_id:1,
+      housing_type_id:1,
+      sensor_brand_id:1,
+      housingType:"testHousing",
+      sensorType:"testSensor",
+      sensorBrand:"test",
+      deploymentType:"test",
+      instCollection:"test",
+      statusType: "Lost",
+      instrument_status:[{
+        instrument_id: 1111,
+        instrument_status_id: 11001,
+        member_id: 1,
+        notes: "test",
+        status: "Lost",
+        status_type_id: 3,
+        time_stamp: "2022-01-05T01:05:00",
+        time_zone: "UTC",
+      }],
+      data_files:[],
+      files:[]
+    }
+    const sensorTypeResponse: any[] = [{sensor_type_id: 1, sensor: "testSensor"}];
+    spyOn(component.sensorEditService, 'getSensorTypeLookup').and.returnValue(
+      of(sensorTypeResponse)
+    );
+
+    const sensorBrandResponse: any[] = [{sensor_brand_id: 1, brand_name: "test"}];
+
+    spyOn(component.sensorEditService, 'getSensorBrandLookup').and.returnValue(
+        of(sensorBrandResponse)
+    );
+
+    const housingTypeResponse: any[] = [{housing_type_id: 1, type_name: "testHousing"}];
+
+    spyOn(component.siteService, 'getAllHousingTypes').and.returnValue(
+        of(housingTypeResponse)
+    );
+
+    const deploymentTypeResponse: any[] = [{deployment_type_id: 1, method: "test"}];
+
+    spyOn(component.siteService, 'getDeploymentTypes').and.returnValue(
+        of(deploymentTypeResponse)
+    );
+
+    const vDatumResponse: any[] = [{datum_id: 0, datum_name: "testDatum"}];
+
+    spyOn(component.siteService, 'getVDatumLookup').and.returnValue(
+        of(vDatumResponse)
+    );
+
+    const collectCondResponse: any[] = [{id: 1, condition: "test"}];
+
+    spyOn(component.sensorEditService, 'getCollectConditions').and.returnValue(
+        of(collectCondResponse)
+    );
+
+    let instrumentRequestSpy = spyOn(component.sensorEditService, 'putInstrument').and.returnValue(of(response));
+    let instrumentStatusRequestSpy = spyOn(component.sensorEditService, 'putInstrumentStatus').and.returnValue(of(statusResponse));
+    let tapedownSpy = spyOn(component, 'sendTapedownRequests');
+
+    component.getSensorTypes();
+    component.getSensorBrands();
+    component.getHousingTypes();
+    component.getDeploymentTypes();
+    component.getVDatums();
+    component.collectConditionLookup();
+    component.sendRequests("3");
+    fixture.detectChanges();
+
+    expect(component.returnData).toEqual(returnData);
+    expect(instrumentRequestSpy).toHaveBeenCalled();
+    expect(instrumentStatusRequestSpy).toHaveBeenCalled();
+    expect(tapedownSpy).toHaveBeenCalledTimes(1);
+    expect(component.returnData.instrument_status[0]).toEqual(returnData.instrument_status[0]);
   });
 });

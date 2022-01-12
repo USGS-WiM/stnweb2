@@ -78,7 +78,8 @@
                     </label>
                 </div>
                 <div class="tableContainer">
-                    <table *ngIf="form.controls.deployedTapedowns.length > 0"
+                    <table [hidden]="!form.controls.deployedTapedowns.length > 0"
+                        #deployedTable
                         mat-table
                         id="tapedownsTable"
                         [dataSource]="deployedTapedowns"
@@ -410,7 +411,8 @@
                         </label>
                     </div>
                     <div class="tableContainer">
-                        <table *ngIf="form.controls.retrievedTapedowns.length > 0"
+                        <table [hidden]="!form.controls.retrievedTapedowns.length > 0"
+                            #retrievedTable
                             mat-table
                             id="tapedownsTable"
                             [dataSource]="retrievedTapedowns"
@@ -456,7 +458,7 @@
                                 <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
                                 <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                     <mat-form-field appearance="fill">
-                                        <input matInput type="number" formControlName="offset_correction" (change)="printForm(tapedown.offset_correction)" [value]="tapedown.offset_correction"/>
+                                        <input matInput type="number" formControlName="offset_correction" [value]="tapedown.offset_correction"/>
                                         <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the sensor orifice."
                                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                     </mat-form-field>
@@ -673,7 +675,8 @@
                         </label>
                     </div>
                     <div class="tableContainer">
-                        <table *ngIf="form.controls.lostTapedowns.length > 0"
+                        <table [hidden]="!form.controls.lostTapedowns.length > 0"
+                            #lostTable
                             mat-table
                             id="tapedownsTable"
                             [dataSource]="lostTapedowns"

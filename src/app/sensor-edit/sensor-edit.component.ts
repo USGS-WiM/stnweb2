@@ -1,7 +1,8 @@
 import { I } from '@angular/cdk/keycodes';
-import { Component, ComponentFactoryResolver, Inject, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table';
 import { SensorEditService } from '@app/services/sensor-edit.service';
 import { SiteService } from '@app/services/site.service';
 import { TimezonesService } from '@app/services/timezones.service';
@@ -13,6 +14,9 @@ import { DateTime } from "luxon";
   styleUrls: ['./sensor-edit.component.scss']
 })
 export class SensorEditComponent implements OnInit {
+  @ViewChild('retrievedTable') retrievedTable: MatTable<any>;
+  @ViewChild('deployedTable') deployedTable: MatTable<any>;
+  @ViewChild('lostTable') lostTable: MatTable<any>;
 
   public sensor;
   public form;
@@ -45,6 +49,7 @@ export class SensorEditComponent implements OnInit {
   public initStatusID;
   public returnData;
   public opDeleted = false;
+  public opUpdated = false;
 
   constructor(
     private dialogRef: MatDialogRef<SensorEditComponent>,
@@ -219,54 +224,88 @@ export class SensorEditComponent implements OnInit {
     .getOPMeasurements(instrument.instrument_status_id)
     .subscribe((results) => {
       if(results.length > 0){
-        if (tapedownArray[0] !== undefined){
-          tapedownArray[0].ground_surface = results[0].ground_surface;
-        }else{
-          tapedownArray.push({ground_surface: results[0].ground_surface});
-        }
-        tapedownArray[0].water_surface = results[0].water_surface;
-        tapedownArray[0].offset_correction = results[0].offset_correction;
-        tapedownArray[0].op_measurements_id = results[0].op_measurements_id;
-        tapedownArray[0].objective_point_id = results[0].objective_point_id;
-        tapedownArray[0].instrument_status_id = instrument.instrument_status_id;
-        // get reference datum info using objective_point_id
-        self.siteService
-        .getOPInfo(results[0].objective_point_id)
-        .subscribe((objectivePoints) => {
-          tapedownArray[0].op_name = objectivePoints.name;
-          if(objectivePoints.elev_ft !== undefined){
-            tapedownArray[0].elevation = objectivePoints.elev_ft;
-          }
-          if(instrument.vdatum !== undefined && instrument.vdatum !== ''){
-            tapedownArray[0].vdatum = instrument.vdatum;
-          }     
-          if(controlName === "deployedTapedowns"){
-            tapedownArray.forEach(function(tapedown){
-              self.initDeployedRefMarks.push(tapedown.op_name);
-            })
-            self.form.controls.deployedRefMarks.setValue(self.initDeployedRefMarks);
-            self.initDeployedTapedowns = tapedownArray;
-          }else if(controlName === "retrievedTapedowns"){
-            tapedownArray.forEach(function(tapedown){
-              self.initRetrievedRefMarks.push(tapedown.op_name);
-            })
-            self.form.controls.retrievedRefMarks.setValue(self.initRetrievedRefMarks);
-            self.initRetrievedTapedowns = tapedownArray;
-          }else if(controlName === "lostTapedowns"){
-            tapedownArray.forEach(function(tapedown){
-              self.initLostRefMarks.push(tapedown.op_name);
-            })
-            self.form.controls.lostRefMarks.setValue(self.initLostRefMarks);
-            self.initLostTapedowns = tapedownArray;
-          }
+          results.forEach(function(result, i){
+              if (tapedownArray[i] === undefined){
+                tapedownArray[i] = {
+                  ground_surface: null,
+                  water_surface: null,
+                  offset_correction: null,
+                  op_measurements_id: null,
+                  op_name: null,
+                  elevation: null,
+                  vdatum: null,
+                  instrument_status_id: null,
+                  objective_point_id: null,
+                };
+              }
+              tapedownArray[i].ground_surface = result.ground_surface;
+              tapedownArray[i].water_surface = result.water_surface;
+              tapedownArray[i].offset_correction = result.offset_correction;
+              tapedownArray[i].op_measurements_id = result.op_measurements_id;
+              tapedownArray[i].objective_point_id = result.objective_point_id;
+              tapedownArray[i].instrument_status_id = instrument.instrument_status_id;
+              // get reference datum info using objective_point_id
+              self.siteService
+              .getOPInfo(result.objective_point_id)
+              .subscribe((objectivePoints) => {
+                tapedownArray[i].op_name = objectivePoints.name;
+                if(objectivePoints.elev_ft !== undefined){
+                  tapedownArray[i].elevation = objectivePoints.elev_ft;
+                }
+                if(instrument.vdatum !== undefined && instrument.vdatum !== ''){
+                  tapedownArray[i].vdatum = instrument.vdatum;
+                }else if (instrument.vdatum_id !== undefined){
+                  for(let vdatum of self.vDatumList){
+                    if(vdatum.datum_id === instrument.vdatum_id){
+                      tapedownArray[i].vdatum = vdatum.datum_name;
+                    }
+                  }
+                }
+                if(controlName === "deployedTapedowns"){
+                  tapedownArray.forEach(function(tapedown){
+                    self.initDeployedRefMarks.push(tapedown.op_name);
+                  })
+                  self.form.controls.deployedRefMarks.setValue(self.initDeployedRefMarks);
+                  self.initDeployedTapedowns = JSON.parse(JSON.stringify(tapedownArray));
+                }else if(controlName === "retrievedTapedowns"){
+                  tapedownArray.forEach(function(tapedown){
+                    self.initRetrievedRefMarks.push(tapedown.op_name);
+                  })
+                  self.form.controls.retrievedRefMarks.setValue(self.initRetrievedRefMarks);
+                  self.initRetrievedTapedowns = JSON.parse(JSON.stringify(tapedownArray));
+                }else if(controlName === "lostTapedowns"){
+                  tapedownArray.forEach(function(tapedown){
+                    self.initLostRefMarks.push(tapedown.op_name);
+                  })
+                  self.form.controls.lostRefMarks.setValue(self.initLostRefMarks);
+                  self.initLostTapedowns = JSON.parse(JSON.stringify(tapedownArray));
+                }
+              })
+          })
+        if(!self.opUpdated){
           self.form.controls[controlName] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
           // save initial tapedown values in case of reset
           self.form.controls[controlName].controls.forEach(function(formgroup, i){
             initForm.push({formgroup: formgroup.getRawValue(), id: i});
           })
-        })
+          if(self.retrievedTable !== undefined){self.retrievedTable.renderRows()};
+          if(self.deployedTable !== undefined){self.deployedTable.renderRows()};
+          if(self.lostTable !== undefined){self.lostTable.renderRows()};
+        }else{
+          // save initial tapedown values in case of reset
+          self.form.controls[controlName].controls.forEach(function(formgroup, i){
+            formgroup.reset(tapedownArray[i]);
+            initForm.push({formgroup: formgroup.getRawValue(), id: i});
+          })
+          if(self.retrievedTable !== undefined){self.retrievedTable.renderRows()};
+          if(self.deployedTable !== undefined){self.deployedTable.renderRows()};
+          if(self.lostTable !== undefined){self.lostTable.renderRows()};
+        }
       }else{
         // If form has already been submitted once and results are empty, OP was just deleted and initial array needs to be reset
+        tapedownArray = [];
+        self.form.controls[controlName] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
+        initForm = [];
         if(controlName === "deployedTapedowns"){
           self.initDeployedTapedowns = [];
         }else if(controlName === "retrievedTapedowns"){
@@ -354,7 +393,6 @@ export class SensorEditComponent implements OnInit {
   }
 
   createTapedownArray(tapedown) {
-    console.log(tapedown)
     return {
       ground_surface: new FormControl(tapedown.ground_surface ? tapedown.ground_surface : null, [this.isNum()]),
       water_surface: new FormControl(tapedown.water_surface ? tapedown.water_surface : null, [this.isNum()]),
@@ -402,7 +440,7 @@ export class SensorEditComponent implements OnInit {
     }
     let self = this;
 
-    let addTapedown = function(statusArray, controlName, status, initRefMarks, initTapedowns) {
+    let addTapedown = function(statusArray, controlName, status, initRefMarks, initTapedowns, table) {
       // If no rms, only 1 value exists
       if(statusArray.length === 0){
         newObject.op_name = value[0];
@@ -436,9 +474,13 @@ export class SensorEditComponent implements OnInit {
           }
         })
       }else{
+        let opNames = [];
         // Add to table
+        statusArray.forEach(function(status){
+          opNames.push(status.op_name);
+        })
         value.forEach(function(name){
-          if(!statusArray.join(',').includes(name)){
+          if(!opNames.join(',').includes(name)){
             newObject.op_name = name;
             self.data.siteRefMarks.forEach(function(mark){
               if(name === mark.name){
@@ -470,21 +512,23 @@ export class SensorEditComponent implements OnInit {
         })
       }
       statusArray = [...statusArray];
+      if(table !== undefined){table.renderRows()};
       self.form.controls[controlName] = new FormArray(statusArray.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
     }
 
     if(status === "Retrieved"){
-      console.log(this.initRetrievedTapedowns);
       // Add tapedown
-      if(value.length > 0){
-        addTapedown(this.retrievedTapedowns, "retrievedTapedowns", status, this.initRetrievedRefMarks, this.initRetrievedTapedowns);
+      if(value.length > this.retrievedTapedowns.length){
+        addTapedown(this.retrievedTapedowns, "retrievedTapedowns", status, this.initRetrievedRefMarks, this.initRetrievedTapedowns, this.retrievedTable);
       }
       // Remove tapedown
       else{
+        let index;
         let okayToDelete = confirm("Are you sure you want to remove this OP Measurement from this sensor?");
         if(okayToDelete){
           // remove
-          this.retrievedTapedowns = [];
+          index = this.retrievedTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
+          this.retrievedTapedowns.splice(index, 1);
           this.retrievedTapedowns = [...this.retrievedTapedowns];
           self.form.controls["retrievedTapedowns"] = new FormArray(this.retrievedTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
           self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
@@ -503,15 +547,17 @@ export class SensorEditComponent implements OnInit {
       }
     }else if(status === "Deployed"){
         // Add tapedown
-        if(value.length > 0){   
-          addTapedown(this.deployedTapedowns, "deployedTapedowns", status, this.initDeployedRefMarks, this.initDeployedTapedowns);
+        if(value.length > this.deployedTapedowns.length){   
+          addTapedown(this.deployedTapedowns, "deployedTapedowns", status, this.initDeployedRefMarks, this.initDeployedTapedowns, this.deployedTable);
         }
         // Remove tapedown
         else{
+          let index;
           let okayToDelete = confirm("Are you sure you want to remove this OP Measurement from this sensor?");
           if(okayToDelete){
             // remove
-            this.deployedTapedowns = [];
+            index = this.deployedTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
+            this.deployedTapedowns.splice(index, 1);
             this.deployedTapedowns = [...this.deployedTapedowns];
             self.form.controls["deployedTapedowns"] = new FormArray(this.deployedTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
             self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
@@ -530,15 +576,17 @@ export class SensorEditComponent implements OnInit {
         }
     }else if(status === "Lost"){
       // Add tapedown
-      if(value.length > 0){   
-        addTapedown(this.lostTapedowns, "lostTapedowns", status, this.initLostRefMarks, this.initLostTapedowns);
+      if(value.length > this.lostTapedowns.length){   
+        addTapedown(this.lostTapedowns, "lostTapedowns", status, this.initLostRefMarks, this.initLostTapedowns, this.lostTable);
       }
       // Remove tapedown
       else{
+        let index;
         let okayToDelete = confirm("Are you sure you want to remove this OP Measurement from this sensor?");
         if(okayToDelete){
           // remove
-          this.lostTapedowns = [];
+          index = this.lostTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
+          this.lostTapedowns.splice(index, 1);
           this.lostTapedowns = [...this.lostTapedowns];
           self.form.controls["lostTapedowns"] = new FormArray(this.lostTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
           self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
@@ -743,11 +791,6 @@ export class SensorEditComponent implements OnInit {
     }
   }
 
-  printForm(value){
-    console.log(this.form.getRawValue().retrievedTapedowns);
-    console.log(this.retrievedTapedowns);
-  }
-
   async sendRequests(statusID) {
     let self = this;
 
@@ -758,7 +801,6 @@ export class SensorEditComponent implements OnInit {
     let deployedTapedowns = sensorSubmission.deployedTapedowns;
     let retrievedTapedowns = sensorSubmission.retrievedTapedowns;
     let lostTapedowns = sensorSubmission.lostTapedowns;
-    alert(JSON.stringify(retrievedTapedowns));
 
     deployedTapedowns.forEach((i) => delete i.elevation);
     retrievedTapedowns.forEach((i) => delete i.elevation);
@@ -846,23 +888,17 @@ export class SensorEditComponent implements OnInit {
               tapedownsToAdd = this.addTapedowns(this.initDeployedTapedowns, deployedTapedowns);
               tapedownsToRemove = this.deleteTapedowns(this.initDeployedTapedowns, deployedTapedowns);
               tapedownsToUpdate = this.updateTapedowns(this.initDeployedTapedowns, deployedTapedowns);
-              console.log(tapedownsToAdd)
-              console.log(tapedownsToRemove)
-              console.log(tapedownsToUpdate)
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, this.deployedTapedowns, this.initDeployedTapedowns, "deployedTapedowns");
+              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, this.deployedTapedowns, "deployedTapedowns");
             }else if(statusID === "2"){
               tapedownsToAdd = this.addTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
               tapedownsToRemove = this.deleteTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
               tapedownsToUpdate = this.updateTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
-              console.log(tapedownsToAdd)
-              console.log(tapedownsToRemove)
-              console.log(tapedownsToUpdate)
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, this.retrievedTapedowns, this.initRetrievedTapedowns, "retrievedTapedowns");
+              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, this.retrievedTapedowns, "retrievedTapedowns");
             }else if(statusID === "3"){
               tapedownsToAdd = this.addTapedowns(this.initLostTapedowns, lostTapedowns);
               tapedownsToRemove = this.deleteTapedowns(this.initLostTapedowns, lostTapedowns);
               tapedownsToUpdate = this.updateTapedowns(this.initLostTapedowns, lostTapedowns);
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, this.lostTapedowns, this.initLostTapedowns, "lostTapedowns");
+              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, this.lostTapedowns, "lostTapedowns");
             }
 
             resolve("Success");
@@ -901,30 +937,17 @@ export class SensorEditComponent implements OnInit {
   }
 
   // Need to populate edit form with new tapedown info, but don't need to return them to site details component
-  sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, initTapedownArray, tapedownControl) {
+  sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl) {
     let self = this;
     // Delete tapedowns
     tapedownsToRemove.forEach(tapedownToRemove => {
       this.sensorEditService.deleteOPMeasure(tapedownToRemove).subscribe(result => {
         // Result will be null if delete worked
         if(result === null){
-        //   for(let tapedown of tapedownArray){
-        //     console.log("remove")
-        //     console.log(tapedown)
-        //     tapedownsToRemove.forEach(function(spliceTapedown, i){
-        //       console.log(spliceTapedown)
-        //       if(tapedown === spliceTapedown.op_measurements_id){
-        //         tapedownArray.splice(i, 1);
-        //         tapedownArray = [...tapedownArray];
-        //         console.log(tapedownArray)
-        //         self.form.controls[tapedownControl] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
-                  this.createTapedownTable();
-                  this.opDeleted = true;
-        //       }
-        //     })
-          // }
+          this.createTapedownTable();
+          this.opDeleted = true;
         }else{
-            alert("Error removing tapedown.");
+          alert("Error removing tapedown.");
         }
       })
     })
@@ -938,12 +961,15 @@ export class SensorEditComponent implements OnInit {
               tapedownArray[i] = result;
               tapedownArray[i].op_name = tapedownToAdd.op_name;
               tapedownArray[i].elevation = result.elevation ? result.elevation : tapedownToAdd.elevation;
-              tapedownArray[i].vdatum = result.elevation ? result.elevation : tapedownToAdd.vdatum;
-              tapedownArray[i].water_surface = result.elevation ? result.elevation : tapedownToAdd.water_surface;
-              tapedownArray[i].ground_surface = result.elevation ? result.elevation : tapedownToAdd.ground_surface;
-              tapedownArray[i].offset_correction = result.elevation ? result.elevation : tapedownToAdd.offset_correction;
+              tapedownArray[i].vdatum = result.vdatum ? result.vdatum : tapedownToAdd.vdatum;
+              tapedownArray[i].water_surface = result.water_surface ? result.water_surface : tapedownToAdd.water_surface;
+              tapedownArray[i].ground_surface = result.ground_surface ? result.ground_surface : tapedownToAdd.ground_surface;
+              tapedownArray[i].offset_correction = result.offset_correction ? result.offset_correction : tapedownToAdd.offset_correction;
+              tapedownArray[i].op_measurements_id = result.op_measurements_id ? result.op_measurements_id : tapedownToAdd.op_measurements_id;
               self.form.controls[tapedownControl].controls.forEach(function(control){
-                    control.reset(tapedownArray[i]);
+                    if(control.controls.op_measurements_id.value === null && control.controls.objective_point_id.value === result.objective_point_id){
+                      control.reset(tapedownArray[i]);
+                    }
               })
               self.createTapedownTable();
             }
@@ -957,7 +983,6 @@ export class SensorEditComponent implements OnInit {
     tapedownsToUpdate.forEach(tapedownToUpdate => {
       this.sensorEditService.updateOPMeasure(tapedownToUpdate.op_measurements_id, tapedownToUpdate).subscribe(result => {
         if(result.length !== 0){
-          console.log("update")
           for(let tapedown of tapedownArray){
             tapedownsToUpdate.forEach(function(updateTapedown, i){
               if(tapedown.op_measurements_id === updateTapedown.op_measurements_id){
@@ -973,6 +998,7 @@ export class SensorEditComponent implements OnInit {
                       control.reset(tapedownArray[i]);
                     }
                 })
+                self.opUpdated = true;
                 self.createTapedownTable();
               }
             })
@@ -1029,17 +1055,12 @@ export class SensorEditComponent implements OnInit {
   updateTapedowns(initTapedowns, changedTapedowns) {
     let initIDs = [];
     let update = [];
-    console.log(initTapedowns);
-    console.log(changedTapedowns)
     initTapedowns.forEach(function(tapedown) {
       initIDs.push(tapedown.op_measurements_id);
     })
-    console.log(initIDs)
     for(let tapedown of changedTapedowns){
-      console.log(tapedown)
       // If IDs are in both, put in case info changed
       if(initIDs.join(',').includes(tapedown.op_measurements_id)){
-        console.log(tapedown)
         update.push(tapedown);
       }
     }
