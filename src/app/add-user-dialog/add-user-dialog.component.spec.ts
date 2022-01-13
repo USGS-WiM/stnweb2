@@ -239,7 +239,7 @@ describe('AddUserDialogComponent', () => {
     expect(component.newUserForm.status).toBe("VALID");
   });
 
-  it('newUserForm form should be INVALID due to agency being null', () => {
+  xit('newUserForm form should be INVALID due to agency being null', () => {
     component.newUserForm.get("fname").setValue("Jane");
     component.newUserForm.get("lname").setValue("Doe");
     component.newUserForm.get("username").setValue("jdoe");

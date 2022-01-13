@@ -438,33 +438,25 @@ export class RefDatumEditComponent implements OnInit {
     self.controlID.forEach(function(control){
       initOPs.push(control.op_control_identifier_id);
     })
-    console.log(this.controlsToAdd)
     // Add control identifier array
     if(this.controlsToAdd.length > 0){
       for(let newControl of this.controlsToAdd){
-        console.log(newControl.op_control_identifier_id)
-        console.log(initOPs.join(','))
-        console.log((newControl.op_control_identifier_id !== null) && (initOPs.join(',').includes(newControl.op_control_identifier_id.toString())))
         if((newControl.op_control_identifier_id !== null) && (initOPs.join(',').includes(newControl.op_control_identifier_id.toString()))){
           // Existing control was changed - put
           let changed = false;
-          console.log(newControl)
           for(let control of self.controlID){
-            console.log(control.op_control_identifier_id)
-            console.log(newControl.op_control_identifier_id)
             if(control.op_control_identifier_id === newControl.op_control_identifier_id){
               if(JSON.stringify(control) !== JSON.stringify(newControl)){
                 changed = true;
               }
             }
           }
-          console.log(changed)
           if(changed){
-            const updateOPControl = await new Promise<string>(resolve => this.opEditService.updateControlID(newControl.op_control_identifier_id, newControl)
+            const updateOPControl = new Promise<string>(resolve => this.opEditService.updateControlID(newControl.op_control_identifier_id, newControl)
                 .subscribe(
                     (data) => {
                         this.returnData.opControlID.push(data);
-                        resolve(updateOPControl);
+                        resolve("Update OP control success.");
                     }
                 )
               )
@@ -478,11 +470,11 @@ export class RefDatumEditComponent implements OnInit {
           delete newControl.last_updated; delete newControl.last_updated_by; delete newControl.op_control_identifier_id;
           // Add new control - post
           newControl.objective_point_id = rdSubmission.objective_point_id;
-          const addOPControl = await new Promise<string>(resolve => this.opEditService.postControlID(newControl)
+          const addOPControl = new Promise<string>(resolve => this.opEditService.postControlID(newControl)
               .subscribe(
                   (data) => {
                       this.returnData.opControlID.push(data);
-                      resolve(addOPControl);
+                      resolve("Add OP control success.");
                   }
               )
             )
@@ -498,10 +490,10 @@ export class RefDatumEditComponent implements OnInit {
       for(let control of this.controlsToRemove){
         if(control.op_control_identifier_id !== null){
         // delete control
-        const deleteOPControl = await new Promise<string>(resolve => this.opEditService.deleteControlID(control.op_control_identifier_id)
+        const deleteOPControl = new Promise<string>(resolve => this.opEditService.deleteControlID(control.op_control_identifier_id)
           .subscribe(
               (data) => {
-                  resolve(deleteOPControl);
+                  resolve("Delete OP control success.");
               }
           )
         )
@@ -511,16 +503,17 @@ export class RefDatumEditComponent implements OnInit {
       };
     }
 
-    const updateRD = await new Promise<string>(resolve => this.opEditService.putReferenceDatum(rdSubmission.objective_point_id, rdSubmission)
+    const updateRD = new Promise<string>(resolve => this.opEditService.putReferenceDatum(rdSubmission.objective_point_id, rdSubmission)
       .subscribe(
           (data) => {
               this.returnData.referenceDatums = data;
-              resolve(updateRD);
+              resolve("Update reference datum success.");
           }
       )
     )
 
     promises.push(updateRD)
+    console.log(promises)
 
     Promise.all(promises).then(() => {
       this.dialogRef.close(this.returnData);
