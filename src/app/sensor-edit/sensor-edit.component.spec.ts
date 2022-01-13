@@ -515,72 +515,124 @@ describe('SensorEditComponent', () => {
   });
 
   it('should remove deleted tapedowns', () => {
-    component.form.controls["lostTapedowns"].controls = [];
     let tapedownsToAdd = [];
     let tapedownsToUpdate = [];
     let tapedownsToRemove = [3];
-    let tapedownArray = [];
-    let tapedownControl = "lostTapedowns";
-    let createTapedownTableSpy = spyOn(component, 'createTapedownTable');
 
-    spyOn(component.sensorEditService, 'deleteOPMeasure').and.returnValue(
+    let removeSpy = spyOn(component.sensorEditService, 'deleteOPMeasure').and.returnValue(
       of(null)
     );
+    spyOn(window, 'alert');
+    let updateSpy = spyOn(component.sensorEditService, 'updateOPMeasure');
+    let addSpy = spyOn(component.sensorEditService, 'addOPMeasure');
 
-    component.createTapedownTable();
-    component.initForm();
-    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl);
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
     fixture.detectChanges();
 
-    expect(createTapedownTableSpy).toHaveBeenCalled();
-    expect(component.opDeleted).toBeTrue();
+    expect(addSpy).not.toHaveBeenCalled();
+    expect(removeSpy).toHaveBeenCalledTimes(1);
+    expect(updateSpy).not.toHaveBeenCalled();
+    expect(window.alert).not.toHaveBeenCalled();
+  });
+
+  it('should show alert if removing tapedowns fails', () => {
+    let tapedownsToAdd = [];
+    let tapedownsToUpdate = [];
+    let tapedownsToRemove = [3];
+
+    spyOn(window, 'alert');
+    let removeSpy = spyOn(component.sensorEditService, 'deleteOPMeasure').and.returnValue(
+      of([])
+    );
+    
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+    fixture.detectChanges();
+    
+    expect(removeSpy).toHaveBeenCalledTimes(1);
+    expect(window.alert).toHaveBeenCalledWith("Error removing tapedown.");
   });
 
   it('should submit updated tapedowns', () => {
     let tapedownsToUpdate = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2, objective_point_id: 2}];
     let tapedownsToAdd = [];
     let tapedownsToRemove = [];
-    let tapedownArray = [{ground_surface: 1, water_surface: 1, offset_correction: 1, instrument_status_id: 2, objective_point_id: 2, op_measurements_id: 2}];
-    let tapedownControl = "lostTapedowns";
-    component.form.controls[tapedownControl] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(component.createTapedownArray(tapedown))));
 
-    let createTapedownTableSpy = spyOn(component, 'createTapedownTable');
+    spyOn(window, 'alert');
+    let removeSpy = spyOn(component.sensorEditService, 'deleteOPMeasure');
+    let addSpy = spyOn(component.sensorEditService, 'addOPMeasure');
 
     let tapedownUpdateResponse = tapedownsToUpdate[0];
 
-    spyOn(component.sensorEditService, 'updateOPMeasure').and.returnValue(
+    let updateSpy = spyOn(component.sensorEditService, 'updateOPMeasure').and.returnValue(
       of(tapedownUpdateResponse)
     );
 
-    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl);
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
     fixture.detectChanges();
 
-    expect(component.form.controls[tapedownControl].controls[0].controls.ground_surface.value).toEqual(2);
-    expect(createTapedownTableSpy).toHaveBeenCalled();
-    expect(component.opUpdated).toBeTrue();
+    expect(addSpy).not.toHaveBeenCalled();
+    expect(removeSpy).not.toHaveBeenCalled();
+    expect(updateSpy).toHaveBeenCalledTimes(1);
+    expect(window.alert).not.toHaveBeenCalled();
+  });
+
+  it('should show alert if updating tapedowns fails', () => {
+    let tapedownsToAdd = [];
+    let tapedownsToUpdate = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2, objective_point_id: 2}];
+    let tapedownsToRemove = [];
+
+    spyOn(window, 'alert');
+    let updateSpy = spyOn(component.sensorEditService, 'updateOPMeasure').and.returnValue(
+      of([])
+    );
+
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+    fixture.detectChanges();
+
+    
+    expect(updateSpy).toHaveBeenCalledTimes(1);
+    expect(window.alert).toHaveBeenCalledWith("Error updating tapedown.");
   });
 
   it('should submit new tapedowns', () => {
     let tapedownsToAdd = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: null, instrument_status_id: 2, objective_point_id: 2}];
     let tapedownsToUpdate = [];
     let tapedownsToRemove = [];
-    let tapedownArray = [{ground_surface: 2, water_surface: 2, offset_correction: 2, instrument_status_id: 2, op_measurements_id: null, objective_point_id: 2}, {ground_surface: 1, water_surface: 1, offset_correction: 1, op_measurements_id: 1, objective_point_id: 1, instrument_status_id: 1}];
-    let tapedownControl = "lostTapedowns";
-    component.form.controls[tapedownControl] = new FormArray(tapedownArray.map((tapedown) => new FormGroup(component.createTapedownArray(tapedown))));
+
+    spyOn(window, 'alert');
 
     let tapedownAddResponse = {ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2, objective_point_id: 2};
 
-    spyOn(component.sensorEditService, 'addOPMeasure').and.returnValue(
+    let addSpy = spyOn(component.sensorEditService, 'addOPMeasure').and.returnValue(
       of(tapedownAddResponse)
     );
-    
-    let createTapedownTableSpy = spyOn(component, 'createTapedownTable');
+    let removeSpy = spyOn(component.sensorEditService, 'deleteOPMeasure');
+    let updateSpy = spyOn(component.sensorEditService, 'updateOPMeasure');
 
-    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate, tapedownArray, tapedownControl);
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
     fixture.detectChanges();
 
-    expect(component.form.controls[tapedownControl].controls[0].controls.op_measurements_id.value).toEqual(2);
-    expect(createTapedownTableSpy).toHaveBeenCalled();
+    expect(addSpy).toHaveBeenCalledTimes(1);
+    expect(removeSpy).not.toHaveBeenCalled();
+    expect(updateSpy).not.toHaveBeenCalled();
+    expect(window.alert).not.toHaveBeenCalled();
+  });
+
+  it('should show alert if adding tapedowns fails', () => {
+    let tapedownsToAdd = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: null, instrument_status_id: 2, objective_point_id: 2}];
+    let tapedownsToUpdate = [];
+    let tapedownsToRemove = [];
+
+    spyOn(window, 'alert');
+    let addSpy = spyOn(component.sensorEditService, 'addOPMeasure').and.returnValue(
+      of([])
+    );
+    
+    component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+    fixture.detectChanges();
+
+    expect(addSpy).toHaveBeenCalledTimes(1);
+    expect(window.alert).toHaveBeenCalledWith("Error adding new tapedown.");
   });
 
   it('should send requests and set return data to results', () => {
