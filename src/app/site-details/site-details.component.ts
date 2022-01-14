@@ -27,6 +27,7 @@ import { connectableObservableDescriptor } from 'rxjs/internal/observable/Connec
 import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
 import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
 import { TimezonesService } from '@app/services/timezones.service';
+import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 
 @Component({
     selector: 'app-site-details',
@@ -449,7 +450,7 @@ export class SiteDetailsComponent implements OnInit {
                                     let flagDate = hwm.flag_date.split("T")[0];
                                     flagDate = flagDate.split("-");
                                     flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
-                                    hwm.flag_date = flagDate;
+                                    hwm.format_flag_date = flagDate;
 
                                     // Get event name for sensor using sensor_id
                                     self.siteService
@@ -575,7 +576,7 @@ export class SiteDetailsComponent implements OnInit {
                                     let flagDate = hwm.flag_date.split("T")[0];
                                     flagDate = flagDate.split("-");
                                     flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
-                                    hwm.flag_date = flagDate;
+                                    hwm.format_flag_date = flagDate;
                                 })
                                 this.hwmDataSource.data = this.hwm;
                                 this.hwmDataSource.paginator = this.hwmPaginator;
@@ -936,7 +937,7 @@ export class SiteDetailsComponent implements OnInit {
             let surveyDate = row.survey_date.split("T")[0];
             surveyDate = surveyDate.split("-");
             surveyDate = surveyDate[1] + "/" + surveyDate[2] + "/" + surveyDate[0];
-            row.survey_date = surveyDate;
+            row.format_survey_date = surveyDate;
         }
 
         let dialogWidth;
@@ -954,6 +955,21 @@ export class SiteDetailsComponent implements OnInit {
             width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openHWMEditDialog(row): void {
+        const dialogRef = this.dialog.open(HwmEditComponent, {
+            data: {
+                hwm: row,
+                files: this.hwmFilesDataSource.data,
+                site_id: this.site.site_id,
+                hdatumList: this.hdatumList,
+                hmethodList: this.hmethodList,
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log(result);
+        });
     }
 
     openSensorDetailsDialog(row): void {
