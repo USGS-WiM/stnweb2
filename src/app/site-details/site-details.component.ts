@@ -25,6 +25,8 @@ import { ResultDetailsComponent } from '@app/result-details/result-details.compo
 import { networkInterfaces } from 'os';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
+import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
+import { TimezonesService } from '@app/services/timezones.service';
 
 @Component({
     selector: 'app-site-details',
@@ -200,6 +202,7 @@ export class SiteDetailsComponent implements OnInit {
         private route: ActivatedRoute,
         public siteService: SiteService,
         public currentUserService: CurrentUserService,
+        public timezonesService: TimezonesService,
         public dialog: MatDialog,
     ) {
         currentUserService.currentUser.subscribe((user) => {
@@ -587,7 +590,7 @@ export class SiteDetailsComponent implements OnInit {
                                 let fileDate = file.file_date.split("T")[0];
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.file_date = fileDate;
+                                file.format_file_date = fileDate;
                                 if(file.instrument_id !== undefined){
                                     self.siteService.getFileSensor(file.file_id).subscribe((results) => {
                                         file.details = results;
@@ -955,21 +958,30 @@ export class SiteDetailsComponent implements OnInit {
 
     openSensorDetailsDialog(row): void {
         // Format dates
+        let self = this;
         let utcPreview;
         row.instrument_status.forEach(function(instrument){
             if(instrument.time_stamp !== undefined && !instrument.time_stamp.includes("/")){
+                let hour = (instrument.time_stamp.split('T')[1]).split(':')[0];
+                let ampm;
+                if(hour > 12){
+                    hour = String(hour - 12).padStart(2, '0');
+                    ampm = "PM";
+                }else{
+                    hour = hour;
+                    ampm = "AM";
+                }
                 if(instrument.status === 'Deployed'){
-                    if(instrument.time_zone !== 'UTC'){
-                        let localTime = DateTime.fromISO(instrument.time_stamp, {zone: instrument.time_zone})
-                        utcPreview = localTime.setZone("UTC").toString();
-                    }
-                  }
+                    let minute = ((instrument.time_stamp.split('T')[1]).split(":")[1]).split(":")[0];
+                    utcPreview = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
+                    utcPreview = utcPreview.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
+                }
                 let timestamp = instrument.time_stamp.split("T")[0];
                 let time = instrument.time_stamp.split("T")[1];
-                time = time.split (':')
+                time = time.split(':');
                 timestamp = timestamp.split("-");
-                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + time[0] + ":" + time[1];
-                instrument.time_stamp = timestamp;
+                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + time[1] + " " + ampm;
+                instrument.format_time_stamp = timestamp;
             }
         })
 
@@ -989,6 +1001,30 @@ export class SiteDetailsComponent implements OnInit {
             width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openSensorEditDialog(row): void {
+        let self = this;
+        const dialogRef = this.dialog.open(SensorEditComponent, {
+            data: {
+                sensor: row,
+                files: this.sensorFilesDataSource.data,
+                site_id: this.site.site_id,
+                siteRefMarks: this.refMarkDataSource.data,
+            },
+            width: '100%',
+            autoFocus: false
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result){
+                this.sensorDataSource.data.forEach(function(sensor, i){
+                    if(sensor.instrument_id === result.instrument_id){
+                        self.sensorDataSource.data[i] = result; 
+                        self.sensorDataSource.data = [...self.sensorDataSource.data];
+                    }
+                })
+            }
+        });
     }
 
     openPeaksDetailsDialog(row): void {

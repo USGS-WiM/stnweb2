@@ -623,6 +623,18 @@
                                 <button mat-stroked-button class="view-details-btn" (click)="openSensorDetailsDialog(row)"
                                     aria-label="Edit">View Details
                                 </button>
+                                <button mat-stroked-button class="edit-details-btn" (click)="openSensorEditDialog(row)"
+                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                </button>
+                                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                    <mat-icon>more_vert</mat-icon>
+                                  </button>
+                                  <mat-menu #menu="matMenu">
+                                    <button mat-menu-item
+                                        aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <span>Delete</span>
+                                    </button>
+                                  </mat-menu>
                                 </td>
                             </ng-container>
 

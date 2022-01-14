@@ -237,10 +237,12 @@ export class SensorDialogComponent implements OnInit {
     this.nwisFilesDataSource.data = this.sortedNWISFilesData;
   }
 
+  /* istanbul ignore next */
   compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
+  /* istanbul ignore next */
   checkDate(date) {
       return new Date(date);
   }

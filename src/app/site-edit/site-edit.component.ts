@@ -1028,11 +1028,11 @@ export class SiteEditComponent implements OnInit {
     delete siteSubmission.latdeg; delete siteSubmission.latmin; delete siteSubmission.latsec; delete siteSubmission.londeg; delete siteSubmission.lonmin; delete siteSubmission.lonsec;
     delete siteSubmission.housingType; delete siteSubmission.siteHousings; delete siteSubmission.networkType; delete siteSubmission.networkName;
 
-    const updateSite = await new Promise<string>(resolve => this.siteEditService.putSite(this.data.site.site_id, siteSubmission)
+    const updateSite = new Promise<string>(resolve => this.siteEditService.putSite(this.data.site.site_id, siteSubmission)
       .subscribe(
           (data) => {
               this.returnData.site = data;
-              resolve(updateSite);
+              resolve("Update site success.");
           }
       )
     )
@@ -1051,11 +1051,11 @@ export class SiteEditComponent implements OnInit {
     for(let housing of this.data.siteHousing){
       if(housing.housingType !== null && !siteHousings.includes(housing.housingType)){
         console.log("delete " + housing.housingType);
-        const deleteHousing = await new Promise<string>(resolve => self.siteEditService.deleteSiteHousings(housing.site_housing_id).subscribe((response) => {
+        const deleteHousing = new Promise<string>(resolve => self.siteEditService.deleteSiteHousings(housing.site_housing_id).subscribe((response) => {
             self.returnData.housings.forEach(function(returnHousing, i){
               if(housing.site_housing_id === returnHousing.site_housing_id){
                 self.returnData.housings.splice(self.returnData.housings.indexOf(i), 1);
-                resolve(deleteHousing);
+                resolve("Delete housing success.");
               }
             });
           })
@@ -1080,11 +1080,11 @@ export class SiteEditComponent implements OnInit {
               networkNameID = network.network_name_id;
             }
           })
-          const deleteNetNames = await new Promise<string>(resolve => self.siteEditService.deleteNetworkNames(self.data.site.site_id, networkNameID ).subscribe((response) => {
+          const deleteNetNames = new Promise<string>(resolve => self.siteEditService.deleteNetworkNames(self.data.site.site_id, networkNameID ).subscribe((response) => {
               self.returnData.networkName.forEach(function(returnNetName, i){
                 if(networkName.network_name_id === returnNetName.network_name_id){
                   self.returnData.networkName.splice(self.returnData.networkName.indexOf(i), 1);
-                  resolve(deleteNetNames)
+                  resolve("Delete network names success.");
                 }
               });
             })
@@ -1104,13 +1104,13 @@ export class SiteEditComponent implements OnInit {
       });
       for(let networkName of this.networkNames) {
           if(networkName.selected && !skipnames.includes(networkName.name)){
-            const addNetNames = await new Promise<string>(resolve => self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
+            const addNetNames = new Promise<string>(resolve => self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
               response.forEach(function(name){
                 if(!self.returnData.networkName.join(',').includes(name.name)){
                   self.returnData.networkName.push(name.name);
                 }
               });
-              resolve(addNetNames);
+              resolve("Add network names success.");
               })
             )
             promises.push(addNetNames);
@@ -1121,14 +1121,14 @@ export class SiteEditComponent implements OnInit {
       //Add NetNames
       for(let networkName of this.networkNames) {
         if(networkName.selected){
-          const addNetNames = await new Promise<string>(resolve => self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
+          const addNetNames = new Promise<string>(resolve => self.siteEditService.postNetworkNames(self.data.site.site_id, networkName.network_name_id).subscribe((response) => {
             console.log("add" + networkName.name)
             response.forEach(function(name){
               if(!self.returnData.networkName.join(',').includes(name.name)){
                 self.returnData.networkName.push(name.name);
               }
             });
-            resolve(addNetNames);
+            resolve("Add network names success.");
             })
           )
           promises.push(addNetNames);
@@ -1152,14 +1152,14 @@ export class SiteEditComponent implements OnInit {
             }
           })
           // Delete network type
-          const deleteNetTypes = await new Promise<string>(resolve => self.siteEditService.deleteNetworkTypes(self.data.site.site_id, networkTypeID ).subscribe((response) => {
+          const deleteNetTypes = new Promise<string>(resolve => self.siteEditService.deleteNetworkTypes(self.data.site.site_id, networkTypeID ).subscribe((response) => {
               let index = self.returnData.networkType.forEach(function(returnNetType, i){
                 if(networkType.network_type_id === returnNetType.network_type_id){
                   return i;
                 }
               });
               self.returnData.networkType.splice(self.returnData.networkType.indexOf(index), 1);
-              resolve(deleteNetTypes);
+              resolve("Delete network types success.");
             })
           )
           promises.push(deleteNetTypes);
@@ -1182,13 +1182,13 @@ export class SiteEditComponent implements OnInit {
           // Only add new network names
           if(networkType.selected && !skiptypes.includes(networkType.network_type_name)){
             console.log("add" + networkType.network_type_name);
-            const addNetTypes = await new Promise<string>(resolve => self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+            const addNetTypes = new Promise<string>(resolve => self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
               response.forEach(function(network){
                 if(!self.returnData.networkType.join(',').includes(network.network_type_name)){
                   self.returnData.networkType.push(network.network_type_name);
                 }
               })
-              resolve(addNetTypes)
+              resolve("Add network types success.");
               })
             )
             promises.push(addNetTypes);
@@ -1201,13 +1201,13 @@ export class SiteEditComponent implements OnInit {
       for(let networkType of this.networkTypes) {
         if(networkType.selected){
           console.log("add" + networkType.network_type_name);
-          const addNetTypes = await new Promise<string>(resolve => self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
+          const addNetTypes = new Promise<string>(resolve => self.siteEditService.postNetworkTypes(self.data.site.site_id, networkType.network_type_id ).subscribe((response) => {
             response.forEach(function(network){
               if(!self.returnData.networkType.join(',').includes(network.network_type_name)){
                 self.returnData.networkType.push(network.network_type_name);
               }
             })
-            resolve(addNetTypes)
+            resolve("Add network types success.");
             })
           )
           promises.push(addNetTypes)
@@ -1220,7 +1220,7 @@ export class SiteEditComponent implements OnInit {
       for(let ht of siteHousingValue) {
         if (ht.site_housing_id !== null && ht.site_housing_id !== undefined) {
           //PUT it
-          const updateHousing = await new Promise<string>(resolve => self.siteEditService.putSiteHousings(ht.site_housing_id, ht).subscribe((response) => {
+          const updateHousing = new Promise<string>(resolve => self.siteEditService.putSiteHousings(ht.site_housing_id, ht).subscribe((response) => {
               let index = self.returnData.housings.forEach(function(returnHousing, i){
                 if(ht.site_housing_id === returnHousing.site_housing_id){
                   return i;
@@ -1229,7 +1229,7 @@ export class SiteEditComponent implements OnInit {
               self.returnData.housings.splice(self.returnData.housings.indexOf(index), 1);
               response = self.getHousingType(response);
               self.returnData.housings.push(response);
-              resolve(updateHousing);
+              resolve("Update housing success.");
             })
           )
           promises.push(updateHousing);
@@ -1237,10 +1237,10 @@ export class SiteEditComponent implements OnInit {
           // Remove site housing id field before sending to avoid 500 error
           delete ht.site_housing_id;
           //POST it
-          const addHousing = await new Promise<string>(resolve => self.siteEditService.postSiteHousings(ht).subscribe((response) => {
+          const addHousing = new Promise<string>(resolve => self.siteEditService.postSiteHousings(ht).subscribe((response) => {
               response = self.getHousingType(response);
               self.returnData.housings.push(response);
-              resolve(addHousing);
+              resolve("Add housing success.");
             })
           )
           promises.push(addHousing);

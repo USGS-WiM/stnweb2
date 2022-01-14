@@ -17,16 +17,11 @@
     font-weight: 500;
 }
 
-.mat-expansion-panel-header-description {
-    flex-basis: 0;
-    justify-content: flex-end;
-    align-items: flex-start;
-}
-
 .tableContainer {
     width: 100%;
     margin-bottom: 20px;
     margin-top: 10px;
+    overflow-x: auto;
 }
 
 table {
@@ -45,6 +40,41 @@ table {
     vertical-align: middle;
     align-self: stretch;
 }
+
+.mat-column-ReferenceDatum{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-Elevation{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-OffsetCorrection{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-WaterSurface{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
+
+.mat-column-GroundSurface{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+} 
 
 .mat-header-cell {
     font-weight: bold;
@@ -69,52 +99,36 @@ table {
     display: block;
 }
 
-#unquantified {
-    margin-left: 15px;
-}
-
-#uncertainty.mat-form-field {
-    margin: 0px 0px 0px 15px;
-    display: block;
-    width: 50%;
-}
-
-.container {
-    margin-left: 15px;
-}
-
-.radio-btn-group {
+.dateFields .mat-form-field {
     margin: 15px;
-}
-
-.alert.alert-danger {
-    color: #f44336;
-}
-
-.info-icon {
-    font-size: 20px;
-    color: #03274B;
-    display: inline-flex !important;
-}
-
-.info-header-icon {
-    font-size: 20px;
-    color: #FFF;
-    text-align: right;
-}
-
-.close-button {
-    float: right;
-}
-
-.close-btn {
-    border: 1px solid #404040;
-}
-
-.controlID.mat-form-field {
-    margin: 0px 0px 0px 15px;
     display: block;
     width: 50%;
+}
+
+.dateFields {
+    display: inline-flex;
+}
+
+.disabled {
+    color: #000;
+}
+
+.date-input {
+    height: 60%;
+    margin: auto;
+    background-color: rgba(0, 0, 0, 0.04);
+    padding: 5px;
+    border: none;
+}
+
+.date-button {
+    margin-left: 10px;
+    border: 1px solid #404040;
+    background-color: #FFF;
+}
+
+.form-header {
+    font-weight: bold;
 }
 
 .ref-button-group {
@@ -126,22 +140,51 @@ table {
     color: #F4F4F4;
 }
 
-.add-button {
-    border: 1px solid #404040;
-}
-
 .cancel-btn {
     margin-left: 10px;
     border: 1px solid #404040;
 }
 
-.ctrl-btn {
-    margin: 10px;
+.close-button {
+    float: right;
+}
+
+.close-btn {
     border: 1px solid #404040;
 }
 
-.form-header {
+.add-button {
+    border: 1px solid #404040;
+}
+
+.required {
+    margin-right: 10px !important;
+    color: #E70000 !important;
     font-weight: bold;
+    display: inline-block;
+    line-height: 36px !important;
+    height: 36px;
+}
+
+.alert.alert-danger {
+    color: #f44336;
+}
+
+.note {
+    font-style: italic;
+    margin: 5px;
+}
+
+.tapedowns {
+    margin-left: 30px;
+}
+
+.tapedown-header {
+    margin: 5px;
+}
+
+.inline-fields {
+    display: inline-flex;
 }
 
 .loading {

@@ -36,6 +36,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import {MatDividerModule} from '@angular/material/divider';
 import {MatGridListModule} from '@angular/material/grid-list';
 
 import { HighchartsChartModule } from 'highcharts-angular';
@@ -67,6 +68,7 @@ import { HwmDialogComponent } from './hwm-dialog/hwm-dialog.component';
 import { SensorDialogComponent } from './sensor-dialog/sensor-dialog.component';
 import { PeakDialogComponent } from './peak-dialog/peak-dialog.component';
 import { FileDetailsDialogComponent } from './file-details-dialog/file-details-dialog.component';
+import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SiteEditComponent } from './site-edit/site-edit.component';
@@ -104,6 +106,7 @@ import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
         CreatePasswordComponent,
         RefDatumEditComponent,
         HwmEditComponent,
+        SensorEditComponent,
     ],
     imports: [
         BrowserModule,
@@ -145,6 +148,7 @@ import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
         MatTooltipModule,
         MatDatepickerModule,
         MatNativeDateModule,
+        MatDividerModule,
         MatGridListModule,
     ],
     providers: [
