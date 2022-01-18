@@ -1,0 +1,105 @@
+.mat-expansion-panel-header {
+    background-color: #03274B;
+}
+
+.mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
+    color: #FFF;
+    background-color: #03274B; 
+}
+
+.mat-expansion-panel-header:hover {
+    background-color: #03274B !important;
+    color: #FFF !important;
+}
+
+.mat-expansion-panel .mat-expansion-panel-header .mat-expansion-panel-header-title {
+    color: #FFF;
+    font-weight: 500;
+}
+
+.mat-expansion-panel-header-description {
+    flex-basis: 0;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.tableContainer {
+    width: 100%;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-column-FileName{
+    padding: 10px;
+    vertical-align: middle;
+    border-right: 1px solid #e0e0e0;
+    align-self: stretch;
+}
+
+.mat-column-FileDate{
+    padding: 10px;
+    vertical-align: middle;
+    align-self: stretch;
+}
+
+.mat-header-cell {
+    font-weight: bold;
+    text-transform: uppercase;
+    color:rgba(0, 0, 0, 0.87);
+    font-size: 12px;
+    vertical-align: middle;
+    background-color: #f7f7f7;
+}
+
+.mat-cell, .mat-header-cell, .mat-footer-cell {
+    overflow: auto;
+    column-width: 170px;
+}
+
+.radio-button {
+    margin: 5px;
+}
+
+.mat-form-field {
+    margin: 15px;
+    display: block;
+}
+
+.radio-btn-group {
+    margin: 15px;
+}
+
+.add-button {
+    border: 1px solid #404040;
+}
+
+.alert.alert-danger {
+    color: #f44336;
+}
+
+.info-icon {
+    font-size: 20px;
+    color: #03274B;
+    display: inline-flex !important;
+}
+
+.form-header {
+    font-weight: bold;
+}
+
+.save-btn {
+    color: #F4F4F4;
+}
+
+.cancel-btn {
+    margin-left: 10px;
+    border: 1px solid #404040;
+}
+
+.close-button {
+    float: right;
+}
