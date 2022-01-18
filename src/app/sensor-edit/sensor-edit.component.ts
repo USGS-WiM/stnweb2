@@ -4,6 +4,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, V
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { EventService } from '@app/services/event.service';
 import { SensorEditService } from '@app/services/sensor-edit.service';
 import { SiteService } from '@app/services/site.service';
 import { TimezonesService } from '@app/services/timezones.service';
@@ -22,6 +23,7 @@ export class SensorEditComponent implements OnInit {
 
   public sensor;
   public form;
+  public events;
   public sensorTypes;
   public sensorBrands;
   public housingTypes;
@@ -49,6 +51,7 @@ export class SensorEditComponent implements OnInit {
   public initLostRefMarks = [];
   public newStatusID = null;
   public initStatusID;
+  public role = Number(localStorage.role);
   public returnData;
 
   constructor(
@@ -56,6 +59,7 @@ export class SensorEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public sensorEditService: SensorEditService,
     public siteService: SiteService,
+    public eventService: EventService,
     public timezonesService: TimezonesService,
     public dialog: MatDialog,
   ) { }
@@ -104,6 +108,9 @@ export class SensorEditComponent implements OnInit {
       this.opsPresent = true;
     }
 
+    if(this.role === 1){
+      this.getEventList();
+    }
     this.createTapedownTable();
     this.getSensorTypes();
     this.getSensorBrands();
@@ -115,6 +122,12 @@ export class SensorEditComponent implements OnInit {
     this.getInitFiles();
     this.setMembers();
     this.initForm();
+  }
+
+  getEventList() {
+    this.eventService.getAllEvents().subscribe(results => {
+      this.events = results;
+    })
   }
 
   getSensorTypes() {
