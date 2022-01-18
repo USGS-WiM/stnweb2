@@ -108,6 +108,18 @@ describe('SensorEditComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should set the event lookup', () => {
+    const response: any[] = [{event_id: 0, event_name: "test"}];
+
+    spyOn(component.eventService, 'getAllEvents').and.returnValue(
+        of(response)
+    );
+
+    component.getEventList();
+    fixture.detectChanges();
+    expect(component.events).toEqual(response);
+  });
+
   it('should set the sensor type lookup', () => {
     const response: any[] = [{sensor_type_id: 0}];
 

@@ -17,8 +17,18 @@
                         Deployed Sensor Information
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <div>
+                <div *ngIf="role === 2 || role === 3">
                     <label class="form-header">Event: </label> {{this.sensor.eventName}}
+                </div>
+                <div *ngIf="role === 1">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Event</mat-label>
+                        <mat-select required aria-label="Event" formControlName="event_id">
+                            <mat-option *ngFor="let event of events" [value]="event.event_id">
+                            {{event.event_name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
                 <mat-form-field appearance="fill">
                     <mat-label>Sensor Type</mat-label>
