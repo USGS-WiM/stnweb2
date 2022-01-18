@@ -77,21 +77,4 @@ describe('SensorDialogComponent', () => {
     expect(component.members[0]).toEqual({name: "John Smith", status: "Deployed"});
   });
 
-  it('should call getTapedowns', () => {
-    const response = [{ground_surface: 9, water_surface: 7, offset_correction: 1, objective_point_id: 1}];
-    const opInfoResponse = {name: "test"}
-    spyOn(component.siteService, 'getOPMeasurements').and.returnValue(
-        of(response)
-    );
-    spyOn(component.siteService, 'getOPInfo').and.returnValue(
-      of(opInfoResponse)
-    );
-    component.setElevations();
-    fixture.detectChanges();
-    expect(component.retrievedTapedowns[0]).toEqual({ground_surface: 9, water_surface: 7, offset_correction: 1, rmName: "test"});
-    expect(component.lostTapedowns[0]).toEqual({ground_surface: 9, water_surface: 7, offset_correction: 1, rmName: "test"});
-    expect(component.deployedTapedowns[0]).toEqual({ground_surface: 9, water_surface: 7, offset_correction: 1, rmName: "test", elevation: "NADV88"});
-  });
-
-
 });
