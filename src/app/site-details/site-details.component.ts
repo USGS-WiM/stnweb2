@@ -542,12 +542,14 @@ export class SiteDetailsComponent implements OnInit {
                                                 if (result.statusID === status.status_type_id){
                                                     result.statusType = status.status;
                                                     self.siteFullInstruments = self.siteFullInstruments.filter(({ statusType }) => statusType !== 'Proposed');
+                                                    if(self.sensorDataSource.data !== self.siteFullInstruments){
+                                                        self.sensorDataSource.data = self.siteFullInstruments;
+                                                        self.sensorDataSource.paginator = self.sensorPaginator;
+                                                    }
                                                 }
                                             });
                                         })
                                     });
-                                    this.sensorDataSource.data = this.siteFullInstruments;
-                                    this.sensorDataSource.paginator = this.sensorPaginator;
                                 })
                                 // Full instrument info
                                 this.siteFullInstruments.forEach(function(result){
