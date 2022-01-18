@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { EventService } from '@app/services/event.service';
 import { HwmEditService } from '@app/services/hwm-edit.service';
 import { SiteService } from '@app/services/site.service';
 
@@ -14,6 +15,7 @@ export class HwmEditComponent implements OnInit {
 
   public form;
   public hwm;
+  public events;
   public vdatums;
   public vmethods;
   public hdatums;
@@ -25,6 +27,7 @@ export class HwmEditComponent implements OnInit {
   public flagMember;
   public approvalDate;
   public approvalMember;
+  public approved = false;
   public initHWMFiles = [];
   public hwm_environment;
   public hwmBank;
@@ -32,6 +35,7 @@ export class HwmEditComponent implements OnInit {
   public uncertainty_unit = "ft";
   public latLngUnit = "decdeg";
   public incorrectDMS = false;
+  public role = Number(localStorage.role);
   public dms = {
     latdeg: null,
     latmin: null,
@@ -55,13 +59,13 @@ export class HwmEditComponent implements OnInit {
     private dialogRef: MatDialogRef<HwmEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public siteService: SiteService,
+    public eventService: EventService,
     public hwmEditService: HwmEditService,
     public dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
     this.hwm = this.data.hwm;
-    console.log(this.hwm);
     this.hwm_environment = this.hwm.hwm_environment;
     this.hwmBank = this.hwm.bank;
     this.hmethods = this.data.hmethodList;
@@ -73,14 +77,31 @@ export class HwmEditComponent implements OnInit {
       this.isStillwater = "No";
     }
 
+    // Admins can change event
+    if(this.role === 1){
+      this.getEventList();
+    }
+
+    this.getInitFiles();
     this.getVDatums();
     this.getVMethods();
     this.getHWMTypes();
     this.getHWMMarkers();
     this.getHWMQualities();
     this.setMembers();
-    this.getApproval();
+    if(this.hwm.approval_id){
+      this.getApproval();
+      this.approved = true;
+    }else{
+      this.approved = false;
+    }
     this.initForm();
+  }
+
+  getEventList() {
+    this.eventService.getAllEvents().subscribe(results => {
+      this.events = results;
+    })
   }
 
   getVDatums() {
@@ -123,14 +144,7 @@ export class HwmEditComponent implements OnInit {
   getApproval() {
     this.hwmEditService.getApproval(this.hwm.approval_id)
       .subscribe((results) => {
-        // Format approval date
-        // let approvalDate = results.approval_date.split("T")[0];
-        // approvalDate = approvalDate.split("-");
-        // approvalDate = approvalDate[1] + "/" + approvalDate[2] + "/" + approvalDate[0];
-        // this.approvalDate = approvalDate;
-        console.log(results.approval_date)
         this.approvalDate = new Date(results.approval_date);
-        console.log(this.approvalDate)
         if(results.member_id !== undefined){
           // Approval member
           this.siteService
@@ -167,7 +181,7 @@ export class HwmEditComponent implements OnInit {
   getInitFiles() {
     let self = this;
     this.data.files.forEach(function(file){
-      if(file.objective_point_id === self.hwm.objective_point_id){
+      if(file.hwm_id === self.hwm.hwm_id){
         self.initHWMFiles.push(file);
       }
     })
@@ -188,20 +202,20 @@ export class HwmEditComponent implements OnInit {
       lonsec: new FormControl(this.dms.lonsec),
       hwm_quality_id: new FormControl(this.hwm.hwm_quality_id !== undefined && this.hwm.hwm_quality_id !== "" ? this.hwm.hwm_quality_id : null, Validators.required),
       bank: new FormControl(this.hwm.bank !== undefined && this.hwm.bank !== "" ? this.hwm.bank : null),
-      elev_ft: new FormControl(this.hwm.elev_ft !== undefined && this.hwm.elev_ft !== "" ? this.hwm.elev_ft : null),
-      hwm_locationdescription: new FormControl(this.hwm.hwm_locationdescription !== undefined && this.hwm.hwm_locationdescription !== "" ? this.hwm.hwm_locationdescription : null, Validators.required),
+      elev_ft: new FormControl(this.hwm.elev_ft !== undefined && this.hwm.elev_ft !== "" ? this.hwm.elev_ft : null, [this.isNum()]),
+      hwm_locationdescription: new FormControl(this.hwm.hwm_locationdescription !== undefined && this.hwm.hwm_locationdescription !== "" ? this.hwm.hwm_locationdescription : null),
       hwm_environment: new FormControl(this.hwm.hwm_environment !== undefined && this.hwm.hwm_environment !== "" ? this.hwm.hwm_environment : null, Validators.required),
       hdatum_id: new FormControl(this.hwm.hdatum_id !== undefined && this.hwm.hdatum_id !== "" ? this.hwm.hdatum_id : null, Validators.required),
       hcollect_method_id: new FormControl(this.hwm.hcollect_method_id !== undefined && this.hwm.hcollect_method_id !== "" ? this.hwm.hcollect_method_id : null, Validators.required),
-      height_above_gnd: new FormControl(this.hwm.height_above_gnd !== undefined && this.hwm.height_above_gnd !== "" ? this.hwm.height_above_gnd : null),
+      height_above_gnd: new FormControl(this.hwm.height_above_gnd !== undefined && this.hwm.height_above_gnd !== "" ? this.hwm.height_above_gnd : null, [this.isNum()]),
       stillwater: new FormControl(this.hwm.stillwater !== undefined && this.hwm.stillwater !== "" ? this.hwm.stillwater : null),
       flag_date: new FormControl(this.hwm.flag_date !== undefined && this.hwm.flag_date !== "" ? this.hwm.flag_date : null, Validators.required),
       survey_date: new FormControl(this.hwm.survey_date !== undefined && this.hwm.survey_date !== "" ? this.hwm.survey_date : null),
       site_id: new FormControl(this.data.site_id !== undefined && this.data.site_id !== "" ? this.data.site_id : null),
       vdatum_id: new FormControl(this.hwm.vdatum_id !== undefined && this.hwm.vdatum_id !== "" ? this.hwm.vdatum_id : null),
       vcollect_method_id: new FormControl(this.hwm.vcollect_method_id !== undefined && this.hwm.vcollect_method_id !== "" ? this.hwm.vcollect_method_id : null),
-      hwm_uncertainty: new FormControl(this.hwm.hwm_uncertainty !== undefined && this.hwm.hwm_uncertainty !== "" ? this.hwm.hwm_uncertainty : null),
-      uncertainty: new FormControl(this.hwm.uncertainty !== undefined && this.hwm.uncertainty !== "" ? this.hwm.uncertainty : null),
+      hwm_uncertainty: new FormControl(this.hwm.hwm_uncertainty !== undefined && this.hwm.hwm_uncertainty !== "" ? this.hwm.hwm_uncertainty : null, [this.isNum()]),
+      uncertainty: new FormControl(this.hwm.uncertainty !== undefined && this.hwm.uncertainty !== "" ? this.hwm.uncertainty : null, [this.isNum()]),
       hwm_id: new FormControl(this.hwm.hwm_id !== undefined && this.hwm.hwm_id !== "" ? this.hwm.hwm_id : null),
       hwm_label: new FormControl(this.hwm.hwm_label !== undefined && this.hwm.hwm_label !== "" ? this.hwm.hwm_label : null, Validators.required),
       hwm_notes: new FormControl(this.hwm.hwm_notes !== undefined && this.hwm.hwm_notes !== "" ? this.hwm.hwm_notes : null),
@@ -211,6 +225,8 @@ export class HwmEditComponent implements OnInit {
       approval_id: new FormControl(this.hwm.approval_id !== undefined && this.hwm.approval_id !== "" ? this.hwm.approval_id : null),
       event_id: new FormControl(this.hwm.event_id !== undefined && this.hwm.event_id !== "" ? this.hwm.event_id : null),
     })
+
+    this.setLatLngValidators();
   }
 
   changeHWMEnvironment(value) {
@@ -276,6 +292,7 @@ export class HwmEditComponent implements OnInit {
   //hwm quality chosen (or it changed from above), check to make sure it is congruent with input above
   compareToUncertainty() {
     let uncertainty = this.form.get("hwm_uncertainty").value;
+    let qualityId = this.form.get("hwm_quality_id").value;
     if (uncertainty !== "" && uncertainty !== undefined) {
         var x = Number(uncertainty);
         if(uncertainty <= 1){
@@ -284,7 +301,7 @@ export class HwmEditComponent implements OnInit {
           // Very poor, max range is infinity
           var matchingQualId = this.hwmQualities.filter(function (h) { return h.hwm_quality_id === 5 })[0].hwm_quality_id;
         }
-        if (uncertainty !== matchingQualId) {
+        if (qualityId !== matchingQualId) {
             //show warning modal and focus in uncertainty
             alert("There is a mismatch between the hwm quality chosen and the hwm uncertainty above. Please correct your hwm uncertainty.");
         }
@@ -449,6 +466,21 @@ export class HwmEditComponent implements OnInit {
     }
   }
 
+  // Create a date without time
+  makeAdate(d) {
+    var aDate = new Date();
+    if (d !== "" && d !== undefined) {
+        //provided date
+        aDate = new Date(d);
+    }
+    var year = aDate.getFullYear();
+    var month = aDate.getMonth();
+    var day = ('0' + aDate.getDate()).slice(-2);
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var dateWOtime = new Date(monthNames[month] + " " + day + ", " + year);
+    return dateWOtime;
+  };
+
   submit() {
     this.form.markAllAsTouched();
     if(this.form.valid){
@@ -465,19 +497,19 @@ export class HwmEditComponent implements OnInit {
         this.form.get("uncertainty").setValue((parseFloat(this.form.controls.uncertainty.value) / 30.48).toFixed(6));
       }
 
-      
       //if they added a survey date, apply survey member as logged in member
-      if (this.form.get("survey_date").value !== undefined && this.form.get("survey_member_id").value === undefined)
-        // this.form.get("survey_member_id").setValue(localStorage.getItem('currentUser').member_id));
+      if (this.form.get("survey_date").value !== undefined && this.form.get("survey_member_id").value === undefined){
+        this.form.get("survey_member_id").setValue(JSON.parse(localStorage.getItem('currentUser')).member_id);
+      }
 
       if (this.form.get("elev_ft").value !== undefined && this.form.get("elev_ft").value !== null) {
         //make sure they added the survey date if they added an elevation
-        if (this.form.get("survey_date").value === undefined){
-          // this.form.get("survey_date").setValue(makeAdate(""));
+        if (this.form.get("survey_date").value === undefined || this.form.get("survey_date").value === null){
+          this.form.get("survey_date").setValue(this.makeAdate(""));
         }
 
-        if (this.form.get("survey_member_id").value === undefined){
-          // this.form.get("survey_member_id").setValue(localStorage.getItem('currentUser').member_id));
+        if (this.form.get("survey_member_id").value === undefined || this.form.get("survey_member_id").value === null){
+          this.form.get("survey_member_id").setValue(JSON.parse(localStorage.getItem('currentUser')).member_id);
         }
     }
 
@@ -497,6 +529,11 @@ export class HwmEditComponent implements OnInit {
     const updateHWM = new Promise<string>((resolve, reject) => this.hwmEditService.putHWM(hwmSubmission.hwm_id, hwmSubmission).subscribe(results => {
       if(results.length !== 0){
         this.returnData = results;
+        // Add formatted date
+        let flagDate = this.returnData.flag_date.split("T")[0];
+        flagDate = flagDate.split("-");
+        flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
+        this.returnData.format_flag_date = flagDate;
         resolve("Success");
       }else{
         // Error

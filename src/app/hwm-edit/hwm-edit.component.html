@@ -19,8 +19,18 @@
                 <mat-label>Waterbody</mat-label>
                 <input aria-label="Waterbody" matInput formControlName="waterbody" [value]="hwm.waterbody"/>
             </mat-form-field>
-            <div>
+            <div *ngIf="role === 3 || role === 2">
                 <label class="form-header">Event: </label> {{this.hwm.eventName}}
+            </div>
+            <div *ngIf="role === 1">
+                <mat-form-field appearance="fill">
+                    <mat-label>Event</mat-label>
+                    <mat-select aria-label="Event" required formControlName="event_id">
+                        <mat-option *ngFor="let event of events" [value]="event.event_id">
+                        {{event.event_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
             <mat-form-field appearance="fill">
                 <mat-label>HWM Type</mat-label>
@@ -52,7 +62,7 @@
             </div>
             <mat-form-field appearance="fill">
                 <mat-label>HWM Uncertainty</mat-label>
-                <input aria-label="HWM Uncertainty" matInput formControlName="hwm_uncertainty" (change)="chooseQuality()"  [value]="hwm.hwm_uncertainty"/>
+                <input aria-label="HWM Uncertainty" type="number" matInput formControlName="hwm_uncertainty" (change)="chooseQuality()"  [value]="hwm.hwm_uncertainty"/>
                 <mat-icon matSuffix class="info-icon" matTooltip="A numeric uncertainty entered here is the preferred method of recording uncertainty and represents the vertical range of peak surfaces that could be described by the HWM evidence (see TM3-A24, pg.27). Do not include any survey uncertainty, which is entered further below.">info</mat-icon>
             </mat-form-field>
             <mat-form-field appearance="fill">
@@ -87,7 +97,7 @@
             <div *ngIf="latLngUnit === 'decdeg'">            
                 <mat-form-field appearance="fill">
                     <mat-label>Latitude</mat-label>
-                    <input aria-label="Latitude" required matInput formControlName="latitude_dd" [value]="hwm.latitude_dd"/>
+                    <input aria-label="Latitude" type="number" required matInput formControlName="latitude_dd" [value]="hwm.latitude_dd"/>
                 </mat-form-field>
                 <!-- LatDD Validator -->
                 <div *ngIf="form.controls.latitude_dd.invalid && (form.controls.latitude_dd.dirty || form.controls.latitude_dd.touched)"
@@ -98,7 +108,7 @@
                 </div>
                 <mat-form-field appearance="fill">
                     <mat-label>Longitude</mat-label>
-                    <input aria-label="longitude" required matInput formControlName="longitude_dd" [value]="hwm.longitude_dd"/>
+                    <input aria-label="longitude" type="number" required matInput formControlName="longitude_dd" [value]="hwm.longitude_dd"/>
                 </mat-form-field>
                 <!-- LonDD Validator -->
                 <div *ngIf="form.controls.longitude_dd.invalid && (form.controls.longitude_dd.dirty || form.controls.longitude_dd.touched)"
@@ -117,21 +127,21 @@
                         <td>
                             <mat-form-field appearance="fill">
                                 <mat-label>Degree</mat-label>
-                                <input aria-label="Degree" required formControlName="latdeg" matInput [value]="dms.latdeg"/>
+                                <input type="number" aria-label="Degree" required formControlName="latdeg" matInput [value]="dms.latdeg"/>
                             </mat-form-field>
                         </td>
                         <td>°</td>
                         <td>
                             <mat-form-field appearance="fill">
                                 <mat-label>Minute</mat-label>
-                                <input aria-label="Minute" required formControlName="latmin" matInput [value]="dms.latmin"/>
+                                <input type="number" aria-label="Minute" required formControlName="latmin" matInput [value]="dms.latmin"/>
                             </mat-form-field>
                         </td>
                         <td>′</td>
                         <td>
                             <mat-form-field appearance="fill">
                                 <mat-label>Second</mat-label>
-                                <input aria-label="Second" required formControlName="latsec" matInput [value]="dms.latsec"/>
+                                <input type="number" aria-label="Second" required formControlName="latsec" matInput [value]="dms.latsec"/>
                             </mat-form-field>
                         </td>
                         <td>″</td>
@@ -164,21 +174,21 @@
                         <td>
                             <mat-form-field appearance="fill">
                                 <mat-label>Degree</mat-label>
-                                <input aria-label="Degree" required formControlName="londeg" matInput [value]="dms.londeg"/>
+                                <input type="number" aria-label="Degree" required formControlName="londeg" matInput [value]="dms.londeg"/>
                             </mat-form-field>
                         </td>
                         <td>°</td>
                         <td>
                             <mat-form-field appearance="fill">
                                 <mat-label>Minute</mat-label>
-                                <input aria-label="Minute" required formControlName="lonmin" matInput [value]="dms.lonmin"/>
+                                <input type="number" aria-label="Minute" required formControlName="lonmin" matInput [value]="dms.lonmin"/>
                             </mat-form-field>
                         </td>
                         <td>′</td>
                         <td>
                             <mat-form-field appearance="fill">
                                 <mat-label>Second</mat-label>
-                                <input aria-label="Second" required formControlName="lonsec" matInput [value]="dms.lonsec"/>
+                                <input type="number" aria-label="Second" required formControlName="lonsec" matInput [value]="dms.lonsec"/>
                             </mat-form-field>
                         </td>
                         <td>″</td>
@@ -222,7 +232,7 @@
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Height Above Ground (Ft)</mat-label>
-                <input aria-label="Height Above Ground" matInput formControlName="height_above_gnd" [value]="hwm.height_above_gnd"/>
+                <input type="number" aria-label="Height Above Ground" matInput formControlName="height_above_gnd" [value]="hwm.height_above_gnd"/>
             </mat-form-field>
             <div>
                 <label class="form-header">Tranquil/Stillwater HWM:</label>
@@ -254,7 +264,7 @@
             </div>
             <mat-form-field appearance="fill">
                 <mat-label>Surveyed Elevation (Ft)</mat-label>
-                <input aria-label="Surveyed Elevation" matInput formControlName="elev_ft" [value]="hwm.elev_ft"/>
+                <input type="number" aria-label="Surveyed Elevation" matInput formControlName="elev_ft" [value]="hwm.elev_ft"/>
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Vertical Datum</mat-label>
@@ -278,18 +288,20 @@
             </mat-radio-group>
             <mat-form-field id="uncertainty" appearance="fill">
                 <mat-label for="uncertainty">Survey Uncertainty</mat-label>
-                <input aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="hwm.uncertainty"/>
+                <input type="number" aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="hwm.uncertainty"/>
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label for="description">Notes</mat-label>
                 <textarea aria-label="description" matInput formControlName="hwm_notes" id="hwm_notes" [value]="hwm.hwm_notes"></textarea>
             </mat-form-field>
-            <div>
-                <label class="form-header">Approved By: </label> {{approvalMember}}
-            </div>
-            <div class="vertically-aligned">
-                <label class="form-header">Approved On: </label> {{approvalDate}}
-                <mat-icon class="info-icon" matTooltip="Time displayed as local, stored in UTC.">info</mat-icon>
+            <div *ngIf="approved">
+                <div>
+                    <label class="form-header">Approved By: </label> {{approvalMember}}
+                </div>
+                <div class="vertically-aligned">
+                    <label class="form-header">Approved On: </label> {{approvalDate}}
+                    <mat-icon class="info-icon" matTooltip="Time displayed as local, stored in UTC.">info</mat-icon>
+                </div>
             </div>
             </mat-expansion-panel>
             <mat-expansion-panel hideToggle [expanded]="filesExpanded"  (opened)="filesExpanded = true" (closed)="filesExpanded = false">
@@ -301,54 +313,42 @@
                     HWM File Information
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="tableContainer">
-                <table *ngIf="initHWMFiles.length > 0; else noHWMFileTable"
+            <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+            <div class="tableContainer" [hidden]="initHWMFiles?.length === 0">
+                <table
                     mat-table
                     id="hwmFilesTable"
-                    [dataSource]="filesDataSource"
-                    (matSortChange)="sortFilesData($event)"
+                    [dataSource]="initHWMFiles"
                     class="mat-elevation-z5"
-                    matSort
                 >
-                    <!-- HWM file date column -->
-                    <ng-container matColumnDef="FileDate">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
-                        <td mat-cell *matCellDef="let file">
-                            <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayHWMFileDate">
-                                ---
-                            </div>
-                            <ng-template #displayHWMFileDate>
-                                {{ file.file_date }}
-                            </ng-template>
-                        </td>
-                    </ng-container>
-
-                    <!-- HWM file name column -->
+                    <!-- file name column -->
                     <ng-container matColumnDef="FileName">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">File Name</th>
+                        <th mat-header-cell *matHeaderCellDef>File Name</th>
                         <td mat-cell *matCellDef="let file">
-                            <div *ngIf="file.name === '' || file.name === undefined; else displayHWMFileName">
-                                ---
+                            <div>
+                                {{file.name}}
                             </div>
-                            <ng-template #displayHWMFileName>
-                                {{ file.name }}
-                            </ng-template>
                         </td>
                     </ng-container>
 
-                    <tr mat-header-row *matHeaderRowDef="displayedHWMFileColumns"></tr>
+                    <!-- file date column -->
+                    <ng-container matColumnDef="FileDate">
+                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                        <td mat-cell *matCellDef="let file">
+                            <div>
+                                {{file.format_file_date}}
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedFileColumns"></tr>
                     <tr
                         mat-row
-                        *matRowDef="let row; columns: displayedHWMFileColumns"
-                        (click)="openFileDetailsDialog(row, 'HWM File')"
-                        class="results-row"
+                        *matRowDef="let row; columns: displayedFileColumns"
+                        class="file-table"
                     ></tr>
                 </table>
             </div>
-            <ng-template #noHWMFileTable>
-                <p class="tableContainer">No HWM Files listed.</p>
-            </ng-template>
-            <mat-paginator [hidden]="hwmFiles === undefined || hwmFiles.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
             </mat-expansion-panel>
         </mat-accordion>
     </mat-dialog-content>

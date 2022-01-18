@@ -969,6 +969,15 @@ export class SiteDetailsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             console.log(result);
+            let self = this;
+            if(result) {
+                this.hwmDataSource.data.forEach(function(hwm, i){
+                    if(hwm.hwm_id === result.hwm_id){
+                        self.hwmDataSource.data[i] = result; 
+                        self.hwmDataSource.data = [...self.hwmDataSource.data];
+                    }
+                })
+            }
         });
     }
 

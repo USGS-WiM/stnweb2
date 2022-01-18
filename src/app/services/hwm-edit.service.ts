@@ -75,7 +75,9 @@ export class HwmEditService {
   //Update a HWM
   public putHWM(hwm_id, hwm): Observable<any> {
     return this.httpClient
-        .get(APP_SETTINGS.API_ROOT + '/hwms/' + hwm_id + '.json', hwm)
+        .put(APP_SETTINGS.API_ROOT + 'hwms/' + hwm_id + '.json', hwm, {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
         .pipe(
             tap((response) => {
                 console.log(
