@@ -24,9 +24,6 @@ export class SensorDialogComponent implements OnInit {
   public lostSensors = 0;
   public retrievedSensors = 0;
   public eventName;
-  public deployedTapedowns = [];
-  public retrievedTapedowns = [];
-  public lostTapedowns = [];
   public deployedExpanded = false;
   public retrievedExpanded = false;
   public lostExpanded = false;
@@ -49,14 +46,6 @@ export class SensorDialogComponent implements OnInit {
     'FileName',
   ];
 
-  displayedTapedownColumns: string[] = [
-    'ReferenceDatum',
-    'Elevation',
-    'OffsetCorrection',
-    'WaterSurface',
-    'GroundSurface',
-  ];
-
   constructor(
     private dialogRef: MatDialogRef<SensorDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -75,7 +64,6 @@ export class SensorDialogComponent implements OnInit {
       
       this.getSensorFiles();
       this.setMembers();
-      this.setElevations();
 
       let self = this;
       // Check sensor statuses
@@ -140,50 +128,6 @@ export class SensorDialogComponent implements OnInit {
           self.members.push({name: results.fname + " " + results.lname, status: instrument.status});
         }
       })
-    })
-  }
-
-  setElevations(){
-    let self = this;
-
-    function getTapedowns(tapedownArray, instrument){
-      if(instrument.vdatum !== undefined && instrument.vdatum !== ''){
-        tapedownArray.push({elevation: instrument.vdatum});
-      }
-        self.siteService
-        .getOPMeasurements(instrument.instrument_status_id)
-        .subscribe((results) => {
-          if(results.length > 0){
-            if (tapedownArray[0] !== undefined){
-              tapedownArray[0].ground_surface = results[0].ground_surface;
-            }else{
-              tapedownArray.push({ground_surface: results[0].ground_surface});
-            }
-            tapedownArray[0].water_surface = results[0].water_surface;
-            tapedownArray[0].offset_correction = results[0].offset_correction;
-            // get reference datum info using objective_point_id
-            self.siteService
-            .getOPInfo(results[0].objective_point_id)
-            .subscribe((objectivePoints) => {
-              tapedownArray[0].rmName = objectivePoints.name;
-              if(objectivePoints.elev_ft !== undefined){
-                tapedownArray[0].elevation = objectivePoints.elev_ft + " " + instrument.vdatum;
-              }
-            })
-          }
-        });
-    }
-
-    this.data.row_data.instrument_status.forEach(function(instrument){
-      if(instrument.status === 'Deployed'){
-        getTapedowns(self.deployedTapedowns, instrument);
-      }
-      else if (instrument.status === 'Retrieved'){
-        getTapedowns(self.retrievedTapedowns, instrument);
-      }
-      else if (instrument.status === 'Lost'){
-        getTapedowns(self.lostTapedowns, instrument);
-      }
     })
   }
 
