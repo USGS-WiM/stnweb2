@@ -12,7 +12,7 @@ import 'leaflet';
     providedIn: 'root',
 })
 export class FiltersService {
-    private resultsPanelState = new BehaviorSubject(false);
+    private resultsPanelState = new BehaviorSubject(true);
     public resultsPanelOpen = this.resultsPanelState.asObservable();
     constructor() {}
 

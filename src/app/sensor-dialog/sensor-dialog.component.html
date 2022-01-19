@@ -635,7 +635,35 @@
                 </table>
             </div>
             <ng-template #noSensorFileTable>
-                <p class="tableContainer">No Sensor Files listed.</p>
+                <table
+                    mat-table
+                    id="sensorFilesTable"
+                    [dataSource]="blankFilesDataSource"
+                    class="mat-elevation-z5"
+                >
+                    <!-- file date -->
+                    <ng-container matColumnDef="FileDate">
+                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                        <td mat-cell *matCellDef="let file">
+                            {{file.date}}
+                        </td>
+                    </ng-container>
+
+                    <!-- file name -->
+                    <ng-container matColumnDef="FileName">
+                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                        <td mat-cell *matCellDef="let file">
+                            {{file.name}}
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedSensorFileColumns"></tr>
+                    <tr
+                        mat-row
+                        *matRowDef="let row; columns: displayedSensorFileColumns"
+                        class="results-row"
+                    ></tr>
+                </table>
             </ng-template>
             <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>
@@ -692,7 +720,35 @@
             </table>
         </div>
         <ng-template #noNWISFileTable>
-            <p class="tableContainer">No NWIS Files listed.</p>
+            <table
+                mat-table
+                id="nwisFilesTable"
+                [dataSource]="blankFilesDataSource"
+                class="mat-elevation-z5"
+            >
+                <!-- peak stage -->
+                <ng-container matColumnDef="FileDate">
+                    <th mat-header-cell *matHeaderCellDef>File Date</th>
+                    <td mat-cell *matCellDef="let file">
+                        {{file.date}}
+                    </td>
+                </ng-container>
+
+                <!-- event name -->
+                <ng-container matColumnDef="FileName">
+                    <th mat-header-cell *matHeaderCellDef>File Name</th>
+                    <td mat-cell *matCellDef="let file">
+                        {{file.name}}
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedNWISFileColumns"></tr>
+                <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedNWISFileColumns"
+                    class="results-row"
+                ></tr>
+            </table>
         </ng-template>
         <mat-paginator [hidden]="nwisFiles === undefined || nwisFiles.length === 0" #nwisFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
         </mat-expansion-panel>

@@ -530,10 +530,61 @@
                                 class="results-row"
                             ></tr>
                         </table>
-                        <ng-template #noRMTable>
-                            <p class="tableContainer">No Reference Datums listed.</p>
-                        </ng-template>
                     </div>
+                    <ng-template #noRMTable>
+                        <table
+                            mat-table
+                            id="datumLocTable"
+                            [dataSource]="blankDataSource"
+                            class="mat-elevation-z5"
+                        >
+                            <!-- reference datum name column -->
+                            <ng-container matColumnDef="RefMarkName">
+                                <th mat-header-cell *matHeaderCellDef>Name</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.date}}
+                                </td>
+                            </ng-container>
+
+                            <!-- reference datum elevation column -->
+                            <ng-container matColumnDef="RefMarkEl">
+                                <th mat-header-cell *matHeaderCellDef>Elevation (ft)</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- Button Column -->
+                            <ng-container matColumnDef="button">
+                                <th mat-header-cell *matHeaderCellDef>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <button mat-stroked-button disabled class="view-details-btn"
+                                        aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                    </button>
+                                    <button mat-stroked-button disabled class="edit-details-btn"
+                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                    </button>
+                                    <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                        <button mat-menu-item disabled
+                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                            <span>Delete</span>
+                                        </button>
+                                    </mat-menu>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedRMColumns"></tr>
+                            <tr
+                                mat-row
+                                *matRowDef="let row; columns: displayedRMColumns"
+                                class="results-row"
+                            ></tr>
+                        </table>
+                    </ng-template>
                     <mat-paginator [hidden]="referenceDatums === undefined || referenceDatums.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Sensors ({{siteFullInstruments.length}})">
@@ -645,10 +696,85 @@
                                 class="results-row"
                             ></tr>
                         </table>
-                        <ng-template #noSensorTable>
-                            <p class="tableContainer">No Sensors listed.</p>
-                        </ng-template>
                     </div>
+                    <ng-template #noSensorTable>
+                        <table
+                            mat-table
+                            id="sensorTable"
+                            [dataSource]="blankDataSource"
+                            class="mat-elevation-z5"
+                        >
+                            <!-- serial number -->
+                            <ng-container matColumnDef="serial_number">
+                                <th mat-header-cell *matHeaderCellDef>Serial Number</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.date}}
+                                </td>
+                            </ng-container>
+
+                            <!-- event -->
+                            <ng-container matColumnDef="eventName">
+                                <th mat-header-cell *matHeaderCellDef>Event</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- deployment type -->
+                            <ng-container matColumnDef="deploymentType">
+                                <th mat-header-cell *matHeaderCellDef>Deployment Type</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- sensor type -->
+                            <ng-container matColumnDef="sensorType">
+                                <th mat-header-cell *matHeaderCellDef>Sensor Type</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- status -->
+                            <ng-container matColumnDef="statusType">
+                                <th mat-header-cell *matHeaderCellDef>Status</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- Button Column -->
+                            <ng-container matColumnDef="button">
+                                <th mat-header-cell *matHeaderCellDef>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <button mat-stroked-button disabled class="view-details-btn"
+                                        aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                    </button>
+                                    <button mat-stroked-button disabled class="edit-details-btn"
+                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                    </button>
+                                    <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                        <button mat-menu-item disabled
+                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                            <span>Delete</span>
+                                        </button>
+                                    </mat-menu>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedSensorColumns"></tr>
+                            <tr
+                                mat-row
+                                *matRowDef="let row; columns: displayedSensorColumns"
+                                class="results-row"
+                            ></tr>
+                        </table>
+                    </ng-template>
                     <mat-paginator [hidden]="siteFullInstruments === undefined || siteFullInstruments.length === 0" #sensorPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="High Water Marks ({{hwm.length}})">
@@ -694,11 +820,11 @@
                             <ng-container matColumnDef="flag_date">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header="flag_date">Flag Date</th>
                                 <td mat-cell *matCellDef="let mark">
-                                    <div *ngIf="mark.flag_date === '' || mark.flag_date === undefined; else displayFlagDate">
+                                    <div *ngIf="mark.format_flag_date === '' || mark.format_flag_date === undefined; else displayFlagDate">
                                         ---
                                     </div>
                                     <ng-template #displayFlagDate>
-                                        {{ mark.flag_date }}
+                                        {{ mark.format_flag_date }}
                                     </ng-template>
                                 </td>
                             </ng-container>
@@ -721,9 +847,21 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-stroked-button class="view-details-btn" (click)="openHWMDetailsDialog(row)"
-                                    aria-label="Edit">View Details
-                                </button>
+                                    <button mat-stroked-button class="view-details-btn" (click)="openHWMDetailsDialog(row)"
+                                        aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                    </button>
+                                    <button mat-stroked-button class="edit-details-btn" (click)="openHWMEditDialog(row)"
+                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                    </button>
+                                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                    <button mat-menu-item
+                                        aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <span>Delete</span>
+                                    </button>
+                                    </mat-menu>
                                 </td>
                             </ng-container>
 
@@ -734,10 +872,77 @@
                                 class="results-row"
                             ></tr>
                         </table>
-                        <ng-template #noHWMTable>
-                            <p class="tableContainer">No HWMs listed.</p>
-                        </ng-template>
                     </div>
+                    <ng-template #noHWMTable>
+                        <table
+                            mat-table
+                            id="hwmTable"
+                            [dataSource]="blankDataSource"
+                            class="mat-elevation-z5"
+                        >
+                            <!-- hwm id -->
+                            <ng-container matColumnDef="hwm_id">
+                                <th mat-header-cell *matHeaderCellDef>HWM ID</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.date}}
+                                </td>
+                            </ng-container>
+
+                            <!-- label -->
+                            <ng-container matColumnDef="hwm_label">
+                                <th mat-header-cell *matHeaderCellDef>Label</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- flag date -->
+                            <ng-container matColumnDef="flag_date">
+                                <th mat-header-cell *matHeaderCellDef>Flag Date</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- label -->
+                            <ng-container matColumnDef="elev_ft">
+                                <th mat-header-cell *matHeaderCellDef>Elevation (ft)</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- Button Column -->
+                            <ng-container matColumnDef="button">
+                                <th mat-header-cell *matHeaderCellDef>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <button mat-stroked-button disabled class="view-details-btn"
+                                        aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                    </button>
+                                    <button mat-stroked-button disabled class="edit-details-btn"
+                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                    </button>
+                                    <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                        <button mat-menu-item disabled
+                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                            <span>Delete</span>
+                                        </button>
+                                    </mat-menu>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedHWMColumns"></tr>
+                            <tr
+                                mat-row
+                                *matRowDef="let row; columns: displayedHWMColumns"
+                                class="results-row"
+                            ></tr>
+                        </table>
+                    </ng-template>
                     <mat-paginator [hidden]="hwm === undefined || hwm.length === 0" #hwmPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Peaks ({{peaks.length}})">
@@ -809,10 +1014,69 @@
                                 class="results-noclick-row"
                             ></tr>
                         </table>
-                        <ng-template #noPeakTable>
-                            <p class="tableContainer">No Peaks listed.</p>
-                        </ng-template>
                     </div>
+                    <ng-template #noPeakTable>
+                        <table
+                            mat-table
+                            id="peakTable"
+                            [dataSource]="blankDataSource"
+                            class="mat-elevation-z5"
+                        >
+                            <!-- peak stage -->
+                            <ng-container matColumnDef="PeakStage">
+                                <th mat-header-cell *matHeaderCellDef>Stage</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.date}}
+                                </td>
+                            </ng-container>
+
+                            <!-- event name -->
+                            <ng-container matColumnDef="PeakEventName">
+                                <th mat-header-cell *matHeaderCellDef>Event Name</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- peak date -->
+                            <ng-container matColumnDef="PeakDate">
+                                <th mat-header-cell *matHeaderCellDef>Date</th>
+                                <td mat-cell *matCellDef="let file">
+                                    {{file.name}}
+                                </td>
+                            </ng-container>
+
+                            <!-- Button Column -->
+                            <ng-container matColumnDef="button">
+                                <th mat-header-cell *matHeaderCellDef>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <button mat-stroked-button disabled class="view-details-btn"
+                                        aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                    </button>
+                                    <button mat-stroked-button disabled class="edit-details-btn"
+                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                    </button>
+                                    <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                        <button mat-menu-item disabled
+                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                            <span>Delete</span>
+                                        </button>
+                                    </mat-menu>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedPeakColumns"></tr>
+                            <tr
+                                mat-row
+                                *matRowDef="let row; columns: displayedPeakColumns"
+                                class="results-row"
+                            ></tr>
+                        </table>
+                    </ng-template>
                     <mat-paginator [hidden]="peaks === undefined || peaks.length === 0" #peaksPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                 </mat-tab>
                 <mat-tab label="Files ({{fileLength}})">
@@ -882,7 +1146,46 @@
                                 </table>
                             </div>
                             <ng-template #noSiteFileTable>
-                                <p class="tableContainer">No Site Files listed.</p>
+                                <table
+                                    mat-table
+                                    id="siteFilesTable"
+                                    [dataSource]="blankFileDataSource"
+                                    class="mat-elevation-z5"
+                                >
+                                    <!-- site file date column -->
+                                    <ng-container matColumnDef="FileDate">
+                                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.format_file_date}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- site file name column -->
+                                    <ng-container matColumnDef="FileName">
+                                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.name}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Button Column -->
+                                    <ng-container matColumnDef="button">
+                                        <th mat-header-cell *matHeaderCellDef>
+                                        </th>
+                                        <td mat-cell *matCellDef="let row">
+                                            <button mat-stroked-button disabled class="view-details-btn"
+                                                aria-label="View Details">View Details
+                                            </button>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="displayedSiteFileColumns"></tr>
+                                    <tr
+                                        mat-row
+                                        *matRowDef="let row; columns: displayedSiteFileColumns"
+                                        class="results-row"
+                                    ></tr>
+                                </table>
                             </ng-template>
                             <mat-paginator [hidden]="siteFiles === undefined || siteFiles.length === 0" #siteFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
@@ -963,7 +1266,54 @@
                                 </table>
                             </div>
                             <ng-template #noDatumFileTable>
-                                <p class="tableContainer">No Reference Datum Files listed.</p>
+                                <table
+                                    mat-table
+                                    id="datumLocFilesTable"
+                                    [dataSource]="blankFileDataSource"
+                                    class="mat-elevation-z5"
+                                >
+                                    <!-- file date column -->
+                                    <ng-container matColumnDef="FileDate">
+                                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.format_file_date}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- file name column -->
+                                    <ng-container matColumnDef="FileName">
+                                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.name}}
+                                        </td>
+                                    </ng-container>
+
+                                     <!-- datum file datum column -->
+                                     <ng-container matColumnDef="FileDatum">
+                                        <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.name}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Button Column -->
+                                    <ng-container matColumnDef="button">
+                                        <th mat-header-cell *matHeaderCellDef>
+                                        </th>
+                                        <td mat-cell *matCellDef="let row">
+                                            <button mat-stroked-button disabled class="view-details-btn"
+                                                aria-label="View Details">View Details
+                                            </button>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="displayedDatumFileColumns"></tr>
+                                    <tr
+                                        mat-row
+                                        *matRowDef="let row; columns: displayedDatumFileColumns"
+                                        class="results-row"
+                                    ></tr>
+                                </table>
                             </ng-template>
                             <mat-paginator [hidden]="datumLocFiles === undefined || datumLocFiles.length === 0" #refMarkFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
@@ -1044,7 +1394,54 @@
                                 </table>
                             </div>
                             <ng-template #noSensorFileTable>
-                                <p class="tableContainer">No Sensor Files listed.</p>
+                                <table
+                                    mat-table
+                                    id="sensorFilesTable"
+                                    [dataSource]="blankFileDataSource"
+                                    class="mat-elevation-z5"
+                                >
+                                    <!-- site file date column -->
+                                    <ng-container matColumnDef="FileDate">
+                                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.format_file_date}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- site file name column -->
+                                    <ng-container matColumnDef="FileName">
+                                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.name}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Sensor file serial number column -->
+                                    <ng-container matColumnDef="FileSerialNum">
+                                        <th mat-header-cell *matHeaderCellDef>Sensor Serial Number</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.name}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Button Column -->
+                                    <ng-container matColumnDef="button">
+                                        <th mat-header-cell *matHeaderCellDef>
+                                        </th>
+                                        <td mat-cell *matCellDef="let row">
+                                            <button mat-stroked-button disabled class="view-details-btn"
+                                                aria-label="View Details">View Details
+                                            </button>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="displayedSensorFileColumns"></tr>
+                                    <tr
+                                        mat-row
+                                        *matRowDef="let row; columns: displayedSensorFileColumns"
+                                        class="results-row"
+                                    ></tr>
+                                </table>
                             </ng-template>
                             <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>
@@ -1112,7 +1509,46 @@
                                 </table>
                             </div>
                             <ng-template #noHWMFileTable>
-                                <p class="tableContainer">No HWM Files listed.</p>
+                                <table
+                                    mat-table
+                                    id="hwmFilesTable"
+                                    [dataSource]="blankFileDataSource"
+                                    class="mat-elevation-z5"
+                                >
+                                    <!-- site file date column -->
+                                    <ng-container matColumnDef="FileDate">
+                                        <th mat-header-cell *matHeaderCellDef>File Date</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.format_file_date}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- site file name column -->
+                                    <ng-container matColumnDef="FileName">
+                                        <th mat-header-cell *matHeaderCellDef>File Name</th>
+                                        <td mat-cell *matCellDef="let file">
+                                            {{file.name}}
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Button Column -->
+                                    <ng-container matColumnDef="button">
+                                        <th mat-header-cell *matHeaderCellDef>
+                                        </th>
+                                        <td mat-cell *matCellDef="let row">
+                                            <button mat-stroked-button disabled class="view-details-btn"
+                                                aria-label="View Details">View Details
+                                            </button>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="displayedHWMFileColumns"></tr>
+                                    <tr
+                                        mat-row
+                                        *matRowDef="let row; columns: displayedHWMFileColumns"
+                                        class="results-row"
+                                    ></tr>
+                                </table>
                             </ng-template>
                             <mat-paginator [hidden]="hwmFiles === undefined || hwmFiles.length === 0" #hwmFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                         </mat-expansion-panel>

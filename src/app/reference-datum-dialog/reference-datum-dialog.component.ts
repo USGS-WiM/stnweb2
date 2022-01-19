@@ -24,6 +24,7 @@ export class ReferenceDatumDialogComponent implements OnInit {
   public controlID;
 
   refMarkFilesDataSource = new MatTableDataSource<any>();
+  blankFilesDataSource = new MatTableDataSource<any>();
   sortedRefMarkFilesData = [];
 
   displayedDatumFileColumns: string[] = [
@@ -41,6 +42,9 @@ export class ReferenceDatumDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Display a blank row if no files
+    this.blankFilesDataSource.data = [{date: "---", name: "---"}];
+
     if(this.data.row_data !== undefined){
       this.setOPType();
       this.setHDatum();

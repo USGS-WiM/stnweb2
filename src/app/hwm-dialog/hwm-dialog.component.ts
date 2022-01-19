@@ -30,6 +30,7 @@ export class HwmDialogComponent implements OnInit {
   filesExpanded = false;
 
   filesDataSource = new MatTableDataSource<any>();
+  blankFilesDataSource = new MatTableDataSource<any>();
   sortedFilesData = [];
   
   displayedHWMFileColumns: string[] = [
@@ -44,6 +45,9 @@ export class HwmDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Display a blank row if no files
+    this.blankFilesDataSource.data = [{date: "---", name: "---"}];
+    
     if(this.data.row_data !== undefined){
       this.getHWMFiles();
       this.setHDatum();

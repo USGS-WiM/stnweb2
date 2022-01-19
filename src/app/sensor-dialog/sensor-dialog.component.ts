@@ -35,6 +35,7 @@ export class SensorDialogComponent implements OnInit {
 
   nwisFilesDataSource = new MatTableDataSource<any>();
   sensorFilesDataSource = new MatTableDataSource<any>();
+  blankFilesDataSource = new MatTableDataSource<any>();
 
   sortedSensorFilesData = [];
   sortedNWISFilesData = [];
@@ -64,6 +65,9 @@ export class SensorDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Display a blank row if no files
+    this.blankFilesDataSource.data = [{date: "---", name: "---"}];
+
     if(this.data.row_data !== undefined){
       if(this.data.row_data.statusType === "Deployed"){
         this.deployedExpanded = true;

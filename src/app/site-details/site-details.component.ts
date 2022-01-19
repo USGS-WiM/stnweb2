@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MAP_CONSTANTS } from '@app/map/map-constants';
 import {
     Router,
     ActivatedRoute,
@@ -88,11 +89,13 @@ export class SiteDetailsComponent implements OnInit {
     sensorFilesDataSource = new MatTableDataSource<any>();
     hwmFilesDataSource = new MatTableDataSource<any>();
     siteFilesDataSource = new MatTableDataSource<any>();
+    blankFileDataSource = new MatTableDataSource<any>();
+    blankDataSource = new MatTableDataSource<any>();
 
-    siteFilesExpanded = false;
-    hwmFilesExpanded = false;
-    refDatumFilesExpanded = false;
-    sensorFilesExpanded = false;
+    siteFilesExpanded = true;
+    hwmFilesExpanded = true;
+    refDatumFilesExpanded = true;
+    sensorFilesExpanded = true;
 
     sortedSensorData = [];
     sortedHWMData = [];
@@ -249,8 +252,11 @@ export class SiteDetailsComponent implements OnInit {
             this.siteID = routeParams.id
         })
 
-        this.getData();
+        // Display a blank row if no files or table info
+        this.blankFileDataSource.data = [{format_file_date: "---", name: "---"}];
+        this.blankDataSource.data = [{file_date: "---", name: "---"}];
 
+        this.getData();
     }
 
     ngAfterViewInit(): void {
