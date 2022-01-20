@@ -652,7 +652,7 @@ export class SiteDetailsComponent implements OnInit {
                                     let peakDate = result.peak_date.split("T")[0];
                                     peakDate = peakDate.split("-");
                                     peakDate = peakDate[1] + "/" + peakDate[2] + "/" + peakDate[0];
-                                    result.peak_date = peakDate;
+                                    result.format_peak_date = peakDate;
                                     self.peaks.push(result);
                                 }
                             }) 
@@ -1064,8 +1064,9 @@ export class SiteDetailsComponent implements OnInit {
             data: {
                 peak: row,
                 site_id: this.site.site_id,
-                siteRefMarks: this.refMarkDataSource.data,
+                siteHWMs: this.hwmDataSource.data,
                 siteSensors: this.sensorDataSource.data,
+                sensorFiles: this.sensorFilesDataSource.data,
             },
             width: '100%',
             autoFocus: false

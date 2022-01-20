@@ -798,7 +798,7 @@
                                         ---
                                     </div>
                                     <ng-template #displayPeakDate>
-                                        {{ peak.peak_date }}
+                                        {{ peak.format_peak_date }}
                                     </ng-template>
                                 </td>
                             </ng-container>
@@ -808,9 +808,18 @@
                                 <th mat-header-cell *matHeaderCellDef>
                                 </th>
                                 <td mat-cell *matCellDef="let row">
-                                <button mat-stroked-button class="view-details-btn" (click)="openPeaksDetailsDialog(row, 'Peak')"
-                                    aria-label="Edit">View Details
-                                </button>
+                                    <button mat-stroked-button class="edit-details-btn" (click)="openPeaksEditDialog(row)"
+                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                    </button>
+                                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                    <button mat-menu-item
+                                        aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <span>Delete</span>
+                                    </button>
+                                    </mat-menu>
                                 </td>
                             </ng-container>
 

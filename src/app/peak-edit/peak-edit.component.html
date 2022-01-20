@@ -18,7 +18,7 @@
                     aria-checked="false"
                     class="checkbox-margin"
                     formControlName="hwm"
-                    >HWM {{hwm.hwm_name}} {{hwm.elev_ft}} ft</mat-checkbox
+                    >HWM {{hwm.hwm_label}} {{hwm.elev_ft}} ft</mat-checkbox
                 >
             </div>
         </section>
@@ -28,14 +28,14 @@
                 <label
                     class="filter-label"
                     aria-label="Select sensor files"
-                    >{{sensor.name}}</label
+                    >{{sensor.deploymentType}}</label
                 >
                 <div *ngFor="let file of sensor.files">
                     <mat-checkbox
                         aria-checked="false"
                         class="checkbox-margin"
                         formControlName="sensor"
-                        >{{file.file_name}}</mat-checkbox
+                        >{{file.name}}</mat-checkbox
                     >
                 </div>
             </div>
@@ -44,20 +44,26 @@
         <section>
             <mat-form-field appearance="fill">
                 <mat-label for="peak_calc_notes">Peak Calculation Notes</mat-label>
-                <textarea aria-label="Peak Calculation Notes" matInput formControlName="peak_calc_notes" id="peak_calc_notes" [value]="peak.peak_calc_notes"></textarea>
+                <textarea aria-label="Peak Calculation Notes" matInput formControlName="calc_notes" id="peak_calc_notes" [value]="peak.calc_notes"></textarea>
                 <mat-icon matSuffix class="info-icon" matTooltip="Please document the reason this peak was chosen for this event." 
                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
             </mat-form-field>
-            <mat-checkbox
+            <mat-form-field appearance="fill">
+                <mat-label>Peak Date</mat-label>
+                <input aria-label="Peak Date" matInput formControlName="peak_date" [value]="peak.peak_date" [matDatepicker]="peakDatePicker" required placeholder="Choose a date">
+                <mat-datepicker-toggle matSuffix [for]="peakDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker [value]="peak.peak_date" #peakDatePicker></mat-datepicker>
+            </mat-form-field>
+            <!-- <mat-checkbox
                 aria-checked="false"
                 class="checkbox-margin"
-                formControlName="peak_discharge_estimated"
+                formControlName="is_peak_date_estimated"
                 >Date Estimated?</mat-checkbox
-            >
+            > -->
             <mat-checkbox
                 aria-checked="false"
                 class="checkbox-margin"
-                formControlName="peak_discharge_estimated"
+                formControlName="is_peak_time_estimated"
                 >Time Estimated?</mat-checkbox
             >
             <mat-form-field appearance="fill">
@@ -80,7 +86,7 @@
             <mat-checkbox
                 aria-checked="false"
                 class="checkbox-margin"
-                formControlName="peak_stage_estimated"
+                formControlName="is_peak_stage_estimated"
                 >Peak Stage Estimated?</mat-checkbox
             >
             <mat-form-field appearance="fill">
@@ -104,14 +110,14 @@
         </section>
         <section>
             <mat-card>
-                <mat-form-field appearance="fill">
+                <!-- <mat-form-field appearance="fill">
                     <mat-label>Peak Discharge</mat-label>
                     <input aria-label="Peak Discharge" matInput formControlName="peak_discharge" [value]="peak.peak_discharge"/>
-                </mat-form-field>
+                </mat-form-field> -->
                 <mat-checkbox
                     aria-checked="false"
                     class="checkbox-margin"
-                    formControlName="peak_discharge_estimated"
+                    formControlName="is_peak_discharge_estimated"
                     >Peak Discharge Estimated?</mat-checkbox
                 >
                 <mat-form-field appearance="fill">
@@ -120,15 +126,15 @@
                 </mat-form-field>
                 <mat-form-field appearance="fill">
                     <mat-label>AEP Confidence Interval (Lower Limit)</mat-label>
-                    <input aria-label="Peak Stage" matInput formControlName="peak_stage" [value]="peak.peak_stage"/>
+                    <input aria-label="AEP Confidence Interval (Lower Limit)" matInput formControlName="aep_lower_limit" [value]="peak.aep_lower_limit"/>
                 </mat-form-field>
                 <mat-form-field appearance="fill">
                     <mat-label>AEP Confidence Interval (Upper Limit)</mat-label>
-                    <input aria-label="Height Above Ground" matInput formControlName="height_above_gnd" [value]="peak.height_above_gnd"/>
+                    <input aria-label="AEP Confidence Interval (Upper Limit)" matInput formControlName="aep_upper_limit" [value]="peak.aep_upper_limit"/>
                 </mat-form-field>
                 <mat-form-field appearance="fill">
                     <mat-label>AEP Confidence Interval (Percentage of Limits)</mat-label>
-                    <input aria-label="Height Above Ground" matInput formControlName="height_above_gnd" [value]="peak.height_above_gnd"/>
+                    <input aria-label="AEP Confidence Interval (Percentage of Limits)" matInput formControlName="aep_percentage" [value]="peak.aep_percentage"/>
                 </mat-form-field>
             </mat-card>
         </section>
