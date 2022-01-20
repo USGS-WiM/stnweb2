@@ -20,6 +20,7 @@ import { MatMenuModule } from '@angular/material/menu';
 
 declare let L: any;
 import 'leaflet';
+import { componentFactoryName } from '@angular/compiler';
 
 describe('SiteDetailsComponent', () => {
     let component: SiteDetailsComponent;
@@ -68,12 +69,24 @@ describe('SiteDetailsComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('should change dimensions on resize', () => {
+        let mockEvent = {target: {innerWidth: 760}}
+
+        component.onResize(mockEvent);
+        fixture.detectChanges();
+        expect(component.gridListWidth).toEqual(1);
+        expect(component.lowerColumns).toEqual(1);
+        expect(component.rowHeight).toEqual("1:0.8");
+        expect(component.rowspan).toEqual("2");
+        expect(component.lowerHeight).toEqual("1:1");
+    });
+
     it('should call getCurrentEvent and return current event', () => {
         const response: any[] = [];
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(response)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(component.currentEvent).toEqual(response);
     });
@@ -87,7 +100,7 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
             of(response)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(component.event).toEqual("Hurricane Delta");
     });
@@ -101,7 +114,7 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
             of(response)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(component.event).toEqual("All Events");
     });
@@ -397,8 +410,12 @@ describe('SiteDetailsComponent', () => {
         const siteResponse = [{site: 7}]
         const fullSensorResponse = [{sensorBrand: "test", sensorType: "test", instrument_status: []}]
         const currentEvent = 4;
+        const eventResponse = [{event_id: 4, event_name: "test"}];
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSiteEvents').and.returnValue(
+            of(eventResponse)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
@@ -419,7 +436,7 @@ describe('SiteDetailsComponent', () => {
         let siteEventFilesSpy = spyOn(component.siteService, 'getSiteEventFiles').and.returnValue(
             of(responseSiteFiles)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(siteSensorSpy).toHaveBeenCalled();
         expect(component.siteFullInstruments.length).toEqual(3);
@@ -445,8 +462,12 @@ describe('SiteDetailsComponent', () => {
         
         const siteResponse = [{site: 7}]
         const currentEvent = 4;
+        const eventResponse = [{event_id: 4, event_name: "test"}];
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSiteEvents').and.returnValue(
+            of(eventResponse)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
@@ -465,7 +486,7 @@ describe('SiteDetailsComponent', () => {
             of(statusResponse)
         );
 
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(siteSensorSpy).toHaveBeenCalled();
         expect(component.siteFullInstruments.length).toEqual(1);
@@ -486,9 +507,13 @@ describe('SiteDetailsComponent', () => {
         ]
         const siteResponse = [{site: 7}]
         const currentEvent = 4;
+        const eventResponse = [{event_id: 4, event_name: "test"}];
         const sensorFileResponse = 1;
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSiteEvents').and.returnValue(
+            of(eventResponse)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
@@ -499,7 +524,7 @@ describe('SiteDetailsComponent', () => {
         let siteEventFilesSpy = spyOn(component.siteService, 'getSiteEventFiles').and.returnValue(
             of(responseSiteFiles)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(component.hwmFiles.length).toEqual(1);
         expect(component.sensorFiles.length).toEqual(1);
