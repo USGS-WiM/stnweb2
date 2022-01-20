@@ -28,6 +28,7 @@ import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.compon
 import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
 import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
+import { PeakEditComponent } from '@app/peak-edit/peak-edit.component';
 
 @Component({
     selector: 'app-site-details',
@@ -1056,6 +1057,24 @@ export class SiteDetailsComponent implements OnInit {
 
     openPeaksDetailsDialog(row): void {
         console.log(row)
+    }
+
+    openPeaksEditDialog(row): void {
+        const dialogRef = this.dialog.open(PeakEditComponent, {
+            data: {
+                peak: row,
+                site_id: this.site.site_id,
+                siteRefMarks: this.refMarkDataSource.data,
+                siteSensors: this.sensorDataSource.data,
+            },
+            width: '100%',
+            autoFocus: false
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result){
+                console.log(result)
+            }
+        });
     }
 
     openFileDetailsDialog(row, type): void {
