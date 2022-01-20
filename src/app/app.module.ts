@@ -77,6 +77,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component';
 import { RoleService } from './services/role.service';
 import { AgencyService } from './services/agency.service';
+import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
 
 @NgModule({
     declarations: [
@@ -104,6 +105,7 @@ import { AgencyService } from './services/agency.service';
         AddUserDialogComponent,
         CreatePasswordComponent,
         RefDatumEditComponent,
+        HwmEditComponent,
         SensorEditComponent,
     ],
     imports: [

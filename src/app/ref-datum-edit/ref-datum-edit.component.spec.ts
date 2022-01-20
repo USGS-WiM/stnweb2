@@ -256,7 +256,7 @@ describe('RefDatumEditComponent', () => {
     expect(component.form.get('lonsec').value).toEqual('30.012');
   });
 
-  it('should show alert and stop loading if site form is invalid', () => {
+  it('should show alert and stop loading if form is invalid', () => {
     component.form.get("description").setValue(null);
     spyOn(window, 'alert');
 

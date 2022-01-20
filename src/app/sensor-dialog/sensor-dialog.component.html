@@ -42,91 +42,6 @@
                     <ng-template #nullHousingType><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
-                    <p class="content-left">Tapedowns</p>
-                    <table *ngIf="deployedTapedowns.length > 0; else noDeployedTapedowns"
-                        mat-table
-                        id="tapedownsTable"
-                        [dataSource]="deployedTapedowns"
-                        class="mat-elevation-z5"
-                        matSort
-                    >
-                        <!-- Reference Datum name column -->
-                        <ng-container matColumnDef="ReferenceDatum">
-                            <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
-                                    ---
-                                </div>
-                                <ng-template #displayTapedownRMName>
-                                    {{ tapedown.rmName }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-    
-                        <!-- Elevation column -->
-                        <ng-container matColumnDef="Elevation">
-                            <th mat-header-cell *matHeaderCellDef>Elevation</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.elevation === '' || tapedown.elevation === undefined; else displayTapedownElevation">
-                                    ---
-                                </div>
-                                <ng-template #displayTapedownElevation>
-                                    {{ tapedown.elevation }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-
-                        <!-- Offset correction column -->
-                        <ng-container matColumnDef="OffsetCorrection">
-                            <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.offset_correction === '' || tapedown.offset_correction === undefined; else displayOffsetCorrection">
-                                    ---
-                                </div>
-                                <ng-template #displayOffsetCorrection>
-                                    {{ tapedown.offset_correction }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-
-                        <!-- WS column -->
-                        <ng-container matColumnDef="WaterSurface">
-                            <th mat-header-cell *matHeaderCellDef>Water Surface</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.water_surface === '' || tapedown.water_surface === undefined; else displayWS">
-                                    ---
-                                </div>
-                                <ng-template #displayWS>
-                                    {{ tapedown.water_surface }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-
-                        <!-- GS column -->
-                        <ng-container matColumnDef="GroundSurface">
-                            <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.ground_surface === '' || tapedown.ground_surface === undefined; else displayGS">
-                                    ---
-                                </div>
-                                <ng-template #displayGS>
-                                    {{ tapedown.ground_surface }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-    
-                        <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
-                        <tr
-                            mat-row
-                            *matRowDef="let row; columns: displayedTapedownColumns"
-                            class="results-row"
-                        ></tr>
-                    </table>
-                    <ng-template #noDeployedTapedowns>
-                        <p class="content-right">None Chosen.</p>
-                    </ng-template>
-                </div>
-                <div class="cell-container">
                     <p class="content-left">Sensor Elevation</p>
                     <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElDeployed">
                         <div *ngFor="let instrument of data.row_data.instrument_status">
@@ -156,6 +71,16 @@
                         </div>
                     </div>
                     <ng-template #nullGSEDeployed><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">In Feet Above</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveDeployed">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullInFeetAboveDeployed><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
                     <p class="content-left">Vented</p>
@@ -281,91 +206,6 @@
                     <ng-template #nullTimezoneRetrieved><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
-                    <p class="content-left">Tapedowns</p>
-                    <table *ngIf="retrievedTapedowns.length > 0; else noRetrievedTapedowns"
-                        mat-table
-                        id="tapedownsTable"
-                        [dataSource]="retrievedTapedowns"
-                        class="mat-elevation-z5"
-                        matSort
-                    >
-                        <!-- Reference Datum name column -->
-                        <ng-container matColumnDef="ReferenceDatum">
-                            <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
-                                    ---
-                                </div>
-                                <ng-template #displayTapedownRMName>
-                                    {{ tapedown.rmName }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-    
-                        <!-- Elevation column -->
-                        <ng-container matColumnDef="Elevation">
-                            <th mat-header-cell *matHeaderCellDef>Elevation</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.elevation === '' || tapedown.elevation === undefined; else displayTapedownElevation">
-                                    ---
-                                </div>
-                                <ng-template #displayTapedownElevation>
-                                    {{ tapedown.elevation }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-
-                        <!-- Offset correction column -->
-                        <ng-container matColumnDef="OffsetCorrection">
-                            <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.offset_correction === '' || tapedown.offset_correction === undefined; else displayOffsetCorrection">
-                                    ---
-                                </div>
-                                <ng-template #displayOffsetCorrection>
-                                    {{ tapedown.offset_correction }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-
-                        <!-- WS column -->
-                        <ng-container matColumnDef="WaterSurface">
-                            <th mat-header-cell *matHeaderCellDef>Water Surface</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.water_surface === '' || tapedown.water_surface === undefined; else displayWS">
-                                    ---
-                                </div>
-                                <ng-template #displayWS>
-                                    {{ tapedown.water_surface }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-
-                        <!-- GS column -->
-                        <ng-container matColumnDef="GroundSurface">
-                            <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
-                            <td mat-cell *matCellDef="let tapedown">
-                                <div *ngIf="tapedown.ground_surface === '' || tapedown.ground_surface === undefined; else displayGS">
-                                    ---
-                                </div>
-                                <ng-template #displayGS>
-                                    {{ tapedown.ground_surface }}
-                                </ng-template>
-                            </td>
-                        </ng-container>
-    
-                        <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
-                        <tr
-                            mat-row
-                            *matRowDef="let row; columns: displayedTapedownColumns"
-                            class="results-row"
-                        ></tr>
-                    </table>
-                    <ng-template #noRetrievedTapedowns>
-                        <p class="content-right">None Chosen.</p>
-                    </ng-template>
-                </div>
-                <div class="cell-container">
                     <p class="content-left">Sensor Elevation</p>
                     <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElRetrieved">
                         <div *ngFor="let instrument of data.row_data.instrument_status">
@@ -394,6 +234,16 @@
                         </div>
                     </div>
                     <ng-template #nullGSERetrieved><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">In Feet Above</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveRetrieved">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullInFeetAboveRetrieved><p class="content-right">---</p></ng-template>
                 </div>
                 <div class="cell-container">
                     <p class="content-left">Member</p>
@@ -457,91 +307,6 @@
                 <ng-template #nullTimezoneLost><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
-                <p class="content-left">Tapedowns</p>
-                <table *ngIf="lostTapedowns.length > 0; else noLostTapedowns"
-                    mat-table
-                    id="tapedownsTable"
-                    [dataSource]="lostTapedowns"
-                    class="mat-elevation-z5"
-                    matSort
-                >
-                    <!-- Reference Datu name column -->
-                    <ng-container matColumnDef="ReferenceDatum">
-                        <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
-                        <td mat-cell *matCellDef="let tapedown">
-                            <div *ngIf="tapedown.rmName === '' || tapedown.rmName === undefined; else displayTapedownRMName">
-                                ---
-                            </div>
-                            <ng-template #displayTapedownRMName>
-                                {{ tapedown.rmName }}
-                            </ng-template>
-                        </td>
-                    </ng-container>
-
-                    <!-- Elevation column -->
-                    <ng-container matColumnDef="Elevation">
-                        <th mat-header-cell *matHeaderCellDef>Elevation</th>
-                        <td mat-cell *matCellDef="let tapedown">
-                            <div *ngIf="tapedown.elevation === '' || tapedown.elevation === undefined; else displayTapedownElevation">
-                                ---
-                            </div>
-                            <ng-template #displayTapedownElevation>
-                                {{ tapedown.elevation }}
-                            </ng-template>
-                        </td>
-                    </ng-container>
-
-                    <!-- Offset correction column -->
-                    <ng-container matColumnDef="OffsetCorrection">
-                        <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
-                        <td mat-cell *matCellDef="let tapedown">
-                            <div *ngIf="tapedown.offset_correction === '' || tapedown.offset_correction === undefined; else displayOffsetCorrection">
-                                ---
-                            </div>
-                            <ng-template #displayOffsetCorrection>
-                                {{ tapedown.offset_correction }}
-                            </ng-template>
-                        </td>
-                    </ng-container>
-
-                    <!-- WS column -->
-                    <ng-container matColumnDef="WaterSurface">
-                        <th mat-header-cell *matHeaderCellDef>Water Surface</th>
-                        <td mat-cell *matCellDef="let tapedown">
-                            <div *ngIf="tapedown.water_surface === '' || tapedown.water_surface === undefined; else displayWS">
-                                ---
-                            </div>
-                            <ng-template #displayWS>
-                                {{ tapedown.water_surface }}
-                            </ng-template>
-                        </td>
-                    </ng-container>
-
-                    <!-- GS column -->
-                    <ng-container matColumnDef="GroundSurface">
-                        <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
-                        <td mat-cell *matCellDef="let tapedown">
-                            <div *ngIf="tapedown.ground_surface === '' || tapedown.ground_surface === undefined; else displayGS">
-                                ---
-                            </div>
-                            <ng-template #displayGS>
-                                {{ tapedown.ground_surface }}
-                            </ng-template>
-                        </td>
-                    </ng-container>
-
-                    <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
-                    <tr
-                        mat-row
-                        *matRowDef="let row; columns: displayedTapedownColumns"
-                        class="results-row"
-                    ></tr>
-                </table>
-                <ng-template #noLostTapedowns>
-                    <p class="content-right">None Chosen.</p>
-                </ng-template>
-            </div>
-            <div class="cell-container">
                 <p class="content-left">Sensor Elevation</p>
                 <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElLost">
                     <div *ngFor="let instrument of data.row_data.instrument_status">
@@ -570,6 +335,16 @@
                     </div>
                 </div>
                 <ng-template #nullGSELost><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">In Feet Above</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveLost">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
+                    </div>
+                </div>
+                <ng-template #nullInFeetAboveLost><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
                 <p class="content-left">Member</p>

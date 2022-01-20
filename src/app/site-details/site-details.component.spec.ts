@@ -366,7 +366,7 @@ describe('SiteDetailsComponent', () => {
         expect(component.siteFullInstruments[0].statusType).not.toEqual(undefined);
         expect(hwmSpy).toHaveBeenCalled();
         expect(component.hwm.length).toEqual(3);
-        expect(component.hwm[0].flag_date).toContain("/");
+        expect(component.hwm[0].format_flag_date).toContain("/");
         expect(component.fileLength).toEqual(responseSiteFiles.length);
     });
 
@@ -454,7 +454,7 @@ describe('SiteDetailsComponent', () => {
         expect(component.siteFullInstruments.length).toEqual(3);
         expect(hwmSpy).toHaveBeenCalled();
         expect(component.hwm.length).toEqual(3);
-        expect(component.hwm[0].flag_date).toContain("/");
+        expect(component.hwm[0].format_flag_date).toContain("/");
         expect(siteFilesSpy).toHaveBeenCalled();
         expect(siteEventFilesSpy).toHaveBeenCalled();
         expect(fullSensorSpy).toHaveBeenCalled();
