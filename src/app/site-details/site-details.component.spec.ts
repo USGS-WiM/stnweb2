@@ -20,6 +20,7 @@ import { MatMenuModule } from '@angular/material/menu';
 
 declare let L: any;
 import 'leaflet';
+import { componentFactoryName } from '@angular/compiler';
 
 describe('SiteDetailsComponent', () => {
     let component: SiteDetailsComponent;
@@ -68,12 +69,24 @@ describe('SiteDetailsComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('should change dimensions on resize', () => {
+        let mockEvent = {target: {innerWidth: 760}}
+
+        component.onResize(mockEvent);
+        fixture.detectChanges();
+        expect(component.gridListWidth).toEqual(1);
+        expect(component.lowerColumns).toEqual(1);
+        expect(component.rowHeight).toEqual("1:0.8");
+        expect(component.rowspan).toEqual("2");
+        expect(component.lowerHeight).toEqual("1:1");
+    });
+
     it('should call getCurrentEvent and return current event', () => {
         const response: any[] = [];
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(response)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(component.currentEvent).toEqual(response);
     });
@@ -87,7 +100,7 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
             of(response)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(component.event).toEqual("Hurricane Delta");
     });
@@ -101,7 +114,7 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
             of(response)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(component.event).toEqual("All Events");
     });
@@ -112,6 +125,9 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(response)
         );
+
+        spyOn(component, 'toggleSiteMap');
+
         // Site service spies
         let hDatumSpy = spyOn(component.siteService, 'getHDatum').and.returnValue(of([]));
         let hCollectionMethodSpy = spyOn(component.siteService, 'getHCollectionMethod').and.returnValue(of([]));
@@ -138,6 +154,8 @@ describe('SiteDetailsComponent', () => {
             of(response)
         );
 
+        spyOn(component, 'toggleSiteMap');
+
         component.getData();
         fixture.detectChanges();
         expect(component.site).toEqual(undefined);
@@ -151,6 +169,8 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+
+        spyOn(component, 'toggleSiteMap');
 
         spyOn(component.siteService, 'getHDatum').and.returnValue(
             of(response)
@@ -169,6 +189,8 @@ describe('SiteDetailsComponent', () => {
             of(siteResponse)
         );
 
+        spyOn(component, 'toggleSiteMap');
+
         spyOn(component.siteService, 'getHCollectionMethod').and.returnValue(
             of(response)
         );
@@ -185,6 +207,8 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+
+        spyOn(component, 'toggleSiteMap');
 
         spyOn(component.siteService, 'getNetworkType').and.returnValue(
             of(response)
@@ -203,6 +227,8 @@ describe('SiteDetailsComponent', () => {
             of(siteResponse)
         );
 
+        spyOn(component, 'toggleSiteMap');
+
         spyOn(component.siteService, 'getNetworkName').and.returnValue(
             of(response)
         );
@@ -220,6 +246,8 @@ describe('SiteDetailsComponent', () => {
             of(siteResponse)
         );
 
+        spyOn(component, 'toggleSiteMap');
+
         spyOn(component.siteService, 'getObjectivePoints').and.returnValue(
             of(response)
         );
@@ -236,6 +264,8 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+
+        spyOn(component, 'toggleSiteMap');
 
         let landownerSpy = spyOn(component.siteService, 'getLandownerContact').and.returnValue(
             of(response)
@@ -256,6 +286,8 @@ describe('SiteDetailsComponent', () => {
             of(siteResponse)
         );
 
+        spyOn(component, 'toggleSiteMap');
+
         let memberSpy = spyOn(component.siteService, 'getMemberName').and.returnValue(
             of(response)
         );
@@ -273,6 +305,8 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+
+        spyOn(component, 'toggleSiteMap');
 
         let peakSpy = spyOn(component.siteService, 'getPeakSummaryView').and.returnValue(
             of(response)
@@ -325,6 +359,8 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+
+        spyOn(component, 'toggleSiteMap');
         let siteSensorSpy = spyOn(component.siteService, 'getSiteFullInstruments').and.returnValue(
             of(responseSensor)
         );
@@ -334,6 +370,8 @@ describe('SiteDetailsComponent', () => {
         let siteFilesSpy = spyOn(component.siteService, 'getSiteFiles').and.returnValue(
             of(responseSiteFiles)
         );
+        spyOn(component, 'getHWMsForMap');
+        spyOn(component, 'getSensorsForMap');
         component.getData();
         fixture.detectChanges();
         expect(siteSensorSpy).toHaveBeenCalled();
@@ -362,6 +400,7 @@ describe('SiteDetailsComponent', () => {
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+        spyOn(component, 'toggleSiteMap');
         spyOn(component.siteService, 'getFileSensor').and.returnValue(
             of(sensorFileResponse)
         );
@@ -397,12 +436,17 @@ describe('SiteDetailsComponent', () => {
         const siteResponse = [{site: 7}]
         const fullSensorResponse = [{sensorBrand: "test", sensorType: "test", instrument_status: []}]
         const currentEvent = 4;
+        const eventResponse = [{event_id: 4, event_name: "test"}];
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSiteEvents').and.returnValue(
+            of(eventResponse)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+        spyOn(component, 'toggleSiteMap');
         let siteSensorSpy = spyOn(component.siteService, 'getSiteEventInstruments').and.returnValue(
             of(responseSensor)
         );
@@ -412,6 +456,8 @@ describe('SiteDetailsComponent', () => {
         let hwmSpy = spyOn(component.siteService, 'getEventHWM').and.returnValue(
             of(responseHWM)
         );
+        spyOn(component, 'getHWMsForMap');
+        spyOn(component, 'getSensorsForMap');
         let siteFilesSpy = spyOn(component.siteService, 'getSiteFiles').and.returnValue(
             of(responseSiteFiles)
         );
@@ -419,7 +465,7 @@ describe('SiteDetailsComponent', () => {
         let siteEventFilesSpy = spyOn(component.siteService, 'getSiteEventFiles').and.returnValue(
             of(responseSiteFiles)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(siteSensorSpy).toHaveBeenCalled();
         expect(component.siteFullInstruments.length).toEqual(3);
@@ -445,15 +491,21 @@ describe('SiteDetailsComponent', () => {
         
         const siteResponse = [{site: 7}]
         const currentEvent = 4;
+        const eventResponse = [{event_id: 4, event_name: "test"}];
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(currentEvent)
+        )
+        spyOn(component.siteService, 'getSiteEvents').and.returnValue(
+            of(eventResponse)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+        spyOn(component, 'toggleSiteMap');
         let siteSensorSpy = spyOn(component.siteService, 'getSiteEventInstruments').and.returnValue(
             of(responseSensor)
         );
+        spyOn(component, 'getSensorsForMap');
         let deploymentTypeSpy = spyOn(component.siteService, 'getDeploymentTypes').and.returnValue(
             of(deploymentResponse)
         );
@@ -465,7 +517,7 @@ describe('SiteDetailsComponent', () => {
             of(statusResponse)
         );
 
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(siteSensorSpy).toHaveBeenCalled();
         expect(component.siteFullInstruments.length).toEqual(1);
@@ -486,20 +538,25 @@ describe('SiteDetailsComponent', () => {
         ]
         const siteResponse = [{site: 7}]
         const currentEvent = 4;
+        const eventResponse = [{event_id: 4, event_name: "test"}];
         const sensorFileResponse = 1;
         spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
             of(currentEvent)
         )
+        spyOn(component.siteService, 'getSiteEvents').and.returnValue(
+            of(eventResponse)
+        )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
             of(siteResponse)
         );
+        spyOn(component, 'toggleSiteMap');
         spyOn(component.siteService, 'getFileSensor').and.returnValue(
             of(sensorFileResponse)
         );
         let siteEventFilesSpy = spyOn(component.siteService, 'getSiteEventFiles').and.returnValue(
             of(responseSiteFiles)
         );
-        component.getData();
+        component.getEvent();
         fixture.detectChanges();
         expect(component.hwmFiles.length).toEqual(1);
         expect(component.sensorFiles.length).toEqual(1);
@@ -549,18 +606,6 @@ describe('SiteDetailsComponent', () => {
     });
 
     it ('map should be created when createSiteMap is called', () => {
-        component.siteFullInstruments = [
-            {deploymentType: "Barometric Pressure"}, 
-            {deploymentType: "Temperature"}, 
-            {deployementType: "Humidity"},
-        ];
-
-        component.hwm = [
-            {latitude_dd: "38", longitude_dd: "-79"}, 
-            {latitude_dd: "39", longitude_dd: "-80"}, 
-            {latitude_dd: "38.5", longitude_dd: "-79"},
-        ]
-
         const response: any[] = [{latitude_dd: 38, longitude_dd: -79, site_no: 8}]
 
         component.site = {latitude_dd: 44.64, longitude_dd: -89.73};
@@ -574,11 +619,61 @@ describe('SiteDetailsComponent', () => {
 
         component.createSiteMap();
         expect(component.map).not.toBeNull;
+        expect(proximitySpy).toHaveBeenCalled();
+        expect(component.markers.getLayers().length).toEqual(1);
+        document.querySelector("#mapContainer").remove();
+    });
+
+    it ('hwm markers should be added to map', () => {
+        component.hwm = [
+            {latitude_dd: "38", longitude_dd: "-79"}, 
+            {latitude_dd: "39", longitude_dd: "-80"}, 
+            {latitude_dd: "38.5", longitude_dd: "-79"},
+        ]
+
+        const response: any[] = [{latitude_dd: 38, longitude_dd: -79, site_no: 8}]
+
+        component.site = {latitude_dd: 44.64, longitude_dd: -89.73};
+        let mapContainer = document.createElement("div");
+        mapContainer.id = "mapContainer";
+        document.body.appendChild(mapContainer);
+
+        spyOn(component.siteService, 'getProximitySites').and.returnValue(
+            of(response)
+        );
+
+        component.createSiteMap();
+        component.getHWMsForMap();
+        expect(component.markers.getLayers().length).toEqual(4);
+        document.querySelector("#mapContainer").remove();
+    });
+
+    it ('sensor markers should be added to map', () => {
+        component.siteFullInstruments = [
+            {deploymentType: "Barometric Pressure"}, 
+            {deploymentType: "Temperature"}, 
+            {deployementType: "Humidity"},
+            {deployementType: "Water Level"},
+        ];
+
+        const response: any[] = [{latitude_dd: 38, longitude_dd: -79, site_no: 8}]
+
+        component.site = {latitude_dd: 44.64, longitude_dd: -89.73};
+        let mapContainer = document.createElement("div");
+        mapContainer.id = "mapContainer";
+        document.body.appendChild(mapContainer);
+
+        spyOn(component.siteService, 'getProximitySites').and.returnValue(
+            of(response)
+        );
+
+        component.createSiteMap();
+        component.getSensorsForMap();
+        expect(component.markers.getLayers().length).toEqual(5);
         expect(component.baroSensorVisible).toBeTrue;
         expect(component.thermSensorVisible).toBeTrue;
         expect(component.humiditySensorVisible).toBeTrue;
-        expect(proximitySpy).toHaveBeenCalled();
-        expect(component.markers.getLayers().length).toEqual(7);
+        expect(component.stormSensorVisible).toBeTrue;
         document.querySelector("#mapContainer").remove();
     });
 
