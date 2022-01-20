@@ -257,8 +257,7 @@ export class SiteDetailsComponent implements OnInit {
         // Display a blank row if no files or table info
         this.blankFileDataSource.data = [{format_file_date: "---", name: "---"}];
         this.blankDataSource.data = [{file_date: "---", name: "---"}];
-
-        this.getData();
+        this.getEvent();
     }
 
     ngAfterViewInit(): void {
@@ -309,9 +308,8 @@ export class SiteDetailsComponent implements OnInit {
         }
     }
 
-    getData() {
+    getEvent() {
         let self = this;
-
         this.siteService.getCurrentEvent().subscribe(result => this.currentEvent = result)
         // Get event name
         this.siteService
@@ -319,17 +317,25 @@ export class SiteDetailsComponent implements OnInit {
             .subscribe((results) => {
                 if(self.currentEvent === 0){
                     this.event = "All Events";
+                    console.log(this.event)
+                    this.getData();
                 }else{
                     if(results.length > 0){
                         results.forEach(function(result){
                             if (self.currentEvent == result.event_id){
                                 self.event = result.event_name;
+                                console.log(self.event)
+                                self.getData();
                             }
                         })
                     }
                 }
 
             });
+    }
+
+    getData() {
+        let self = this;
 
         this.siteService
             .getSingleSite(this.siteID)
