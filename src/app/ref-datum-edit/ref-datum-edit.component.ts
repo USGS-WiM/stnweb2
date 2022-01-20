@@ -513,7 +513,6 @@ export class RefDatumEditComponent implements OnInit {
     )
 
     promises.push(updateRD)
-    console.log(promises)
 
     Promise.all(promises).then(() => {
       this.dialogRef.close(this.returnData);

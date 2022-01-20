@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MAP_CONSTANTS } from '@app/map/map-constants';
 import {
     Router,
     ActivatedRoute,
@@ -80,6 +81,7 @@ export class SiteDetailsComponent implements OnInit {
     public sensorFilesDone = false;
     public siteMapHidden = true;
     public map;
+    public siteMarker;
     
     refMarkDataSource = new MatTableDataSource<any>();
     sensorDataSource = new MatTableDataSource<any>();
@@ -89,11 +91,13 @@ export class SiteDetailsComponent implements OnInit {
     sensorFilesDataSource = new MatTableDataSource<any>();
     hwmFilesDataSource = new MatTableDataSource<any>();
     siteFilesDataSource = new MatTableDataSource<any>();
+    blankFileDataSource = new MatTableDataSource<any>();
+    blankDataSource = new MatTableDataSource<any>();
 
-    siteFilesExpanded = false;
-    hwmFilesExpanded = false;
-    refDatumFilesExpanded = false;
-    sensorFilesExpanded = false;
+    siteFilesExpanded = true;
+    hwmFilesExpanded = true;
+    refDatumFilesExpanded = true;
+    sensorFilesExpanded = true;
 
     sortedSensorData = [];
     sortedHWMData = [];
@@ -250,8 +254,10 @@ export class SiteDetailsComponent implements OnInit {
             this.siteID = routeParams.id
         })
 
+        // Display a blank row if no files or table info
+        this.blankFileDataSource.data = [{format_file_date: "---", name: "---"}];
+        this.blankDataSource.data = [{file_date: "---", name: "---"}];
         this.getEvent();
-
     }
 
     ngAfterViewInit(): void {
@@ -337,6 +343,7 @@ export class SiteDetailsComponent implements OnInit {
                 if(results.length === undefined || results.length > 0){
                     this.site = results;
                     this.noSiteInfo = false;
+                    this.toggleSiteMap();
 
                     // Get horizontal datum lookup
                     this.siteService
@@ -422,7 +429,7 @@ export class SiteDetailsComponent implements OnInit {
                                 this.siteFullInstruments = results;
 
                                 if(results.length > 0){
-                                    this.siteFullInstruments.forEach(function(result){
+                                    this.siteFullInstruments.forEach(function(result, i){
                                         let timestamp = new Date(Math.max(...result.instrument_status.map(e => new Date(e.time_stamp))));
                                         
                                         result.instrument_status.forEach(function(statusType){
@@ -443,6 +450,7 @@ export class SiteDetailsComponent implements OnInit {
                                     })
                                     this.sensorDataSource.data = this.siteFullInstruments;
                                     this.sensorDataSource.paginator = this.sensorPaginator;
+                                    this.getSensorsForMap();
                                 }
 
                         });
@@ -468,6 +476,7 @@ export class SiteDetailsComponent implements OnInit {
                                 })
                                 this.hwmDataSource.data = this.hwm;
                                 this.hwmDataSource.paginator = this.hwmPaginator;
+                                this.getHWMsForMap();
                             }
 
                         });
@@ -540,7 +549,7 @@ export class SiteDetailsComponent implements OnInit {
                                 this.siteService
                                 .getStatusTypes()
                                 .subscribe((statusResults) => {
-                                    this.siteFullInstruments.forEach(function(result){
+                                    this.siteFullInstruments.forEach(function(result, i){
                                         self.siteService
                                         // Get each sensor status id and match to status type in lookup
                                         .getStatus(result.instrument_id)
@@ -558,6 +567,7 @@ export class SiteDetailsComponent implements OnInit {
                                             });
                                         })
                                     });
+                                    this.getSensorsForMap();
                                 })
                                 // Full instrument info
                                 this.siteFullInstruments.forEach(function(result){
@@ -589,6 +599,7 @@ export class SiteDetailsComponent implements OnInit {
                                 })
                                 this.hwmDataSource.data = this.hwm;
                                 this.hwmDataSource.paginator = this.hwmPaginator;
+                                this.getHWMsForMap();
                             }
 
                         });
@@ -730,6 +741,7 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     createSiteMap(){
+        let self = this;
         let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution:
                 '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors.',
@@ -749,10 +761,46 @@ export class SiteDetailsComponent implements OnInit {
             L.DomEvent.disableClickPropagation(document.querySelector('#legend'));
         }
 
-        let hwmIcon = L.divIcon({className: "wmm-diamond wmm-altred wmm-icon-noicon wmm-icon-red wmm-size-15"});
-
         let siteIcon = L.divIcon({className: "wmm-pin wmm-altblue wmm-icon-circle wmm-icon-white wmm-size-20"});
 
+        let nearbyIcon = L.divIcon({className: "wmm-pin wmm-altblue wmm-icon-circle wmm-icon-altblue wmm-size-15"});
+
+        let sitePopupContent = `<b>Site:</b> ${this.site.site_no}`;
+        this.siteMarker = L.marker([this.site.latitude_dd, this.site.longitude_dd], {icon: siteIcon});
+        this.siteMarker.bindPopup(sitePopupContent);
+        this.markers.addLayer(this.siteMarker)
+
+        this.siteMarker.desc = this.site.site_no;
+       
+        this.map.addLayer(this.markers);
+
+        this.markers.on('clusterclick', function (a) {
+            a.layer.spiderfy();
+        });
+
+        // Spiderify on load
+        this.markers.zoomToShowLayer(this.siteMarker);
+
+        // Proximity site markers
+        this.siteService.getProximitySites(this.site.latitude_dd, this.site.longitude_dd, 0.05).subscribe((results) => {
+            if(results.length > 0){
+                results.forEach(function(site){
+                    if(site.site_no !== self.site.site_no){
+                        self.nearbySitesVisible = true;
+                        let nearbySiteMarker = L.marker([site.latitude_dd, site.longitude_dd], {icon: nearbyIcon}).addTo(self.nearbySites);
+                        nearbySiteMarker.data = {
+                            id: site.site_no,
+                        }
+                        let nearbySitePopupContent = `<b>Nearby Site:</b> ${site.site_no}`
+                        nearbySiteMarker.bindPopup(nearbySitePopupContent)
+                    }
+                })
+            }
+        });
+    }
+
+    getSensorsForMap() {
+        // Sensor Icons
         let baroIcon = L.divIcon({className: "wmm-square wmm-yellow wmm-icon-noicon wmm-icon-yellow wmm-size-15"});
         
         let waterTempIcon = L.divIcon({className: "wmm-square wmm-orange wmm-icon-noicon wmm-icon-orange wmm-size-15"});
@@ -773,14 +821,6 @@ export class SiteDetailsComponent implements OnInit {
 
         let otherIcon = L.divIcon({className: "wmm-circle wmm-white wmm-icon-noicon wmm-icon-white wmm-size-15"});
 
-        let nearbyIcon = L.divIcon({className: "wmm-pin wmm-altblue wmm-icon-circle wmm-icon-altblue wmm-size-15"});
-
-        let sitePopupContent = `<b>Site:</b> ${this.site.site_no}`;
-        let siteMarker = L.marker([this.site.latitude_dd, this.site.longitude_dd], {icon: siteIcon});
-        siteMarker.bindPopup(sitePopupContent);
-        this.markers.addLayer(siteMarker)
-
-        siteMarker.desc = this.site.site_no;
         let self = this;
         let icon;
         this.siteFullInstruments.forEach(function(sensor){
@@ -828,18 +868,22 @@ export class SiteDetailsComponent implements OnInit {
               }
             let sensorMarker = L.marker([self.site.latitude_dd, self.site.longitude_dd], {icon: icon});
             sensorMarker.desc = sensor.serial_number;
-            sensorMarker.bindPopup(`<b>Deployment Type: </b>${sensor.deploymentType}<br><b>Serial Number:</b> ${sensor.serial_number !== "" ? sensor.serial_number : "---"}<br><b>Status: </b>${sensor.statusType}`)
+            let deploymentType = sensor.deploymentType !== undefined && sensor.deploymentType !== null && sensor.deploymentType !== "" ? sensor.deploymentType : "---";
+            let statusType = sensor.statusType !== undefined && sensor.statusType !== null && sensor.statusType !== "" ? sensor.statusType : "---";
+            sensorMarker.bindPopup(`<b>Deployment Type: </b>${deploymentType}<br><b>Serial Number:</b> ${sensor.serial_number !== "" ? sensor.serial_number : "---"}<br><b>Status: </b>${statusType}`)
             self.markers.addLayer(sensorMarker);
+            
+            self.map.invalidateSize();
+
+            // Spiderify
+            self.markers.zoomToShowLayer(self.siteMarker);
         })
-        this.map.addLayer(this.markers);
+    }
 
-        this.markers.on('clusterclick', function (a) {
-            a.layer.spiderfy();
-        });
+    getHWMsForMap() {
+        let hwmIcon = L.divIcon({className: "wmm-diamond wmm-altred wmm-icon-noicon wmm-icon-red wmm-size-15"});
 
-        // Spiderify on load
-        this.markers.zoomToShowLayer(siteMarker);
-
+        let self = this;
         // HWM markers
         this.hwm.forEach(function(mark){
             let hwmMarker = L.marker([mark.latitude_dd, mark.longitude_dd], {icon: hwmIcon});
@@ -850,23 +894,11 @@ export class SiteDetailsComponent implements OnInit {
             hwmMarker.bindPopup(hwmPopupContent)
             self.markers.addLayer(hwmMarker)
         })
-
-        // Proximity site markers
-        this.siteService.getProximitySites(this.site.latitude_dd, this.site.longitude_dd, 0.05).subscribe((results) => {
-            if(results.length > 0){
-                results.forEach(function(site){
-                    if(site.site_no !== self.site.site_no){
-                        self.nearbySitesVisible = true;
-                        let nearbySiteMarker = L.marker([site.latitude_dd, site.longitude_dd], {icon: nearbyIcon}).addTo(self.nearbySites);
-                        nearbySiteMarker.data = {
-                            id: site.site_no,
-                        }
-                        let nearbySitePopupContent = `<b>Nearby Site:</b> ${site.site_no}`
-                        nearbySiteMarker.bindPopup(nearbySitePopupContent)
-                    }
-                })
-            }
-        });
+        
+        this.map.invalidateSize();
+        
+        // Spiderify
+        this.markers.zoomToShowLayer(this.siteMarker);
     }
 
     toggleNearby() {
