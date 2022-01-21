@@ -4,6 +4,7 @@ import { UserService } from '@services/user.service';
 import { AgencyService } from '@services/agency.service';
 import { RoleService } from '@services/role.service';
 import { AddUserDialogComponent } from '@app/add-user-dialog/add-user-dialog.component';
+import { UserDetailsComponent } from '@app/user-details/user-details.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -35,7 +36,8 @@ export class UserManagementComponent implements OnInit {
     'First Name',
     'Email',
     'Agency',
-    'Role'
+    'Role',
+    'button',
   ];
 
   constructor(
@@ -224,6 +226,16 @@ export class UserManagementComponent implements OnInit {
         this.refreshTable();
       }
     });
+  }
+
+  openUserDetailsDialog(row): void {
+    console.log(row)
+    const dialogRef = this.dialog.open(UserDetailsComponent, {
+      data: {
+        user_data: row
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
 }
