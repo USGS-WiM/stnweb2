@@ -8,35 +8,167 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
     <mat-dialog-content>
         <label
-            class="filter-label"
+            class="section-title"
             aria-label="Select data used for interpretation"
             >Select data used for interpretation:</label
         >
         <section class="checkbox-section">
-            <div *ngFor="let hwm of hwms">
-                <mat-checkbox
-                    aria-checked="false"
-                    class="checkbox-margin"
-                    formControlName="hwm"
-                    >HWM {{hwm.hwm_label}} {{hwm.elev_ft}} ft</mat-checkbox
-                >
+            <div *ngFor="let hwm of hwms; let i = index">
+                <div>
+                    <mat-checkbox
+                        aria-checked="false"
+                        class="checkbox-margin"
+                        [ngModel]="hwm.selected"
+                        [ngModelOptions]="{standalone: true}" 
+                        (click)="addHWM(hwm)"
+                        >HWM {{hwm.hwm_id}} - {{hwm.elev_ft || '--'}} ft</mat-checkbox
+                    >
+                    <div class="button-group">
+                        <button mat-button type="button" (click)="showHWMDetails(i)"><mat-icon class="info-icon" matTooltip="Show Details">info</mat-icon></button>
+                        <button mat-button *ngIf="hwm.elev_ft" type="button" (click)="primaryHWM(hwm)" class="right-button"><mat-icon class="check-icon" matTooltip="Set as Primary">check_circle_outline</mat-icon></button>
+                        <button mat-button *ngIf="!hwm.elev_ft" type="button" (click)="showIncompleteHWMInfo()" class="right-button"><mat-icon class="warning-icon" matTooltip="Incomplete">warning</mat-icon></button>
+                    </div>
+                </div>
+                <!-- HWM Details, not shown unless Show Details clicked -->
+                <div *ngIf="hwm.showHWMDetail">
+                    <mat-card class="details-card">
+                        <label>HWM {{hwm.hwm_id}} Details</label>
+                        <button mat-button class="close-button" type="button" (click)="closeDetail()" aria-hidden="true" aria-label="Exit"><mat-icon>close</mat-icon></button>
+                        <div class="table-container">
+                            <div class="outer-content">
+                                <div class="cell-container">
+                                    <p class="content-left">Location Description</p>
+                                    <p class="content-right" *ngIf="hwm.hwm_locationdescription !== undefined && hwm.hwm_locationdescription !== ''; else nullLocDesc">{{hwm.hwm_locationdescription}}</p>
+                                    <ng-template #nullLocDesc><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Bank</p>
+                                    <p class="content-right" *ngIf="hwm.bank !== undefined && hwm.bank !== ''; else nullBank">{{hwm.bank}}</p>
+                                    <ng-template #nullBank><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Flag Date</p>
+                                    <p class="content-right" *ngIf="hwm.format_flag_date !== undefined && hwm.format_flag_date !== ''; else nullFlagDate">{{hwm.format_flag_date}}</p>
+                                    <ng-template #nullFlagDate><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Elevation</p>
+                                    <p class="content-right" *ngIf="hwm.elev_ft !== undefined && hwm.elev_ft !== ''; else nullElev">{{hwm.elev_ft}} ft</p>
+                                    <ng-template #nullElev><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Elevation Above Ground</p>
+                                    <p class="content-right" *ngIf="hwm.height_above_gnd !== undefined && hwm.height_above_gnd !== ''; else nullHeightAvGnd">{{hwm.height_above_gnd}} ft</p>
+                                    <ng-template #nullHeightAvGnd><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Quality</p>
+                                    <p class="content-right" *ngIf="hwm.hwm_quality_id !== undefined && hwm.hwm_quality_id !== '' && hwmQuality !== undefined && hwmQuality !== ''; else nullQuality">{{hwmQuality}}</p>
+                                    <ng-template #nullQuality><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Type</p>
+                                    <p class="content-right" *ngIf="hwm.hwm_type_id !== undefined && hwm.hwm_type_id !== '' && hwmType !== undefined && hwmType !== ''; else nullHWMType">{{hwmType}}</p>
+                                    <ng-template #nullHWMType><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Tranquil/Stillwater HWM</p>
+                                    <p class="content-right" *ngIf="hwm.stillwater === 1">Yes</p>
+                                    <p class="content-right" *ngIf="hwm.stillwater === 0">No</p>
+                                    <p class="content-right" *ngIf="hwm.stillwater !== 1 && hwm.stillwater !== 0">---</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="hwm.files.length > 0">
+                            <label>HWM Files</label>
+                            <div *ngFor="let f of hwm.files">
+                                <a target="_blank" href="{{serverURL}}/Files/{{f.file_id}}/Item">
+                                    {{f.file_date | date: 'MM/dd/yyyy'}} ({{f.name || f.file_id}})
+                                </a>
+                            </div>
+                        </div>
+                        <div *ngIf="hwm.files.length == 0">No files</div>
+                    </mat-card>
+                </div>
             </div>
         </section>
         <mat-divider></mat-divider>
         <section class="checkbox-section">
-            <div *ngFor="let sensor of sensors">
-                <label
-                    class="filter-label"
-                    aria-label="Select sensor files"
-                    >{{sensor.deploymentType}}</label
-                >
-                <div *ngFor="let file of sensor.files">
+            <div *ngFor="let sensor of sensors; let i = index">
+                <div class="sensor-title">
+                    <label
+                        class="filter-label"
+                        aria-label="Select sensor files"
+                        >{{sensor.deploymentType || sensor.sensorType}} Sensor
+                    </label>
+                    <div class="button-group">
+                        <button mat-button type="button" (click)="showSensorDetails(i)"><mat-icon class="info-icon" matTooltip="Show Details">info</mat-icon></button>
+                        <button mat-button *ngIf="sensor.needDF" type="button" (click)="showIncompleteDFInfo()" class="right-button"><mat-icon class="warning-icon" matTooltip="Incomplete">warning</mat-icon></button>
+                        <button mat-button *ngIf="!sensor.isRetrieved" type="button" (click)="showRetrieveInfo()" class="right-button"><mat-icon class="retrieve-warning-icon" matTooltip="Needs to be Retrieved">warning</mat-icon></button>
+                    </div>
+                </div>
+                <!-- Sensor Details, not shown unless Show Details clicked -->
+                <div *ngIf="sensor.showSensorDetail">
+                    <mat-card class="details-card">
+                        <label>{{sensor.deploymentType || sensor.sensorType}} Sensor Details</label>
+                        <button mat-button class="close-button" type="button" (click)="closeDetail()" aria-hidden="true" aria-label="Exit"><mat-icon>close</mat-icon></button>
+                        <div class="table-container">
+                            <div class="outer-content">
+                                <div class="cell-container">
+                                    <p class="content-left">Sensor Type</p>
+                                    <p class="content-right" *ngIf="sensor.sensorType !== undefined && sensor.sensorType !== ''; else nullSensorType">{{sensor.sensorType}}</p>
+                                    <ng-template #nullSensorType><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Deployment Type</p>
+                                    <p class="content-right" *ngIf="sensor.deploymentType !== undefined && sensor.deploymentType !== ''; else nullDeploymentType">{{sensor.deploymentType}}</p>
+                                    <ng-template #nullDeploymentType><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Retrieved On</p>
+                                    <p class="content-right" *ngIf="sensor.instrument_status[0].time_stamp !== undefined && sensor.instrument_status[0].time_stamp !== ''; else nullRetrievedDate">{{sensor.instrument_status[0].time_stamp}}</p>
+                                    <ng-template #nullRetrievedDate><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Serial Number</p>
+                                    <p class="content-right" *ngIf="sensor.serial_number !== undefined && sensor.serial_number !== ''; else nullSerialNum">{{sensor.serial_number}}</p>
+                                    <ng-template #nullSerialNum><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Location Description</p>
+                                    <p class="content-right" *ngIf="sensor.location_description !== undefined && sensor.location_description !== ''; else nullLocDesc">{{sensor.location_description}}</p>
+                                    <ng-template #nullLocDesc><p class="content-right">---</p></ng-template>
+                                </div>
+                                <div class="cell-container">
+                                    <p class="content-left">Sensor Brand</p>
+                                    <p class="content-right" *ngIf="sensor.sensorBrand !== undefined && sensor.sensorBrand !== ''; else nullSensorBrand">{{sensor.sensorBrand}}</p>
+                                    <ng-template #nullSensorBrand><p class="content-right">---</p></ng-template>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="sensor.files.length > 0">
+                            <label>Sensor Files</label>
+                            <div *ngFor="let f of sensor.files">
+                                <a target="_blank" href="{{serverURL}}/Files/{{f.file_id}}/Item">
+                                    {{f.file_date | date: 'MM/dd/yyyy'}} ({{f.name || f.file_id}})
+                                </a>
+                            </div>
+                        </div>
+                        <div *ngIf="sensor.files.length == 0">No files</div>
+                    </mat-card>
+                </div>
+                <div *ngFor="let file of sensor.files; let index = j">
                     <mat-checkbox
                         aria-checked="false"
                         class="checkbox-margin"
-                        formControlName="sensor"
-                        >{{file.name}}</mat-checkbox
+                        [ngModel]="file.selected"
+                        [ngModelOptions]="{standalone: true}" 
+                        >{{file.name || '---'}}</mat-checkbox
                     >
+                    <div class="button-group">
+                        <button mat-button type="button" (click)="showDataFileDetails(j)"><mat-icon class="info-icon" matTooltip="Show Details">info</mat-icon></button>
+                        <button mat-button type="button" (click)="primaryDataFile(file)" class="right-button"><mat-icon class="check-icon" matTooltip="Set as Primary">check_circle_outline</mat-icon></button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -48,18 +180,21 @@
                 <mat-icon matSuffix class="info-icon" matTooltip="Please document the reason this peak was chosen for this event." 
                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
             </mat-form-field>
+            <div>
+                <label class="form-header">Peak Creator: </label> {{creator}}
+            </div>
             <mat-form-field appearance="fill">
                 <mat-label>Peak Date</mat-label>
                 <input aria-label="Peak Date" matInput formControlName="peak_date" [value]="peak.peak_date" [matDatepicker]="peakDatePicker" required placeholder="Choose a date">
                 <mat-datepicker-toggle matSuffix [for]="peakDatePicker"></mat-datepicker-toggle>
                 <mat-datepicker [value]="peak.peak_date" #peakDatePicker></mat-datepicker>
             </mat-form-field>
-            <!-- <mat-checkbox
+            <mat-checkbox
                 aria-checked="false"
                 class="checkbox-margin"
-                formControlName="is_peak_date_estimated"
+                formControlName="is_peak_estimated"
                 >Date Estimated?</mat-checkbox
-            > -->
+            >
             <mat-checkbox
                 aria-checked="false"
                 class="checkbox-margin"
@@ -104,16 +239,20 @@
             <mat-checkbox
             aria-checked="false"
             class="checkbox-margin"
-            formControlName="height_above_gnd_estimated"
-            >Height Above Ground Estimated?</mat-checkbox
-        >
+            formControlName="is_hag_estimated"
+            >Height Above Ground Estimated?</mat-checkbox>
         </section>
         <section>
             <mat-card>
-                <!-- <mat-form-field appearance="fill">
+                <div>
+                    These fields shall be filled out pursuant to sw13.01
+                    <br />
+                    Click this <a target="_blank" href="https://water.usgs.gov/admin/memo/SW/sw13.01.pdf">link</a> for more information.
+                </div>
+                <mat-form-field appearance="fill">
                     <mat-label>Peak Discharge</mat-label>
                     <input aria-label="Peak Discharge" matInput formControlName="peak_discharge" [value]="peak.peak_discharge"/>
-                </mat-form-field> -->
+                </mat-form-field>
                 <mat-checkbox
                     aria-checked="false"
                     class="checkbox-margin"
@@ -126,15 +265,15 @@
                 </mat-form-field>
                 <mat-form-field appearance="fill">
                     <mat-label>AEP Confidence Interval (Lower Limit)</mat-label>
-                    <input aria-label="AEP Confidence Interval (Lower Limit)" matInput formControlName="aep_lower_limit" [value]="peak.aep_lower_limit"/>
+                    <input aria-label="AEP Confidence Interval (Lower Limit)" matInput formControlName="aep_lowci" [value]="peak.aep_lowci"/>
                 </mat-form-field>
                 <mat-form-field appearance="fill">
                     <mat-label>AEP Confidence Interval (Upper Limit)</mat-label>
-                    <input aria-label="AEP Confidence Interval (Upper Limit)" matInput formControlName="aep_upper_limit" [value]="peak.aep_upper_limit"/>
+                    <input aria-label="AEP Confidence Interval (Upper Limit)" matInput formControlName="aep_upperci" [value]="peak.aep_upperci"/>
                 </mat-form-field>
                 <mat-form-field appearance="fill">
                     <mat-label>AEP Confidence Interval (Percentage of Limits)</mat-label>
-                    <input aria-label="AEP Confidence Interval (Percentage of Limits)" matInput formControlName="aep_percentage" [value]="peak.aep_percentage"/>
+                    <input aria-label="AEP Confidence Interval (Percentage of Limits)" matInput formControlName="aep_aep_range" [value]="peak.aep_aep_range"/>
                 </mat-form-field>
             </mat-card>
         </section>
