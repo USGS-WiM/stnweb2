@@ -4,17 +4,40 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased](https://github.com/USGS-WiM/stnweb2/tree/dev)
+
+### Added
+
+-   
+
+### Changed
+
+-   
+
+### Fixed
+
+-  
+
+## [v0.6.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.6.0) - 2022-01-25
 
 ### Added
 
 -   Added map filter button on mobile.  Map filters open to replace the map and filter results.
 -   Added Real-Time Stream Gage layer
--   Added Site Pages with navigation from site popups on map
+-   Added Site Page with navigation from site popups on map
 -   Added map to site details page
--   Added USWDS Banner to top of page
 -   Added pagination and sorting to tables on site dashboard page
+-   USWDS banner and accessability styles
+-   Map to site page
+-   Added sorting and pagination to tables on site page
+-   Edit ability for site page
+-   Edit ability for Reference Datums
+-   Edit ability for HWMs
+-   Edit ability for Sensors
+-   Edit ability for Sensors
+-   User management page
+-   ability to add new user
+-   View details, edit, and delete button for site entities
 
 ### Changed
 
@@ -25,6 +48,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Disallowed closing of the login dialog
 -   Redirecting to landing page on logout
 -   Multiple panels may be open and do not reset on filtering the map
+-   Minimize legend and map button in mobile view
+-   Display n/a for empty location descriptions
+-   Change "Datum Location" to "Reference Datum"
+-   Forced login to access/view application
+-   Keep filter section expanded if filter is selected
+-   Removed tape downs from sensor table
+-   Disabled clicking outside of the add new user dialog
 
 ### Fixed
 
@@ -37,6 +67,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Streamgage markers removed from map when Clear Filters button is clicked
 -   Fixed site ID not added to popups for some sites
 -   Use last updated date if no event end date for NOAA and streamgage popups
+-   Event filters not clearing on button click
+-   Mobile and layout fixes
+-   Remove real-time streamgage layer on clear filters click
+-   SiteID not populating on map filter change
+-   Peak not showing when event is selected
+-   Role and Agency not sorting in user management table
 
 ## [v0.5.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.5.0) - 2021-06-10
 
