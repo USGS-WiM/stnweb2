@@ -228,11 +228,14 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
-  openUserDetailsDialog(row): void {
+  openUserDetailsDialog(row, boolean): void {
     console.log(row)
     const dialogRef = this.dialog.open(UserDetailsComponent, {
       data: {
-        user_data: row
+        user_data: row,
+        viewOrEdit: boolean,
+        agencies: this.agencies,
+        roles: this.roles
       },
     });
     dialogRef.afterClosed().subscribe((result) => { });

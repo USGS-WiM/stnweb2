@@ -5,6 +5,7 @@ import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms'
 import { ConfirmComponent} from '@app/confirm/confirm.component';
 import { UserService} from '@app/services/user.service';
 import { APP_SETTINGS } from '../app.settings';
+import { APP_UTILITIES } from '../app.utilities';
 import {map, startWith} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -55,7 +56,7 @@ export class AddUserDialogComponent implements OnInit {
   ngOnInit(): void {
     this.agencies = this.data.agencies;
     this.roles = this.data.roles;
-
+    console.log(this.agencies);
     for (let a in this.agencies) {
       this.options.push({ a_n: this.agencies[a].agency_name, a_id: this.agencies[a].agency_id})
     }
@@ -74,31 +75,14 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   display(selectedoption){
+    console.log(selectedoption);
     return selectedoption ? selectedoption.a_n : undefined;
    }
-
-   // formats phone number to display as (111) 111 1111
-   formatPhoneNumber(value) {
-    if (!value) return value;
-    const phoneNumber = value.replace(/[^\d]/g, "");
-    const phoneNumberLength = phoneNumber.length;
-    if (phoneNumberLength < 4) return phoneNumber;
-    if (phoneNumberLength < 7) {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-    }
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
-      3,
-      6
-    )}-${phoneNumber.slice(6, 9)}`;
-  }
 
   // On key down gets value of phone input, sends it to formatter, and then replaces input with formatted value
   phoneNumberFormatter(event: any) {
     if (event !== undefined) {
-      const inputid = event.srcElement.id
-      const inputField = (<HTMLInputElement>document.getElementById(inputid));
-      const formattedInputValue = this.formatPhoneNumber((<HTMLInputElement>document.getElementById(inputid)).value);
-      inputField.value = formattedInputValue;
+      return APP_UTILITIES.PHONENUMBERFORMATTER(event);
     }
   }
 

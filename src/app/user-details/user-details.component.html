@@ -5,7 +5,7 @@
             <div class="entryField">
                 <mat-form-field appearance="fill" class="form-control">
                     <mat-label>First Name</mat-label>
-                    <input matInput disabled aria-required="true" formControlName="fname" required>
+                    <input matInput aria-required="true" formControlName="fname" required>
                     <mat-icon matSuffix>face</mat-icon>
                 </mat-form-field>
                 <mat-form-field appearance="fill" class="form-control">
@@ -19,7 +19,6 @@
                     <mat-label>Username</mat-label>
                     <input matInput  aria-required="true" required formControlName="username">
                     <mat-icon matSuffix>perm_identity</mat-icon>
-                    <mat-hint>Use your USGS username</mat-hint>
                 </mat-form-field>
                 <mat-form-field appearance="fill" class="form-control">
                     <mat-label>Enter email</mat-label>
@@ -83,14 +82,20 @@
                     <mat-error>Invalid phone format</mat-error>
                 </mat-form-field>
             </div>
-            <div class="entryField">
+            <button mat-stroked-button *ngIf="editingMode" (click)="showPasswordChange = true">
+              Change Password
+            </button>
+            <div class="entryField" *ngIf="showPasswordChange">
                 <create-password [formGroup]="this.userForm.get('password')">
                 </create-password>
+                <button mat-stroked-button *ngIf="editingMode" (click)="clearPasswordFields()">
+                  Cancel Password Change
+                </button>
             </div>
         </form>
     </div>
     <p>
-    <!-- <mat-expansion-panel>
+    <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
             Form data JSON
@@ -103,7 +108,7 @@
           <p>Form Status: {{userForm.status}}
             <pre> {{userForm.value | json}} </pre>
         </div>
-      </mat-expansion-panel> -->
+      </mat-expansion-panel>
     </p>
 </mat-dialog-content>
 <mat-dialog-actions>
@@ -111,9 +116,9 @@
       <button mat-stroked-button (click)="this.userDetailsDialogRef.close('cancel');">
         Cancel
       </button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid"
-        >Submit
-        <mat-icon>output</mat-icon>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.dirty" *ngIf="editingMode"
+        >Save
+        <mat-icon>save</mat-icon>
       </button>
       <mat-progress-bar mode="indeterminate" *ngIf="submitLoading"></mat-progress-bar>
     </div>

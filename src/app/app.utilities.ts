@@ -151,6 +151,31 @@ export class APP_UTILITIES {
         return localStorage.getItem('role');
     }
 
+    // On key down gets value of phone input, sends it to formatter, and then replaces input with formatted value
+  public static PHONENUMBERFORMATTER(event: any) {
+    if (event !== undefined) {
+      const inputid = event.srcElement.id
+      const inputField = (<HTMLInputElement>document.getElementById(inputid));
+      const formattedInputValue = this.FORMATPHONENUMBER((<HTMLInputElement>document.getElementById(inputid)).value);
+      inputField.value = formattedInputValue;
+    }
+  }
+
+  // formats phone number to display as (111) 111 1111
+  public static FORMATPHONENUMBER(value) {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    }
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
+      3,
+      6
+    )}-${phoneNumber.slice(6, 9)}`;
+  }
+
     public static get DUMMY_USER(): Member {
         return {
             member_id: 1,

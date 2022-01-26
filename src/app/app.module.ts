@@ -78,7 +78,6 @@ import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component
 import { RoleService } from './services/role.service';
 import { AgencyService } from './services/agency.service';
 import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
-import { UserEditComponent } from './user-edit/user-edit.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 
 @NgModule({
@@ -109,7 +108,6 @@ import { UserDetailsComponent } from './user-details/user-details.component';
         RefDatumEditComponent,
         HwmEditComponent,
         SensorEditComponent,
-        UserEditComponent,
         UserDetailsComponent,
     ],
     imports: [
