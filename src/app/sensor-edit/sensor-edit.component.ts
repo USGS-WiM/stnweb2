@@ -184,9 +184,13 @@ export class SensorEditComponent implements OnInit {
         self.sensor.instrument_status[i].hour = String(hour - 12).padStart(2, '0');
         self.sensor.instrument_status[i].ampm = "PM";
       }else{
-        // instrument.time_stamp.hour = hour;
-        self.sensor.instrument_status[i].hour = String(hour).padStart(2, '0');
-        self.sensor.instrument_status[i].ampm = "AM";
+        if(String(hour) === '00'){
+          self.sensor.instrument_status[i].hour = '12';
+          self.sensor.instrument_status[i].ampm = "AM";
+        }else{
+          self.sensor.instrument_status[i].hour = String(hour).padStart(2, '0');
+          self.sensor.instrument_status[i].ampm = "AM";
+        }
       }
       // minute
       let minute = instrument.time_stamp.split('T')[1].split(':')[1];
@@ -323,6 +327,7 @@ export class SensorEditComponent implements OnInit {
   }
 
   initForm() {
+    let self = this;
     this.form = new FormGroup({
       event_id: new FormControl(this.sensor.event_id !== undefined && this.sensor.event_id !== "" ? this.sensor.event_id : null),
       instrument_id: new FormControl(this.sensor.instrument_id !== undefined && this.sensor.instrument_id !== "" ? this.sensor.instrument_id : null),
@@ -346,6 +351,12 @@ export class SensorEditComponent implements OnInit {
       lostRefMarks: new FormControl(),
     })
 
+    this.sensor.instrument_status.forEach(function(instrument){
+      if(instrument.timezone !== 'UTC'){
+        self.previewUTC(instrument);
+      }
+    })
+
     this.form.controls.interval.setValidators([this.isNum()]);
   }
 
@@ -362,11 +373,12 @@ export class SensorEditComponent implements OnInit {
   }
 
   createInstrumentArray(instrument) {
+    let timezone = this.timezonesService.matchTimezone(instrument.time_zone);
     return {
       instrument_id: new FormControl(this.sensor.instrument_id ? this.sensor.instrument_id: null),
       instrument_status_id: new FormControl(instrument.instrument_status_id ? instrument.instrument_status_id: null),
       time_stamp: new FormControl(instrument.time_stamp ? instrument.time_stamp: null),
-      time_zone: new FormControl(instrument.time_zone ? instrument.time_zone : null),
+      time_zone: new FormControl(timezone ? timezone : null),
       notes: new FormControl(instrument.notes ? instrument.notes: null),
       member_id: new FormControl(instrument.member_id ? instrument.member_id : null),
       vdatum_id: new FormControl(instrument.vdatum_id ? instrument.vdatum_id : null),
@@ -610,7 +622,13 @@ export class SensorEditComponent implements OnInit {
     this.form.controls["instrument_status"].controls.forEach(function(instrument_status, i){
       if(instrument_status.controls.status_type_id.value === instrument.status_type_id){
           let hour = instrument_status.value.ampm === "PM" ? (Number(instrument_status.value.hour) + 12) : instrument_status.value.hour;
-          hour = String(hour).padStart(2, '0');
+          if(String(hour) === '12' && instrument_status.value.ampm === 'AM'){
+            hour = '00';
+          }else if (String(hour) === '24' && instrument_status.value.ampm === 'PM'){
+            hour = '12';
+          }else{
+            hour = String(hour).padStart(2, '0');
+          }
           let minute = String(instrument_status.value.minute).padStart(2, '0');
           let initDate;
           try{
@@ -627,7 +645,6 @@ export class SensorEditComponent implements OnInit {
           utcDate = self.timezonesService.convertTimezone(instrument.time_zone, date, minute);
           let utchour = (utcDate.split('T')[1]).split(':')[0].padStart(2, '0');
           self.form.controls["instrument_status"].controls[i].controls["time_stamp"].setValue(date);
-          self.form.controls["instrument_status"].controls[i].controls["hour"].setValue(instrument.hour);
           self.form.controls["instrument_status"].controls[i].controls["minute"].setValue(minute);
           let timestamp = utcDate.split("T")[0];
           timestamp = timestamp.split("-");

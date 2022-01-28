@@ -316,7 +316,7 @@ describe('SiteDetailsComponent', () => {
         fixture.detectChanges();
         expect(peakSpy).toHaveBeenCalled();
         expect(component.peaks.length).toEqual(1);
-        expect(component.peaks[0].peak_date).toEqual("09/16/2020");
+        expect(component.peaks[0].format_peak_date).toEqual("09/16/2020");
     });
 
     it('siteHousing should be populated if site housing results are returned', () => {
