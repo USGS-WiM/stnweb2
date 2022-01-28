@@ -166,8 +166,8 @@ export class SiteDetailsComponent implements OnInit {
     ];
 
     displayedPeakColumns: string[] = [
-        'PeakStage',
         'PeakEventName',
+        'PeakStage',
         'PeakDate',
         'button',
     ];
@@ -670,10 +670,7 @@ export class SiteDetailsComponent implements OnInit {
                         if(results.length > 0){
                             results.forEach(function(result){
                                 if (self.currentEvent === 0 || result.event_name === self.event){
-                                    let peakDate = result.peak_date.split("T")[0];
-                                    peakDate = peakDate.split("-");
-                                    peakDate = peakDate[1] + "/" + peakDate[2] + "/" + peakDate[0];
-                                    result.format_peak_date = peakDate;
+                                    result.format_peak_date = self.setTimeAndDate(result.peak_date);
                                     self.peaks.push(result);
                                 }
                             }) 
@@ -730,6 +727,30 @@ export class SiteDetailsComponent implements OnInit {
                     })
                 }
             });
+    }
+
+    setTimeAndDate(time_stamp) {
+        let hour = (time_stamp.split('T')[1]).split(':')[0];
+        let ampm;
+        if(hour > 12){
+          hour = String(hour - 12).padStart(2, '0');
+          ampm = "PM";
+        }else{
+          if(String(hour) === '00'){
+            hour = '12';
+            ampm = "AM";
+          }else{
+            hour = String(hour).padStart(2, '0');
+            ampm = "AM";
+          }
+        }
+        // minute
+        let minute = time_stamp.split('T')[1].split(':')[1];
+        minute = String(minute).padStart(2, '0');
+        let timestamp = time_stamp.split("T")[0];
+        timestamp = timestamp.split("-");
+        timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + minute + " " + ampm;
+        return timestamp;
     }
 
     toggleSiteMap(){
@@ -1103,12 +1124,13 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openPeaksEditDialog(row): void {
+        let self = this;
         let hwms = this.hwmDataSource.data;
         let sensors = this.sensorDataSource.data;
         // Only pass peaks and hwms for selected event
         if(this.event !== 'All Events'){
-            sensors = this.sensorDataSource.data.filter(function (s) { return s.eventName == this.event; });
-            hwms = this.hwmDataSource.data.filter(function (h) { return h.eventName == this.event; });  
+            sensors = this.sensorDataSource.data.filter(function (s) { return s.eventName == self.event; });
+            hwms = this.hwmDataSource.data.filter(function (h) { return h.eventName == self.event; });  
         }
         const dialogRef = this.dialog.open(PeakEditComponent, {
             data: {
@@ -1123,12 +1145,12 @@ export class SiteDetailsComponent implements OnInit {
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            let self = this;
             if (result && result.peak !== undefined && result.peak !== null){
                 // Update peak
                 this.peaksDataSource.data.forEach(function(peak, i){
                     if (peak.peak_summary_id === result.peak.peak_summary_id){
                         result.peak.event_name = self.peaksDataSource.data[i].event_name;
+                        result.peak.format_peak_date = self.setTimeAndDate(result.peak.peak_date);
                         self.peaksDataSource.data[i] = result.peak;
                         self.peaksDataSource.data = [...self.peaksDataSource.data];
                     }
