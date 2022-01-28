@@ -960,19 +960,6 @@
                                 class="mat-elevation-z5"
                                 matSort
                             >
-                                <!-- peak stage column -->
-                                <ng-container matColumnDef="PeakStage">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_stage">Stage</th>
-                                    <td mat-cell *matCellDef="let peak">
-                                        <div *ngIf="peak.peak_stage === '' || peak.peak_stage === undefined; else displayPeakStage">
-                                            ---
-                                        </div>
-                                        <ng-template #displayPeakStage>
-                                            {{ peak.peak_stage }}
-                                        </ng-template>
-                                    </td>
-                                </ng-container>
-
                                 <!-- peak event name column -->
                                 <ng-container matColumnDef="PeakEventName">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header="event_name">Event Name</th>
@@ -986,15 +973,28 @@
                                     </td>
                                 </ng-container>
 
+                                <!-- peak stage column -->
+                                <ng-container matColumnDef="PeakStage">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_stage">Peak Stage (ft)</th>
+                                    <td mat-cell *matCellDef="let peak">
+                                        <div *ngIf="peak.peak_stage === '' || peak.peak_stage === undefined; else displayPeakStage">
+                                            ---
+                                        </div>
+                                        <ng-template #displayPeakStage>
+                                            {{ peak.peak_stage }}
+                                        </ng-template>
+                                    </td>
+                                </ng-container>
+
                                 <!-- peak date column -->
                                 <ng-container matColumnDef="PeakDate">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_date">Date</th>
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_date">Peak Date</th>
                                     <td mat-cell *matCellDef="let peak">
                                         <div *ngIf="peak.peak_date === '' || peak.peak_date === undefined; else displayPeakDate">
                                             ---
                                         </div>
                                         <ng-template #displayPeakDate>
-                                            {{ peak.peak_date }}
+                                            {{ peak.format_peak_date }}
                                         </ng-template>
                                     </td>
                                 </ng-container>

@@ -165,8 +165,8 @@ export class SiteDetailsComponent implements OnInit {
     ];
 
     displayedPeakColumns: string[] = [
-        'PeakStage',
         'PeakEventName',
+        'PeakStage',
         'PeakDate',
         'button',
     ];
@@ -666,10 +666,7 @@ export class SiteDetailsComponent implements OnInit {
                         if(results.length > 0){
                             results.forEach(function(result){
                                 if (self.currentEvent === 0 || result.event_name === self.event){
-                                    let peakDate = result.peak_date.split("T")[0];
-                                    peakDate = peakDate.split("-");
-                                    peakDate = peakDate[1] + "/" + peakDate[2] + "/" + peakDate[0];
-                                    result.peak_date = peakDate;
+                                    result.format_peak_date = self.setTimeAndDate(result.peak_date);
                                     self.peaks.push(result);
                                 }
                             }) 
@@ -726,6 +723,30 @@ export class SiteDetailsComponent implements OnInit {
                     })
                 }
             });
+    }
+
+    setTimeAndDate(time_stamp) {
+        let hour = (time_stamp.split('T')[1]).split(':')[0];
+        let ampm;
+        if(hour > 12){
+          hour = String(hour - 12).padStart(2, '0');
+          ampm = "PM";
+        }else{
+          if(String(hour) === '00'){
+            hour = '12';
+            ampm = "AM";
+          }else{
+            hour = String(hour).padStart(2, '0');
+            ampm = "AM";
+          }
+        }
+        // minute
+        let minute = time_stamp.split('T')[1].split(':')[1];
+        minute = String(minute).padStart(2, '0');
+        let timestamp = time_stamp.split("T")[0];
+        timestamp = timestamp.split("-");
+        timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + minute + " " + ampm;
+        return timestamp;
     }
 
     toggleSiteMap(){
