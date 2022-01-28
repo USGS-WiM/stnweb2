@@ -14,6 +14,7 @@ import { MatSort } from '@angular/material/sort';
 import { Sort } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { APP_UTILITIES } from '@app/app.utilities';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-result-details',
@@ -41,7 +42,8 @@ export class ResultDetailsComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         private sensorService: SensorService,
         private eventService: EventService,
-        private changeDetectorRefs: ChangeDetectorRef
+        private changeDetectorRefs: ChangeDetectorRef,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -66,6 +68,10 @@ export class ResultDetailsComponent implements OnInit {
                 this.siteSensors = results;
                 this.getEvents();
             });
+    }
+
+    routeToSite() { 
+        this.router.navigateByUrl('/Site/' + this.data['site_id'] + '/SiteDashboard');
     }
 
     /* istanbul ignore next */

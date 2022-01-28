@@ -104,7 +104,8 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <div class="detail-section-buttons centered">
-        <button mat-button mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
+        <button mat-button class="primary save-btn" mat-dialog-close cdkFocusInitial (click)="routeToSite()" aria-label="View Site">View Site</button>
+        <button mat-stroked-button class="close-btn" mat-dialog-close cdkFocusInitial aria-label="Close">Close</button>
         <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
     </div>
 </mat-dialog-actions>
