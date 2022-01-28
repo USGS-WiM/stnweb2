@@ -8,15 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
--   
+-   Edit ability for Peaks
 
 ### Changed
 
--   
+-   Sort result details table by sensor status when opened (Deployed > Retrieved > Proposed > Lost)
 
 ### Fixed
 
--  
+-  Sensor files not displaying when event selected
 
 ## [v0.6.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.6.0) - 2022-01-25
 

@@ -55,4 +55,28 @@ describe('TimezonesService', () => {
 
     expect(convertedTime).toEqual("2022-05-05T07:05:00");
   });
+
+  it('should return MST/MDT', () => {
+    let timezone = service.matchTimezone('MST');
+
+    expect(timezone).toEqual('MST/MDT');
+  });
+
+  it('should return EST/EDT', () => {
+    let timezone = service.matchTimezone('EST');
+
+    expect(timezone).toEqual('EST/EDT');
+  });
+
+  it('should return CST/CDT', () => {
+    let timezone = service.matchTimezone('CST');
+
+    expect(timezone).toEqual('CST/CDT');
+  });
+
+  it('should return PST/PDT', () => {
+    let timezone = service.matchTimezone('PST');
+
+    expect(timezone).toEqual('PST/PDT');
+  });
 });

@@ -78,6 +78,7 @@ import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component
 import { RoleService } from './services/role.service';
 import { AgencyService } from './services/agency.service';
 import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
+import { PeakEditComponent } from './peak-edit/peak-edit.component';
 
 @NgModule({
     declarations: [
@@ -107,6 +108,7 @@ import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
         RefDatumEditComponent,
         HwmEditComponent,
         SensorEditComponent,
+        PeakEditComponent,
     ],
     imports: [
         BrowserModule,
