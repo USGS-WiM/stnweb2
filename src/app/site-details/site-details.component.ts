@@ -29,6 +29,7 @@ import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.compon
 import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
 import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
+import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
 
 @Component({
     selector: 'app-site-details',
@@ -1094,7 +1095,14 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openPeaksDetailsDialog(row): void {
-        console.log(row)
+        this.dialog.open(PeakDialogComponent, {
+            data: {
+                peak: row,
+                sensors: this.sensorDataSource.data,
+                hwms: this.hwmDataSource.data,
+                sensorFiles: this.sensorFilesDataSource.data,
+            },
+        });
     }
 
     openFileDetailsDialog(row, type): void {
