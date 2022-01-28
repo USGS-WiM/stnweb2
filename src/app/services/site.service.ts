@@ -687,38 +687,6 @@ export class SiteService {
             );
     }
 
-    //Get peak summary
-  public getPeakSummary(peak_summary_id): Observable<any> {
-    return this.httpClient
-        .get(APP_SETTINGS.API_ROOT + 'PeakSummaries/' + peak_summary_id + '.json')
-        .pipe(
-            tap((response) => {
-                console.log(
-                    'getPeakSummary response received'
-                );
-                return response;
-            }),
-            catchError(this.handleError<any>('getPeakSummary', []))
-        );
-  }
-
-  //Get peak summary data files
-  public getPeakDataFiles(peak_summary_id): Observable<any> {
-    return this.httpClient
-        .get(APP_SETTINGS.API_ROOT + 'PeakSummaries/' + peak_summary_id + '/DataFiles.json', {
-          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
-        })
-        .pipe(
-            tap((response) => {
-                console.log(
-                    'getPeakDataFiles response received'
-                );
-                return response;
-            }),
-            catchError(this.handleError<any>('getPeakDataFiles', []))
-        );
-  }
-
     //Get OP Measurements
     public getOPMeasurements(instrumentStatusID): Observable<any> {
         return this.httpClient

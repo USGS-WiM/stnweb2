@@ -175,7 +175,7 @@ describe('PeakDialogComponent', () => {
   it('should get peak data files', () => {
     const response = [{data_file_id: 0}, {data_file_id: 0}];
 
-    spyOn(component.siteService, 'getPeakDataFiles').and.returnValue(
+    spyOn(component.peakEditService, 'getPeakDataFiles').and.returnValue(
         of(response)
     );
     let selectedDFSpy = spyOn(component, 'getSelectedDataFiles');
@@ -199,7 +199,7 @@ describe('PeakDialogComponent', () => {
       vdatum_id: 1,
       time_zone: "EDT",
     };
-    spyOn(component.siteService, 'getPeakSummary').and.returnValue(
+    spyOn(component.peakEditService, 'getPeakSummary').and.returnValue(
       of(response)
     );
     let memberSpy = spyOn(component, 'setMembers');

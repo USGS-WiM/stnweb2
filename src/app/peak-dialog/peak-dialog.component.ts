@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { PeakEditService } from '@app/services/peak-edit.service';
 import { SiteService } from '@app/services/site.service';
 
 @Component({
@@ -23,6 +24,7 @@ export class PeakDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<PeakDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public siteService: SiteService,
+    public peakEditService: PeakEditService,
   ) { }
 
   ngOnInit(): void {
@@ -55,7 +57,7 @@ export class PeakDialogComponent implements OnInit {
   }
 
   getPeakSummary() {
-    this.siteService.getPeakSummary(this.peak.peak_summary_id).subscribe((results) => {
+    this.peakEditService.getPeakSummary(this.peak.peak_summary_id).subscribe((results) => {
       this.peak.is_peak_discharge_estimated = results.is_peak_discharge_estimated === 1 ? "Yes" : "No";
       this.peak.is_peak_estimated = results.is_peak_estimated === 1 ? "Yes" : "No";
       this.peak.is_peak_stage_estimated = results.is_peak_stage_estimated === 1 ? "Yes" : "No";
@@ -80,7 +82,7 @@ export class PeakDialogComponent implements OnInit {
   }
 
   getPeakDataFiles() {
-    this.siteService.getPeakDataFiles(this.peak.peak_summary_id).subscribe(results => {
+    this.peakEditService.getPeakDataFiles(this.peak.peak_summary_id).subscribe(results => {
       this.peakDFs = results;
       this.getSelectedDataFiles();
     })
