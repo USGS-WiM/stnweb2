@@ -210,10 +210,6 @@ export class PeakEditComponent implements OnInit {
     this.peak.utc_preview = timestamp.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
   }
 
-  // TODO
-  // time zone conversion?
-  // Send requests
-
   determineDFPresent(f) {
     for (var x = 0; x < f.length; x++) {
         if (f[x].filetype_id == 2) {
