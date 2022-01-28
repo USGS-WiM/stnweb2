@@ -625,7 +625,7 @@ export class PeakEditComponent implements OnInit {
       data: {
         title: "Set as Primary",
         titleIcon: "",
-        message: "Are you sure you want to set this as the Primary Data file? (Coming soon: Script processing to populate the Peak date, time and time zone, Stage, Vertical Datum and Height above ground)",
+        message: "Are you sure you want to set this as the Primary Data file?",
         confirmButtonText: "OK",
         showCancelButton: true,
       },
