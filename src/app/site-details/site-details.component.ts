@@ -1124,12 +1124,13 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openPeaksEditDialog(row): void {
+        let self = this;
         let hwms = this.hwmDataSource.data;
         let sensors = this.sensorDataSource.data;
         // Only pass peaks and hwms for selected event
         if(this.event !== 'All Events'){
-            sensors = this.sensorDataSource.data.filter(function (s) { return s.eventName == this.event; });
-            hwms = this.hwmDataSource.data.filter(function (h) { return h.eventName == this.event; });  
+            sensors = this.sensorDataSource.data.filter(function (s) { return s.eventName == self.event; });
+            hwms = this.hwmDataSource.data.filter(function (h) { return h.eventName == self.event; });  
         }
         const dialogRef = this.dialog.open(PeakEditComponent, {
             data: {
@@ -1144,12 +1145,12 @@ export class SiteDetailsComponent implements OnInit {
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            let self = this;
             if (result && result.peak !== undefined && result.peak !== null){
                 // Update peak
                 this.peaksDataSource.data.forEach(function(peak, i){
                     if (peak.peak_summary_id === result.peak.peak_summary_id){
                         result.peak.event_name = self.peaksDataSource.data[i].event_name;
+                        result.peak.format_peak_date = self.setTimeAndDate(result.peak.peak_date);
                         self.peaksDataSource.data[i] = result.peak;
                         self.peaksDataSource.data = [...self.peaksDataSource.data];
                     }
