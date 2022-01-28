@@ -950,7 +950,6 @@
                     </mat-tab>
                     <mat-tab label="Peaks ({{peaks.length}})">
                         <mat-card class="mat-elevation-z0 header-card"><p>Peaks ({{peaks.length}})</p></mat-card>
-                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To view details about a Peak Summary, first choose an Event above.</p></mat-card>
                         <div class="tableContainer" *ngIf="peaks !== undefined; else noPeakTable">
                             <table *ngIf="peaks.length > 0; else noPeakTable"
                                 mat-table
@@ -1004,9 +1003,21 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                    <button mat-stroked-button class="view-details-btn" (click)="openPeaksDetailsDialog(row, 'Peak')"
-                                        aria-label="Edit">View Details
-                                    </button>
+                                        <button mat-stroked-button class="view-details-btn" (click)="openPeaksDetailsDialog(row)"
+                                            aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                        </button>
+                                        <button mat-stroked-button class="edit-details-btn" (click)="openPeaksEditDialog(row)"
+                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                        </button>
+                                        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                            <mat-icon>more_vert</mat-icon>
+                                        </button>
+                                        <mat-menu #menu="matMenu">
+                                            <button mat-menu-item disabled
+                                                aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                                <span>Delete</span>
+                                        </button>
+                                        </mat-menu>
                                     </td>
                                 </ng-container>
 
@@ -1323,14 +1334,14 @@
                             <mat-expansion-panel hideToggle [expanded]="sensorFilesExpanded" (opened)="sensorFilesExpanded = true" (closed)="sensorFilesExpanded = false">
                                 <mat-expansion-panel-header class="panel-headers">
                                     <mat-panel-title *ngIf="!sensorFilesExpanded" style="color: grey; font-weight: 500">
-                                        Sensor Files ({{sensorFiles.length}})
+                                        Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
                                     <mat-panel-title *ngIf="sensorFilesExpanded" style="color: #FFF; font-weight: 550">
-                                        Sensor Files ({{sensorFiles.length}})
+                                        Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="sensorFiles !== undefined; else noSensorFileTable">
-                                    <table *ngIf="sensorFiles.length > 0 && sensorFilesDone; else noSensorFileTable"
+                                    <table *ngIf="sensorFilesDataSource.data.length > 0 && sensorFilesDone; else noSensorFileTable"
                                         mat-table
                                         id="sensorFilesTable"
                                         [dataSource]="sensorFilesDataSource"

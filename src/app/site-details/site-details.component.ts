@@ -29,6 +29,7 @@ import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.compon
 import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
 import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
+import { PeakEditComponent } from '@app/peak-edit/peak-edit.component';
 
 @Component({
     selector: 'app-site-details',
@@ -317,14 +318,12 @@ export class SiteDetailsComponent implements OnInit {
             .subscribe((results) => {
                 if(self.currentEvent === 0){
                     this.event = "All Events";
-                    console.log(this.event)
                     this.getData();
                 }else{
                     if(results.length > 0){
                         results.forEach(function(result){
                             if (self.currentEvent == result.event_id){
                                 self.event = result.event_name;
-                                console.log(self.event)
                                 self.getData();
                             }
                         })
@@ -617,9 +616,13 @@ export class SiteDetailsComponent implements OnInit {
                                         file.details = results;
                                         self.sensorFiles.push(file);
                                         self.fileLength ++;
+
                                         // Wait for all files to finish being retrieved before loading table
-                                        if (self.files.length === (self.sensorFiles.length + self.hwmFiles.length + self.siteFiles.length + self.datumLocFiles.length)){
+                                        if (self.files.length === (self.sensorFiles.length + self.hwmFiles.length + self.datumLocFiles.length)){
                                             self.sensorFilesDone = true;
+                                            
+                                            self.sensorFilesDataSource.data = self.sensorFiles;
+                                            self.sensorFilesDataSource.paginator = self.sensorFilesPaginator;
                                         }
                                     });
                                 }else if (file.hwm_id !== undefined){
@@ -627,11 +630,12 @@ export class SiteDetailsComponent implements OnInit {
                                     self.fileLength ++;
                                 }
                             });
+                                            
+                            // this.sensorFilesDataSource.data = this.sensorFiles;
+                            // this.sensorFilesDataSource.paginator = this.sensorFilesPaginator;
+
                             this.hwmFilesDataSource.data = this.hwmFiles;
                             this.hwmFilesDataSource.paginator = this.hwmFilesPaginator;
-
-                            this.sensorFilesDataSource.data = this.sensorFiles;
-                            this.sensorFilesDataSource.paginator = this.sensorFilesPaginator;
                         });
 
                         // Get site and datum location files not associated with an event
@@ -1116,6 +1120,59 @@ export class SiteDetailsComponent implements OnInit {
 
     openPeaksDetailsDialog(row): void {
         console.log(row)
+    }
+
+    /* istanbul ignore next */
+    openPeaksEditDialog(row): void {
+        let hwms = this.hwmDataSource.data;
+        let sensors = this.sensorDataSource.data;
+        // Only pass peaks and hwms for selected event
+        if(this.event !== 'All Events'){
+            sensors = this.sensorDataSource.data.filter(function (s) { return s.eventName == this.event; });
+            hwms = this.hwmDataSource.data.filter(function (h) { return h.eventName == this.event; });  
+        }
+        const dialogRef = this.dialog.open(PeakEditComponent, {
+            data: {
+                peak: row,
+                site_id: this.site.site_id,
+                siteHWMs: hwms,
+                siteSensors: sensors,
+                sensorFiles: this.sensorFilesDataSource.data,
+                hwmFiles: this.hwmFilesDataSource.data,
+            },
+            width: '100%',
+            autoFocus: false
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            let self = this;
+            if (result && result.peak !== undefined && result.peak !== null){
+                // Update peak
+                this.peaksDataSource.data.forEach(function(peak, i){
+                    if (peak.peak_summary_id === result.peak.peak_summary_id){
+                        result.peak.event_name = self.peaksDataSource.data[i].event_name;
+                        self.peaksDataSource.data[i] = result.peak;
+                        self.peaksDataSource.data = [...self.peaksDataSource.data];
+                    }
+                })
+                // Update HWMs
+                if(result.hwmsToAdd.length > 0){
+                    let hwmsToAdd = result.hwmsToAdd.join(',');
+                    this.hwmDataSource.data.forEach(function(hwm, h) {
+                        if (hwmsToAdd.includes(String(hwm.hwm_id))){
+                            self.hwmDataSource.data[h].peak_summary_id = result.peak.peak_summary_id;
+                        }
+                    })
+                }
+                if(result.hwmsToRemove.length > 0){
+                    let hwmsToRemove = result.hwmsToRemove.join(',');
+                    this.hwmDataSource.data.forEach(function(hwm, h) {
+                        if (hwmsToRemove.includes(String(hwm.hwm_id))){
+                            self.hwmDataSource.data[h].peak_summary_id = null;
+                        }
+                    })
+                }
+            }
+        });
     }
 
     openFileDetailsDialog(row, type): void {
