@@ -3,6 +3,7 @@ import {
     ChangeDetectorRef,
     Component,
     OnInit,
+    ViewChild,
 } from '@angular/core';
 import { Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -22,10 +23,14 @@ import { APP_UTILITIES } from '@app/app.utilities';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResultDetailsComponent implements OnInit {
-    sensorDataSource = new MatTableDataSource([]);
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
+
+    sensorDataSource = new MatTableDataSource([]); 
+    sortedData = [];
     siteSensors = [];
     allEvents = [];
     sensorData;
+    isInit = true;
 
     displayedColumns: string[] = [
         'Event',
@@ -82,6 +87,9 @@ export class ResultDetailsComponent implements OnInit {
         // looping through each sensor and retrieving the event name using the event_id
 
         this.sensorDataSource.data = sensors;
+        this.sensorDataSource.sort = this.sort;
+        // Sort  by Deployed > Retrieved > Proposed > Lost initially
+        this.sortData({active: "status", direction: "asc"});
         this.changeDetectorRefs.detectChanges();
     }
 
@@ -133,5 +141,77 @@ export class ResultDetailsComponent implements OnInit {
         }
         this.sensorData = sensors;
         return sensors;
+    }
+
+    // fired when user clicks a sortable header
+    sortData(sort: Sort) {
+        const data = this.sensorData.slice();
+        if (!sort.active || sort.direction === '') {
+            this.sortedData = data;
+            return;
+        }
+        /* istanbul ignore next */
+        this.sortedData = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'event':
+                    return this.compare(a.eventName, b.eventName, isAsc);
+                case 'location_description':
+                    return this.compare(a.location_description, b.location_description, isAsc);
+                case 'deployment_type':
+                    return this.compare(a.deploymentType, b.deploymentType, isAsc);
+                case 'housing_type':
+                    return this.compare(a.housingType, b.housingType, isAsc);
+                case 'sensor_type':
+                    return this.compare(a.sensorType, b.sensorType, isAsc);
+                case 'status':
+                    if(this.isInit){
+                        return this.initCompare(
+                            a.instrument_status,
+                            b.instrument_status,
+                        );
+                    }else{
+                        return this.compare(
+                            a.instrument_status,
+                            b.instrument_status,
+                            isAsc
+                        ); 
+                    }
+                default:
+                    return 0;
+            }
+
+        });
+        // Set to false after initial sort
+        this.isInit = false;
+        
+        // Need to update the data source to update the table rows
+        this.sensorDataSource.data = this.sortedData;
+    }
+    initCompare(a: string, b: string) {
+        if(a === "Deployed"){
+            a = "1";
+        }else if(a === "Retrieved"){
+            a = "2";
+        }else if(a === "Proposed"){
+            a = "3";
+        }else if(a === "Lost"){
+            a = "4";
+        }
+
+        if(b === "Deployed"){
+            b = "1";
+        }else if(b === "Retrieved"){
+            b = "2";
+        }else if(b === "Proposed"){
+            b = "3";
+        }else if(b === "Lost"){
+            b = "4";
+        }
+
+        return (Number(a) < Number(b) ? -1 : 1);
+    }
+    compare(a: number | string, b: number | string, isAsc: boolean) {
+        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
     }
 }
