@@ -673,11 +673,6 @@ export class PeakEditComponent implements OnInit {
     const updatePeak = new Promise<string>((resolve, reject) => this.peakEditService.putPeak(peakSubmission.peak_summary_id, peakSubmission).subscribe(results => {
       if(results.length !== 0){
         this.returnData.peak = results;
-        // Add formatted date
-        let peakDate = results.peak_date.split("T")[0];
-        peakDate = peakDate.split("-");
-        peakDate = peakDate[1] + "/" + peakDate[2] + "/" + peakDate[0];
-        this.returnData.peak.format_peak_date = peakDate;
         
         // Remove DFs
         if(this.removedDFs.length > 0) {

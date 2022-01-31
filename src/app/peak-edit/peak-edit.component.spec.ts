@@ -518,15 +518,6 @@ describe('PeakEditComponent', () => {
       site_id: 101010,
     };
 
-    const returnValue = {
-      format_peak_date: "01/26/2022",
-      latitude: 39,
-      longitude: -90,
-      peak_date: "2022-01-26T01:10:00",
-      peak_summary_id: 100,
-      site_id: 101010,
-    };
-
     const removedDF = {
       data_file_id: 0,
         description: "test",
@@ -621,7 +612,7 @@ describe('PeakEditComponent', () => {
     
     component.sendRequests();
     fixture.detectChanges();
-    expect(component.returnData.peak).toEqual(returnValue);
+    expect(component.returnData.peak).toEqual(response);
     expect(component.returnData.hwmsToAdd).toEqual([hwmResponse.hwm_id]);
     expect(updateDFSpy).toHaveBeenCalledTimes(1);
 
