@@ -346,32 +346,32 @@ describe('HwmEditComponent', () => {
       {hwm_quality_id : 4, max_range: .4, min_range: .201},
       {hwm_quality_id : 5, max_range: 1, min_range: .401},
     ];
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
     component.form.get("hwm_uncertainty").setValue(0.75);
     component.form.get("hwm_quality_id").setValue(5);
 
     component.compareToUncertainty();
     fixture.detectChanges();
 
-    expect(window.alert).not.toHaveBeenCalled();
+    expect(dialogSpy).not.toHaveBeenCalled();
     
     component.form.get("hwm_quality_id").setValue(4);
 
     component.compareToUncertainty();
     fixture.detectChanges();
 
-    expect(window.alert).toHaveBeenCalledWith("There is a mismatch between the hwm quality chosen and the hwm uncertainty above. Please correct your hwm uncertainty.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should show alert and stop loading if form is invalid', () => {
     component.form.get("hwm_label").setValue(null);
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
 
     component.submit();
     fixture.detectChanges();
     expect(component.form.valid).toBeFalse();
     expect(component.loading).toBeFalse();
-    expect(window.alert).toHaveBeenCalledWith("Some required HWM fields are missing or incorrect.  Please fix these fields before submitting.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should create a new date without time', () => {

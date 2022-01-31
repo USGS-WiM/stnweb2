@@ -286,7 +286,9 @@ describe('SensorEditComponent', () => {
   });
 
   it('should add or remove a tapedown', () => {
-    let confirmSpy = spyOn(window, 'confirm').and.returnValue(true);
+    let confirmSpy = spyOn(component.dialog, 'open')
+     .and
+     .returnValue({afterClosed: () => of(true)} as MatDialogRef<unknown>);
     const response: any[] = [{datum_id: 0, datum_name: "testDatum"}];
 
     spyOn(component.siteService, 'getVDatumLookup').and.returnValue(
@@ -475,13 +477,13 @@ describe('SensorEditComponent', () => {
 
   it('should show alert and stop loading if instrument form is invalid', () => {
     component.form.get("serial_number").setValue(null);
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
 
     component.submit("3");
     fixture.detectChanges();
     expect(component.form.valid).toBeFalse();
     expect(component.loading).toBeFalse();
-    expect(window.alert).toHaveBeenCalledWith("Some required sensor fields are missing or incorrect.  Please fix these fields before submitting.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should convert interval and send requests if instrument form is valid', () => {
@@ -534,7 +536,7 @@ describe('SensorEditComponent', () => {
     let removeSpy = spyOn(component.sensorEditService, 'deleteOPMeasure').and.returnValue(
       of(null)
     );
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
     let updateSpy = spyOn(component.sensorEditService, 'updateOPMeasure');
     let addSpy = spyOn(component.sensorEditService, 'addOPMeasure');
 
@@ -544,7 +546,7 @@ describe('SensorEditComponent', () => {
     expect(addSpy).not.toHaveBeenCalled();
     expect(removeSpy).toHaveBeenCalledTimes(1);
     expect(updateSpy).not.toHaveBeenCalled();
-    expect(window.alert).not.toHaveBeenCalled();
+    expect(dialogSpy).not.toHaveBeenCalled();
   });
 
   it('should show alert if removing tapedowns fails', () => {
@@ -552,7 +554,7 @@ describe('SensorEditComponent', () => {
     let tapedownsToUpdate = [];
     let tapedownsToRemove = [3];
 
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
     let removeSpy = spyOn(component.sensorEditService, 'deleteOPMeasure').and.returnValue(
       of([])
     );
@@ -561,7 +563,7 @@ describe('SensorEditComponent', () => {
     fixture.detectChanges();
     
     expect(removeSpy).toHaveBeenCalledTimes(1);
-    expect(window.alert).toHaveBeenCalledWith("Error removing tapedown.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should submit updated tapedowns', () => {
@@ -569,7 +571,7 @@ describe('SensorEditComponent', () => {
     let tapedownsToAdd = [];
     let tapedownsToRemove = [];
 
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
     let removeSpy = spyOn(component.sensorEditService, 'deleteOPMeasure');
     let addSpy = spyOn(component.sensorEditService, 'addOPMeasure');
 
@@ -585,7 +587,7 @@ describe('SensorEditComponent', () => {
     expect(addSpy).not.toHaveBeenCalled();
     expect(removeSpy).not.toHaveBeenCalled();
     expect(updateSpy).toHaveBeenCalledTimes(1);
-    expect(window.alert).not.toHaveBeenCalled();
+    expect(dialogSpy).not.toHaveBeenCalled();
   });
 
   it('should show alert if updating tapedowns fails', () => {
@@ -593,7 +595,7 @@ describe('SensorEditComponent', () => {
     let tapedownsToUpdate = [{ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2, objective_point_id: 2}];
     let tapedownsToRemove = [];
 
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
     let updateSpy = spyOn(component.sensorEditService, 'updateOPMeasure').and.returnValue(
       of([])
     );
@@ -603,7 +605,7 @@ describe('SensorEditComponent', () => {
 
     
     expect(updateSpy).toHaveBeenCalledTimes(1);
-    expect(window.alert).toHaveBeenCalledWith("Error updating tapedown.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should submit new tapedowns', () => {
@@ -611,7 +613,7 @@ describe('SensorEditComponent', () => {
     let tapedownsToUpdate = [];
     let tapedownsToRemove = [];
 
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
 
     let tapedownAddResponse = {ground_surface: 2, water_surface: 2, offset_correction: 2, op_measurements_id: 2, instrument_status_id: 2, objective_point_id: 2};
 
@@ -627,7 +629,7 @@ describe('SensorEditComponent', () => {
     expect(addSpy).toHaveBeenCalledTimes(1);
     expect(removeSpy).not.toHaveBeenCalled();
     expect(updateSpy).not.toHaveBeenCalled();
-    expect(window.alert).not.toHaveBeenCalled();
+    expect(dialogSpy).not.toHaveBeenCalled();
   });
 
   it('should show alert if adding tapedowns fails', () => {
@@ -635,7 +637,7 @@ describe('SensorEditComponent', () => {
     let tapedownsToUpdate = [];
     let tapedownsToRemove = [];
 
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
     let addSpy = spyOn(component.sensorEditService, 'addOPMeasure').and.returnValue(
       of([])
     );
@@ -644,7 +646,7 @@ describe('SensorEditComponent', () => {
     fixture.detectChanges();
 
     expect(addSpy).toHaveBeenCalledTimes(1);
-    expect(window.alert).toHaveBeenCalledWith("Error adding new tapedown.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should send requests and set return data to results', () => {

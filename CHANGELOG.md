@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Sort result details table by sensor status when opened (Deployed > Retrieved > Proposed > Lost)
 -   Revised peak table columns
+-   Replaced alerts/confirms with dialog
 
 ### Fixed
 
