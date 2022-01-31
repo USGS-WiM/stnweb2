@@ -17,6 +17,11 @@ $stn-app-theme: mat-light-theme(
 
 .primary {
     background-color: #1a237e !important;
+    color: #F4F4F4 !important;
+}
+
+.secondary {
+    border: 1px solid #404040 !important;
 }
 
 // secondary button: border: 2px solid #404040

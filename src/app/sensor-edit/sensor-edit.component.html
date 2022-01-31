@@ -304,7 +304,7 @@
                                     </mat-form-field>
                                     <input class="date-input" formControlName="hour" type="number" aria-label="Deploy Hour" [value]="instrument.hour" required placeholder="00"> : 
                                     <input class="date-input" formControlName="minute" type="number" aria-label="Deploy Minute" [value]="instrument.minute" required placeholder="00">
-                                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
+                                    <button mat-stroked-button class="date-input date-button secondary" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Time Zone</mat-label>
@@ -331,8 +331,8 @@
                     </div>
                 </div>
                 <div class="ref-button-group">
-                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" id="1" type="submit">Save</button>
-                    <button class="cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Deployed')">Cancel Edits</button>
+                    <button class="primary" mat-button cdkFocusInitial aria-label="Save" id="1" type="submit">Save</button>
+                    <button class="secondary cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Deployed')">Cancel Edits</button>
                 </div>
             </mat-expansion-panel>
             <mat-expansion-panel hideToggle [expanded]="retrievedExpanded" (opened)="retrievedExpanded = true" (closed)="retrievedExpanded = false" *ngIf="sensor.statusType === 'Retrieved'">
@@ -596,8 +596,8 @@
                     </div>
                 </div>
                 <div class="ref-button-group">
-                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" id="2" type="submit">Save</button>
-                    <button class="cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Retrieved')">Cancel Edits</button>
+                    <button class="primary" mat-button cdkFocusInitial aria-label="Save" id="2" type="submit">Save</button>
+                    <button class="secondary cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Retrieved')">Cancel Edits</button>
                 </div>
             </mat-expansion-panel>
             <mat-expansion-panel hideToggle [expanded]="lostExpanded" (opened)="lostExpanded = true" (closed)="lostExpanded = false" *ngIf="sensor.statusType === 'Lost'">
@@ -861,8 +861,8 @@
                     </div>
                 </div>
                 <div class="ref-button-group">
-                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" id="3" type="submit">Save</button>
-                    <button class="cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Lost')">Cancel Edits</button>
+                    <button class="primary" mat-button cdkFocusInitial aria-label="Save" id="3" type="submit">Save</button>
+                    <button class="secondary cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Lost')">Cancel Edits</button>
                 </div>
             </mat-expansion-panel>
             <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
@@ -874,7 +874,7 @@
                         Sensor File Information
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <button mat-stroked-button class="secondary" type="button"><mat-icon>add</mat-icon> Add File</button>
                 <div class="tableContainer" [hidden]="initSensorFiles?.length === 0">
                     <table
                         mat-table
@@ -970,7 +970,7 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
-            <button mat-stroked-button class="close-btn" [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Cancel">Cancel</button>
+            <button mat-stroked-button class="secondary" [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Cancel">Cancel</button>
             <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
         </div>
     </mat-dialog-actions>

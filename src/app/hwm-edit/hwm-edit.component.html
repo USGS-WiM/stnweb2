@@ -313,7 +313,7 @@
                     HWM File Information
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+            <button mat-stroked-button class="secondary" type="button"><mat-icon>add</mat-icon> Add File</button>
             <div class="tableContainer" [hidden]="initHWMFiles?.length === 0">
                 <table
                     mat-table
@@ -355,8 +355,8 @@
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
             <div class="ref-button-group">
-                <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
-                <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                <button class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                <button class="secondary cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
             </div>
         </div>
     </mat-dialog-actions>

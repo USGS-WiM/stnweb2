@@ -24,9 +24,9 @@
                         >HWM {{hwm.hwm_id}} - {{hwm.elev_ft || '--'}} ft</mat-checkbox
                     >
                     <div class="button-group">
-                        <button mat-button type="button" (click)="showHWMDetails(i)"><mat-icon class="info-icon" matTooltip="Show Details">info</mat-icon></button>
-                        <button mat-button *ngIf="hwm.elev_ft" type="button" (click)="primaryHWM(hwm)" class="right-button"><mat-icon class="check-icon" matTooltip="Set as Primary">check_circle_outline</mat-icon></button>
-                        <button mat-button *ngIf="!hwm.elev_ft" type="button" (click)="showIncompleteHWMInfo()" class="right-button"><mat-icon class="warning-icon" matTooltip="Incomplete">warning</mat-icon></button>
+                        <button mat-button type="button" class="secondary" (click)="showHWMDetails(i)"><mat-icon class="info-icon" matTooltip="Show Details">info</mat-icon></button>
+                        <button mat-button *ngIf="hwm.elev_ft" class="secondary" type="button" (click)="primaryHWM(hwm)" class="right-button"><mat-icon class="check-icon" matTooltip="Set as Primary">check_circle_outline</mat-icon></button>
+                        <button mat-button *ngIf="!hwm.elev_ft" class="secondary" type="button" (click)="showIncompleteHWMInfo()" class="right-button"><mat-icon class="warning-icon" matTooltip="Incomplete">warning</mat-icon></button>
                     </div>
                 </div>
                 <!-- HWM Details, not shown unless Show Details clicked -->
@@ -269,7 +269,7 @@
                 <div class="inline-widths">
                     <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="peak.hour" required placeholder="00"> : 
                     <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" [value]="peak.minute" required placeholder="00">
-                    <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime()" [value]="peak.ampm">{{peak.ampm}}</button>
+                    <button mat-stroked-button class="date-input secondary date-button" type="button" (click)="changeTime()" [value]="peak.ampm">{{peak.ampm}}</button>
                 </div>
             </div>
             <div class="inline-fields">
@@ -420,8 +420,8 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
-            <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
-            <button type="button"mat-dialog-close mat-stroked-button class="close-btn" cdkFocusInitial aria-label="Close">Cancel</button>
+            <button class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+            <button type="button"mat-dialog-close mat-stroked-button class="secondary close-btn" cdkFocusInitial aria-label="Close">Cancel</button>
         </div>
     </mat-dialog-actions>
 </form>
