@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Sort result details table by sensor status when opened (Deployed > Retrieved > Proposed > Lost)
 -   Revised peak table columns
+-   Updated Reference Datum Edit dialog layout
+-   Updated radio button/form field layout for all edit dialogs
+-   View Details and Edit buttons move within button menu on smaller screens
 
 ### Fixed
 
