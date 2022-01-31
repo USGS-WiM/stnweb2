@@ -511,7 +511,7 @@ table {
     margin: 0px !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .view-details-btn { display: none; }
     
     .view-details-mobile { display: block; }
@@ -519,4 +519,14 @@ table {
     .edit-details-btn { display: none; }
     
     .edit-details-mobile { display: block; }
+  }
+
+@media (min-width: 1000px) {
+    .view-details-btn { display: inline-block; }
+    
+    .view-details-mobile { display: none; }
+    
+    .edit-details-btn { display: inline-block; }
+    
+    .edit-details-mobile { display: none; }
   }
