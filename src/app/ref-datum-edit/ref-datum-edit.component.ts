@@ -422,7 +422,15 @@ export class RefDatumEditComponent implements OnInit {
       this.sendRequests();
     }else{
       this.loading = false;
-      alert("Some required reference datum fields are missing or incorrect.  Please fix these fields before submitting.")
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required reference datum fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
     }
   }
 

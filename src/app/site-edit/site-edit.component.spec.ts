@@ -12,6 +12,7 @@ import { of } from 'rxjs';
 import { APP_SETTINGS } from '@app/app.settings';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { normalizeTickInterval } from 'highcharts';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('SiteEditComponent', () => {
   let component: SiteEditComponent;
@@ -69,6 +70,7 @@ describe('SiteEditComponent', () => {
         HttpClientTestingModule,
         MatTableModule,
         MatSnackBarModule,
+        NoopAnimationsModule
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
@@ -624,13 +626,14 @@ describe('SiteEditComponent', () => {
 
   it('should show alert and stop loading if site form is invalid', () => {
     component.siteForm.get("site_description").setValue(null);
-    spyOn(window, 'alert');
+    
+    let dialogSpy = spyOn(component.dialog, 'open');
 
     component.submitSiteForm();
     fixture.detectChanges();
     expect(component.valid).toBeFalse();
     expect(component.loading).toBeFalse();
-    expect(window.alert).toHaveBeenCalledWith("Some required site fields are missing or incorrect.  Please fix these fields before submitting.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should not call putSite and show alert if landowner invalid', () => {
@@ -644,7 +647,7 @@ describe('SiteEditComponent', () => {
     component.siteForm.get("landownercontact_id").setValue(9999);
     component.landownerForm.markAsDirty();
     let putSiteSpy = spyOn(component, 'putSite');
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
 
     component.submitSiteForm();
     fixture.detectChanges();
@@ -652,7 +655,7 @@ describe('SiteEditComponent', () => {
     expect(component.landownerValid).toBeFalse();
     expect(putSiteSpy).not.toHaveBeenCalled();
     expect(component.loading).toBeFalse();
-    expect(window.alert).toHaveBeenCalledWith("Some required landowner contact fields are missing or incorrect.  Please fix these fields before submitting.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should call putSite and post landowner form', () => {
@@ -708,7 +711,11 @@ describe('SiteEditComponent', () => {
   it('should delete file and remove from page', () => {
     component.returnData.files = [{file_id: 1}, {file_id: 2}];
     let response = {file_id: 1};
-    spyOn(window, 'confirm').and.returnValue(true);
+    
+    
+    spyOn(component.dialog, 'open')
+     .and
+     .returnValue({afterClosed: () => of(true)} as MatDialogRef<unknown>);
     spyOn(component.siteEditService, 'deleteFile').and.returnValue(
       of(response)
     );
@@ -781,12 +788,12 @@ describe('SiteEditComponent', () => {
     component.siteFileForm.get("file_date").setValue("2018-12-29T22:55:17.129");
     component.siteFileForm.get("FULLname").setValue("test");
     component.siteFileForm.get("agency_id").setValue(9999);
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
 
     component.createFile();
     fixture.detectChanges();
 
-    expect(window.alert).toHaveBeenCalledWith("Some required site file fields are missing or incorrect.  Please fix these fields before submitting.");
+    expect(dialogSpy).toHaveBeenCalled();
     expect(component.loading).toBeFalse();
   });
 
@@ -823,12 +830,13 @@ describe('SiteEditComponent', () => {
     component.siteFileForm.get("file_date").setValue("2018-12-29T22:55:17.129");
     component.siteFileForm.get("FULLname").setValue("test");
     component.siteFileForm.get("agency_id").setValue(9999);
-    spyOn(window, 'alert');
+    
+    let dialogSpy = spyOn(component.dialog, 'open');
 
     component.saveFile();
     fixture.detectChanges();
 
-    expect(window.alert).toHaveBeenCalledWith("Some required site file fields are missing or incorrect.  Please fix these fields before submitting.");
+    expect(dialogSpy).toHaveBeenCalled();
     expect(component.loading).toBeFalse();
   });
 

@@ -12,6 +12,7 @@ import { forkJoin } from 'rxjs';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { APP_SETTINGS } from '../app.settings';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { ConfirmComponent } from '@app/confirm/confirm.component';
 
 @Component({
   selector: 'app-site-edit',
@@ -159,7 +160,8 @@ export class SiteEditComponent implements OnInit {
     public siteService: SiteService,
     public siteEditService: SiteEditService,
     private changeDetector : ChangeDetectorRef,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -1002,7 +1004,15 @@ export class SiteEditComponent implements OnInit {
         }else{
           this.landownerValid = false;
           this.loading = false;
-          alert("Some required landowner contact fields are missing or incorrect.  Please fix these fields before submitting.")
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "",
+              titleIcon: "close",
+              message: "Some required landowner contact fields are missing or incorrect.  Please fix these fields before submitting.",
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
         }
       }else{
         this.putSite();
@@ -1010,7 +1020,15 @@ export class SiteEditComponent implements OnInit {
     }else{
       this.valid = false;
       this.loading = false;
-      alert("Some required site fields are missing or incorrect.  Please fix these fields before submitting.")
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required site fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
     }
     this.fileUploading = false;
   }
@@ -1252,6 +1270,15 @@ export class SiteEditComponent implements OnInit {
       this.dialogRef.close(this.returnData);
       this.loading = false;
       this.fileUploading = false;
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "Successfully updated Site",
+          titleIcon: "check",
+          message: null,
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
       return;
     })
   }
@@ -1296,7 +1323,15 @@ export class SiteEditComponent implements OnInit {
     }else{
       this.loading = false;
       this.fileValid = false;
-      alert("Some required site file fields are missing or incorrect.  Please fix these fields before submitting.")
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required site file fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
     }
   }
 
@@ -1319,27 +1354,38 @@ export class SiteEditComponent implements OnInit {
   }
 
   deleteFile() {
-    let okayToDelete = confirm("Are you sure you want to remove this file?");
-    if(okayToDelete){
-      this.siteFileForm.markAllAsTouched();
-      let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
-      this.siteEditService.deleteFile(fileSubmission.file_id)
-        .subscribe(
-            (data) => {
-              let index;
-              for(let file of this.returnData.files){
-                if(JSON.stringify(file) === JSON.stringify(data)){
-                  index = this.returnData.files.indexOf(file);
+    let dialogRef = this.dialog.open(ConfirmComponent, {
+      data: {
+        title: "",
+        titleIcon: "",
+        message: "Are you sure you want to remove this file?",
+        confirmButtonText: "OK",
+        showCancelButton: true,
+      },
+    });
+    
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result){
+        this.siteFileForm.markAllAsTouched();
+        let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+        this.siteEditService.deleteFile(fileSubmission.file_id)
+          .subscribe(
+              (data) => {
+                let index;
+                for(let file of this.returnData.files){
+                  if(JSON.stringify(file) === JSON.stringify(data)){
+                    index = this.returnData.files.indexOf(file);
+                  }
                 }
+                this.returnData.files.splice(index, 1);
+                this.initSiteFiles = this.returnData.files;
+                this.initSiteFiles = [...this.initSiteFiles];
+                this.cancelFile();
+                this.showFileForm = false;
               }
-              this.returnData.files.splice(index, 1);
-              this.initSiteFiles = this.returnData.files;
-              this.initSiteFiles = [...this.initSiteFiles];
-              this.cancelFile();
-              this.showFileForm = false;
-            }
-        );
-    }
+          );
+      }
+    });
   }
 
   createFile() {
@@ -1428,7 +1474,15 @@ export class SiteEditComponent implements OnInit {
     }else{
       this.fileValid = false;
       this.loading = false;
-      alert("Some required site file fields are missing or incorrect.  Please fix these fields before submitting.")
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required site file fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
     }
   }
 }

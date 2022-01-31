@@ -489,12 +489,12 @@ describe('PeakEditComponent', () => {
 
   it('should alert the user if form is invalid on submit', () => {
     component.form.controls.peak_date.setValue(null);
-    spyOn(window, 'alert');
+    let dialogSpy = spyOn(component.dialog, 'open');
     component.submit();
     fixture.detectChanges();
     expect(component.form.valid).toBeFalse();
     expect(component.loading).toBeFalse();
-    expect(window.alert).toHaveBeenCalledWith("Some required Peak fields are missing or incorrect.  Please fix these fields before submitting.");
+    expect(dialogSpy).toHaveBeenCalled();
   });
 
   it('should start loading and send requests if form is valid on submit', () => {
