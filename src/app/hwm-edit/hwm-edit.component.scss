@@ -91,6 +91,15 @@ table {
     font-weight: bold;
 }
 
+.inline-fields {
+    display: flex;
+    align-items: center;
+}
+
+.inline-widths {
+    flex: 0 0 50%;
+}
+
 .save-btn {
     color: #F4F4F4;
 }

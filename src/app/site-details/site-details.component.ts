@@ -619,7 +619,7 @@ export class SiteDetailsComponent implements OnInit {
                                         self.fileLength ++;
 
                                         // Wait for all files to finish being retrieved before loading table
-                                        if (self.files.length === (self.sensorFiles.length + self.hwmFiles.length + self.datumLocFiles.length)){
+                                        if (self.files.length === (self.sensorFiles.length + self.hwmFiles.length)){
                                             self.sensorFilesDone = true;
                                             
                                             self.sensorFilesDataSource.data = self.sensorFiles;
@@ -631,9 +631,6 @@ export class SiteDetailsComponent implements OnInit {
                                     self.fileLength ++;
                                 }
                             });
-                                            
-                            // this.sensorFilesDataSource.data = this.sensorFiles;
-                            // this.sensorFilesDataSource.paginator = this.sensorFilesPaginator;
 
                             this.hwmFilesDataSource.data = this.hwmFiles;
                             this.hwmFilesDataSource.paginator = this.hwmFilesPaginator;
@@ -641,8 +638,8 @@ export class SiteDetailsComponent implements OnInit {
 
                         // Get site and datum location files not associated with an event
                         this.siteService.getSiteFiles(this.siteID).subscribe((results) => {
-                            this.files = results;
-                            this.files.forEach(function(file){
+                            let files = results;
+                            files.forEach(function(file){
                                 let fileDate = file.file_date.split("T")[0];
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
@@ -887,10 +884,9 @@ export class SiteDetailsComponent implements OnInit {
                   icon = windspeedIcon;
                   self.windSensorVisible = true;
                   break;
-                case '': 
+                default: 
                   icon = otherIcon;
                   self.otherSensorVisible = true;
-                  break;
               }
             let sensorMarker = L.marker([self.site.latitude_dd, self.site.longitude_dd], {icon: icon});
             sensorMarker.desc = sensor.serial_number;
@@ -1135,11 +1131,7 @@ export class SiteDetailsComponent implements OnInit {
         let self = this;
         let hwms = this.hwmDataSource.data;
         let sensors = this.sensorDataSource.data;
-        // Only pass peaks and hwms for selected event
-        if(this.event !== 'All Events'){
-            sensors = this.sensorDataSource.data.filter(function (s) { return s.eventName == self.event; });
-            hwms = this.hwmDataSource.data.filter(function (h) { return h.eventName == self.event; });  
-        }
+        
         const dialogRef = this.dialog.open(PeakEditComponent, {
             data: {
                 peak: row,
