@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SiteService } from '@app/services/site.service';
 import { OpEditService } from '@app/services/op-edit.service';
+import { ConfirmComponent } from '@app/confirm/confirm.component';
 
 @Component({
   selector: 'app-ref-datum-edit',
@@ -57,6 +58,7 @@ export class RefDatumEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public siteService: SiteService,
     public opEditService: OpEditService,
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -517,6 +519,15 @@ export class RefDatumEditComponent implements OnInit {
     Promise.all(promises).then(() => {
       this.dialogRef.close(this.returnData);
       this.loading = false;
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "Successfully updated Reference Datum",
+          titleIcon: "check",
+          message: null,
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
       return;
     })
   }
