@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-    Reference Datum
+    Edit Reference Datum
     <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <div [hidden]="!loading" class="loading">
@@ -54,6 +54,7 @@
                     <button type="button" mat-button aria-label="Remove Control Identifier" (click)="removeControlIdentifier(control, i)"><mat-icon>close</mat-icon></button>
                 </div>
                 <div>
+                    <mat-label class="form-header">Lat/Lng Unit:</mat-label>
                     <mat-radio-group class="radio-btn-group" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
                         <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
                         <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
