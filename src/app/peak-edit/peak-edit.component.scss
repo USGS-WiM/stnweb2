@@ -77,13 +77,8 @@
     font-weight: bold;
 }
 
-.save-btn {
-    color: #F4F4F4;
-}
-
 .cancel-btn {
     margin-left: 10px;
-    border: 1px solid #404040;
 }
 
 .section-title {
@@ -135,7 +130,6 @@
 .button-group {
     float: right;
     button{
-        border: 1px solid #404040;
         height: 30px;
         width: 30px;
         padding: 0px;
@@ -155,7 +149,6 @@
 .date-button {
     flex: 0 0 20%;
     margin-left: 10px;
-    border: 1px solid #404040;
     background-color: #FFF;
 }
 
