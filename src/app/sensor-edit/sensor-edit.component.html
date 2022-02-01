@@ -874,7 +874,7 @@
                         Sensor File Information
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <button mat-stroked-button class="secondary" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <button mat-stroked-button class="add" type="button"><mat-icon>add</mat-icon> Add File</button>
                 <div class="tableContainer" [hidden]="initSensorFiles?.length === 0">
                     <table
                         mat-table
@@ -922,7 +922,7 @@
                         NWIS Connection
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <button mat-stroked-button class="add-button add" type="button"><mat-icon>add</mat-icon> Add File</button>
                 <div class="tableContainer">
                     <table *ngIf="initNWISFiles.length > 0"
                         mat-table

@@ -24,7 +24,19 @@ $stn-app-theme: mat-light-theme(
     border: 1px solid #404040 !important;
 }
 
-// secondary button: border: 2px solid #404040
+.delete {
+    color: #ce0000 !important;
+    border: 1px solid #ce0000 !important;
+}
+
+.delete-borderless {
+    color: #ce0000 !important;
+}
+
+.add {
+    color: #2B7059 !important; 
+    border: 1px solid #2B7059 !important;
+}
 
 @include angular-material-theme($stn-app-theme);
 

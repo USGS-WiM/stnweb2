@@ -283,7 +283,7 @@
                                             <label class="form-header">Landowner Contact</label><mat-icon matSuffix class="info-icon" matTooltip="Do not record information that private citizens have a reasonable expectation of privacy about. No names or phone numbers of private citizens.  Business contact information is acceptable." 
                                             aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                         </div>
-                                        <button mat-stroked-button class="add-button secondary" (click)="addLandownerContact()" type="button"><mat-icon>add</mat-icon> Add Landowner</button>
+                                        <button mat-stroked-button class="add-button add" (click)="addLandownerContact()" type="button"><mat-icon>add</mat-icon> Add Landowner</button>
                                         <form [formGroup]="landownerForm" [hidden]="!hasLandownerContact && !addLandownerCheck">
                                             <mat-expansion-panel hideToggle expanded="true">
                                                 <mat-expansion-panel-header>
@@ -441,7 +441,7 @@
                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
-                <button mat-stroked-button class="add-button secondary" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <button mat-stroked-button class="add-button add" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
                 <div class="tableContainer" [hidden]="initSiteFiles?.length === 0">
                     <table
                         mat-table
@@ -651,7 +651,7 @@
                                     </div>
                                     <div [hidden]="siteFileIsUploading" class="file-button-group">
                                         <button aria-label="Save File" mat-button type="button" class="save-btn primary" *ngIf="siteFiles.FileEntity.file_id !== null" (click)="saveFile()">Save File</button>
-                                        <button aria-label="Delete File" mat-button class="delete-btn" type="button" *ngIf="siteFiles.FileEntity.file_id !== null" (click)="deleteFile()">Delete File</button>
+                                        <button aria-label="Delete File" mat-button class="delete-btn delete" type="button" *ngIf="siteFiles.FileEntity.file_id !== null" (click)="deleteFile()">Delete File</button>
                                         <button aria-label="Create File" mat-button type="button" class="save-btn primary" *ngIf="siteFiles.FileEntity.file_id == null" (click)="createFile()">Create File</button>
                                         <button aria-label="Close or Cancel File" mat-stroked-button class="secondary" style="margin-left: 10px" type="button" (click)="cancelFile()">Close/Cancel File</button>
                                     </div>

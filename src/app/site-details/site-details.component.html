@@ -10,10 +10,10 @@
                     Site {{site.site_no}} ({{event}})
                     <div class="site-buttons">
                         <button mat-stroked-button class="edit-button secondary" [disabled]="editDisabled" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
-                        <button *ngIf="!deleteDisabled" mat-stroked-button class="delete-button secondary"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                        <button *ngIf="!deleteDisabled" mat-stroked-button class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>
                         <span *ngIf="deleteDisabled" matTooltip="To delete a site, please contact a STN administrator." 
                         aria-label="Displays a tooltip when focused or hovered over">
-                            <button mat-stroked-button disabled class="delete-button secondary"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                            <button mat-stroked-button disabled class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>
                         </span>
                     </div>
                 </div>
@@ -518,8 +518,8 @@
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
                                     <mat-menu #menu="matMenu">
-                                        <button mat-menu-item
-                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <button mat-menu-item class="delete-borderless"
+                                            aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
                                     </mat-menu>
@@ -572,7 +572,7 @@
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
-                                            <button mat-menu-item disabled
+                                            <button mat-menu-item disabled 
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
                                             </button>
@@ -684,8 +684,8 @@
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
                                     <mat-menu #menu="matMenu">
-                                        <button mat-menu-item
-                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <button mat-menu-item class="delete-borderless"
+                                            aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
                                     </mat-menu>
@@ -860,8 +860,8 @@
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
-                                        <button mat-menu-item
-                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <button mat-menu-item class="delete-borderless"
+                                            aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
                                         </mat-menu>
@@ -1013,8 +1013,8 @@
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
-                                            <button mat-menu-item disabled
-                                                aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                            <button mat-menu-item class="delete-borderless"
+                                                aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                                 <span>Delete</span>
                                         </button>
                                         </mat-menu>

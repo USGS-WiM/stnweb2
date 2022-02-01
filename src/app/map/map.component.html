@@ -27,8 +27,8 @@
         <!-- Minimize/maximize map button displayed on mobile screen sizes -->
         <div id="mobile-minimize-button">
             <button
-				class="navBarBtnActive"
-                mat-button
+				class="navBarBtnActive secondary"
+                mat-stroked-button
                 aria-label="Display Map View"
                 (click)="toggleMap()"
             >
@@ -44,8 +44,8 @@
                     <span> Loading Layers...</span></div>
                     
 				<button
-					class="navBarBtnActive"
-					mat-button
+					class="navBarBtnActive secondary"
+					mat-stroked-button
 					aria-label="Display Map View"
 					(click)="toggleMap()"
 				>
@@ -267,8 +267,8 @@
                 </div>
                 <div class="button-row">
                     <button
-                        mat-raised-button
-                        color="accent"
+                        mat-button
+                        class="primary"
                         type="submit"
                         aria-label="Filter Sites"
                         (click)="submitMapFilter()"
@@ -277,8 +277,8 @@
                         Sites
                     </button>
                     <button
-                        mat-raised-button
-                        color="warn"
+                        mat-stroked-button
+                        class="secondary"
                         type="reset"
                         aria-label="Clear filters"
                         (click)="clearMapFilterForm()"

@@ -38,7 +38,7 @@
                 <div>
                     <label class="form-header">Control Identifier</label>
                 </div>
-                <button type="button" class="ctrl-btn secondary" mat-stroked-button aria-label="Control Identifier" (click)="addControl()">Add New Identifier</button>
+                <button type="button" class="ctrl-btn add" mat-stroked-button aria-label="Control Identifier" (click)="addControl()"><mat-icon>add</mat-icon> Add New Identifier</button>
                 <mat-icon matSuffix class="info-icon" matTooltip="National Geodetic Survey permanent identifier. See: ngs.noaa.gov/NGSDataExplorer/ for more information.">info</mat-icon>
                 <div class="container" *ngFor="let control of controlsToAdd; let i = index" formArrayName="op_control_identifier">
                     <mat-radio-group class="radio-btn-group" [(ngModel)]="controlsToAdd[i].identifier_type" [ngModelOptions]="{standalone: true}" (change)="changeControlID($event, i, control)">
@@ -290,7 +290,7 @@
                         <mat-icon class="info-header-icon" matTooltip="Files uploaded to Reference Datum are not tied to an event.  To associate a file with an event, please upload through a sensor or hwm instead of here.">info</mat-icon>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
-                <button mat-stroked-button class="secondary" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <button mat-stroked-button class="add" type="button"><mat-icon>add</mat-icon> Add File</button>
                 <div class="tableContainer" [hidden]="initDatumFiles?.length === 0">
                     <table
                         mat-table
