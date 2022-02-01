@@ -31,6 +31,7 @@ import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
 import { PeakEditComponent } from '@app/peak-edit/peak-edit.component';
+import { EventService } from '@app/services/event.service';
 
 @Component({
     selector: 'app-site-details',
@@ -208,6 +209,7 @@ export class SiteDetailsComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         public siteService: SiteService,
+        public eventService: EventService,
         public currentUserService: CurrentUserService,
         public timezonesService: TimezonesService,
         public dialog: MatDialog,
@@ -312,7 +314,7 @@ export class SiteDetailsComponent implements OnInit {
 
     getEvent() {
         let self = this;
-        this.siteService.getCurrentEvent().subscribe(result => this.currentEvent = result)
+        this.eventService.getCurrentEvent().subscribe(result => this.currentEvent = result)
         // Get event name
         this.siteService
             .getSiteEvents(this.siteID)

@@ -19,16 +19,9 @@ import 'leaflet';
 })
 export class SiteService {
     // public currentEvent;
-    private event = new BehaviorSubject<number>(0);
-    currentEvent = this.event.asObservable();
 
     constructor(private httpClient: HttpClient) {
     }
-
-    //private eventSitesSubject: Subject<any>;
-    // public get eventSites(): Observable<any> {
-    //     return this.eventSitesSubject.asObservable();
-    // }
 
     // Event Sites
     public getEventSites(eventID: number): Observable<Site[]> {
@@ -966,21 +959,6 @@ export class SiteService {
                     return response;
                 }),
                 catchError(this.handleError<any>('getFileItem', []))
-            );
-    }
-
-    public setCurrentEvent(currentEvent: number) {
-        this.event.next(currentEvent);
-    }
-    
-    //Get site events
-    public getCurrentEvent(): Observable<any> {
-        return this.currentEvent
-            .pipe(
-                tap((response) => {
-                    return response;
-                }),
-                catchError(this.handleError<any>('getCurrentEvent', []))
             );
     }
 

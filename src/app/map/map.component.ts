@@ -70,8 +70,6 @@ import { canvas } from 'leaflet';
 import { FilterResultsComponent } from '@app/filter-results/filter-results.component';
 import { FilterComponent } from '@app/filter/filter.component';
 import { MatOption } from '@angular/material/core';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
-import { Console } from 'console';
 
 @Component({
     selector: 'app-map',
@@ -656,36 +654,82 @@ export class MapComponent implements OnInit {
     }
     //TODO: LOOK HERE FIRST
     displayMostRecentEvent() {
-        //Get id and name of most recent event
-        if (this.events.length > 0) {
-            this.currentEvent = this.events[0].event_id;
-            this.currentEventName = this.events[0].event_name;
-            this.submittedEvent = this.events[0]
-        }
+        let self = this;
+        // Get current event
+        this.eventService.getCurrentEvent().subscribe(function(result) {
+            // If the current event id is 0, event not filtered
+            if(result === 0 && self.events.length > 0){
+                self.currentEvent = self.events[0].event_id;
+                self.currentEventName = self.events[0].event_name;
+                self.submittedEvent = self.events[0]
+            }else if(result && result !== 0 && self.events.length > 0){
+                self.currentEvent = result;
+                self.submittedEvent = self.events.filter((event) => event.event_id === self.currentEvent)[0];
+                self.currentEventName = self.submittedEvent.event_name;
+            }
 
-        //Clear the old markers from the layer
-        this.siteService.siteMarkers.clearLayers();
-
-        //Plot markers for selected event
-        this.siteService
-            .getEventSites(this.currentEvent)
-            .subscribe((results) => {
-                this.resultsReturned = true;
-                this.sitesDataArray = results;
-                this.filtersService.updateSites(results);
-                this.mapResults(
-                    this.sitesDataArray,
-                    this.filteredSitesIcon,
-                    this.siteService.siteMarkers,
-                    true
-                );
-                setTimeout(() => {
-                    // setting filter-results table to default display
-                    if (this.filterResultsComponent !== undefined){
-                        this.filterResultsComponent.refreshDataSource();
+            // Get map filters if there are any
+            self.filtersService.getCurrentFilters().subscribe(function(filters) {
+                console.log(filters)
+                if(filters !== []){
+                    console.log(filters);
+                    if(filters.networks !== ''){
+                        self.mapFilterForm.get('networkControl').setValue(filters.networks);
                     }
-                }, 1000);
+                    if(filters.sensorTypes !== ''){
+                        self.mapFilterForm.get('sensorTypeControl').setValue(filters.sensorTypes);
+                    }
+                    if(filters.states !== ''){
+                        self.mapFilterForm.get('stateControl').setValue(filters.states);
+                    }
+                    if(filters.HWMOnly !== ''){
+                        self.mapFilterForm.get('HWMOnlyControl').setValue(filters.HWMOnly);
+                    }
+                    if(filters.HWMSurveyed !== ''){
+                        self.mapFilterForm.get('surveyedControl').setValue(filters.HWMSurveyed);
+                    }
+                    if(filters.HousingTypeOne !== ''){
+                        self.mapFilterForm.get('bracketSiteOnlyControl').setValue(filters.HousingTypeOne);
+                    }
+                    if(filters.RDGOnly !== ''){
+                        self.mapFilterForm.get('RDGOnlyControl').setValue(filters.RDGOnly);
+                    }
+                    if(filters.opDefinedTrue !== ''){
+                        self.mapFilterForm.get('OPDefinedControl').setValue(filters.opDefinedTrue);
+                    }
+                    if(filters.sensorOnly !== ''){
+                        self.mapFilterForm.get('sensorOnlyControl').setValue(filters.sensorOnly);
+                    }
+                }
             });
+            
+            // Set inital event in filter form
+            self.mapFilterForm.get('eventsControl').setValue(self.submittedEvent);
+
+            //Clear the old markers from the layer
+            self.siteService.siteMarkers.clearLayers();
+
+            //Plot markers for selected event
+            self.siteService
+                .getEventSites(self.currentEvent)
+                .subscribe((results) => {
+                    self.resultsReturned = true;
+                    self.sitesDataArray = results;
+                    self.filtersService.updateSites(results);
+                    self.mapResults(
+                        self.sitesDataArray,
+                        self.filteredSitesIcon,
+                        self.siteService.siteMarkers,
+                        true
+                    );
+                    setTimeout(() => {
+                        // setting filter-results table to default display
+                        if (self.filterResultsComponent !== undefined){
+                            self.filterResultsComponent.refreshDataSource();
+                        }
+                    }, 1000);
+                });
+        })
     }
 
     toggleMap() {
@@ -1704,7 +1748,21 @@ export class MapComponent implements OnInit {
                         this.getFilterResults(validSites);
                     });
 
-                this.siteService.setCurrentEvent(eventId);
+                // Store map filters in service
+                this.eventService.setCurrentEvent(eventId);
+                this.filtersService.setCurrentFilters({
+                    "event": eventId, 
+                    "networks": networkIds, 
+                    "sensorTypes": sensorIds, 
+                    "states": stateAbbrevs, 
+                    "opDefinedTrue": opDefinedTrue, 
+                    "HWMOnly": HWMTrue,
+                    "HWMSurveyed": surveyed,
+                    "sensorOnly": sensorTrue,
+                    "RDGOnly": RDGTrue,
+                    "HousingTypeOne": bracketTrue,
+                });
+
                 // Reload NOAA Tide and Current Stations if filters are changed
                 this.eventService.getEvent(eventId).toPromise().then((result) => {
                     // If the event is changed, use event date range in popup
