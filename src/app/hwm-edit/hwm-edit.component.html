@@ -89,6 +89,7 @@
                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
             </mat-form-field>
             <div>
+                <mat-label class="form-header">Lat/Lng Unit:</mat-label>
                 <mat-radio-group class="radio-btn-group" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
                     <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
                     <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
@@ -282,14 +283,16 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-radio-group class="radio-btn-group" [(value)]="uncertainty_unit" (change)="uncertaintyUnitChange($event.value)">
-                <mat-radio-button class="radio-button" value="ft">+/- ft</mat-radio-button>
-                <mat-radio-button class="radio-button" value="cm">+/- cm</mat-radio-button>
-            </mat-radio-group>
-            <mat-form-field id="uncertainty" appearance="fill">
-                <mat-label for="uncertainty">Survey Uncertainty</mat-label>
-                <input type="number" aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="hwm.uncertainty"/>
-            </mat-form-field>
+            <div class="inline-fields">
+                <mat-form-field id="uncertainty" class="inline-widths" appearance="fill">
+                    <mat-label for="uncertainty">Survey Uncertainty</mat-label>
+                    <input type="number" aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="hwm.uncertainty"/>
+                </mat-form-field>
+                <mat-radio-group class="radio-btn-group" [(value)]="uncertainty_unit" (change)="uncertaintyUnitChange($event.value)">
+                    <mat-radio-button class="radio-button" value="ft">+/- ft</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="cm">+/- cm</mat-radio-button>
+                </mat-radio-group>
+            </div>
             <mat-form-field appearance="fill">
                 <mat-label for="description">Notes</mat-label>
                 <textarea aria-label="description" matInput formControlName="hwm_notes" id="hwm_notes" [value]="hwm.hwm_notes"></textarea>

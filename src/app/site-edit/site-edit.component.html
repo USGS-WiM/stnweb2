@@ -31,10 +31,13 @@
                             aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                             <mat-hint>e.g. Atlantic Ocean</mat-hint>
                         </mat-form-field>
-                        <mat-radio-group id="latLngUnit" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
-                            <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
-                            <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
-                        </mat-radio-group>   
+                        <div>
+                            <mat-label class="form-header">Lat/Lng Unit:</mat-label>
+                            <mat-radio-group id="latLngUnit" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
+                                <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
+                                <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
+                            </mat-radio-group>   
+                        </div>
                         <div *ngIf="latLngUnit === 'decdeg'">            
                             <mat-form-field appearance="fill">
                                 <mat-label>Latitude</mat-label>

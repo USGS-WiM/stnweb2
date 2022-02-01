@@ -258,7 +258,7 @@
                 </div>
                 <mat-divider></mat-divider>
                 <mat-radio-group class="radio-btn-group" [(value)]="vented" (change)="ventedChange($event.value)">
-                    <mat-label>Vented</mat-label>
+                    <mat-label class="form-header">Vented: </mat-label>
                     <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
                     <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
                 </mat-radio-group>
@@ -276,14 +276,16 @@
                     <mat-icon matSuffix class="info-icon" matTooltip="Please be specific so others can find this sensor later. This field is public." 
                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                 </mat-form-field>
-                <mat-radio-group class="radio-btn-group" [(value)]="interval_unit" (change)="intervalUnitChange($event.value)">
-                    <mat-radio-button class="radio-button" value="min">Minutes</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="sec">Seconds</mat-radio-button>
-                </mat-radio-group>
-                <mat-form-field appearance="fill">
-                    <mat-label for="elevation">Interval</mat-label>
-                    <input aria-label="Interval" matInput formControlName="interval" type="number" [value]="sensor.interval"/>
-                </mat-form-field>
+                <div class="inline-fields-70">
+                    <mat-form-field class="inline-widths" appearance="fill">
+                        <mat-label for="interval">Interval</mat-label>
+                        <input aria-label="Interval" matInput formControlName="interval" type="number" [value]="sensor.interval"/>
+                    </mat-form-field>
+                    <mat-radio-group class="radio-btn-group" [(value)]="interval_unit" (change)="intervalUnitChange($event.value)">
+                        <mat-radio-button class="radio-button" value="min">Minutes</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="sec">Seconds</mat-radio-button>
+                    </mat-radio-group>
+                </div>
                 <!-- Interval Validator -->
                 <div *ngIf="form.controls.interval.invalid && (form.controls.interval.dirty || form.controls.interval.touched)"
                     class="alert alert-danger">

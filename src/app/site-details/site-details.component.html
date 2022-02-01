@@ -518,7 +518,15 @@
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
                                     <mat-menu #menu="matMenu">
-                                        <button mat-menu-item class="delete-borderless"
+                                        <button mat-menu-item class="view-details-mobile" (click)="openRefMarkDetailsDialog(row)"
+                                            aria-label="View Details"><mat-icon>search</mat-icon>
+                                            <span> View Details</span>
+                                        </button>
+                                        <button mat-menu-item class="edit-details-mobile" (click)="openRefDatumEditDialog(row)"
+                                            aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                            <span> Edit</span>
+                                        </button>
+                                        <button mat-menu-item disabled class="delete-borderless"
                                             aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
@@ -572,7 +580,13 @@
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
-                                            <button mat-menu-item disabled 
+                                            <button mat-menu-item disabled class="view-details-mobile"
+                                                aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            </button>
+                                            <button mat-menu-item disabled class="edit-details-mobile"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
+                                            <button mat-menu-item disabled
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
                                             </button>
@@ -684,7 +698,15 @@
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
                                     <mat-menu #menu="matMenu">
-                                        <button mat-menu-item class="delete-borderless"
+                                        <button mat-menu-item class="view-details-mobile" (click)="openSensorEditDialog(row)"
+                                            aria-label="View Details"><mat-icon>search</mat-icon>
+                                            <span> View Details</span>
+                                        </button>
+                                        <button mat-menu-item class="edit-details-mobile" (click)="openHWMEditDialog(row)"
+                                            aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                            <span> Edit</span>
+                                        </button>
+                                        <button mat-menu-item  class="delete-borderless"
                                             aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
@@ -762,6 +784,12 @@
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
+                                            <button mat-menu-item disabled class="view-details-mobile"
+                                                aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            </button>
+                                            <button mat-menu-item disabled class="edit-details-mobile"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
                                             <button mat-menu-item disabled
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
@@ -860,10 +888,18 @@
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
-                                        <button mat-menu-item class="delete-borderless"
-                                            aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
-                                            <span>Delete</span>
-                                        </button>
+                                            <button mat-menu-item class="view-details-mobile" (click)="openHWMDetailsDialog(row)"
+                                                aria-label="View Details"><mat-icon>search</mat-icon>
+                                                <span> View Details</span>
+                                            </button>
+                                            <button mat-menu-item class="edit-details-mobile" (click)="openHWMEditDialog(row)"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                <span> Edit</span>
+                                            </button>
+                                            <button mat-menu-item class="delete-borderless"
+                                                aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                <span>Delete</span>
+                                            </button>
                                         </mat-menu>
                                     </td>
                                 </ng-container>
@@ -930,6 +966,12 @@
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
+                                            <button mat-menu-item disabled class="view-details-mobile"
+                                                aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            </button>
+                                            <button mat-menu-item disabled class="edit-details-mobile"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
                                             <button mat-menu-item disabled
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
@@ -1013,6 +1055,14 @@
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
+                                            <button mat-menu-item class="view-details-mobile" (click)="openPeaksDetailsDialog(row)"
+                                                aria-label="View Details"><mat-icon>search</mat-icon>
+                                                <span> View Details</span>
+                                            </button>
+                                            <button mat-menu-item class="edit-details-mobile" (click)="openPeaksEditDialog(row)"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                <span> Edit</span>
+                                            </button>
                                             <button mat-menu-item class="delete-borderless"
                                                 aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                                 <span>Delete</span>
@@ -1065,16 +1115,24 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                        <button mat-stroked-button disabled class="view-details-btn secondary"
-                                            aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                        <button mat-stroked-button disabled class="view-details-btn"
+                                            aria-label="View Details"><mat-icon>search</mat-icon>
+                                            <span> View Details</span>
                                         </button>
-                                        <button mat-stroked-button disabled class="edit-details-btn secondary"
-                                            aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                        <button mat-stroked-button disabled class="edit-details-btn"
+                                            aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                            <span> Edit</span>
                                         </button>
                                         <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
+                                            <button mat-menu-item disabled class="view-details-mobile"
+                                                aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            </button>
+                                            <button mat-menu-item disabled class="edit-details-mobile"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
                                             <button mat-menu-item disabled
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
