@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Edit ability for Peaks
 -   View details for Peaks
+-   Event populated in map filter form on page load
+-   Map filters after navigating from map page
 
 ### Changed
 
@@ -26,6 +28,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -  Sensor and HWM files not always displaying in peak dialogs when event selected
 -  Sensor markers not displaying on map when no deployment type
 -  View Details/Edit buttons displayed in both column and menu
+-  Site icon not displayed on map on site pages when no sensors or hwms
+-  Surveyed RP Only Sites not send with map filter query
 
 ## [v0.6.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.6.0) - 2022-01-25
 

@@ -4,7 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatChipList, MatChipInputEvent } from '@angular/material/chips';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { COMMA, ENTER, I } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -655,85 +655,121 @@ export class MapComponent implements OnInit {
     //TODO: LOOK HERE FIRST
     displayMostRecentEvent() {
         let self = this;
-        // Get current event
-        this.eventService.getCurrentEvent().subscribe(function(result) {
-            console.log(result)
-            console.log(typeof(result))
-            // If the current event id is 0, event not filtered
-            if(result === 0 && self.events.length > 0){
+        // Get current map filters - use first to end subscription after first event
+        this.filtersService.getCurrentFilters().first().subscribe(function(result) {
+            // Check if any map filters besides event exist
+            let hasFilters = self.getMapFilters(result);
+            // If the current event id is null, event not filtered
+            // If other filters exist, don't set event to most recent
+            if(result.event_id === null && self.events.length > 0 && !hasFilters){
                 self.currentEvent = self.events[0].event_id;
                 self.currentEventName = self.events[0].event_name;
-                self.submittedEvent = self.events[0]
-            }else if(result !== '' && result !== 0 && self.events.length > 0){
-                console.log(result)
-                self.currentEvent = result;
+                self.submittedEvent = self.events[0];
+                // Store most recent event as current event
+                self.filtersService.setCurrentFilters({
+                    "event_id": self.currentEvent
+                });
+            }else if(result.event_id !== null && self.events.length > 0){
+                self.currentEvent = result.event_id;
                 self.submittedEvent = self.events.filter((event) => event.event_id === self.currentEvent)[0];
                 self.currentEventName = self.submittedEvent.event_name;
+            }else{
+                self.currentEvent = null;
             }
-
-            console.log(self.currentEventName)
-            // Get map filters if there are any
-            self.filtersService.getCurrentFilters().subscribe(function(filters) {
-                console.log(filters)
-                if(filters.length === undefined || filters.length > 1){
-                    console.log(filters);
-                    if(filters.networks !== ''){
-                        self.mapFilterForm.get('networkControl').setValue(filters.networks);
-                    }
-                    if(filters.sensorTypes !== ''){
-                        self.mapFilterForm.get('sensorTypeControl').setValue(filters.sensorTypes);
-                    }
-                    if(filters.states !== ''){
-                        self.mapFilterForm.get('stateControl').setValue(filters.states);
-                    }
-                    if(filters.HWMOnly !== ''){
-                        self.mapFilterForm.get('HWMOnlyControl').setValue(filters.HWMOnly);
-                    }
-                    if(filters.HWMSurveyed !== ''){
-                        self.mapFilterForm.get('surveyedControl').setValue(filters.HWMSurveyed);
-                    }
-                    if(filters.HousingTypeOne !== ''){
-                        self.mapFilterForm.get('bracketSiteOnlyControl').setValue(filters.HousingTypeOne);
-                    }
-                    if(filters.RDGOnly !== ''){
-                        self.mapFilterForm.get('RDGOnlyControl').setValue(filters.RDGOnly);
-                    }
-                    if(filters.opDefinedTrue !== ''){
-                        self.mapFilterForm.get('OPDefinedControl').setValue(filters.opDefinedTrue);
-                    }
-                    if(filters.sensorOnly !== ''){
-                        self.mapFilterForm.get('sensorOnlyControl').setValue(filters.sensorOnly);
-                    }
-                }
-            });
-            
-            // Set inital event in filter form
-            self.mapFilterForm.get('eventsControl').setValue(self.submittedEvent);
 
             //Clear the old markers from the layer
             self.siteService.siteMarkers.clearLayers();
+            
+            if(self.currentEvent !== null){
+                // Set inital event in filter form
+                self.mapFilterForm.get('eventsControl').setValue(self.submittedEvent);
 
-            //Plot markers for selected event
-            self.siteService
-                .getEventSites(self.currentEvent)
-                .subscribe((results) => {
-                    self.resultsReturned = true;
-                    self.sitesDataArray = results;
-                    self.filtersService.updateSites(results);
-                    self.mapResults(
-                        self.sitesDataArray,
-                        self.filteredSitesIcon,
-                        self.siteService.siteMarkers,
-                        true
-                    );
-                    setTimeout(() => {
-                        // setting filter-results table to default display
-                        if (self.filterResultsComponent !== undefined){
-                            self.filterResultsComponent.refreshDataSource();
+                //Plot markers for selected event
+                self.siteService
+                    .getEventSites(self.currentEvent)
+                    .subscribe((results) => {
+                        self.resultsReturned = true;
+                        self.sitesDataArray = results;
+                        self.filtersService.updateSites(results);
+                        self.mapResults(
+                            self.sitesDataArray,
+                            self.filteredSitesIcon,
+                            self.siteService.siteMarkers,
+                            true
+                        );
+                        self.filterComponent.eventPanelState = true;
+                        if(hasFilters){
+                            self.submitMapFilter();
                         }
-                    }, 1000);
-                });
+                        setTimeout(() => {
+                            // setting filter-results table to default display
+                            if (self.filterResultsComponent !== undefined){
+                                self.filterResultsComponent.refreshDataSource();
+                            }
+                        }, 1000);
+                    });
+            }else{
+                // If event is null, map could still have other filters
+                if(hasFilters){
+                    self.submitMapFilter();
+                }
+            }
         })
+    }
+
+    getMapFilters(filters) {
+        let hasFilters = false;
+        if(filters.networks !== '' && filters.networks !== undefined && filters.networks.length > 0){
+            hasFilters = true;
+            this.mapFilterForm.get('networkControl').setValue(filters.networks);
+            this.filterComponent.networksPanelState = true;
+        }
+        if(filters.sensorTypes !== '' && filters.sensorTypes !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('sensorTypeControl').setValue(filters.sensorTypes);
+            this.filterComponent.sensorPanelState = true;
+        }
+        if(filters.states !== '' && filters.states !== undefined && filters.states.length > 0){
+            hasFilters = true;
+            this.mapFilterForm.get('stateControl').setValue(filters.states);
+            this.filterComponent.statesPanelState = true;
+        }
+        if(filters.HWMOnly && filters.HWMOnly !== '' && filters.HWMOnly !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('HWMOnlyControl').setValue(filters.HWMOnly);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.HWMSurveyed !== null && filters.HWMSurveyed !== '' && filters.HWMSurveyed !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('surveyedControl').setValue(filters.HWMSurveyed);
+            this.filterComponent.hmwPanelState = true;
+        }
+        if(filters.HousingTypeOne && filters.HousingTypeOne !== '' && filters.HousingTypeOne !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('bracketSiteOnlyControl').setValue(filters.HousingTypeOne);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.RDGOnly && filters.RDGOnly !== '' && filters.RDGOnly !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('RDGOnlyControl').setValue(filters.RDGOnly);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.opDefinedTrue && filters.opDefinedTrue !== '' && filters.opDefinedTrue !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('OPDefinedControl').setValue(filters.opDefinedTrue);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.sensorOnly && filters.sensorOnly !== '' && filters.sensorOnly !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('sensorOnlyControl').setValue(filters.sensorOnly);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.surveyedOnly && filters.surveyedOnly !== '' && filters.surveyedOnly !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('surveyedOnlyControl').setValue(filters.surveyedOnly);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        return hasFilters;
     }
 
     toggleMap() {
@@ -1685,6 +1721,7 @@ export class MapComponent implements OnInit {
             : '';
         let HWMTrue = filterParams.HWMOnlyControl ? '1' : '';
         let sensorTrue = filterParams.sensorOnlyControl ? '1' : '';
+        let surveyedTrue = filterParams.surveyedOnlyControl ? '1' : '';
         //Pre-deployed bracket site is HousingTypeOne=1 in API
         let bracketTrue = filterParams.bracketSiteOnlyControl ? '1' : '';
         let RDGTrue = filterParams.RDGOnlyControl ? '1' : '';
@@ -1725,6 +1762,8 @@ export class MapComponent implements OnInit {
                     surveyed +
                     '&SensorOnly=' +
                     sensorTrue +
+                    '&SurveyedOnly=' +
+                    surveyedTrue +
                     '&RDGOnly=' +
                     RDGTrue +
                     '&HousingTypeOne=' +
@@ -1753,17 +1792,22 @@ export class MapComponent implements OnInit {
                     });
 
                 // Store map filters in service
-                this.eventService.setCurrentEvent(eventId);
+                let event_id = eventId;
+                if(eventId === ''){
+                    event_id = null;
+                }
                 this.filtersService.setCurrentFilters({
+                    "event_id": event_id,
                     "networks": multiNetworkIds, 
                     "sensorTypes": sensorIds, 
-                    "states": stateAbbrevs, 
-                    "opDefinedTrue": opDefinedTrue, 
-                    "HWMOnly": HWMTrue,
-                    "HWMSurveyed": surveyed,
-                    "sensorOnly": sensorTrue,
-                    "RDGOnly": RDGTrue,
-                    "HousingTypeOne": bracketTrue,
+                    "states": this.mapFilterForm.get('stateControl').value, 
+                    "opDefinedTrue": filterParams.OPDefinedControl, 
+                    "HWMOnly": filterParams.HWMOnlyControl,
+                    "HWMSurveyed": filterParams.surveyedControl,
+                    "surveyedOnly": filterParams.surveyedOnlyControl,
+                    "sensorOnly": filterParams.sensorOnlyControl,
+                    "RDGOnly": filterParams.RDGOnlyControl,
+                    "HousingTypeOne": filterParams.bracketSiteOnlyControl,
                 });
 
                 // Reload NOAA Tide and Current Stations if filters are changed
@@ -1829,6 +1873,8 @@ export class MapComponent implements OnInit {
                             surveyed +
                             '&SensorOnly=' +
                             sensorTrue +
+                            '&SurveyedOnly=' +
+                            surveyedTrue +
                             '&RDGOnly=' +
                             RDGTrue +
                             '&HousingTypeOne=' +
@@ -1864,19 +1910,23 @@ export class MapComponent implements OnInit {
                             });
                     }
 
-                    console.log(eventId)
                     // Store map filters in service
-                    this.eventService.setCurrentEvent(eventId);
+                    let event_id = eventId;
+                    if(eventId === ''){
+                        event_id = null;
+                    }
                     this.filtersService.setCurrentFilters({
+                        "event_id": event_id,
                         "networks": multiNetworkIds, 
                         "sensorTypes": sensorIds, 
-                        "states": stateAbbrevs, 
-                        "opDefinedTrue": opDefinedTrue, 
-                        "HWMOnly": HWMTrue,
-                        "HWMSurveyed": surveyed,
-                        "sensorOnly": sensorTrue,
-                        "RDGOnly": RDGTrue,
-                        "HousingTypeOne": bracketTrue,
+                        "states": this.mapFilterForm.get('stateControl').value, 
+                        "opDefinedTrue": filterParams.OPDefinedControl, 
+                        "HWMOnly": filterParams.HWMOnlyControl,
+                        "HWMSurveyed": filterParams.surveyedControl,
+                        "surveyedOnly": filterParams.surveyedOnlyControl,
+                        "sensorOnly": filterParams.sensorOnlyControl,
+                        "RDGOnly": filterParams.RDGOnlyControl,
+                        "HousingTypeOne": filterParams.bracketSiteOnlyControl,
                     });
                 }
             }

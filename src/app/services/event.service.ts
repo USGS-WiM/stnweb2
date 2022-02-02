@@ -19,30 +19,12 @@ import { FilteredEventsQuery } from '@interfaces/filtered-events-query';
 export class EventService {
     events$: Observable<any>;
     public events: any;
-    
-    private event = new BehaviorSubject<number>(0);
-    currentEvent = this.event.asObservable();
 
     constructor(private httpClient: HttpClient) {
         this.events$ = httpClient.get(APP_SETTINGS.EVENTS + '.json').pipe(
             shareReplay(1),
             tap(() => console.log('after sharing'))
         );
-    }
-
-    public setCurrentEvent(currentEvent: number) {
-        this.event.next(currentEvent);
-    }
-    
-    //Get site events
-    public getCurrentEvent(): Observable<any> {
-        return this.currentEvent
-            .pipe(
-                tap((response) => {
-                    return response;
-                }),
-                catchError(APP_UTILITIES.handleError<any>('getCurrentEvent', []))
-            );
     }
 
     // retrieve the full events list

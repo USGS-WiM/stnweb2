@@ -17,7 +17,7 @@ export class FiltersService {
     private resultsPanelState = new BehaviorSubject(true);
     public resultsPanelOpen = this.resultsPanelState.asObservable();
 
-    private filters = new BehaviorSubject<any>([]);
+    private filters = new BehaviorSubject<any>({event_id: null});
     currentFilters = this.filters.asObservable();
 
     constructor() {}
