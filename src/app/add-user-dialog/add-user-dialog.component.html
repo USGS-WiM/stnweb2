@@ -108,7 +108,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <div class="detail-section-buttons">
-      <button mat-stroked-button (click)="this.addUserdialogRef.close('cancel');">
+      <button mat-stroked-button class="secondary" (click)="this.addUserdialogRef.close('cancel');">
         Cancel
       </button>
       <button mat-raised-button color="primary" type="submit" [disabled]="newUserForm.invalid"

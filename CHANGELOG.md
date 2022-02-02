@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Updated Reference Datum Edit dialog layout
 -   Updated radio button/form field layout for all edit dialogs
 -   View Details and Edit buttons move within button menu on smaller screens
+-   Implement consistent button styling throughout app
 
 ### Fixed
 
