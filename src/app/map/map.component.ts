@@ -697,7 +697,9 @@ export class MapComponent implements OnInit {
                             self.siteService.siteMarkers,
                             true
                         );
-                        self.filterComponent.eventPanelState = true;
+                        if (this.filterComponent !== undefined) {
+                            self.filterComponent.eventPanelState = true;
+                        }
                         if(hasFilters){
                             self.submitMapFilter();
                         }
