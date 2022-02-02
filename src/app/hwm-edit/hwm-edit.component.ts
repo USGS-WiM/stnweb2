@@ -303,7 +303,15 @@ export class HwmEditComponent implements OnInit {
         }
         if (qualityId !== matchingQualId) {
             //show warning modal and focus in uncertainty
-            alert("There is a mismatch between the hwm quality chosen and the hwm uncertainty above. Please correct your hwm uncertainty.");
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "",
+                titleIcon: "close",
+                message: "There is a mismatch between the hwm quality chosen and the hwm uncertainty above. Please correct your hwm uncertainty.",
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
         }
     }
   }
@@ -516,7 +524,15 @@ export class HwmEditComponent implements OnInit {
       this.sendRequests();
     }else{
       this.loading = false;
-      alert("Some required HWM fields are missing or incorrect.  Please fix these fields before submitting.")
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required HWM fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
     }
   }
 
@@ -537,7 +553,15 @@ export class HwmEditComponent implements OnInit {
         resolve("Success");
       }else{
         // Error
-        alert("Error updating HWM");
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Error updating HWM",
+            titleIcon: "close",
+            message: null,
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
         reject(new Error("Error updating HWM."));
       }
     }));

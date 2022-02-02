@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-    Reference Datum
+    Edit Reference Datum
     <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <div [hidden]="!loading" class="loading">
@@ -38,22 +38,23 @@
                 <div>
                     <label class="form-header">Control Identifier</label>
                 </div>
-                <button type="button" class="ctrl-btn" mat-stroked-button aria-label="Control Identifier" (click)="addControl()">Add New Identifier</button>
+                <button type="button" class="ctrl-btn add" mat-stroked-button aria-label="Control Identifier" (click)="addControl()"><mat-icon>add</mat-icon> Add New Identifier</button>
                 <mat-icon matSuffix class="info-icon" matTooltip="National Geodetic Survey permanent identifier. See: ngs.noaa.gov/NGSDataExplorer/ for more information.">info</mat-icon>
-                <div class="container" *ngFor="let control of controlsToAdd; let i = index" formArrayName="op_control_identifier">
-                    <mat-radio-group class="radio-btn-group" [(ngModel)]="controlsToAdd[i].identifier_type" [ngModelOptions]="{standalone: true}" (change)="changeControlID($event, i, control)">
-                        <mat-radio-button class="radio-button" value="PID">PID</mat-radio-button>
-                        <mat-radio-button class="radio-button" value="Other">Other</mat-radio-button>
-                    </mat-radio-group>
-                    <div [formGroupName]="i">
-                        <mat-form-field class="controlID" appearance="fill">
+                <div class="inline-fields" *ngFor="let control of controlsToAdd; let i = index" formArrayName="op_control_identifier">
+                    <button type="button" mat-button aria-label="Remove Control Identifier" (click)="removeControlIdentifier(control, i)"><mat-icon>close</mat-icon></button>
+                    <div [formGroupName]="i" class="inline-widths">
+                        <mat-form-field appearance="fill">
                             <mat-label>Control Identifier</mat-label>
                             <input aria-label="Control Identifier" matInput formControlName="identifier" [value]="control.identifier" (change)="addControlToList(i)"/>
                         </mat-form-field>
                     </div>
-                    <button type="button" mat-button aria-label="Remove Control Identifier" (click)="removeControlIdentifier(control, i)"><mat-icon>close</mat-icon></button>
+                    <mat-radio-group class="radio-btn-group" [(ngModel)]="controlsToAdd[i].identifier_type" [ngModelOptions]="{standalone: true}" (change)="changeControlID($event, i, control)">
+                        <mat-radio-button class="radio-button" value="PID">PID</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="Other">Other</mat-radio-button>
+                    </mat-radio-group>
                 </div>
                 <div>
+                    <mat-label class="form-header">Lat/Lng Unit:</mat-label>
                     <mat-radio-group class="radio-btn-group" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
                         <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
                         <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
@@ -195,14 +196,16 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-radio-group class="radio-btn-group" [(value)]="elev_unit" (change)="elevUnitChange($event)">
-                    <mat-radio-button class="radio-button" value="ft">ft</mat-radio-button>
-                    <mat-radio-button class="radio-button" value="m">meter</mat-radio-button>
-                </mat-radio-group>
-                <mat-form-field appearance="fill">
-                    <mat-label for="elevation">Elevation</mat-label>
-                    <input aria-label="Elevation" matInput formControlName="elev_ft" [value]="rd.elev_ft"/>
-                </mat-form-field>
+                <div class="inline-fields">
+                    <mat-form-field class="inline-widths-80" appearance="fill">
+                        <mat-label for="elevation">Elevation</mat-label>
+                        <input aria-label="Elevation" matInput formControlName="elev_ft" [value]="rd.elev_ft"/>
+                    </mat-form-field>
+                    <mat-radio-group class="radio-btn-group" [(value)]="elev_unit" (change)="elevUnitChange($event)">
+                        <mat-radio-button class="radio-button" value="ft">ft</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="m">meter</mat-radio-button>
+                    </mat-radio-group>
+                </div>
                 <!-- Elevation Validator -->
                 <div *ngIf="form.controls.elev_ft.invalid && (form.controls.elev_ft.dirty || form.controls.elev_ft.touched)"
                     class="alert alert-danger">
@@ -228,19 +231,20 @@
                 </mat-form-field>
                 <label class="form-header">Uncertainty</label>
                 <div class="container">
-                    <mat-radio-group class="radio-btn-group" [(value)]="uncertainty_unit" (change)="uncertaintyUnitChange($event)">
-                        <mat-radio-button class="radio-button" value="ft">ft</mat-radio-button>
-                        <mat-radio-button class="radio-button" value="cm">cm</mat-radio-button>
-                    </mat-radio-group>
-                    <mat-form-field id="uncertainty" appearance="fill">
-                        <mat-label for="uncertainty">Uncertainty</mat-label>
-                        <input aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="rd.uncertainty"/>
-                        <mat-icon matSuffix class="info-icon" matTooltip="From GNSS or OPUS solution.">info</mat-icon>
-                    </mat-form-field>
-                    <mat-checkbox id="unquantified" [value]="unquantified" [checked]="unquantified" (change)="unquantifiedChanged($event)">
-                        Unquantified
-                    </mat-checkbox>
-                    <!-- Uncertainty Validator -->
+                    <div class="inline-fields">
+                        <mat-form-field id="uncertainty" class="inline-widths" appearance="fill">
+                            <mat-label for="uncertainty">Uncertainty</mat-label>
+                            <input aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="rd.uncertainty"/>
+                            <mat-icon matSuffix class="info-icon" matTooltip="From GNSS or OPUS solution.">info</mat-icon>
+                        </mat-form-field>
+                        <mat-radio-group class="radio-btn-group" [(value)]="uncertainty_unit" (change)="uncertaintyUnitChange($event)">
+                            <mat-radio-button class="radio-button" value="ft">ft</mat-radio-button>
+                            <mat-radio-button class="radio-button" value="cm">cm</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-checkbox id="unquantified" [value]="unquantified" [checked]="unquantified" (change)="unquantifiedChanged($event)">
+                            Unquantified
+                        </mat-checkbox>
+                    </div>                    <!-- Uncertainty Validator -->
                     <div *ngIf="form.controls.uncertainty.invalid && (form.controls.uncertainty.dirty || form.controls.uncertainty.touched)"
                         class="alert alert-danger">
                         <div *ngIf="form.controls.uncertainty.errors?.['incorrectValue']">
@@ -273,10 +277,6 @@
                     <mat-datepicker [value]="rd.date_recovered" #recDatePicker></mat-datepicker>
                     <mat-icon matSuffix class="info-icon" matTooltip="Enter the date the location was recently found in good condition.">info</mat-icon>
                 </mat-form-field>
-                <div class="ref-button-group">
-                    <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
-                    <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
-                </div>
             </mat-expansion-panel>
             <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
                 <mat-expansion-panel-header>
@@ -290,7 +290,7 @@
                         <mat-icon class="info-header-icon" matTooltip="Files uploaded to Reference Datum are not tied to an event.  To associate a file with an event, please upload through a sensor or hwm instead of here.">info</mat-icon>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
-                <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <button mat-stroked-button class="add" type="button"><mat-icon>add</mat-icon> Add File</button>
                 <div class="tableContainer" [hidden]="initDatumFiles?.length === 0">
                     <table
                         mat-table
@@ -334,8 +334,10 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
-            <button mat-stroked-button class="close-btn" [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Close">Close</button>
-            <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+            <div class="ref-button-group">
+                <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                <button class="cancel-btn secondary" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+            </div>
         </div>
     </mat-dialog-actions>
 </form>

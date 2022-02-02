@@ -123,7 +123,6 @@ table {
 
 .date-button {
     margin-left: 10px;
-    border: 1px solid #404040;
     background-color: #FFF;
 }
 
@@ -136,25 +135,12 @@ table {
     text-align: center;
 }
 
-.save-btn {
-    color: #F4F4F4;
-}
-
 .cancel-btn {
     margin-left: 10px;
-    border: 1px solid #404040;
 }
 
 .close-button {
     float: right;
-}
-
-.close-btn {
-    border: 1px solid #404040;
-}
-
-.add-button {
-    border: 1px solid #404040;
 }
 
 .required {
@@ -185,6 +171,15 @@ table {
 
 .inline-fields {
     display: inline-flex;
+}
+
+.inline-fields-70 {
+    display: flex;
+    align-items: center;
+}
+
+.inline-widths {
+    flex: 0 0 70%;
 }
 
 .loading {

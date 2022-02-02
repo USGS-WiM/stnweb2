@@ -61,4 +61,19 @@ export class TimezonesService {
 
     }
   }
+
+  public matchTimezone(time_zone) {
+    if(time_zone === 'UTC'){
+      return 'UTC';
+    }else if (time_zone === 'EDT' || time_zone === 'EST'){
+      return 'EST/EDT';
+    }else if (time_zone === 'PDT' || time_zone === 'PST'){
+      return 'PST/PDT';
+    }else if (time_zone === 'CDT' || time_zone === 'CST'){
+      return 'CST/CDT';
+    }else if (time_zone === 'MDT' || time_zone === 'MST'){
+      return 'MST/MDT';
+    }
+
+  }
 }

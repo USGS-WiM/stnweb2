@@ -89,6 +89,7 @@
                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
             </mat-form-field>
             <div>
+                <mat-label class="form-header">Lat/Lng Unit:</mat-label>
                 <mat-radio-group class="radio-btn-group" [(ngModel)]="latLngUnit" [ngModelOptions]="{standalone: true}" (change)="changeLatLngUnit($event)">
                     <mat-radio-button class="radio-button" value="decdeg">Dec Deg</mat-radio-button>
                     <mat-radio-button class="radio-button" value="dms">DMS</mat-radio-button>
@@ -282,14 +283,16 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-radio-group class="radio-btn-group" [(value)]="uncertainty_unit" (change)="uncertaintyUnitChange($event.value)">
-                <mat-radio-button class="radio-button" value="ft">+/- ft</mat-radio-button>
-                <mat-radio-button class="radio-button" value="cm">+/- cm</mat-radio-button>
-            </mat-radio-group>
-            <mat-form-field id="uncertainty" appearance="fill">
-                <mat-label for="uncertainty">Survey Uncertainty</mat-label>
-                <input type="number" aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="hwm.uncertainty"/>
-            </mat-form-field>
+            <div class="inline-fields">
+                <mat-form-field id="uncertainty" class="inline-widths" appearance="fill">
+                    <mat-label for="uncertainty">Survey Uncertainty</mat-label>
+                    <input type="number" aria-label="Uncertainty" matInput formControlName="uncertainty" [value]="hwm.uncertainty"/>
+                </mat-form-field>
+                <mat-radio-group class="radio-btn-group" [(value)]="uncertainty_unit" (change)="uncertaintyUnitChange($event.value)">
+                    <mat-radio-button class="radio-button" value="ft">+/- ft</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="cm">+/- cm</mat-radio-button>
+                </mat-radio-group>
+            </div>
             <mat-form-field appearance="fill">
                 <mat-label for="description">Notes</mat-label>
                 <textarea aria-label="description" matInput formControlName="hwm_notes" id="hwm_notes" [value]="hwm.hwm_notes"></textarea>
@@ -313,7 +316,7 @@
                     HWM File Information
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+            <button mat-stroked-button class="add" type="button"><mat-icon>add</mat-icon> Add File</button>
             <div class="tableContainer" [hidden]="initHWMFiles?.length === 0">
                 <table
                     mat-table
@@ -355,8 +358,8 @@
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
             <div class="ref-button-group">
-                <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
-                <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                <button class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                <button class="secondary cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
             </div>
         </div>
     </mat-dialog-actions>

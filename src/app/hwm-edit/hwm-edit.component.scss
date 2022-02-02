@@ -73,10 +73,6 @@ table {
     margin: 15px;
 }
 
-.add-button {
-    border: 1px solid #404040;
-}
-
 .alert.alert-danger {
     color: #f44336;
 }
@@ -91,13 +87,17 @@ table {
     font-weight: bold;
 }
 
-.save-btn {
-    color: #F4F4F4;
+.inline-fields {
+    display: flex;
+    align-items: center;
+}
+
+.inline-widths {
+    flex: 0 0 50%;
 }
 
 .cancel-btn {
     margin-left: 10px;
-    border: 1px solid #404040;
 }
 
 .close-button {

@@ -184,9 +184,13 @@ export class SensorEditComponent implements OnInit {
         self.sensor.instrument_status[i].hour = String(hour - 12).padStart(2, '0');
         self.sensor.instrument_status[i].ampm = "PM";
       }else{
-        // instrument.time_stamp.hour = hour;
-        self.sensor.instrument_status[i].hour = String(hour).padStart(2, '0');
-        self.sensor.instrument_status[i].ampm = "AM";
+        if(String(hour) === '00'){
+          self.sensor.instrument_status[i].hour = '12';
+          self.sensor.instrument_status[i].ampm = "AM";
+        }else{
+          self.sensor.instrument_status[i].hour = String(hour).padStart(2, '0');
+          self.sensor.instrument_status[i].ampm = "AM";
+        }
       }
       // minute
       let minute = instrument.time_stamp.split('T')[1].split(':')[1];
@@ -323,6 +327,7 @@ export class SensorEditComponent implements OnInit {
   }
 
   initForm() {
+    let self = this;
     this.form = new FormGroup({
       event_id: new FormControl(this.sensor.event_id !== undefined && this.sensor.event_id !== "" ? this.sensor.event_id : null),
       instrument_id: new FormControl(this.sensor.instrument_id !== undefined && this.sensor.instrument_id !== "" ? this.sensor.instrument_id : null),
@@ -346,6 +351,12 @@ export class SensorEditComponent implements OnInit {
       lostRefMarks: new FormControl(),
     })
 
+    this.sensor.instrument_status.forEach(function(instrument){
+      if(instrument.timezone !== 'UTC'){
+        self.previewUTC(instrument);
+      }
+    })
+
     this.form.controls.interval.setValidators([this.isNum()]);
   }
 
@@ -362,11 +373,12 @@ export class SensorEditComponent implements OnInit {
   }
 
   createInstrumentArray(instrument) {
+    let timezone = this.timezonesService.matchTimezone(instrument.time_zone);
     return {
       instrument_id: new FormControl(this.sensor.instrument_id ? this.sensor.instrument_id: null),
       instrument_status_id: new FormControl(instrument.instrument_status_id ? instrument.instrument_status_id: null),
       time_stamp: new FormControl(instrument.time_stamp ? instrument.time_stamp: null),
-      time_zone: new FormControl(instrument.time_zone ? instrument.time_zone : null),
+      time_zone: new FormControl(timezone ? timezone : null),
       notes: new FormControl(instrument.notes ? instrument.notes: null),
       member_id: new FormControl(instrument.member_id ? instrument.member_id : null),
       vdatum_id: new FormControl(instrument.vdatum_id ? instrument.vdatum_id : null),
@@ -513,46 +525,28 @@ export class SensorEditComponent implements OnInit {
       // Remove tapedown
       else{
         let index;
-        let okayToDelete = confirm("Are you sure you want to remove this OP Measurement from this sensor?");
-        if(okayToDelete){
-          // remove
-          index = this.retrievedTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
-          this.retrievedTapedowns.splice(index, 1);
-          this.retrievedTapedowns = [...this.retrievedTapedowns];
-          self.form.controls["retrievedTapedowns"] = new FormArray(this.retrievedTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
-          self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
-            for(let statusType of self.allStatusTypes){
-              if(instrument.controls.status_type_id.value === statusType.status_type_id){
-                if(statusType.status === "Retrieved"){
-                  self.form.controls["instrument_status"].controls[i].controls["vdatum_id"].setValue(null);
-                  self.form.controls["instrument_status"].controls[i].controls["sensor_elevation"].setValue(null);
-                  self.form.controls["instrument_status"].controls[i].controls["ws_elevation"].setValue(null);
-                  self.form.controls["instrument_status"].controls[i].controls["gs_elevation"].setValue(null);
-                }
-              }
-            }
-          });
-        }
-      }
-    }else if(status === "Deployed"){
-        // Add tapedown
-        if(value.length > this.deployedTapedowns.length){   
-          addTapedown(this.deployedTapedowns, "deployedTapedowns", status, this.initDeployedRefMarks, this.initDeployedTapedowns, this.deployedTable);
-        }
-        // Remove tapedown
-        else{
-          let index;
-          let okayToDelete = confirm("Are you sure you want to remove this OP Measurement from this sensor?");
-          if(okayToDelete){
+        let dialogRef = this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "",
+            titleIcon: "",
+            message: "Are you sure you want to remove this OP Measurement from this sensor?",
+            confirmButtonText: "OK",
+            showCancelButton: true,
+          },
+        });
+        
+        dialogRef.afterClosed().subscribe((result) => {
+          // Confirm returns true
+          if(result){
             // remove
-            index = this.deployedTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
-            this.deployedTapedowns.splice(index, 1);
-            this.deployedTapedowns = [...this.deployedTapedowns];
-            self.form.controls["deployedTapedowns"] = new FormArray(this.deployedTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
+            index = this.retrievedTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
+            this.retrievedTapedowns.splice(index, 1);
+            this.retrievedTapedowns = [...this.retrievedTapedowns];
+            self.form.controls["retrievedTapedowns"] = new FormArray(this.retrievedTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
             self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
               for(let statusType of self.allStatusTypes){
                 if(instrument.controls.status_type_id.value === statusType.status_type_id){
-                  if(statusType.status === "Deployed"){
+                  if(statusType.status === "Retrieved"){
                     self.form.controls["instrument_status"].controls[i].controls["vdatum_id"].setValue(null);
                     self.form.controls["instrument_status"].controls[i].controls["sensor_elevation"].setValue(null);
                     self.form.controls["instrument_status"].controls[i].controls["ws_elevation"].setValue(null);
@@ -562,6 +556,48 @@ export class SensorEditComponent implements OnInit {
               }
             });
           }
+        });
+      }
+    }else if(status === "Deployed"){
+        // Add tapedown
+        if(value.length > this.deployedTapedowns.length){   
+          addTapedown(this.deployedTapedowns, "deployedTapedowns", status, this.initDeployedRefMarks, this.initDeployedTapedowns, this.deployedTable);
+        }
+        // Remove tapedown
+        else{
+          let index;
+          
+          let dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "",
+              titleIcon: "",
+              message: "Are you sure you want to remove this OP Measurement from this sensor?",
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+          
+          dialogRef.afterClosed().subscribe((result) => {
+            if(result){
+              // remove
+              index = this.deployedTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
+              this.deployedTapedowns.splice(index, 1);
+              this.deployedTapedowns = [...this.deployedTapedowns];
+              self.form.controls["deployedTapedowns"] = new FormArray(this.deployedTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
+              self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
+                for(let statusType of self.allStatusTypes){
+                  if(instrument.controls.status_type_id.value === statusType.status_type_id){
+                    if(statusType.status === "Deployed"){
+                      self.form.controls["instrument_status"].controls[i].controls["vdatum_id"].setValue(null);
+                      self.form.controls["instrument_status"].controls[i].controls["sensor_elevation"].setValue(null);
+                      self.form.controls["instrument_status"].controls[i].controls["ws_elevation"].setValue(null);
+                      self.form.controls["instrument_status"].controls[i].controls["gs_elevation"].setValue(null);
+                    }
+                  }
+                }
+              });
+            }
+          });
         }
     }else if(status === "Lost"){
       // Add tapedown
@@ -571,26 +607,37 @@ export class SensorEditComponent implements OnInit {
       // Remove tapedown
       else{
         let index;
-        let okayToDelete = confirm("Are you sure you want to remove this OP Measurement from this sensor?");
-        if(okayToDelete){
-          // remove
-          index = this.lostTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
-          this.lostTapedowns.splice(index, 1);
-          this.lostTapedowns = [...this.lostTapedowns];
-          self.form.controls["lostTapedowns"] = new FormArray(this.lostTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
-          self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
-            for(let statusType of self.allStatusTypes){
-              if(instrument.controls.status_type_id.value === statusType.status_type_id){
-                if(statusType.status === "Lost"){
-                  self.form.controls["instrument_status"].controls[i].controls["vdatum_id"].setValue(null);
-                  self.form.controls["instrument_status"].controls[i].controls["sensor_elevation"].setValue(null);
-                  self.form.controls["instrument_status"].controls[i].controls["ws_elevation"].setValue(null);
-                  self.form.controls["instrument_status"].controls[i].controls["gs_elevation"].setValue(null);
+        let dialogRef = this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "",
+            titleIcon: "",
+            message: "Are you sure you want to remove this OP Measurement from this sensor?",
+            confirmButtonText: "OK",
+            showCancelButton: true,
+          },
+        });
+        
+        dialogRef.afterClosed().subscribe((result) => {
+          if(result){
+            // remove
+            index = this.lostTapedowns.findIndex(j => !value.join(',').includes(j.op_name));
+            this.lostTapedowns.splice(index, 1);
+            this.lostTapedowns = [...this.lostTapedowns];
+            self.form.controls["lostTapedowns"] = new FormArray(this.lostTapedowns.map((tapedown) => new FormGroup(self.createTapedownArray(tapedown))));
+            self.form.controls["instrument_status"].controls.forEach(function(instrument, i){
+              for(let statusType of self.allStatusTypes){
+                if(instrument.controls.status_type_id.value === statusType.status_type_id){
+                  if(statusType.status === "Lost"){
+                    self.form.controls["instrument_status"].controls[i].controls["vdatum_id"].setValue(null);
+                    self.form.controls["instrument_status"].controls[i].controls["sensor_elevation"].setValue(null);
+                    self.form.controls["instrument_status"].controls[i].controls["ws_elevation"].setValue(null);
+                    self.form.controls["instrument_status"].controls[i].controls["gs_elevation"].setValue(null);
+                  }
                 }
               }
-            }
-          });
-        }
+            });
+          }
+        });
       }
     }
   }
@@ -610,7 +657,13 @@ export class SensorEditComponent implements OnInit {
     this.form.controls["instrument_status"].controls.forEach(function(instrument_status, i){
       if(instrument_status.controls.status_type_id.value === instrument.status_type_id){
           let hour = instrument_status.value.ampm === "PM" ? (Number(instrument_status.value.hour) + 12) : instrument_status.value.hour;
-          hour = String(hour).padStart(2, '0');
+          if(String(hour) === '12' && instrument_status.value.ampm === 'AM'){
+            hour = '00';
+          }else if (String(hour) === '24' && instrument_status.value.ampm === 'PM'){
+            hour = '12';
+          }else{
+            hour = String(hour).padStart(2, '0');
+          }
           let minute = String(instrument_status.value.minute).padStart(2, '0');
           let initDate;
           try{
@@ -627,7 +680,6 @@ export class SensorEditComponent implements OnInit {
           utcDate = self.timezonesService.convertTimezone(instrument.time_zone, date, minute);
           let utchour = (utcDate.split('T')[1]).split(':')[0].padStart(2, '0');
           self.form.controls["instrument_status"].controls[i].controls["time_stamp"].setValue(date);
-          self.form.controls["instrument_status"].controls[i].controls["hour"].setValue(instrument.hour);
           self.form.controls["instrument_status"].controls[i].controls["minute"].setValue(minute);
           let timestamp = utcDate.split("T")[0];
           timestamp = timestamp.split("-");
@@ -776,7 +828,15 @@ export class SensorEditComponent implements OnInit {
       this.sendRequests(statusID);
     }else{
       this.loading = false;
-      alert("Some required sensor fields are missing or incorrect.  Please fix these fields before submitting.")
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required sensor fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
     }
   }
 
@@ -892,14 +952,30 @@ export class SensorEditComponent implements OnInit {
 
             resolve("Success");
           }else{
-            alert("Error updating instrument status.");
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "Error updating Instrument Status.",
+                titleIcon: "close",
+                message: null,
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
             resolve("Success");
           }
         })
       }
       else{
-        alert("Error updating sensor.");
-        reject(new Error("Error updating sensor."));
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Error updating Sensor.",
+            titleIcon: "close",
+            message: null,
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+        reject(new Error("Error updating Sensor."));
       }
     }));
 
@@ -908,7 +984,7 @@ export class SensorEditComponent implements OnInit {
       this.dialogRef.close(this.returnData);
       this.dialog.open(ConfirmComponent, {
         data: {
-          title: "Successfully updated sensor",
+          title: "Successfully updated Sensor",
           titleIcon: "check",
           message: null,
           confirmButtonText: "OK",
@@ -928,7 +1004,15 @@ export class SensorEditComponent implements OnInit {
         this.sensorEditService.deleteOPMeasure(tapedownToRemove).subscribe(result => {
           // Result will be null if delete worked
           if(result !== null){
-            alert("Error removing tapedown.");
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "Error removing tapedown.",
+                titleIcon: "close",
+                message: null,
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
           }
         });
       })
@@ -938,7 +1022,15 @@ export class SensorEditComponent implements OnInit {
       delete tapedownToAdd.op_measurements_id;
       this.sensorEditService.addOPMeasure(tapedownToAdd).subscribe(result => {
         if(result.length === 0){
-          alert("Error adding new tapedown.");
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error adding new tapedown.",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
         }
       })
     })
@@ -946,7 +1038,15 @@ export class SensorEditComponent implements OnInit {
     tapedownsToUpdate.forEach(tapedownToUpdate => {
       this.sensorEditService.updateOPMeasure(tapedownToUpdate.op_measurements_id, tapedownToUpdate).subscribe(result => {
         if(result.length === 0){
-          alert("Error updating tapedown.");
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error updating tapedown.",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
         }
       })
     })

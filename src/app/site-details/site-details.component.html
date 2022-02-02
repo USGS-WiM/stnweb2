@@ -9,11 +9,11 @@
                 <div id="siteMap">
                     Site {{site.site_no}} ({{event}})
                     <div class="site-buttons">
-                        <button mat-raised-button class="edit-button" [disabled]="editDisabled" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
-                        <button *ngIf="!deleteDisabled" mat-raised-button class="delete-button"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                        <button mat-stroked-button class="edit-button secondary" [disabled]="editDisabled" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
+                        <button *ngIf="!deleteDisabled" mat-stroked-button class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>
                         <span *ngIf="deleteDisabled" matTooltip="To delete a site, please contact a STN administrator." 
                         aria-label="Displays a tooltip when focused or hovered over">
-                            <button mat-raised-button disabled class="delete-button"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                            <button mat-stroked-button disabled class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>
                         </span>
                     </div>
                 </div>
@@ -23,7 +23,7 @@
             <mat-tab-group>
                 <mat-tab label="Site">
                     <div class="map-button-container">
-                        <button mat-raised-button class="map-button" (click)="toggleSiteMap()">
+                        <button mat-stroked-button class="map-button secondary" (click)="toggleSiteMap()">
                             <span *ngIf="siteMapHidden">View site on map <mat-icon class="expand-icon">expand_more</mat-icon></span>
                             <span *ngIf="!siteMapHidden">Hide map <mat-icon class="expand-icon">expand_less</mat-icon></span>
                         </button>
@@ -508,18 +508,26 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                    <button mat-stroked-button class="view-details-btn" (click)="openRefMarkDetailsDialog(row)"
+                                    <button mat-stroked-button class="view-details-btn secondary" (click)="openRefMarkDetailsDialog(row)"
                                         aria-label="View Details"><mat-icon>search</mat-icon> View Details
                                     </button>
-                                    <button mat-stroked-button class="edit-details-btn" (click)="openRefDatumEditDialog(row)"
+                                    <button mat-stroked-button class="edit-details-btn secondary" (click)="openRefDatumEditDialog(row)"
                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
                                     </button>
                                     <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
                                     <mat-menu #menu="matMenu">
-                                        <button mat-menu-item
-                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <button mat-menu-item class="view-details-mobile" (click)="openRefMarkDetailsDialog(row)"
+                                            aria-label="View Details"><mat-icon>search</mat-icon>
+                                            <span> View Details</span>
+                                        </button>
+                                        <button mat-menu-item class="edit-details-mobile" (click)="openRefDatumEditDialog(row)"
+                                            aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                            <span> Edit</span>
+                                        </button>
+                                        <button mat-menu-item disabled class="delete-borderless"
+                                            aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
                                     </mat-menu>
@@ -562,16 +570,22 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                        <button mat-stroked-button disabled class="view-details-btn"
+                                        <button mat-stroked-button disabled class="view-details-btn secondary"
                                             aria-label="View Details"><mat-icon>search</mat-icon> View Details
                                         </button>
-                                        <button mat-stroked-button disabled class="edit-details-btn"
+                                        <button mat-stroked-button disabled class="edit-details-btn secondary"
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
                                         </button>
                                         <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
+                                            <button mat-menu-item disabled class="view-details-mobile"
+                                                aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            </button>
+                                            <button mat-menu-item disabled class="edit-details-mobile"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
                                             <button mat-menu-item disabled
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
@@ -674,18 +688,26 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                    <button mat-stroked-button class="view-details-btn" (click)="openSensorDetailsDialog(row)"
+                                    <button mat-stroked-button class="view-details-btn secondary" (click)="openSensorDetailsDialog(row)"
                                         aria-label="Edit">View Details
                                     </button>
-                                    <button mat-stroked-button class="edit-details-btn" (click)="openSensorEditDialog(row)"
+                                    <button mat-stroked-button class="edit-details-btn secondary" (click)="openSensorEditDialog(row)"
                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
                                     </button>
                                     <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
                                     <mat-menu #menu="matMenu">
-                                        <button mat-menu-item
-                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
+                                        <button mat-menu-item class="view-details-mobile" (click)="openSensorEditDialog(row)"
+                                            aria-label="View Details"><mat-icon>search</mat-icon>
+                                            <span> View Details</span>
+                                        </button>
+                                        <button mat-menu-item class="edit-details-mobile" (click)="openHWMEditDialog(row)"
+                                            aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                            <span> Edit</span>
+                                        </button>
+                                        <button mat-menu-item  class="delete-borderless"
+                                            aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
                                     </mat-menu>
@@ -752,16 +774,22 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                        <button mat-stroked-button disabled class="view-details-btn"
+                                        <button mat-stroked-button disabled class="view-details-btn secondary"
                                             aria-label="View Details"><mat-icon>search</mat-icon> View Details
                                         </button>
-                                        <button mat-stroked-button disabled class="edit-details-btn"
+                                        <button mat-stroked-button disabled class="edit-details-btn secondary"
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
                                         </button>
                                         <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
+                                            <button mat-menu-item disabled class="view-details-mobile"
+                                                aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            </button>
+                                            <button mat-menu-item disabled class="edit-details-mobile"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
                                             <button mat-menu-item disabled
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
@@ -850,20 +878,28 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                        <button mat-stroked-button class="view-details-btn" (click)="openHWMDetailsDialog(row)"
+                                        <button mat-stroked-button class="view-details-btn secondary" (click)="openHWMDetailsDialog(row)"
                                             aria-label="View Details"><mat-icon>search</mat-icon> View Details
                                         </button>
-                                        <button mat-stroked-button class="edit-details-btn" (click)="openHWMEditDialog(row)"
+                                        <button mat-stroked-button class="edit-details-btn secondary" (click)="openHWMEditDialog(row)"
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
                                         </button>
                                         <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
-                                        <button mat-menu-item
-                                            aria-label="Delete"><mat-icon>delete_forever</mat-icon>
-                                            <span>Delete</span>
-                                        </button>
+                                            <button mat-menu-item class="view-details-mobile" (click)="openHWMDetailsDialog(row)"
+                                                aria-label="View Details"><mat-icon>search</mat-icon>
+                                                <span> View Details</span>
+                                            </button>
+                                            <button mat-menu-item class="edit-details-mobile" (click)="openHWMEditDialog(row)"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                <span> Edit</span>
+                                            </button>
+                                            <button mat-menu-item class="delete-borderless"
+                                                aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                <span>Delete</span>
+                                            </button>
                                         </mat-menu>
                                     </td>
                                 </ng-container>
@@ -920,16 +956,22 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                        <button mat-stroked-button disabled class="view-details-btn"
+                                        <button mat-stroked-button disabled class="view-details-btn secondary"
                                             aria-label="View Details"><mat-icon>search</mat-icon> View Details
                                         </button>
-                                        <button mat-stroked-button disabled class="edit-details-btn"
+                                        <button mat-stroked-button disabled class="edit-details-btn secondary"
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
                                         </button>
                                         <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
+                                            <button mat-menu-item disabled class="view-details-mobile"
+                                                aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            </button>
+                                            <button mat-menu-item disabled class="edit-details-mobile"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
                                             <button mat-menu-item disabled
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
@@ -950,7 +992,6 @@
                     </mat-tab>
                     <mat-tab label="Peaks ({{peaks.length}})">
                         <mat-card class="mat-elevation-z0 header-card"><p>Peaks ({{peaks.length}})</p></mat-card>
-                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To view details about a Peak Summary, first choose an Event above.</p></mat-card>
                         <div class="tableContainer" *ngIf="peaks !== undefined; else noPeakTable">
                             <table *ngIf="peaks.length > 0; else noPeakTable"
                                 mat-table
@@ -960,19 +1001,6 @@
                                 class="mat-elevation-z5"
                                 matSort
                             >
-                                <!-- peak stage column -->
-                                <ng-container matColumnDef="PeakStage">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_stage">Stage</th>
-                                    <td mat-cell *matCellDef="let peak">
-                                        <div *ngIf="peak.peak_stage === '' || peak.peak_stage === undefined; else displayPeakStage">
-                                            ---
-                                        </div>
-                                        <ng-template #displayPeakStage>
-                                            {{ peak.peak_stage }}
-                                        </ng-template>
-                                    </td>
-                                </ng-container>
-
                                 <!-- peak event name column -->
                                 <ng-container matColumnDef="PeakEventName">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header="event_name">Event Name</th>
@@ -986,15 +1014,28 @@
                                     </td>
                                 </ng-container>
 
+                                <!-- peak stage column -->
+                                <ng-container matColumnDef="PeakStage">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_stage">Peak Stage (ft)</th>
+                                    <td mat-cell *matCellDef="let peak">
+                                        <div *ngIf="peak.peak_stage === '' || peak.peak_stage === undefined; else displayPeakStage">
+                                            ---
+                                        </div>
+                                        <ng-template #displayPeakStage>
+                                            {{ peak.peak_stage }}
+                                        </ng-template>
+                                    </td>
+                                </ng-container>
+
                                 <!-- peak date column -->
                                 <ng-container matColumnDef="PeakDate">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_date">Date</th>
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="peak_date">Peak Date</th>
                                     <td mat-cell *matCellDef="let peak">
                                         <div *ngIf="peak.peak_date === '' || peak.peak_date === undefined; else displayPeakDate">
                                             ---
                                         </div>
                                         <ng-template #displayPeakDate>
-                                            {{ peak.peak_date }}
+                                            {{ peak.format_peak_date }}
                                         </ng-template>
                                     </td>
                                 </ng-container>
@@ -1004,9 +1045,29 @@
                                     <th mat-header-cell *matHeaderCellDef>
                                     </th>
                                     <td mat-cell *matCellDef="let row">
-                                    <button mat-stroked-button class="view-details-btn" (click)="openPeaksDetailsDialog(row, 'Peak')"
-                                        aria-label="Edit">View Details
-                                    </button>
+                                        <button mat-stroked-button class="view-details-btn secondary" (click)="openPeaksDetailsDialog(row)"
+                                            aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                        </button>
+                                        <button mat-stroked-button class="edit-details-btn secondary" (click)="openPeaksEditDialog(row)"
+                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                        </button>
+                                        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                            <mat-icon>more_vert</mat-icon>
+                                        </button>
+                                        <mat-menu #menu="matMenu">
+                                            <button mat-menu-item class="view-details-mobile" (click)="openPeaksDetailsDialog(row)"
+                                                aria-label="View Details"><mat-icon>search</mat-icon>
+                                                <span> View Details</span>
+                                            </button>
+                                            <button mat-menu-item class="edit-details-mobile" (click)="openPeaksEditDialog(row)"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                <span> Edit</span>
+                                            </button>
+                                            <button mat-menu-item class="delete-borderless"
+                                                aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                <span>Delete</span>
+                                        </button>
+                                        </mat-menu>
                                     </td>
                                 </ng-container>
 
@@ -1055,15 +1116,23 @@
                                     </th>
                                     <td mat-cell *matCellDef="let row">
                                         <button mat-stroked-button disabled class="view-details-btn"
-                                            aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            aria-label="View Details"><mat-icon>search</mat-icon>
+                                            <span> View Details</span>
                                         </button>
                                         <button mat-stroked-button disabled class="edit-details-btn"
-                                            aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                            <span> Edit</span>
                                         </button>
                                         <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
                                         <mat-menu #menu="matMenu">
+                                            <button mat-menu-item disabled class="view-details-mobile"
+                                                aria-label="View Details"><mat-icon>search</mat-icon> View Details
+                                            </button>
+                                            <button mat-menu-item disabled class="edit-details-mobile"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
                                             <button mat-menu-item disabled
                                                 aria-label="Delete"><mat-icon>delete_forever</mat-icon>
                                                 <span>Delete</span>
@@ -1134,7 +1203,7 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                            <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Site File')"
+                                            <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Site File')"
                                                 aria-label="Edit">View Details
                                             </button>
                                             </td>
@@ -1176,7 +1245,7 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                                <button mat-stroked-button disabled class="view-details-btn"
+                                                <button mat-stroked-button disabled class="view-details-btn secondary"
                                                     aria-label="View Details">View Details
                                                 </button>
                                             </td>
@@ -1254,7 +1323,7 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                            <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Reference Datum File')"
+                                            <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Reference Datum File')"
                                                 aria-label="Edit">View Details
                                             </button>
                                             </td>
@@ -1304,7 +1373,7 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                                <button mat-stroked-button disabled class="view-details-btn"
+                                                <button mat-stroked-button disabled class="view-details-btn secondary"
                                                     aria-label="View Details">View Details
                                                 </button>
                                             </td>
@@ -1323,14 +1392,14 @@
                             <mat-expansion-panel hideToggle [expanded]="sensorFilesExpanded" (opened)="sensorFilesExpanded = true" (closed)="sensorFilesExpanded = false">
                                 <mat-expansion-panel-header class="panel-headers">
                                     <mat-panel-title *ngIf="!sensorFilesExpanded" style="color: grey; font-weight: 500">
-                                        Sensor Files ({{sensorFiles.length}})
+                                        Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
                                     <mat-panel-title *ngIf="sensorFilesExpanded" style="color: #FFF; font-weight: 550">
-                                        Sensor Files ({{sensorFiles.length}})
+                                        Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="sensorFiles !== undefined; else noSensorFileTable">
-                                    <table *ngIf="sensorFiles.length > 0 && sensorFilesDone; else noSensorFileTable"
+                                    <table *ngIf="sensorFilesDataSource.data.length > 0 && sensorFilesDone; else noSensorFileTable"
                                         mat-table
                                         id="sensorFilesTable"
                                         [dataSource]="sensorFilesDataSource"
@@ -1382,7 +1451,7 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                            <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'Sensor File')"
+                                            <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Sensor File')"
                                                 aria-label="Edit">View Details
                                             </button>
                                             </td>
@@ -1432,7 +1501,7 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                                <button mat-stroked-button disabled class="view-details-btn"
+                                                <button mat-stroked-button disabled class="view-details-btn secondary"
                                                     aria-label="View Details">View Details
                                                 </button>
                                             </td>
@@ -1497,7 +1566,7 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                            <button mat-stroked-button class="view-details-btn" (click)="openFileDetailsDialog(row, 'HWM File')"
+                                            <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'HWM File')"
                                                 aria-label="Edit">View Details
                                             </button>
                                             </td>
@@ -1539,7 +1608,7 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                                <button mat-stroked-button disabled class="view-details-btn"
+                                                <button mat-stroked-button disabled class="view-details-btn secondary"
                                                     aria-label="View Details">View Details
                                                 </button>
                                             </td>
