@@ -657,21 +657,25 @@ export class MapComponent implements OnInit {
         let self = this;
         // Get current event
         this.eventService.getCurrentEvent().subscribe(function(result) {
+            console.log(result)
+            console.log(typeof(result))
             // If the current event id is 0, event not filtered
             if(result === 0 && self.events.length > 0){
                 self.currentEvent = self.events[0].event_id;
                 self.currentEventName = self.events[0].event_name;
                 self.submittedEvent = self.events[0]
-            }else if(result && result !== 0 && self.events.length > 0){
+            }else if(result !== '' && result !== 0 && self.events.length > 0){
+                console.log(result)
                 self.currentEvent = result;
                 self.submittedEvent = self.events.filter((event) => event.event_id === self.currentEvent)[0];
                 self.currentEventName = self.submittedEvent.event_name;
             }
 
+            console.log(self.currentEventName)
             // Get map filters if there are any
             self.filtersService.getCurrentFilters().subscribe(function(filters) {
                 console.log(filters)
-                if(filters !== []){
+                if(filters.length === undefined || filters.length > 1){
                     console.log(filters);
                     if(filters.networks !== ''){
                         self.mapFilterForm.get('networkControl').setValue(filters.networks);
@@ -1751,8 +1755,7 @@ export class MapComponent implements OnInit {
                 // Store map filters in service
                 this.eventService.setCurrentEvent(eventId);
                 this.filtersService.setCurrentFilters({
-                    "event": eventId, 
-                    "networks": networkIds, 
+                    "networks": multiNetworkIds, 
                     "sensorTypes": sensorIds, 
                     "states": stateAbbrevs, 
                     "opDefinedTrue": opDefinedTrue, 
@@ -1860,6 +1863,21 @@ export class MapComponent implements OnInit {
                                 }
                             });
                     }
+
+                    console.log(eventId)
+                    // Store map filters in service
+                    this.eventService.setCurrentEvent(eventId);
+                    this.filtersService.setCurrentFilters({
+                        "networks": multiNetworkIds, 
+                        "sensorTypes": sensorIds, 
+                        "states": stateAbbrevs, 
+                        "opDefinedTrue": opDefinedTrue, 
+                        "HWMOnly": HWMTrue,
+                        "HWMSurveyed": surveyed,
+                        "sensorOnly": sensorTrue,
+                        "RDGOnly": RDGTrue,
+                        "HousingTypeOne": bracketTrue,
+                    });
                 }
             }
         }
