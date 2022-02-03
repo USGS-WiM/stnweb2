@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Edit ability for Peaks
 -   View details for Peaks
+-   Adds view sensor button to results table which opens dialog listing sensors; includes button to site page
+-   Makes siteid a link to site page
 
 ### Changed
 
