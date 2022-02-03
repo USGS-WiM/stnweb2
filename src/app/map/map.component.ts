@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatChipList, MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -70,8 +71,6 @@ import { canvas } from 'leaflet';
 import { FilterResultsComponent } from '@app/filter-results/filter-results.component';
 import { FilterComponent } from '@app/filter/filter.component';
 import { MatOption } from '@angular/material/core';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
-import { Console } from 'console';
 
 @Component({
     selector: 'app-map',
@@ -656,36 +655,124 @@ export class MapComponent implements OnInit {
     }
     //TODO: LOOK HERE FIRST
     displayMostRecentEvent() {
-        //Get id and name of most recent event
-        if (this.events.length > 0) {
-            this.currentEvent = this.events[0].event_id;
-            this.currentEventName = this.events[0].event_name;
-            this.submittedEvent = this.events[0]
+        let self = this;
+        // Get current map filters - use first to end subscription after first event
+        this.filtersService.getCurrentFilters().first().subscribe(function(result) {
+            // Check if any map filters besides event exist
+            let hasFilters = self.getMapFilters(result);
+            // If the current event id is null, event not filtered
+            // If other filters exist, don't set event to most recent
+            if(result.event_id === null && self.events.length > 0 && !hasFilters){
+                self.currentEvent = self.events[0].event_id;
+                self.currentEventName = self.events[0].event_name;
+                self.submittedEvent = self.events[0];
+                // Store most recent event as current event
+                self.filtersService.setCurrentFilters({
+                    "event_id": self.currentEvent
+                });
+            }else if(result.event_id !== null && self.events.length > 0){
+                self.currentEvent = result.event_id;
+                self.submittedEvent = self.events.filter((event) => event.event_id === self.currentEvent)[0];
+                self.currentEventName = self.submittedEvent.event_name;
+            }else{
+                self.currentEvent = null;
+            }
+
+            //Reset the layer
+            self.siteService.siteMarkers = L.featureGroup([]);
+            
+            if(self.currentEvent !== null){
+                // Set inital event in filter form
+                self.mapFilterForm.get('eventsControl').setValue(self.submittedEvent);
+
+                //Plot markers for selected event
+                self.siteService
+                    .getEventSites(self.currentEvent)
+                    .subscribe((results) => {
+                        self.resultsReturned = true;
+                        self.sitesDataArray = results;
+                        self.filtersService.updateSites(results);
+                        self.mapResults(
+                            self.sitesDataArray,
+                            self.filteredSitesIcon,
+                            self.siteService.siteMarkers,
+                            true
+                        )
+                        if (self.filterComponent !== undefined) {
+                            self.filterComponent.eventPanelState = true;
+                        }
+                        if(hasFilters){
+                            self.submitMapFilter();
+                        }
+                        setTimeout(() => {
+                            // setting filter-results table to default display
+                            if (self.filterResultsComponent !== undefined){
+                                self.filterResultsComponent.refreshDataSource();
+                            }
+                        }, 1000);
+                    });
+            }else{
+                // If event is null, map could still have other filters
+                if(hasFilters){
+                    self.submitMapFilter();
+                }
+            }
+        })
+    }
+
+    getMapFilters(filters) {
+        let hasFilters = false;
+        if(filters.networks !== '' && filters.networks !== undefined && filters.networks.length > 0){
+            hasFilters = true;
+            this.mapFilterForm.get('networkControl').setValue(filters.networks);
+            this.filterComponent.networksPanelState = true;
         }
-
-        //Clear the old markers from the layer
-        this.siteService.siteMarkers.clearLayers();
-
-        //Plot markers for selected event
-        this.siteService
-            .getEventSites(this.currentEvent)
-            .subscribe((results) => {
-                this.resultsReturned = true;
-                this.sitesDataArray = results;
-                this.filtersService.updateSites(results);
-                this.mapResults(
-                    this.sitesDataArray,
-                    this.filteredSitesIcon,
-                    this.siteService.siteMarkers,
-                    true
-                );
-                setTimeout(() => {
-                    // setting filter-results table to default display
-                    if (this.filterResultsComponent !== undefined){
-                        this.filterResultsComponent.refreshDataSource();
-                    }
-                }, 1000);
-            });
+        if(filters.sensorTypes !== '' && filters.sensorTypes !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('sensorTypeControl').setValue(filters.sensorTypes);
+            this.filterComponent.sensorPanelState = true;
+        }
+        if(filters.states !== '' && filters.states !== undefined && filters.states.length > 0){
+            hasFilters = true;
+            this.mapFilterForm.get('stateControl').setValue(filters.states);
+            this.filterComponent.statesPanelState = true;
+        }
+        if(filters.HWMOnly && filters.HWMOnly !== '' && filters.HWMOnly !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('HWMOnlyControl').setValue(filters.HWMOnly);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.HWMSurveyed !== null && filters.HWMSurveyed !== '' && filters.HWMSurveyed !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('surveyedControl').setValue(filters.HWMSurveyed);
+            this.filterComponent.hmwPanelState = true;
+        }
+        if(filters.HousingTypeOne && filters.HousingTypeOne !== '' && filters.HousingTypeOne !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('bracketSiteOnlyControl').setValue(filters.HousingTypeOne);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.RDGOnly && filters.RDGOnly !== '' && filters.RDGOnly !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('RDGOnlyControl').setValue(filters.RDGOnly);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.opDefinedTrue && filters.opDefinedTrue !== '' && filters.opDefinedTrue !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('OPDefinedControl').setValue(filters.opDefinedTrue);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.sensorOnly && filters.sensorOnly !== '' && filters.sensorOnly !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('sensorOnlyControl').setValue(filters.sensorOnly);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        if(filters.surveyedOnly && filters.surveyedOnly !== '' && filters.surveyedOnly !== undefined){
+            hasFilters = true;
+            this.mapFilterForm.get('surveyedOnlyControl').setValue(filters.surveyedOnly);
+            this.filterComponent.additionalFiltersPanelState = true;
+        }
+        return hasFilters;
     }
 
     toggleMap() {
@@ -1637,6 +1724,7 @@ export class MapComponent implements OnInit {
             : '';
         let HWMTrue = filterParams.HWMOnlyControl ? '1' : '';
         let sensorTrue = filterParams.sensorOnlyControl ? '1' : '';
+        let surveyedTrue = filterParams.surveyedOnlyControl ? '1' : '';
         //Pre-deployed bracket site is HousingTypeOne=1 in API
         let bracketTrue = filterParams.bracketSiteOnlyControl ? '1' : '';
         let RDGTrue = filterParams.RDGOnlyControl ? '1' : '';
@@ -1677,6 +1765,8 @@ export class MapComponent implements OnInit {
                     surveyed +
                     '&SensorOnly=' +
                     sensorTrue +
+                    '&SurveyedOnly=' +
+                    surveyedTrue +
                     '&RDGOnly=' +
                     RDGTrue +
                     '&HousingTypeOne=' +
@@ -1704,7 +1794,25 @@ export class MapComponent implements OnInit {
                         this.getFilterResults(validSites);
                     });
 
-                this.siteService.setCurrentEvent(eventId);
+                // Store map filters in service
+                let event_id = eventId;
+                if(eventId === ''){
+                    event_id = null;
+                }
+                this.filtersService.setCurrentFilters({
+                    "event_id": event_id,
+                    "networks": multiNetworkIds, 
+                    "sensorTypes": sensorIds, 
+                    "states": this.mapFilterForm.get('stateControl').value, 
+                    "opDefinedTrue": filterParams.OPDefinedControl, 
+                    "HWMOnly": filterParams.HWMOnlyControl,
+                    "HWMSurveyed": filterParams.surveyedControl,
+                    "surveyedOnly": filterParams.surveyedOnlyControl,
+                    "sensorOnly": filterParams.sensorOnlyControl,
+                    "RDGOnly": filterParams.RDGOnlyControl,
+                    "HousingTypeOne": filterParams.bracketSiteOnlyControl,
+                });
+
                 // Reload NOAA Tide and Current Stations if filters are changed
                 this.eventService.getEvent(eventId).toPromise().then((result) => {
                     // If the event is changed, use event date range in popup
@@ -1768,6 +1876,8 @@ export class MapComponent implements OnInit {
                             surveyed +
                             '&SensorOnly=' +
                             sensorTrue +
+                            '&SurveyedOnly=' +
+                            surveyedTrue +
                             '&RDGOnly=' +
                             RDGTrue +
                             '&HousingTypeOne=' +
@@ -1802,6 +1912,25 @@ export class MapComponent implements OnInit {
                                 }
                             });
                     }
+
+                    // Store map filters in service
+                    let event_id = eventId;
+                    if(eventId === ''){
+                        event_id = null;
+                    }
+                    this.filtersService.setCurrentFilters({
+                        "event_id": event_id,
+                        "networks": multiNetworkIds, 
+                        "sensorTypes": sensorIds, 
+                        "states": this.mapFilterForm.get('stateControl').value, 
+                        "opDefinedTrue": filterParams.OPDefinedControl, 
+                        "HWMOnly": filterParams.HWMOnlyControl,
+                        "HWMSurveyed": filterParams.surveyedControl,
+                        "surveyedOnly": filterParams.surveyedOnlyControl,
+                        "sensorOnly": filterParams.sensorOnlyControl,
+                        "RDGOnly": filterParams.RDGOnlyControl,
+                        "HousingTypeOne": filterParams.bracketSiteOnlyControl,
+                    });
                 }
             }
         }

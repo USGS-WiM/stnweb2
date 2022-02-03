@@ -31,6 +31,7 @@ import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
 import { PeakEditComponent } from '@app/peak-edit/peak-edit.component';
+import { FiltersService } from '@app/services/filters.service';
 
 @Component({
     selector: 'app-site-details',
@@ -211,6 +212,7 @@ export class SiteDetailsComponent implements OnInit {
         public currentUserService: CurrentUserService,
         public timezonesService: TimezonesService,
         public dialog: MatDialog,
+        public filtersService: FiltersService
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -312,12 +314,13 @@ export class SiteDetailsComponent implements OnInit {
 
     getEvent() {
         let self = this;
-        this.siteService.getCurrentEvent().subscribe(result => this.currentEvent = result)
+        this.filtersService.getCurrentFilters().subscribe(result => this.currentEvent = result.event_id)
+
         // Get event name
         this.siteService
             .getSiteEvents(this.siteID)
             .subscribe((results) => {
-                if(self.currentEvent === 0){
+                if(self.currentEvent === null){
                     this.event = "All Events";
                     this.getData();
                 }else{
@@ -420,7 +423,7 @@ export class SiteDetailsComponent implements OnInit {
                     });
 
                     // If no event selected
-                    if(this.currentEvent === 0){
+                    if(this.currentEvent === null){
                         // Get site full instruments
                         this.siteService
                         .getSiteFullInstruments(this.siteID)
@@ -667,7 +670,7 @@ export class SiteDetailsComponent implements OnInit {
                     .subscribe((results) => {
                         if(results.length > 0){
                             results.forEach(function(result){
-                                if (self.currentEvent === 0 || result.event_name === self.event){
+                                if (self.currentEvent === null || result.event_name === self.event){
                                     result.format_peak_date = self.setTimeAndDate(result.peak_date);
                                     self.peaks.push(result);
                                 }
@@ -820,6 +823,14 @@ export class SiteDetailsComponent implements OnInit {
                 })
             }
         });
+
+        // If no sensors or hwms, need this to correctly display site marker
+        if (this.map) {
+            var map = this.map;
+            setTimeout(function () {
+                map.invalidateSize();
+            }, 100);
+        }
     }
 
     getSensorsForMap() {
@@ -1031,7 +1042,6 @@ export class SiteDetailsComponent implements OnInit {
             },
         });
         dialogRef.afterClosed().subscribe((result) => {
-            console.log(result);
             let self = this;
             if(result) {
                 this.hwmDataSource.data.forEach(function(hwm, i){

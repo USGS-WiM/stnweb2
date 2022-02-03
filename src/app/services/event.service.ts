@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { APP_SETTINGS } from '../app.settings';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map, tap, shareReplay } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
