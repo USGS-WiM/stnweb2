@@ -677,8 +677,8 @@ export class MapComponent implements OnInit {
                 self.currentEvent = null;
             }
 
-            //Clear the old markers from the layer
-            self.siteService.siteMarkers.clearLayers();
+            //Reset the layer
+            self.siteService.siteMarkers = L.featureGroup([]);
             
             if(self.currentEvent !== null){
                 // Set inital event in filter form
@@ -696,8 +696,8 @@ export class MapComponent implements OnInit {
                             self.filteredSitesIcon,
                             self.siteService.siteMarkers,
                             true
-                        );
-                        if (this.filterComponent !== undefined) {
+                        )
+                        if (self.filterComponent !== undefined) {
                             self.filterComponent.eventPanelState = true;
                         }
                         if(hasFilters){
