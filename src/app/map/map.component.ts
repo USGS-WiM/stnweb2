@@ -641,6 +641,14 @@ export class MapComponent implements OnInit {
         // });
     }
 
+    //Session Event snackbar
+    eventSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+    }
+
     //Temporary message pop up when user zooms out and layers are removed
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
