@@ -18,6 +18,7 @@ import { Site } from '@app/interfaces/site';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ResultDetailsComponent } from '../result-details/result-details.component';
+import { RouterTestingModule } from '@angular/router/testing';
 export const mockSitesList: Site[] = APP_UTILITIES.SITES_DUMMY_DATA_LIST;
 
 describe('FilterResultsComponent', () => {
@@ -41,6 +42,7 @@ describe('FilterResultsComponent', () => {
                 MatDialogModule,
                 MatInputModule,
                 MatSortModule,
+                RouterTestingModule,
             ],
             providers: [
                 SiteService,

@@ -6,10 +6,6 @@ table {
     overflow-x: auto;
 }
 
-.results-row {
-    cursor: pointer;
-}
-
 .mat-column-siteId{
     padding: 10px;
     border-right: 1px solid #e0e0e0;
@@ -70,6 +66,13 @@ table {
 
 .mat-column-permHouse{
     padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-button{
+    padding: 10px;
     vertical-align: top;
     align-self: stretch;
 }
@@ -85,4 +88,15 @@ table {
 
 .mat-cell, .mat-header-cell, .mat-footer-cell {
     overflow: auto;
+}
+
+.view-details-btn {
+    margin: 5px 5px;
+    border: 1px solid #404040;
+}
+
+.site-link {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
 }
