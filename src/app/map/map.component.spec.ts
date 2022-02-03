@@ -251,6 +251,17 @@ describe('MapComponent', () => {
         expect(component.sitesDataArray).toEqual(response);
     });
 
+    it('should return false if no map filters exist', () => {
+        let filters = {
+            event_id: 31,
+            HWMOnly: false,
+        }
+        let hasFilters = component.getMapFilters(filters);
+        fixture.detectChanges();
+
+        expect(hasFilters).toBeFalse;
+    })
+
     it('should call getTides on load and return list of all stations', async() => {
         const response: NoaaStation[] = [];
         await component.eventService.getAllEvents();

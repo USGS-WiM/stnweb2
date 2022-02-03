@@ -81,20 +81,20 @@ describe('SiteDetailsComponent', () => {
         expect(component.lowerHeight).toEqual("1:1");
     });
 
-    it('should call getCurrentEvent and return current event', () => {
-        const response: any[] = [];
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+    it('should call getCurrentFilters and return current event', () => {
+        const response = {event_id: 5};
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(response)
         );
         component.getEvent();
         fixture.detectChanges();
-        expect(component.currentEvent).toEqual(response);
+        expect(component.currentEvent).toEqual(response.event_id);
     });
 
     it('should call getSiteEvents and set the current event to event name if not 0', () => {
         const response: any[] = [{event_name: "Hurricane Delta", event_id: 4}];
-        const currentEvent = 4;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        const currentEvent = {event_id: 4};
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -107,8 +107,8 @@ describe('SiteDetailsComponent', () => {
 
     it('should call getSiteEvents and set the current event to "All Events" if not 0', () => {
         const response: any[] = [];
-        const currentEvent = 0;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        const currentEvent = {event_id: null};
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -352,8 +352,8 @@ describe('SiteDetailsComponent', () => {
             {file_date: "2020-09-16T16:05:04.931548"}
         ]
         const siteResponse = [{site: 7}]
-        const currentEvent = 0;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        const currentEvent = {event_id: null};
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
@@ -392,9 +392,9 @@ describe('SiteDetailsComponent', () => {
             {file_date: "2020-09-16T16:05:04.931548"},
         ]
         const siteResponse = [{site: 7}]
-        const currentEvent = 0;
+        const currentEvent = {event_id: null};
         const sensorFileResponse = 1;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
@@ -435,9 +435,9 @@ describe('SiteDetailsComponent', () => {
         ]
         const siteResponse = [{site: 7}]
         const fullSensorResponse = [{sensorBrand: "test", sensorType: "test", instrument_status: []}]
-        const currentEvent = 4;
+        const currentEvent ={event_id: 4};
         const eventResponse = [{event_id: 4, event_name: "test"}];
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -490,9 +490,9 @@ describe('SiteDetailsComponent', () => {
         const statusResponse = {status_type_id: 4}
         
         const siteResponse = [{site: 7}]
-        const currentEvent = 4;
+        const currentEvent = {event_id: 4};
         const eventResponse = [{event_id: 4, event_name: "test"}];
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -537,10 +537,10 @@ describe('SiteDetailsComponent', () => {
             {file_date: "2020-09-16T16:05:04.931548"},
         ]
         const siteResponse = [{site: 7}]
-        const currentEvent = 4;
+        const currentEvent = {event_id: 4};
         const eventResponse = [{event_id: 4, event_name: "test"}];
         const sensorFileResponse = 1;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
