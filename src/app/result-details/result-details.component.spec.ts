@@ -21,6 +21,7 @@ import { APP_SETTINGS } from '@app/app.settings';
 import { of } from 'rxjs';
 import { Event } from '@interfaces/event';
 import { Sitefullsensors } from '@interfaces/sitefullsensors';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ResultDetailsComponent', () => {
     let component: ResultDetailsComponent;
@@ -43,6 +44,7 @@ describe('ResultDetailsComponent', () => {
                 MatSortModule,
                 MatAutocompleteModule,
                 MatAutocompleteModule,
+                RouterTestingModule,
             ],
             providers: [
                 SensorService,

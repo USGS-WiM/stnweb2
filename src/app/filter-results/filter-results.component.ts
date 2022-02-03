@@ -7,6 +7,7 @@ import { FiltersService } from '@services/filters.service';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ResultDetailsComponent } from '../result-details/result-details.component';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-filter-results',
@@ -35,11 +36,13 @@ export class FilterResultsComponent implements OnInit {
         'longitude',
         'waterbody',
         'permHouse',
+        'button',
     ];
 
     constructor(
         private filtersService: FiltersService,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private router: Router,
     ) {
         this.filtersService.selectedSites.subscribe(
             (currentSites) => (this.currentSites = currentSites)
@@ -85,6 +88,10 @@ export class FilterResultsComponent implements OnInit {
         // setting sort and paging
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+    }
+
+    routeToSite(siteID){
+        this.router.navigateByUrl('/Site/' + siteID + '/SiteDashboard');
     }
 
     // fired when user clicks a sortable header
