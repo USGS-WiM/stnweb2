@@ -662,7 +662,7 @@ export class MapComponent implements OnInit {
             let hasFilters = self.getMapFilters(result);
             // If the current event id is null, event not filtered
             // If other filters exist, don't set event to most recent
-            if(result.event_id === null && self.events.length > 0 && !hasFilters){
+            if(result.event_id === null && result.networks === undefined && self.events.length > 0 && !hasFilters){
                 self.currentEvent = self.events[0].event_id;
                 self.currentEventName = self.events[0].event_name;
                 self.submittedEvent = self.events[0];
@@ -676,6 +676,7 @@ export class MapComponent implements OnInit {
                 self.currentEventName = self.submittedEvent.event_name;
             }else{
                 self.currentEvent = null;
+                self.currentEventName = null;
             }
 
             self.currentEventName = self.currentEventName !== null ? self.currentEventName : "All Events";
@@ -723,17 +724,17 @@ export class MapComponent implements OnInit {
 
     getMapFilters(filters) {
         let hasFilters = false;
-        if(filters.networks !== '' && filters.networks !== undefined && filters.networks.length > 0){
+        if(filters.networks !== '' && filters.networks !== null && filters.networks !== undefined && filters.networks.length > 0){
             hasFilters = true;
             this.mapFilterForm.get('networkControl').setValue(filters.networks);
             this.filterComponent.networksPanelState = true;
         }
-        if(filters.sensorTypes !== '' && filters.sensorTypes !== undefined){
+        if(filters.sensorTypes !== '' && filters.sensorTypes !== null && filters.sensorTypes !== undefined){
             hasFilters = true;
             this.mapFilterForm.get('sensorTypeControl').setValue(filters.sensorTypes);
             this.filterComponent.sensorPanelState = true;
         }
-        if(filters.states !== '' && filters.states !== undefined && filters.states.length > 0){
+        if(filters.states !== '' && filters.states !== null && filters.states !== undefined && filters.states.length > 0){
             hasFilters = true;
             this.mapFilterForm.get('stateControl').setValue(filters.states);
             this.filterComponent.statesPanelState = true;
@@ -1817,8 +1818,7 @@ export class MapComponent implements OnInit {
                     "RDGOnly": filterParams.RDGOnlyControl,
                     "HousingTypeOne": filterParams.bracketSiteOnlyControl,
                 });
-
-                this.currentEventName = filterParams.eventsControl.event_name !== null ? filterParams.eventsControl.event_name : "All Events";
+                this.currentEventName = filterParams.eventsControl && filterParams.eventsControl.event_name !== null ? filterParams.eventsControl.event_name : "All Events";
 
                 // Reload NOAA Tide and Current Stations if filters are changed
                 this.eventService.getEvent(eventId).toPromise().then((result) => {
@@ -1938,7 +1938,7 @@ export class MapComponent implements OnInit {
                         "RDGOnly": filterParams.RDGOnlyControl,
                         "HousingTypeOne": filterParams.bracketSiteOnlyControl,
                     });
-                    this.currentEventName = filterParams.eventsControl.event_name !== null ? filterParams.eventsControl.event_name : "All Events";
+                    this.currentEventName = filterParams.eventsControl && filterParams.eventsControl.event_name !== null ? filterParams.eventsControl.event_name : "All Events";
                 }
             }
         }

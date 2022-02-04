@@ -451,7 +451,6 @@ describe('MapComponent', () => {
 
     it('there should be as many queries as there are networks', () => {
         component.mapFilterForm.get('networkControl').setValue([1, 2, 3]);
-        component.mapFilterForm.get('eventsControl').setValue({event_name: null});
         const response: Site[] = [];
         spyOn(component.siteService, 'getFilteredSites').and.returnValue(
             of(response)
