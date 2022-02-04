@@ -640,14 +640,6 @@ export class MapComponent implements OnInit {
         // });
     }
 
-    //Session Event snackbar
-    eventSnackBar(message: string, action: string) {
-        this.snackBar.open(message, action, {
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-        });
-    }
-
     //Temporary message pop up when user zooms out and layers are removed
     openZoomOutSnackBar(message: string, action: string, duration: number) {
         this.snackBar.open(message, action, {
@@ -686,6 +678,7 @@ export class MapComponent implements OnInit {
                 self.currentEvent = null;
             }
 
+            self.currentEventName = self.currentEventName !== null ? self.currentEventName : "All Events";
             //Reset the layer
             self.siteService.siteMarkers = L.featureGroup([]);
             
@@ -781,19 +774,6 @@ export class MapComponent implements OnInit {
             this.filterComponent.additionalFiltersPanelState = true;
         }
         return hasFilters;
-    }
-
-    toggleMap() {
-        this.mapPanelMinimized = !this.mapPanelMinimized;
-        if (this.map) {
-            var map = this.map;
-            // this.streetMaps.redraw();
-            // this.map.invalidateSize();
-            // console.log("INVALIDATING")
-            setTimeout(function () {
-                map.invalidateSize();
-            }, 100);
-        }
     }
 
     createMap() {
@@ -1636,6 +1616,23 @@ export class MapComponent implements OnInit {
         this.mapFilterForm.get('eventStateControl').setValue(null);
         this.mapFilterForm.get('eventTypeControl').setValue(null);
 
+        // Clear stored filters
+        this.filtersService.setCurrentFilters({
+            "event_id": null,
+            "networks": null, 
+            "sensorTypes": null, 
+            "states": null, 
+            "opDefinedTrue": null, 
+            "HWMOnly": null,
+            "HWMSurveyed": null,
+            "surveyedOnly": null,
+            "sensorOnly": null,
+            "RDGOnly": null,
+            "HousingTypeOne": null,
+        });
+        
+        this.currentEventName = "All Events";
+
         //reset the event options
         this.updateEventFilter();
 
@@ -1821,6 +1818,8 @@ export class MapComponent implements OnInit {
                     "HousingTypeOne": filterParams.bracketSiteOnlyControl,
                 });
 
+                this.currentEventName = filterParams.eventsControl.event_name !== null ? filterParams.eventsControl.event_name : "All Events";
+
                 // Reload NOAA Tide and Current Stations if filters are changed
                 this.eventService.getEvent(eventId).toPromise().then((result) => {
                     // If the event is changed, use event date range in popup
@@ -1939,6 +1938,7 @@ export class MapComponent implements OnInit {
                         "RDGOnly": filterParams.RDGOnlyControl,
                         "HousingTypeOne": filterParams.bracketSiteOnlyControl,
                     });
+                    this.currentEventName = filterParams.eventsControl.event_name !== null ? filterParams.eventsControl.event_name : "All Events";
                 }
             }
         }
@@ -1947,12 +1947,6 @@ export class MapComponent implements OnInit {
     openMapFilters(){
         // Viewing on mobile, change boolean value to hide or display map filters, map panel, and filter results
         this.isClicked = !this.isClicked;
-
-        if (this.isClicked){
-            document.getElementById('mobile-minimize-button').style.display = 'none';
-        }else{
-            document.getElementById('mobile-minimize-button').style.display = 'flex';
-        }
     }
 
     onResize(){
@@ -1962,14 +1956,8 @@ export class MapComponent implements OnInit {
         // Show or hide mobile minimize map button
         if (this.isMobile){
             this.isClicked = this.isClicked;
-            if (this.isClicked){
-                document.getElementById('mobile-minimize-button').style.display = 'none';
-            }else{
-                document.getElementById('mobile-minimize-button').style.display = 'flex';
-            }
         }else{
             this.isClicked = false;
-            document.getElementById('mobile-minimize-button').style.display = 'none';
         }
     }
 
