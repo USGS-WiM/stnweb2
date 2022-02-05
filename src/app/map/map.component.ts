@@ -662,7 +662,7 @@ export class MapComponent implements OnInit {
             let hasFilters = self.getMapFilters(result);
             // If the current event id is null, event not filtered
             // If other filters exist, don't set event to most recent
-            if(result.event_id === null && self.events.length > 0 && !hasFilters){
+            if(result.event_id === null && result.networks === undefined && self.events.length > 0 && !hasFilters){
                 self.currentEvent = self.events[0].event_id;
                 self.currentEventName = self.events[0].event_name;
                 self.submittedEvent = self.events[0];
@@ -676,8 +676,10 @@ export class MapComponent implements OnInit {
                 self.currentEventName = self.submittedEvent.event_name;
             }else{
                 self.currentEvent = null;
+                self.currentEventName = null;
             }
 
+            self.currentEventName = self.currentEventName !== null ? self.currentEventName : "All Events";
             //Reset the layer
             self.siteService.siteMarkers = L.featureGroup([]);
             
@@ -722,17 +724,17 @@ export class MapComponent implements OnInit {
 
     getMapFilters(filters) {
         let hasFilters = false;
-        if(filters.networks !== '' && filters.networks !== undefined && filters.networks.length > 0){
+        if(filters.networks !== '' && filters.networks !== null && filters.networks !== undefined && filters.networks.length > 0){
             hasFilters = true;
             this.mapFilterForm.get('networkControl').setValue(filters.networks);
             this.filterComponent.networksPanelState = true;
         }
-        if(filters.sensorTypes !== '' && filters.sensorTypes !== undefined){
+        if(filters.sensorTypes !== '' && filters.sensorTypes !== null && filters.sensorTypes !== undefined){
             hasFilters = true;
             this.mapFilterForm.get('sensorTypeControl').setValue(filters.sensorTypes);
             this.filterComponent.sensorPanelState = true;
         }
-        if(filters.states !== '' && filters.states !== undefined && filters.states.length > 0){
+        if(filters.states !== '' && filters.states !== null && filters.states !== undefined && filters.states.length > 0){
             hasFilters = true;
             this.mapFilterForm.get('stateControl').setValue(filters.states);
             this.filterComponent.statesPanelState = true;
@@ -773,19 +775,6 @@ export class MapComponent implements OnInit {
             this.filterComponent.additionalFiltersPanelState = true;
         }
         return hasFilters;
-    }
-
-    toggleMap() {
-        this.mapPanelMinimized = !this.mapPanelMinimized;
-        if (this.map) {
-            var map = this.map;
-            // this.streetMaps.redraw();
-            // this.map.invalidateSize();
-            // console.log("INVALIDATING")
-            setTimeout(function () {
-                map.invalidateSize();
-            }, 100);
-        }
     }
 
     createMap() {
@@ -1628,6 +1617,23 @@ export class MapComponent implements OnInit {
         this.mapFilterForm.get('eventStateControl').setValue(null);
         this.mapFilterForm.get('eventTypeControl').setValue(null);
 
+        // Clear stored filters
+        this.filtersService.setCurrentFilters({
+            "event_id": null,
+            "networks": null, 
+            "sensorTypes": null, 
+            "states": null, 
+            "opDefinedTrue": null, 
+            "HWMOnly": null,
+            "HWMSurveyed": null,
+            "surveyedOnly": null,
+            "sensorOnly": null,
+            "RDGOnly": null,
+            "HousingTypeOne": null,
+        });
+        
+        this.currentEventName = "All Events";
+
         //reset the event options
         this.updateEventFilter();
 
@@ -1812,6 +1818,7 @@ export class MapComponent implements OnInit {
                     "RDGOnly": filterParams.RDGOnlyControl,
                     "HousingTypeOne": filterParams.bracketSiteOnlyControl,
                 });
+                this.currentEventName = filterParams.eventsControl && filterParams.eventsControl.event_name !== null ? filterParams.eventsControl.event_name : "All Events";
 
                 // Reload NOAA Tide and Current Stations if filters are changed
                 this.eventService.getEvent(eventId).toPromise().then((result) => {
@@ -1931,6 +1938,7 @@ export class MapComponent implements OnInit {
                         "RDGOnly": filterParams.RDGOnlyControl,
                         "HousingTypeOne": filterParams.bracketSiteOnlyControl,
                     });
+                    this.currentEventName = filterParams.eventsControl && filterParams.eventsControl.event_name !== null ? filterParams.eventsControl.event_name : "All Events";
                 }
             }
         }
@@ -1939,12 +1947,6 @@ export class MapComponent implements OnInit {
     openMapFilters(){
         // Viewing on mobile, change boolean value to hide or display map filters, map panel, and filter results
         this.isClicked = !this.isClicked;
-
-        if (this.isClicked){
-            document.getElementById('mobile-minimize-button').style.display = 'none';
-        }else{
-            document.getElementById('mobile-minimize-button').style.display = 'flex';
-        }
     }
 
     onResize(){
@@ -1954,14 +1956,8 @@ export class MapComponent implements OnInit {
         // Show or hide mobile minimize map button
         if (this.isMobile){
             this.isClicked = this.isClicked;
-            if (this.isClicked){
-                document.getElementById('mobile-minimize-button').style.display = 'none';
-            }else{
-                document.getElementById('mobile-minimize-button').style.display = 'flex';
-            }
         }else{
             this.isClicked = false;
-            document.getElementById('mobile-minimize-button').style.display = 'none';
         }
     }
 
