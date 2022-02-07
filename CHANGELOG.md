@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Remove second navbar
 -   Restyle event filters on map page
 -   Remove minimize/maximize map button
+-   Change placeholders in map filters to All __
 
 ### Fixed
 

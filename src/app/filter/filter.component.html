@@ -118,12 +118,10 @@
         <div class="form-container">
 
                 <mat-form-field appearance="fill">
-                    <mat-label for="networkOptions"
-                        >Networks</mat-label
-                    >
                     <mat-select
                         id="networkOptions"
                         formControlName="networkControl"
+                        placeholder="All Networks"
                         multiple
                     >
                         <mat-option
@@ -148,12 +146,10 @@
         <div class="form-container">
 
                 <mat-form-field appearance="fill">
-                    <mat-label for="sensorTypes"
-                        >Sensor Type</mat-label
-                    >
                     <mat-select
                         id="sensorOptions"
                         formControlName="sensorTypeControl"
+                        placeholder="All Sensor Types"
                     >
                         <mat-option>Any</mat-option>
                         <mat-option
@@ -196,7 +192,7 @@
                         <input
                             aria-label="Select states to filter sites"
                             #stateInput
-                            placeholder="States"
+                            placeholder="All States"
                             [matChipInputFor]="statesList"
                             [matChipInputSeparatorKeyCodes]="
                                 separatorKeysCodes
