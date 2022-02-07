@@ -557,32 +557,12 @@ describe('MapComponent', () => {
         expect(component.mapFilterForm.get('stateControl').value).toEqual(null);
     });
 
-    it ('map size should change', () => {
-        component.toggleMap();
-        expect(component.map.invalidateSize()).toBeTruthy();
-    })
-
     it ('onResize should be called on window resize', () => {
         component.isClicked = true;
         let resizeSpy = spyOn(component, 'onResize').and.callThrough();
         window.dispatchEvent(new Event('resize'));
         fixture.detectChanges();
         expect(resizeSpy).toHaveBeenCalled();
-        if (component.isMobile){
-            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
-        }else{
-            expect(component.isClicked).toBeFalse;
-            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
-        }
-    });
-
-    it ('mobile minimize button should be checked on resize', () => {
-        component.isClicked = false;
-        if (component.isMobile){
-            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('flex');
-        }else{
-            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
-        }
     });
 
     it ('isClicked should change value to true', () => {
@@ -595,14 +575,5 @@ describe('MapComponent', () => {
         component.isClicked = true;
         component.openMapFilters();
         expect(component.isClicked).toBeFalsy();
-    });
-
-    it ('mobile minimize button should be hidden on Map Filters button click', () => {
-        component.openMapFilters();
-        if (component.isClicked){
-            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('none');
-        }else{
-            expect(window.getComputedStyle(document.getElementById('mobile-minimize-button')).display).toEqual('flex');
-        }
     });
 });

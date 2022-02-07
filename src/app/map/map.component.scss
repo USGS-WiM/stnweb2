@@ -476,6 +476,7 @@ $borderRadius: 4px;
         max-width: 800px;
         margin: 15px auto 0 auto;
     }
+
     .mat-card-content {
         width: 28%;
         max-width: 28%;
@@ -556,6 +557,22 @@ $borderRadius: 4px;
     background-color: rgba(255, 166, 0, 0.801);
     color: white;
     margin-bottom: 300px;
+}
+
+.session-event {
+    background-color: #f7f7f7;
+    color: #000;
+    margin-top: 20px;
+    opacity: 0.8 !important;
+    margin-right: auto;
+    margin-left: auto;
+    font-size: 16px;
+    display: inline-flex;
+}
+
+.session-event p {
+    font-weight: bold;
+    padding-left: 5px;
 }
 
 //Mobile screen sizes
