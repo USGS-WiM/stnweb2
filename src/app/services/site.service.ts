@@ -758,7 +758,7 @@ export class SiteService {
     //Get File Type Lookup
     public getFileTypeLookup(): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + 'FileTypes/.json')
+            .get(APP_SETTINGS.API_ROOT + 'FileTypes.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -950,7 +950,7 @@ export class SiteService {
     // Get File Item
     public getFileItem(file_id): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + 'Files/' + file_id + '/item', {headers: APP_SETTINGS.AUTH_JSON_HEADERS},)
+            .get(APP_SETTINGS.API_ROOT + 'Files/' + file_id + '/Item', {headers: APP_SETTINGS.AUTH_JSON_HEADERS},)
             .pipe(
                 tap((response) => {
                     console.log(

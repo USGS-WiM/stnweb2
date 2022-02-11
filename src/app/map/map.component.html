@@ -33,6 +33,17 @@
 		
 			</div>
 
+            <div id="jumpToResults">
+                <button
+                    mat-button
+					class="secondary"
+                    aria-label="View Results"
+                    (click)="jumpToResult()"
+                >
+                    <mat-icon>arrow_downward</mat-icon>&nbsp;View Results
+                </button>
+            </div>
+
             <a id="siteRouterLink"></a>
 
             <!-- Map -->
@@ -266,9 +277,11 @@
                     </button>
                 </div>
             </mat-card-content>
-            <app-filter-results [ngStyle]="{'display': isClicked ? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}"
-                    [mapFilterForm]="mapFilterForm"
-            ></app-filter-results>
+            <div #jumpToResults>
+                <app-filter-results [ngStyle]="{'display': isClicked ? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}"
+                        [mapFilterForm]="mapFilterForm"
+                ></app-filter-results>
+            </div>
         </mat-card>
     </div>
 </div>

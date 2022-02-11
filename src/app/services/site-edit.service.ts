@@ -197,7 +197,7 @@ export class SiteEditService {
   public postSource(source): Observable<any> {
     // rootURL + '/Sources/:id.json'
     return this.httpClient
-        .post(APP_SETTINGS.API_ROOT + '/Sources.json', source, {
+        .post(APP_SETTINGS.API_ROOT + 'Sources.json', source, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
