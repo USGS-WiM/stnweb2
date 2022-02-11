@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Session event displayed on each page
 -   Back to Map button displayed on each page
 -   Add ability to add, edit and delete Site, Reference Datum and HWM files in Files Tab
+-   Add View Results button on map
 
 ### Changed
 

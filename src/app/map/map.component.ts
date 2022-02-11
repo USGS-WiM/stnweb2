@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { CurrentUserService } from '@services/current-user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -78,6 +78,8 @@ import { MatOption } from '@angular/material/core';
     styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit {
+    @ViewChild("jumpToResults") jumpToElement: ElementRef;
+
     @ViewChild(FilterResultsComponent)
     filterResultsComponent: FilterResultsComponent;
 
@@ -775,6 +777,16 @@ export class MapComponent implements OnInit {
             this.filterComponent.additionalFiltersPanelState = true;
         }
         return hasFilters;
+    }
+
+    jumpToResult() {
+        let self = this;
+        // Open results panel
+        this.filtersService.changeResultsPanelState(true);
+        // Scroll to results - need timeout to wait for results panel to open if it was closed
+        setTimeout(function () {
+            self.jumpToElement.nativeElement.scrollIntoView();
+        }, 130);
     }
 
     createMap() {
