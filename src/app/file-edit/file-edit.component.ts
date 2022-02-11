@@ -260,7 +260,7 @@ export class FileEditComponent implements OnInit {
       source_id: new FormControl(this.file.source_id !== undefined ? this.file.source_id : null),
       description: new FormControl(this.file.description !== undefined ? this.file.description : null, Validators.required),
       file_date: new FormControl(this.file.file_date !== undefined ? this.file.file_date : null, Validators.required),
-      photo_date: new FormControl(this.file.photo_date !== undefined ? this.file.photo_date : null, Validators.required),
+      photo_date: new FormControl(this.file.photo_date !== undefined ? this.file.photo_date : null),
       agency_id: new FormControl(this.file.agency_id !== undefined ? this.file.agency_id : null, Validators.required),
       site_id: new FormControl(this.file.site_id !== undefined ? this.file.site_id : null),
       hwm_id: new FormControl(this.file.hwm_id !== undefined ? this.file.hwm_id : null),
@@ -284,6 +284,10 @@ export class FileEditComponent implements OnInit {
       this.form.controls["hwm_id"].setValidators([Validators.required]);
     }else if(this.data.type === 'Reference Datum File'){
       this.form.controls["objective_point_id"].setValidators([Validators.required]);
+    }
+
+    if(this.form.controls.filetype_id.value === 1){
+      this.form.controls["photo_date"].setValidators([Validators.required]);
     }
   }
 
@@ -344,11 +348,6 @@ export class FileEditComponent implements OnInit {
     this.file.File = event.target.files[0];
     this.form.controls['File'].setValue(this.file.File);
     this.fileUploading = true;
-    if(this.file.filetype_id === 1){
-      this.form.controls["photo_date"].setValidators([Validators.required]);
-    }else{
-      this.form.controls["photo_date"].clearValidators();
-    }
   }
 
   // Re-upload file or add missing file
