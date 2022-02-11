@@ -156,7 +156,7 @@ export class SiteEditComponent implements OnInit {
   
   // Regular Expression to match phone and zip character strings
   phonePattern: RegExp = (/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/);
-  zipPattern: RegExp = (/^\d{5}(?:\d{2})?$/);
+  zipPattern: RegExp = (/[0-9]{5}/);
 
   constructor(
     private dialogRef: MatDialogRef<SiteEditComponent>,
@@ -580,7 +580,7 @@ export class SiteEditComponent implements OnInit {
       city: new FormControl(this.site.city),
       state: new FormControl(this.site.state, Validators.required),
       county: new FormControl(this.site.county, Validators.required),
-      zip: new FormControl(this.site.zip),
+      zip: new FormControl(this.site.zip, Validators.pattern(this.zipPattern)),
       housingType: new FormControl(this.housingTypeArray),
       siteHousings: new FormArray(this.siteHousingArray.map((housing, index) => new FormGroup(this.createHousingArray(housing)))),
       priority_id: new FormControl(this.priority.priority_id),

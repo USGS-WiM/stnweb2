@@ -194,7 +194,10 @@
                         </mat-form-field>
                         <mat-form-field appearance="fill">
                             <mat-label>Zip</mat-label>
-                            <input aria-label="Zip" matInput formControlName="zip" [value]="site.zip"/>
+                            <input aria-label="Zip" matInput maxLength="5" formControlName="zip" [value]="site.zip"/>
+                            <mat-error>
+                                Invalid zip code
+                            </mat-error>
                         </mat-form-field>
                         <mat-form-field appearance="fill">
                             <mat-label>County</mat-label>
@@ -326,7 +329,10 @@
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Zip</mat-label>
-                                                    <input aria-label="Zip" formControlName="zip" matInput [value]="landownerContact.zip"/>
+                                                    <input aria-label="Zip" maxLength="5" formControlName="zip" matInput [value]="landownerContact.zip"/>
+                                                    <mat-error>
+                                                        Invalid zip code
+                                                    </mat-error>
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Primary Phone</mat-label>
