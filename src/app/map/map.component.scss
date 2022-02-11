@@ -185,6 +185,21 @@ $borderRadius: 4px;
             vertical-align: middle;
         }
     }
+
+    #jumpToResults{
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+        padding-top: 8px;
+
+        button {
+            margin: 30px;
+            background-color: white;
+            z-index: 1000;
+        }
+    }
 }
 
 .leaflet-popup-content{
@@ -618,6 +633,10 @@ $borderRadius: 4px;
     }
 
     #mapControls{
+        display: none !important;
+    }
+
+    #jumpToResults{
         display: none !important;
     }
 

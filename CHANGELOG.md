@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Map filters after navigating from map page
 -   Session event displayed on each page
 -   Back to Map button displayed on each page
+-   Add View Results button on map
 
 ### Changed
 
