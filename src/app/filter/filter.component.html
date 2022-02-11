@@ -1,99 +1,113 @@
 <form class="form" [formGroup]="mapFilterForm">
-    <mat-accordion [multi]="true">
     <!--Event-->
-    <mat-expansion-panel [(expanded)]="eventPanelState" class="small-card">
-        <mat-expansion-panel-header>
-            <mat-panel-title>
-                Event
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="form-container">
-            <mat-form-field appearance="fill">
-                <mat-label for="eventType"
-                    >Filter Events by Type</mat-label
-                >
-                <mat-select
-                    #eventTypeOptions
-                    id="eventTypeOptions"
-                    formControlName="eventTypeControl"
-                    (selectionChange)="onEventChange()"
-                >
-                    <mat-option>Any</mat-option>
-                    <mat-option
-                        *ngFor="
-                            let eventType of eventTypes$ | async
-                        "
-                        [value]="eventType"
-                        >{{ eventType.type }}</mat-option
-                    >
-                </mat-select>
-            </mat-form-field>
+    <mat-card class="small-card event-card">
+        <mat-card-title class="event-title">
+            Session Event
+        </mat-card-title>
+        <mat-card-content class="form-container">
+            <div>
+                <label>Filter Events by Type</label>
+                <div class="form-div">
+                    <mat-form-field appearance="fill">
+                        <!-- <mat-label for="eventType"
+                            >All Events</mat-label
+                        > -->
+                        <mat-select
+                            #eventTypeOptions
+                            placeholder="All Types"
+                            id="eventTypeOptions"
+                            formControlName="eventTypeControl"
+                            (selectionChange)="onEventChange()"
+                        >
+                            <mat-option>Any</mat-option>
+                            <mat-option
+                                *ngFor="
+                                    let eventType of eventTypes$ | async
+                                "
+                                [value]="eventType"
+                                >{{ eventType.type }}</mat-option
+                            >
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div>
+                <label>Filter Events by State</label>
+                <div class="form-div">
+                    <mat-form-field appearance="fill">
+                        <!-- <mat-label for="eventType"
+                            >Filter Events by State</mat-label
+                        > -->
+                        <input
+                            matInput
+                            id="eventStateOptions"
+                            type="text"
+                            aria-label="Dropdown menu for state selection"
+                            matInput
+                            placeholder="All States"
+                            formControlName="eventStateControl"
+                            [matAutocomplete]="eventStateAutocomplete"
+                        />
+                        <mat-hint
+                            >Start typing for suggestions</mat-hint
+                        >
+                        <mat-autocomplete
+                            #eventStateAutocomplete="matAutocomplete"
+                            [displayWith]="displayEventState"
+                        >
+                            <mat-option
+                                *ngFor="
+                                    let eventState of eventStates$
+                                        | async
+                                "
+                                (click)="onEventChange()"
+                                [value]="eventState"
+                                >{{ eventState.state_name }}</mat-option
+                            >
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-div">
+                <label>Event Name</label>
+                <div class="form-div">
+                    <mat-form-field class="eventSelect" appearance="fill">
+                        <!-- <mat-label for="eventSelection"
+                            >Event</mat-label
+                        > -->
+                        <input
+                            matInput
+                            id="eventSelection"
+                            type="text"
+                            aria-label="Dropdown menu for storm event selection"
+                            matInput
+                            placeholder="All Events"
+                            formControlName="eventsControl"
+                            [matAutocomplete]="eventAutocomplete"
+                        />
+                        <mat-hint
+                            >Start typing for suggestions</mat-hint
+                        >
+                        <mat-autocomplete
+                            #eventAutocomplete="matAutocomplete"
+                            [displayWith]="displayEvent"
+                        >
+                            <mat-option
+                                *ngFor="
+                                    let event of filteredEvents$ | async
+                                "
+                                [value]="event"
+                            >
+                                {{ event.event_name }}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
 
-            <mat-form-field appearance="fill">
-                <mat-label for="eventType"
-                    >Filter Events by State</mat-label
-                >
-                <input
-                    matInput
-                    id="eventStateOptions"
-                    type="text"
-                    aria-label="Dropdown menu for state selection"
-                    matInput
-                    formControlName="eventStateControl"
-                    [matAutocomplete]="eventStateAutocomplete"
-                />
-                <mat-hint
-                    >Start typing for suggestions</mat-hint
-                >
-                <mat-autocomplete
-                    #eventStateAutocomplete="matAutocomplete"
-                    [displayWith]="displayEventState"
-                >
-                    <mat-option
-                        *ngFor="
-                            let eventState of eventStates$
-                                | async
-                        "
-                        (click)="onEventChange()"
-                        [value]="eventState"
-                        >{{ eventState.state_name }}</mat-option
-                    >
-                </mat-autocomplete>
-            </mat-form-field>
-
-            <mat-form-field class="eventSelect">
-                <mat-label for="eventSelection"
-                    >Event</mat-label
-                >
-                <input
-                    matInput
-                    id="eventSelection"
-                    type="text"
-                    aria-label="Dropdown menu for storm event selection"
-                    matInput
-                    formControlName="eventsControl"
-                    [matAutocomplete]="eventAutocomplete"
-                />
-                <mat-hint
-                    >Start typing for suggestions</mat-hint
-                >
-                <mat-autocomplete
-                    #eventAutocomplete="matAutocomplete"
-                    [displayWith]="displayEvent"
-                >
-                    <mat-option
-                        *ngFor="
-                            let event of filteredEvents$ | async
-                        "
-                        [value]="event"
-                    >
-                        {{ event.event_name }}
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-        </div>
-    </mat-expansion-panel>
-
+    <mat-accordion [multi]="true">
     <!--Networks-->
     <mat-expansion-panel [(expanded)]="networksPanelState" class="small-card">
         <mat-expansion-panel-header>
@@ -104,12 +118,10 @@
         <div class="form-container">
 
                 <mat-form-field appearance="fill">
-                    <mat-label for="networkOptions"
-                        >Networks</mat-label
-                    >
                     <mat-select
                         id="networkOptions"
                         formControlName="networkControl"
+                        placeholder="All Networks"
                         multiple
                     >
                         <mat-option
@@ -134,12 +146,10 @@
         <div class="form-container">
 
                 <mat-form-field appearance="fill">
-                    <mat-label for="sensorTypes"
-                        >Sensor Type</mat-label
-                    >
                     <mat-select
                         id="sensorOptions"
                         formControlName="sensorTypeControl"
+                        placeholder="All Sensor Types"
                     >
                         <mat-option>Any</mat-option>
                         <mat-option
@@ -182,7 +192,7 @@
                         <input
                             aria-label="Select states to filter sites"
                             #stateInput
-                            placeholder="States"
+                            placeholder="All States"
                             [matChipInputFor]="statesList"
                             [matChipInputSeparatorKeyCodes]="
                                 separatorKeysCodes

@@ -1,3 +1,4 @@
+<app-session-event></app-session-event>
 <div id="siteDetailsContainer">
     <div id="progress" *ngIf="noSiteInfo === undefined">
         <mat-spinner style="margin:0 auto;" mode="indeterminate" diameter="20"></mat-spinner>
@@ -7,7 +8,7 @@
         <div class="site-title">
             <div *ngIf="site !== undefined">
                 <div id="siteMap">
-                    Site {{site.site_no}} ({{event}})
+                    Site {{site.site_no}}
                     <div class="site-buttons">
                         <button mat-stroked-button class="edit-button secondary" [disabled]="editDisabled" (click)="openEditDialog()"><mat-icon>edit</mat-icon> Edit Site</button>
                         <button *ngIf="!deleteDisabled" mat-stroked-button class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>

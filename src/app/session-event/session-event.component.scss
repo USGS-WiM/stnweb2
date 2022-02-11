@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    margin: auto;
+    width: 100%;
+    padding: 20px 40px 10px 40px;
+    align-items: center;
+}
+
+.session-event {
+    font-size: 20px;
+    margin-right: 0px;
+    margin-left: auto;
+    display: inline-flex;
+
+    .event-name {
+        font-weight: bold;
+        margin-left: 5px;
+    }
+}

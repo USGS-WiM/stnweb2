@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Makes siteid a link to site page
 -   Event populated in map filter form on page load
 -   Map filters after navigating from map page
+-   Session event displayed on each page
+-   Back to Map button displayed on each page
 -   Add ability to add, edit and delete Site, Reference Datum and HWM files in Files Tab
 
 ### Changed
@@ -25,6 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Updated radio button/form field layout for all edit dialogs
 -   View Details and Edit buttons move within button menu on smaller screens
 -   Implement consistent button styling throughout app
+-   Remove second navbar
+-   Restyle event filters on map page
+-   Remove minimize/maximize map button
+-   Change placeholders in map filters to All __
 
 ### Fixed
 

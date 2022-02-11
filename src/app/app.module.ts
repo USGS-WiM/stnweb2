@@ -77,9 +77,10 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { RefDatumEditComponent } from './ref-datum-edit/ref-datum-edit.component';
 import { RoleService } from './services/role.service';
 import { AgencyService } from './services/agency.service';
+import { FileEditComponent } from './file-edit/file-edit.component';
 import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
 import { PeakEditComponent } from './peak-edit/peak-edit.component';
-import { FileEditComponent } from './file-edit/file-edit.component';
+import { SessionEventComponent } from './session-event/session-event.component';
 
 @NgModule({
     declarations: [
@@ -111,6 +112,7 @@ import { FileEditComponent } from './file-edit/file-edit.component';
         SensorEditComponent,
         PeakEditComponent,
         FileEditComponent,
+        SessionEventComponent,
     ],
     imports: [
         BrowserModule,
