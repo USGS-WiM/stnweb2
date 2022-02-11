@@ -153,6 +153,10 @@ export class SiteEditComponent implements OnInit {
     'FileName',
     'FileDate',
   ];
+  
+  // Regular Expression to match phone and zip character strings
+  phonePattern: RegExp = (/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/);
+  zipPattern: RegExp = (/[0-9]{5}/);
 
   constructor(
     private dialogRef: MatDialogRef<SiteEditComponent>,
@@ -479,10 +483,10 @@ export class SiteEditComponent implements OnInit {
       address: new FormControl(this.landownerContact.address),
       city: new FormControl(this.landownerContact.city),
       state: new FormControl(this.landownerContact.state),
-      zip: new FormControl(this.landownerContact.zip),
-      email: new FormControl(this.landownerContact.email),
-      primaryphone: new FormControl(this.landownerContact.primaryphone),
-      secondaryphone: new FormControl(this.landownerContact.secondaryphone),
+      zip: new FormControl(this.landownerContact.zip, Validators.pattern(this.zipPattern)),
+      email: new FormControl(this.landownerContact.email, Validators.email),
+      primaryphone: new FormControl(this.landownerContact.primaryphone, Validators.pattern(this.phonePattern)),
+      secondaryphone: new FormControl(this.landownerContact.secondaryphone, Validators.pattern(this.phonePattern)),
       landownercontact_id: new FormControl(this.landownerContact.landownercontactid)
     })
   }
@@ -509,6 +513,31 @@ export class SiteEditComponent implements OnInit {
       this.landownerForm.controls['state'].setValue(this.landownerContact.state);
       this.landownerForm.controls['zip'].setValue(this.landownerContact.zip);
 
+    }
+  }
+
+  // formats phone number to display as (111) 111 1111
+  formatPhoneNumber(value) {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    }
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
+      3,
+      6
+    )}-${phoneNumber.slice(6, 9)}`;
+  }
+
+  // On key down gets value of phone input, sends it to formatter, and then replaces input with formatted value
+  phoneNumberFormatter(event: any) {
+    if (event !== undefined) {
+      const inputid = event.srcElement.id
+      const inputField = (<HTMLInputElement>document.getElementById(inputid));
+      const formattedInputValue = this.formatPhoneNumber((<HTMLInputElement>document.getElementById(inputid)).value);
+      inputField.value = formattedInputValue;
     }
   }
 
@@ -551,7 +580,7 @@ export class SiteEditComponent implements OnInit {
       city: new FormControl(this.site.city),
       state: new FormControl(this.site.state, Validators.required),
       county: new FormControl(this.site.county, Validators.required),
-      zip: new FormControl(this.site.zip),
+      zip: new FormControl(this.site.zip, Validators.pattern(this.zipPattern)),
       housingType: new FormControl(this.housingTypeArray),
       siteHousings: new FormArray(this.siteHousingArray.map((housing, index) => new FormGroup(this.createHousingArray(housing)))),
       priority_id: new FormControl(this.priority.priority_id),
