@@ -32,6 +32,9 @@ import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
 import { PeakEditComponent } from '@app/peak-edit/peak-edit.component';
 import { FiltersService } from '@app/services/filters.service';
+import { FileEditComponent } from '@app/file-edit/file-edit.component';
+import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { FileEditService } from '@app/services/file-edit.service';
 
 @Component({
     selector: 'app-site-details',
@@ -212,7 +215,8 @@ export class SiteDetailsComponent implements OnInit {
         public currentUserService: CurrentUserService,
         public timezonesService: TimezonesService,
         public dialog: MatDialog,
-        public filtersService: FiltersService
+        public filtersService: FiltersService,
+        public fileEditService: FileEditService,
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -493,6 +497,12 @@ export class SiteDetailsComponent implements OnInit {
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
                                 file.format_file_date = fileDate;
+                                if(file.photo_date){
+                                    let photoDate = file.photo_date.split("T")[0];
+                                    photoDate = photoDate.split("-");
+                                    photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
+                                    file.format_photo_date = photoDate;
+                                }
                                 if(file.instrument_id !== undefined){
                                     self.siteService.getFileSensor(file.file_id).subscribe((results) => {
                                         file.details = results;
@@ -507,6 +517,12 @@ export class SiteDetailsComponent implements OnInit {
                                 }else if (file.hwm_id !== undefined){
                                     self.hwmFiles.push(file);
                                 }else if (file.objective_point_id !== undefined){
+                                    // Add rd name to result
+                                    self.refMarkDataSource.data.forEach(function(rd){
+                                        if(rd.objective_point_id === file.objective_point_id){
+                                            file.rd_name = rd.name;
+                                        }
+                                    })
                                     self.datumLocFiles.push(file);
                                 }else{
                                     self.siteFiles.push(file);
@@ -615,6 +631,12 @@ export class SiteDetailsComponent implements OnInit {
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
                                 file.format_file_date = fileDate;
+                                if(file.photo_date){
+                                    let photoDate = file.photo_date.split("T")[0];
+                                    photoDate = photoDate.split("-");
+                                    photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
+                                    file.format_photo_date = photoDate;
+                                }
                                 if(file.instrument_id !== undefined){
                                     self.siteService.getFileSensor(file.file_id).subscribe((results) => {
                                         file.details = results;
@@ -647,7 +669,19 @@ export class SiteDetailsComponent implements OnInit {
                                 fileDate = fileDate.split("-");
                                 fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
                                 file.format_file_date = fileDate;
+                                if(file.photo_date){
+                                    let photoDate = file.photo_date.split("T")[0];
+                                    photoDate = photoDate.split("-");
+                                    photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
+                                    file.format_photo_date = photoDate;
+                                }
                                 if (file.objective_point_id !== undefined){
+                                    // Add rd name to result
+                                    self.refMarkDataSource.data.forEach(function(rd){
+                                        if(rd.objective_point_id === file.objective_point_id){
+                                            file.rd_name = rd.name;
+                                        }
+                                    })
                                     self.datumLocFiles.push(file);
                                     self.fileLength ++;
                                 }else if (file.hwm_id === undefined && file.instrument_id === undefined){
@@ -1187,14 +1221,6 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openFileDetailsDialog(row, type): void {
-        // Format photo date
-        if(row.photo_date !== undefined && !row.photo_date.includes("/")){
-            let photoDate = row.photo_date.split("T")[0];
-            photoDate = photoDate.split("-");
-            photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
-            row.format_photo_date = photoDate;
-        }
-
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '80%';
@@ -1212,6 +1238,179 @@ export class SiteDetailsComponent implements OnInit {
             width: dialogWidth,
         });
         dialogRef.afterClosed().subscribe((result) => {});
+    }
+
+    openFileEditDialog(row, type): void {
+        let self = this;
+        const dialogRef = this.dialog.open(FileEditComponent, {
+            data: {
+                row_data: row,
+                type: type,
+                siteInfo: this.site,
+                addOrEdit: 'Edit'
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result){
+                if(type === "Site File") {
+                    // Update files data source and site
+                    self.siteFilesDataSource.data.forEach(function(file, i){
+                        if(file.file_id === result.file_id){
+                            self.siteFilesDataSource.data[i] = result;
+                            self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                        }
+                    })
+                }else if(type === "HWM File") {
+                    // Update files data source and hwm
+                    self.hwmFilesDataSource.data.forEach(function(file, i){
+                        if(file.file_id === result.file_id){
+                            self.hwmFilesDataSource.data[i] = result;
+                            self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                        }
+                    })
+                }else if(type === "Reference Datum File") {
+                    // Update files data source and reference datum
+                    self.refMarkFilesDataSource.data.forEach(function(file, i){
+                        if(file.file_id === result.file_id){
+                            self.refMarkFilesDataSource.data[i] = result;
+                            self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                        }
+                    })
+                }else if(type === "Sensor File") {
+                    // Update files data source and sensor
+                    self.sensorFilesDataSource.data.forEach(function(file, i){
+                        if(file.file_id === result.file_id){
+                            self.sensorFilesDataSource.data[i] = result;
+                            self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                        }
+                    })
+                }
+            }
+        });
+    }
+
+    addFile(type, event): void {
+        let self = this;
+        // Prevent expansion panel from toggling
+        event.stopPropagation();
+
+        // Open File Edit Dialog
+        const dialogRef = this.dialog.open(FileEditComponent, {
+            data: {
+                row_data: null,
+                type: type,
+                siteInfo: this.site,
+                siteRefDatums: this.refMarkDataSource.data,
+                siteHWMs: this.hwmDataSource.data,
+                siteSensors: this.sensorDataSource.data,
+                addOrEdit: 'Add'
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result){
+                if(type === "Site File") {
+                    // Update files data source and site
+                    self.siteFilesDataSource.data.push(result);
+                    self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                }else if(type === "HWM File") {
+                    // Update files data source and hwm
+                    self.hwmFilesDataSource.data.push(result);
+                    self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                }else if(type === "Reference Datum File") {
+                    // Add rd name to result
+                    self.refMarkDataSource.data.forEach(function(rd){
+                        if(rd.objective_point_id === result.objective_point_id){
+                            result.rd_name = rd.name;
+                        }
+                    })
+                    // Update files data source and reference datum
+                    self.refMarkFilesDataSource.data.push(result);
+                    self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                }else if(type === "Sensor File") {
+                    // Update files data source and sensor
+                    self.sensorFilesDataSource.data.push(result);
+                    self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                }
+            }
+        });
+    }
+
+    deleteFile(row, type): void {
+        let self = this;
+
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove File",
+              titleIcon: "close",
+              message: "Are you sure you want to remove this file?",
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                // Delete file
+                this.fileEditService.deleteFile(row.file_id).subscribe((results) => {
+                    if(results === null){
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "Successfully removed file",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                        if(type === "Site File") {
+                            // Update files data source and site
+                            self.siteFilesDataSource.data.forEach(function(file, i){
+                                if(file.file_id === row.file_id){
+                                    self.siteFilesDataSource.data.splice(i, 1);
+                                    self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                                }
+                            })
+
+                        }else if(type === "HWM File") {
+                            // Update files data source and hwm
+                            self.hwmFilesDataSource.data.forEach(function(file, i){
+                                if(file.file_id === row.file_id){
+                                    self.hwmFilesDataSource.data.splice(i, 1);
+                                    self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                                }
+                            })
+                        }else if(type === "Reference Datum File") {
+                            // Update files data source and reference datum
+                            self.refMarkFilesDataSource.data.forEach(function(file, i){
+                                if(file.file_id === row.file_id){
+                                    self.refMarkFilesDataSource.data.splice(i, 1);
+                                    self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                                }
+                            })
+                        }else if(type === "Sensor File") {
+                            // Update files data source and sensor
+                            self.sensorFilesDataSource.data.forEach(function(file, i){
+                                if(file.file_id === row.file_id){
+                                    self.sensorFilesDataSource.data.splice(i, 1);
+                                    self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                                }
+                            })
+                        }
+                    }else{
+                        // error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error removing file",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }
+                })
+            }
+        });
     }
 
     openEditDialog(){
@@ -1419,8 +1618,8 @@ export class SiteDetailsComponent implements OnInit {
                     let aDate = this.checkDate(a.file_date);
                     let bDate = this.checkDate(b.file_date);
                     return this.compare(aDate, bDate, isAsc);
-                case 'datum_name':
-                    return this.compare(a.datum_name, b.datum_name, isAsc);
+                case 'rd_name':
+                    return this.compare(a.rd_name, b.rd_name, isAsc);
                 default:
                     return 0;
             }

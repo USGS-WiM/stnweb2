@@ -634,7 +634,7 @@
                                                 <input #upload [hidden]="true" id="Upload" type="file" max="500000" file-model="existingFile.File" (change)="getFileName($event)">
                                                 <span *ngIf="fileUploading" class="file-upload-span">
                                                     Correct File?
-                                                    <button aria-label="Upload" mat-button class="save-btn" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
+                                                    <button aria-label="Upload" mat-button class="primary" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
                                                 </span>
                                             </div>
                                             <!-- change out the existing fileItem with a different one-->
@@ -647,7 +647,7 @@
                                                 </div>
                                                 <span *ngIf="fileUploading" class="file-upload-span">
                                                     Correct File?
-                                                    <button aria-label="Is this file correct?" mat-button class="save-btn" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
+                                                    <button aria-label="Is this file correct?" mat-button class="primary" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
                                                 </span>
                                             </div>
                                         </div>

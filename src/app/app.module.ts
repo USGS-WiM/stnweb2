@@ -79,6 +79,7 @@ import { RoleService } from './services/role.service';
 import { AgencyService } from './services/agency.service';
 import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
 import { PeakEditComponent } from './peak-edit/peak-edit.component';
+import { FileEditComponent } from './file-edit/file-edit.component';
 
 @NgModule({
     declarations: [
@@ -109,6 +110,7 @@ import { PeakEditComponent } from './peak-edit/peak-edit.component';
         HwmEditComponent,
         SensorEditComponent,
         PeakEditComponent,
+        FileEditComponent,
     ],
     imports: [
         BrowserModule,

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Makes siteid a link to site page
 -   Event populated in map filter form on page load
 -   Map filters after navigating from map page
+-   Add ability to add, edit and delete Site, Reference Datum and HWM files in Files Tab
 
 ### Changed
 

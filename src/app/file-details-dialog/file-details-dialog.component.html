@@ -97,7 +97,7 @@
             </div>
             <div class="cell-container" *ngIf="data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1">
                 <p class="content-left">Associated File</p>
-                <p class="content-right" *ngIf="data.row_data.name !== undefined && data.row_data.name !== ''; else nullAssociatedFile"><a id="associatedFile" href="{{associatedFileUrl}}" target="_blank">{{data.row_data.name}}</a></p>
+                <p class="content-right" *ngIf="fileItemExists; else nullAssociatedFile"><a id="associatedFile" href="{{associatedFileUrl}}" target="_blank">{{data.row_data.name}}</a></p>
                 <ng-template #nullAssociatedFile><p class="content-right">---Missing---</p></ng-template>
             </div>
         </div>
