@@ -330,15 +330,24 @@
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Primary Phone</mat-label>
-                                                    <input aria-label="Primary Phone" formControlName="primaryphone" matInput [value]="landownerContact.primaryphone"/>
+                                                    <input id="primary-phone" aria-label="Primary Phone" (keydown)="this.phoneNumberFormatter($event)" formControlName="primaryphone" matInput [value]="landownerContact.primaryphone"/>
+                                                    <mat-error>
+                                                        Invalid phone format
+                                                    </mat-error>
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Secondary Phone</mat-label>
-                                                    <input aria-label="Secondary Phone" formControlName="secondaryphone" matInput [value]="landownerContact.secondaryphone"/>
+                                                    <input id="secondary-phone" aria-label="Secondary Phone" (keydown)="this.phoneNumberFormatter($event)" formControlName="secondaryphone" matInput [value]="landownerContact.secondaryphone"/>
+                                                    <mat-error>
+                                                        Invalid phone format
+                                                    </mat-error>
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Email</mat-label>
                                                     <input aria-label="Email" formControlName="email" matInput [value]="landownerContact.email"/>
+                                                    <mat-error>
+                                                        Invalid email format
+                                                    </mat-error>
                                                 </mat-form-field>
                                             </mat-expansion-panel>
                                         </form>
