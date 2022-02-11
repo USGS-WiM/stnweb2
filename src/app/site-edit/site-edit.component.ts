@@ -842,7 +842,7 @@ export class SiteEditComponent implements OnInit {
   getFile() {
     if(this.siteFiles.FileEntity.file_id !== null && this.siteFiles.FileEntity.file_id !== undefined){
       this.siteService.getFileItem(this.siteFiles.FileEntity.file_id).subscribe((results) => {
-        if(results.FileName !== undefined) {
+        if(results.Length > 0) {
           this.fileItemExists = true;
           this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.siteFiles.FileEntity.file_id + '/item';
           this.siteFiles.FileEntity.name = results.FileName;

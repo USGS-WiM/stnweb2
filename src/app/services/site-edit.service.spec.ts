@@ -220,7 +220,7 @@ describe('SiteEditService', () => {
         );
     });
     const req = httpTestingController.expectOne(
-      APP_SETTINGS.API_ROOT + '/Sources.json',
+      APP_SETTINGS.API_ROOT + 'Sources.json',
     );
     req.flush(mockSource);
   });

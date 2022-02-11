@@ -1163,6 +1163,10 @@
                                     <mat-panel-title *ngIf="siteFilesExpanded" style="color: #FFF; font-weight: 550">
                                         Site Files ({{siteFiles.length}})
                                     </mat-panel-title>
+                                    
+                                    <button mat-button (click)="addFile('Site File', $event)"
+                                        aria-label="Add File"><mat-icon class="add-file">add</mat-icon>
+                                    </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="siteFiles !== undefined; else noSiteFileTable">
                                     <table *ngIf="siteFiles.length > 0; else noSiteFileTable"
@@ -1204,9 +1208,29 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                            <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Site File')"
-                                                aria-label="Edit">View Details
-                                            </button>
+                                                <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Site File')"
+                                                    aria-label="View Details">View Details
+                                                </button>
+                                                <button mat-stroked-button class="edit-details-btn secondary" (click)="openFileEditDialog(row, 'Site File')"
+                                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                                </button>
+                                                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
+                                                <mat-menu #menu="matMenu">
+                                                    <button mat-menu-item class="view-details-mobile" (click)="openFileDetailsDialog(row, 'Site File')"
+                                                        aria-label="View Details"><mat-icon>search</mat-icon>
+                                                        <span> View Details</span>
+                                                    </button>
+                                                    <button mat-menu-item class="edit-details-mobile" (click)="openFileEditDialog(row, 'Site File')"
+                                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                        <span> Edit</span>
+                                                    </button>
+                                                    <button mat-menu-item class="delete-borderless" (click)="deleteFile(row, 'Site File')"
+                                                        aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </mat-menu>
                                             </td>
                                         </ng-container>
 
@@ -1249,6 +1273,26 @@
                                                 <button mat-stroked-button disabled class="view-details-btn secondary"
                                                     aria-label="View Details">View Details
                                                 </button>
+                                                <button mat-stroked-button disabled class="edit-details-btn secondary"
+                                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                                </button>
+                                                <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
+                                                <mat-menu #menu="matMenu">
+                                                    <button mat-menu-item disabled class="view-details-mobile"
+                                                        aria-label="View Details"><mat-icon>search</mat-icon>
+                                                        <span> View Details</span>
+                                                    </button>
+                                                    <button mat-menu-item disabled class="edit-details-mobile"
+                                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                        <span> Edit</span>
+                                                    </button>
+                                                    <button mat-menu-item disabled class="delete-borderless"
+                                                        aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </mat-menu>
                                             </td>
                                         </ng-container>
 
@@ -1260,6 +1304,9 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
+                                <button mat-stroked-button (click)="addFile('Site File', $event)" class="add"
+                                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
+                                </button>
                                 <mat-paginator [hidden]="siteFiles === undefined || siteFiles.length === 0" #siteFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                             </mat-expansion-panel>
                             <mat-expansion-panel hideToggle [expanded]="refDatumFilesExpanded" (opened)="refDatumFilesExpanded = true" (closed)="refDatumFilesExpanded = false">
@@ -1270,6 +1317,9 @@
                                     <mat-panel-title *ngIf="refDatumFilesExpanded" style="color: #FFF; font-weight: 550">
                                         Reference Datum Files ({{datumLocFiles.length}})
                                     </mat-panel-title>
+                                    <button mat-button (click)="addFile('Reference Datum File', $event)"
+                                        aria-label="Add File"><mat-icon class="add-file">add</mat-icon>
+                                    </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="datumLocFiles !== undefined; else noDatumFileTable">
                                     <table *ngIf="datumLocFiles.length > 0; else noDatumFileTable"
@@ -1284,11 +1334,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayDatumFileDate">
+                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displayDatumFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displayDatumFileDate>
-                                                    {{ file.file_date }}
+                                                    {{ file.format_file_date }}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1308,13 +1358,13 @@
 
                                         <!-- datum file datum column -->
                                         <ng-container matColumnDef="FileDatum">
-                                            <th mat-header-cell *matHeaderCellDef mat-sort-header="datum_name">Reference Datum</th>
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header="rd_name">Reference Datum</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.datum_name === '' || file.datum_name === undefined; else displayDatumFileDatum">
+                                                <div *ngIf="file.rd_name === '' || file.rd_name === undefined; else displayDatumFileDatum">
                                                     ---
                                                 </div>
                                                 <ng-template #displayDatumFileDatum>
-                                                    {{ file.datum_name }}
+                                                    {{ file.rd_name }}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1324,9 +1374,29 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                            <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Reference Datum File')"
-                                                aria-label="Edit">View Details
-                                            </button>
+                                                <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Reference Datum File')"
+                                                    aria-label="View Details">View Details
+                                                </button>
+                                                <button mat-stroked-button class="edit-details-btn secondary" (click)="openFileEditDialog(row, 'Reference Datum File')"
+                                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                                </button>
+                                                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
+                                                <mat-menu #menu="matMenu">
+                                                    <button mat-menu-item class="view-details-mobile" (click)="openFileDetailsDialog(row, 'Reference Datum File')"
+                                                        aria-label="View Details"><mat-icon>search</mat-icon>
+                                                        <span> View Details</span>
+                                                    </button>
+                                                    <button mat-menu-item class="edit-details-mobile" (click)="openFileEditDialog(row, 'Reference Datum File')"
+                                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                        <span> Edit</span>
+                                                    </button>
+                                                    <button mat-menu-item class="delete-borderless" (click)="deleteFile(row, 'Reference Datum File')"
+                                                        aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </mat-menu>
                                             </td>
                                         </ng-container>
 
@@ -1377,6 +1447,26 @@
                                                 <button mat-stroked-button disabled class="view-details-btn secondary"
                                                     aria-label="View Details">View Details
                                                 </button>
+                                                <button mat-stroked-button disabled class="edit-details-btn secondary"
+                                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                                </button>
+                                                <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
+                                                <mat-menu #menu="matMenu">
+                                                    <button mat-menu-item disabled class="view-details-mobile"
+                                                        aria-label="View Details"><mat-icon>search</mat-icon>
+                                                        <span> View Details</span>
+                                                    </button>
+                                                    <button mat-menu-item disabled class="edit-details-mobile"
+                                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                        <span> Edit</span>
+                                                    </button>
+                                                    <button mat-menu-item disabled class="delete-borderless"
+                                                        aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </mat-menu>
                                             </td>
                                         </ng-container>
 
@@ -1388,6 +1478,9 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
+                                <button mat-stroked-button (click)="addFile('Reference Datum File', $event)" class="add"
+                                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
+                                </button>
                                 <mat-paginator [hidden]="datumLocFiles === undefined || datumLocFiles.length === 0" #refMarkFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                             </mat-expansion-panel>
                             <mat-expansion-panel hideToggle [expanded]="sensorFilesExpanded" (opened)="sensorFilesExpanded = true" (closed)="sensorFilesExpanded = false">
@@ -1398,6 +1491,9 @@
                                     <mat-panel-title *ngIf="sensorFilesExpanded" style="color: #FFF; font-weight: 550">
                                         Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
+                                    <!-- <button mat-button (click)="addFile('Sensor File', $event)"
+                                        aria-label="Add File"><mat-icon class="add-file">add</mat-icon>
+                                    </button> -->
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="sensorFiles !== undefined; else noSensorFileTable">
                                     <table *ngIf="sensorFilesDataSource.data.length > 0 && sensorFilesDone; else noSensorFileTable"
@@ -1412,11 +1508,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySensorFileDate">
+                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displaySensorFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displaySensorFileDate>
-                                                    {{ file.file_date }}
+                                                    {{ file.format_file_date }}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1452,9 +1548,29 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                            <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Sensor File')"
-                                                aria-label="Edit">View Details
-                                            </button>
+                                                <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Sensor File')"
+                                                    aria-label="View Details">View Details
+                                                </button>
+                                                <!-- <button mat-stroked-button class="edit-details-btn secondary" (click)="openFileEditDialog(row, 'Sensor File')"
+                                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                                </button> -->
+                                                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
+                                                <mat-menu #menu="matMenu">
+                                                    <button mat-menu-item class="view-details-mobile" (click)="openFileDetailsDialog(row, 'Sensor File')"
+                                                        aria-label="View Details"><mat-icon>search</mat-icon>
+                                                        <span> View Details</span>
+                                                    </button>
+                                                    <!-- <button mat-menu-item class="edit-details-mobile" (click)="openFileEditDialog(row, 'Sensor File')"
+                                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                        <span> Edit</span>
+                                                    </button>
+                                                    <button mat-menu-item class="delete-borderless" (click)="deleteFile(row, 'Sensor File')"
+                                                        aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                        <span>Delete</span>
+                                                    </button> -->
+                                                </mat-menu>
                                             </td>
                                         </ng-container>
 
@@ -1505,6 +1621,26 @@
                                                 <button mat-stroked-button disabled class="view-details-btn secondary"
                                                     aria-label="View Details">View Details
                                                 </button>
+                                                <!-- <button mat-stroked-button disabled class="edit-details-btn secondary"
+                                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                                </button> -->
+                                                <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
+                                                <mat-menu #menu="matMenu">
+                                                    <button mat-menu-item disabled class="view-details-mobile"
+                                                        aria-label="View Details"><mat-icon>search</mat-icon>
+                                                        <span> View Details</span>
+                                                    </button>
+                                                    <!-- <button mat-menu-item disabled class="edit-details-mobile"
+                                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                        <span> Edit</span>
+                                                    </button>
+                                                    <button mat-menu-item disabled class="delete-borderless"
+                                                        aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                        <span>Delete</span>
+                                                    </button> -->
+                                                </mat-menu>
                                             </td>
                                         </ng-container>
 
@@ -1516,6 +1652,9 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
+                                <!-- <button mat-stroked-button (click)="addFile('Sensor File', $event)" class="add"
+                                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
+                                </button> -->
                                 <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                             </mat-expansion-panel>
                             <mat-expansion-panel hideToggle [expanded]="hwmFilesExpanded" (opened)="hwmFilesExpanded = true" (closed)="hwmFilesExpanded = false">
@@ -1526,6 +1665,9 @@
                                     <mat-panel-title *ngIf="hwmFilesExpanded" style="color: #FFF; font-weight: 550">
                                         HWM Files ({{hwmFiles.length}})
                                     </mat-panel-title>
+                                    <button mat-button (click)="addFile('HWM File', $event)"
+                                        aria-label="Add File"><mat-icon class="add-file">add</mat-icon>
+                                    </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="hwmFiles !== undefined; else noHWMFileTable">
                                     <table *ngIf="hwmFiles.length > 0; else noHWMFileTable"
@@ -1540,11 +1682,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayHWMFileDate">
+                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displayHWMFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displayHWMFileDate>
-                                                    {{ file.file_date }}
+                                                    {{ file.format_file_date }}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1567,9 +1709,29 @@
                                             <th mat-header-cell *matHeaderCellDef>
                                             </th>
                                             <td mat-cell *matCellDef="let row">
-                                            <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'HWM File')"
-                                                aria-label="Edit">View Details
-                                            </button>
+                                                <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'HWM File')"
+                                                    aria-label="View Details">View Details
+                                                </button>
+                                                <button mat-stroked-button class="edit-details-btn secondary" (click)="openFileEditDialog(row, 'HWM File')"
+                                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                                </button>
+                                                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
+                                                <mat-menu #menu="matMenu">
+                                                    <button mat-menu-item class="view-details-mobile" (click)="openFileDetailsDialog(row, 'HWM File')"
+                                                        aria-label="View Details"><mat-icon>search</mat-icon>
+                                                        <span> View Details</span>
+                                                    </button>
+                                                    <button mat-menu-item class="edit-details-mobile" (click)="openFileEditDialog(row, 'HWM File')"
+                                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                        <span> Edit</span>
+                                                    </button>
+                                                    <button mat-menu-item class="delete-borderless" (click)="deleteFile(row, 'HWM File')"
+                                                        aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </mat-menu>
                                             </td>
                                         </ng-container>
 
@@ -1612,6 +1774,26 @@
                                                 <button mat-stroked-button disabled class="view-details-btn secondary"
                                                     aria-label="View Details">View Details
                                                 </button>
+                                                <button mat-stroked-button disabled class="edit-details-btn secondary"
+                                                    aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                                </button>
+                                                <button mat-icon-button disabled [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+                                                    <mat-icon>more_vert</mat-icon>
+                                                </button>
+                                                <mat-menu #menu="matMenu">
+                                                    <button mat-menu-item disabled class="view-details-mobile"
+                                                        aria-label="View Details"><mat-icon>search</mat-icon>
+                                                        <span> View Details</span>
+                                                    </button>
+                                                    <button mat-menu-item disabled class="edit-details-mobile"
+                                                        aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
+                                                        <span> Edit</span>
+                                                    </button>
+                                                    <button mat-menu-item disabled class="delete-borderless"
+                                                        aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </mat-menu>
                                             </td>
                                         </ng-container>
 
@@ -1623,6 +1805,9 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
+                                <button mat-stroked-button (click)="addFile('HWM File', $event)" class="add"
+                                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
+                                </button>
                                 <mat-paginator [hidden]="hwmFiles === undefined || hwmFiles.length === 0" #hwmFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                             </mat-expansion-panel>
                         </mat-accordion>

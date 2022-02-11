@@ -726,6 +726,106 @@ describe('SiteDetailsComponent', () => {
         expect(table).toBeInstanceOf(MatTableDataSource);
     });
 
+    it('should edit a site file', () => {
+        let row = {file_id: 1, filetype_id: 1, description: "test2"};
+        component.siteFilesDataSource.data = [{file_id: 1, filetype_id: 1, description: "test1"}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (row)} as MatDialogRef<typeof component>);
+
+        component.openFileEditDialog(component.siteFilesDataSource.data[0], 'Site File');  
+        fixture.detectChanges();
+
+        expect(component.siteFilesDataSource.data[0]).toEqual(row);
+    })
+
+    it('should edit a reference datum file', () => {
+        let row = {file_id: 1, filetype_id: 1, description: "test2"};
+        component.refMarkFilesDataSource.data = [{file_id: 1, filetype_id: 1, description: "test1"}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (row)} as MatDialogRef<typeof component>);
+
+        component.openFileEditDialog(component.refMarkFilesDataSource.data[0], 'Reference Datum File');  
+        fixture.detectChanges();
+
+        expect(component.refMarkFilesDataSource.data[0]).toEqual(row);
+    })
+
+    it('should edit an hwm file', () => {
+        let row = {file_id: 1, filetype_id: 1, description: "test2"};
+        component.hwmFilesDataSource.data = [{file_id: 1, filetype_id: 1, description: "test1"}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (row)} as MatDialogRef<typeof component>);
+
+        component.openFileEditDialog(component.hwmFilesDataSource.data[0], 'HWM File');  
+        fixture.detectChanges();
+
+        expect(component.hwmFilesDataSource.data[0]).toEqual(row);
+    })
+
+    it('should edit a sensor file', () => {
+        let row = {file_id: 1, filetype_id: 1, description: "test2"};
+        component.sensorFilesDataSource.data = [{file_id: 1, filetype_id: 1, description: "test1"}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (row)} as MatDialogRef<typeof component>);
+
+        component.openFileEditDialog(component.sensorFilesDataSource.data[0], 'Sensor File');  
+        fixture.detectChanges();
+
+        expect(component.sensorFilesDataSource.data[0]).toEqual(row);
+    })
+
+    it('should delete a site file', () => {
+        let row = {file_id: 1};
+        component.siteFilesDataSource.data = [{file_id: 1}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (true)} as MatDialogRef<typeof component>);
+        spyOn(component.fileEditService, 'deleteFile').and.returnValue(
+            of(null)
+          );
+
+        component.deleteFile(row, 'Site File');  
+        fixture.detectChanges();
+
+        expect(component.siteFilesDataSource.data).toEqual([{file_id: 2}, {file_id: 3}]);
+    })
+
+    it('should delete a reference datum file', () => {
+        let row = {file_id: 1, objective_point_id: 1};
+        component.refMarkFilesDataSource.data = [{file_id: 1, objective_point_id: 1}, {file_id: 2, objective_point_id: 1}, {file_id: 3, objective_point_id: 2}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (true)} as MatDialogRef<typeof component>);
+        spyOn(component.fileEditService, 'deleteFile').and.returnValue(
+            of(null)
+          );
+
+        component.deleteFile(row, 'Reference Datum File');  
+        fixture.detectChanges();
+
+        expect(component.refMarkFilesDataSource.data).toEqual([{file_id: 2, objective_point_id: 1}, {file_id: 3, objective_point_id: 2}]);
+    })
+
+    it('should delete a hwm file', () => {
+        let row = {file_id: 1, hwm_id: 1};
+        component.hwmFilesDataSource.data = [{file_id: 1, hwm_id: 1}, {file_id: 2, hwm_id: 1}, {file_id: 3, hwm_id: 2}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (true)} as MatDialogRef<typeof component>);
+        spyOn(component.fileEditService, 'deleteFile').and.returnValue(
+            of(null)
+          );
+
+        component.deleteFile(row, 'HWM File');
+        fixture.detectChanges();
+
+        expect(component.hwmFilesDataSource.data).toEqual([{file_id: 2, hwm_id: 1}, {file_id: 3, hwm_id: 2}]);
+    })
+
+    it('should delete a sensor file', () => {
+        let row = {file_id: 1, instrument_id: 1};
+        component.sensorFilesDataSource.data = [{file_id: 1, instrument_id: 1}, {file_id: 2, instrument_id: 1}, {file_id: 3, instrument_id: 2}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (true)} as MatDialogRef<typeof component>);
+        spyOn(component.fileEditService, 'deleteFile').and.returnValue(
+            of(null)
+          );
+
+        component.deleteFile(row, 'Sensor File');  
+        fixture.detectChanges();
+
+        expect(component.sensorFilesDataSource.data).toEqual([{file_id: 2, instrument_id: 1}, {file_id: 3, instrument_id: 2}]);
+    })
+
     it('should sort sensors', () => {
         fixture.detectChanges();
         const sort: Sort = {active: 'sensorType', direction: 'asc'};
@@ -836,11 +936,11 @@ describe('SiteDetailsComponent', () => {
 
         expect(component.refMarkFilesDataSource.data).toEqual([{file_date: "02/20/2020"}, {file_date: "01/21/2021"}]);
 
-        const sort2: Sort = {active: 'datum_name', direction: 'asc'};
-        component.refMarkFilesDataSource.data = [{datum_name: "test"}, {datum_name: "datumtest"}]
+        const sort2: Sort = {active: 'rd_name', direction: 'asc'};
+        component.refMarkFilesDataSource.data = [{rd_name: "test"}, {rd_name: "datumtest"}]
         component.sortRefMarkFilesData(sort2);
 
-        expect(component.refMarkFilesDataSource.data).toEqual([{datum_name: "datumtest"}, {datum_name: "test"}]);
+        expect(component.refMarkFilesDataSource.data).toEqual([{rd_name: "datumtest"}, {rd_name: "test"}]);
     });
 
     it('should sort site files', () => {

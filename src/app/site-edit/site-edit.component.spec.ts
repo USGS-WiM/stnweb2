@@ -452,7 +452,7 @@ describe('SiteEditComponent', () => {
 
   it('should get the file item name', () => {
     component.siteFiles.FileEntity.file_id = 1;
-    const response = {FileName: "testFile"};
+    const response = {FileName: "testFile", Length : 1};
     
     spyOn(component.siteService, 'getFileItem').and.returnValue(
         of(response)
@@ -552,7 +552,7 @@ describe('SiteEditComponent', () => {
       fileBelongsTo: "Site File",
       fileType: "Link",
       file_date: "2021-12-06T18:00:00",
-      file_id: 108937,
+      file_id: 1,
       filetype_id: 8,
       latitude_dd: null,
       longitude_dd: null,
@@ -560,10 +560,10 @@ describe('SiteEditComponent', () => {
       photo_date: "2021-12-06T18:00:00",
       photo_direction: null,
       site_id: 24224,
-      source_id: 3313,
+      source_id: 1,
     }
 
-    component.returnData.files = [{file_id: 108937}];
+    component.returnData.files = [{file_id: 1}];
     
     spyOn(component.siteEditService, 'uploadFile').and.returnValue(
         of(response)
