@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/USGS-WiM/stnweb2/tree/dev)
 
 ### Added
+ -
+ 
+### Changed
+ -
+ 
+ ### Fixed
+ 
+ -
+
+## [v0.7.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.7.0) - 2022-01-17
+
+### Added
 
 -   Edit ability for Peaks
 -   View details for Peaks
