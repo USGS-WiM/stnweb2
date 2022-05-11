@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -
  
 ### Changed
- -
+
+ -  Increased details modal widths
+ -  Improved responsiveness of tables in details modals
  
  ### Fixed
  
