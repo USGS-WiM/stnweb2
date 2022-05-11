@@ -141,9 +141,10 @@ export class SiteDetailsComponent implements OnInit {
         zoomToBoundsOnClick: false
     });
     public currentUser;
+    role = localStorage.role;
     // Disable edit button for some roles
-    editDisabled = localStorage.role !== '3' && localStorage.role !== '2' && localStorage.role !== '1';
-    deleteDisabled = localStorage.role !== '1';
+    editDisabled = this.role !== '3' && this.role !== '2' && this.role !== '1';
+    deleteDisabled = this.role !== '1';
 
     displayedColumns: string[] = [
         'HousingType',
@@ -1073,17 +1074,24 @@ export class SiteDetailsComponent implements OnInit {
                 site_id: this.site.site_id,
                 hdatumList: this.hdatumList,
                 hmethodList: this.hmethodList,
+                event_id: this.currentEvent,
+                event: this.event,
+                hwmSite: this.site,
             },
         });
         dialogRef.afterClosed().subscribe((result) => {
             let self = this;
-            if(result) {
+            if(result.result && result.editOrCreate === "Edit") {
                 this.hwmDataSource.data.forEach(function(hwm, i){
-                    if(hwm.hwm_id === result.hwm_id){
-                        self.hwmDataSource.data[i] = result; 
+                    if(hwm.hwm_id === result.result.hwm_id){
+                        self.hwmDataSource.data[i] = result.result; 
                         self.hwmDataSource.data = [...self.hwmDataSource.data];
                     }
                 })
+            }
+            else if(result.result && result.editOrCreate === "Create") {
+                self.hwmDataSource.data.push(result.result); 
+                self.hwmDataSource.data = [...self.hwmDataSource.data];
             }
         });
     }
@@ -1416,7 +1424,7 @@ export class SiteDetailsComponent implements OnInit {
     openEditDialog(){
         let siteHousing = JSON.parse(JSON.stringify(this.siteHousing));
 
-        if(localStorage.role === '3' || localStorage.role === '2' || localStorage.role === '1'){
+        if(this.role === '3' || this.role === '2' || this.role === '1'){
             const dialogRef = this.dialog.open(SiteEditComponent, {
                 data: {
                     site: this.site,

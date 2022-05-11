@@ -306,7 +306,7 @@ table {
     font-size: 22px;
 }
 
-.add-file {
+.add-buttons {
     color: #FFF;
 }
 
@@ -385,11 +385,16 @@ table {
     background-color: #03274B;
     height: 70px;
     padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
 }
 
 .header-card p {
     color: #FFF;
     font-size: 20px;
+    margin: 0px;
 }
 
 .event-alert {
