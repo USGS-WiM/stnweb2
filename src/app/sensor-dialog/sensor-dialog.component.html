@@ -15,143 +15,141 @@
             </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="table-container">
-            <div class="outer-content">
-                <div class="cell-container">
-                    <p class="content-left">Event</p>
-                    <p class="content-right" *ngIf="data.row_data.eventName !== undefined && data.row_data.eventName !== ''; else nullEvent">{{data.row_data.eventName}}</p>
-                    <ng-template #nullEvent><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Sensor Type</p>
-                    <p class="content-right" *ngIf="data.row_data.sensorType !== undefined && data.row_data.sensorType !== ''; else nullSensorType">{{data.row_data.sensorType}}</p>
-                    <ng-template #nullSensorType><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Sensor Brand</p>
-                    <p class="content-right" *ngIf="data.row_data.sensorBrand !== undefined && data.row_data.sensorBrand !== ''; else nullSensorBrand">{{data.row_data.sensorBrand}}</p>
-                    <ng-template #nullSensorBrand><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Serial Number</p>
-                    <p class="content-right" *ngIf="data.row_data.serial_number !== undefined && data.row_data.serial_number !== ''; else nullSerialNum">{{data.row_data.serial_number}}</p>
-                    <ng-template #nullSerialNum><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Housing Type</p>
-                    <p class="content-right" *ngIf="data.row_data.housingType !== undefined && data.row_data.housingType !== ''; else nullHousingType">{{data.row_data.housingType}}</p>
-                    <ng-template #nullHousingType><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Sensor Elevation</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElDeployed">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
-                        </div>
+            <div class="cell-container">
+                <p class="content-left">Event</p>
+                <p class="content-right" *ngIf="data.row_data.eventName !== undefined && data.row_data.eventName !== ''; else nullEvent">{{data.row_data.eventName}}</p>
+                <ng-template #nullEvent><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Sensor Type</p>
+                <p class="content-right" *ngIf="data.row_data.sensorType !== undefined && data.row_data.sensorType !== ''; else nullSensorType">{{data.row_data.sensorType}}</p>
+                <ng-template #nullSensorType><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Sensor Brand</p>
+                <p class="content-right" *ngIf="data.row_data.sensorBrand !== undefined && data.row_data.sensorBrand !== ''; else nullSensorBrand">{{data.row_data.sensorBrand}}</p>
+                <ng-template #nullSensorBrand><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Serial Number</p>
+                <p class="content-right" *ngIf="data.row_data.serial_number !== undefined && data.row_data.serial_number !== ''; else nullSerialNum">{{data.row_data.serial_number}}</p>
+                <ng-template #nullSerialNum><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Housing Type</p>
+                <p class="content-right" *ngIf="data.row_data.housingType !== undefined && data.row_data.housingType !== ''; else nullHousingType">{{data.row_data.housingType}}</p>
+                <ng-template #nullHousingType><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Sensor Elevation</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElDeployed">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
                     </div>
-                    <ng-template #nullSensorElDeployed><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template></ng-template>
-                <div class="cell-container">
-                    <p class="content-left">Water Surface Elevation</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSEDeployed">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
-                        </div>
+                <ng-template #nullSensorElDeployed><p class="content-right">---</p></ng-template>
+            </div>
+            <ng-template></ng-template>
+            <div class="cell-container">
+                <p class="content-left">Water Surface Elevation</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSEDeployed">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
                     </div>
-                    <ng-template #nullWSEDeployed><p class="content-right">---</p></ng-template>
                 </div>
-                <div class="cell-container">
-                    <p class="content-left">Ground Elevation</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSEDeployed">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
-                        </div>
+                <ng-template #nullWSEDeployed><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Ground Elevation</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSEDeployed">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
                     </div>
-                    <ng-template #nullGSEDeployed><p class="content-right">---</p></ng-template>
                 </div>
-                <div class="cell-container">
-                    <p class="content-left">In Feet Above</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveDeployed">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
-                        </div>
+                <ng-template #nullGSEDeployed><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">In Feet Above</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveDeployed">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
                     </div>
-                    <ng-template #nullInFeetAboveDeployed><p class="content-right">---</p></ng-template>
                 </div>
-                <div class="cell-container">
-                    <p class="content-left">Vented</p>
-                    <p class="content-right" *ngIf="data.row_data.vented !== undefined && data.row_data.vented !== ''; else nullVented">{{data.row_data.vented}}</p>
-                    <ng-template #nullVented><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Deployment Type</p>
-                    <p class="content-right" *ngIf="data.row_data.deploymentType !== undefined && data.row_data.deploymentType !== ''; else nullDeploymentType">{{data.row_data.deploymentType}}</p>
-                    <ng-template #nullDeploymentType><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Location Description</p>
-                    <p class="content-right" *ngIf="data.row_data.location_description !== undefined && data.row_data.location_description !== ''; else nullLocDesc">{{data.row_data.location_description}}</p>
-                    <ng-template #nullLocDesc><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Interval</p>
-                    <p class="content-right" *ngIf="data.row_data.interval !== undefined && data.row_data.interval !== '' && data.row_data.interval !== 0; else nullInterval">{{data.row_data.interval}} seconds</p>
-                    <ng-template #nullInterval><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Deploy Date</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampDeployed">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.format_time_stamp !== undefined && instrument.format_time_stamp !== ''">{{instrument.format_time_stamp}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.format_time_stamp === undefined || instrument.format_time_stamp === ''">---</p>
-                        </div>
+                <ng-template #nullInFeetAboveDeployed><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Vented</p>
+                <p class="content-right" *ngIf="data.row_data.vented !== undefined && data.row_data.vented !== ''; else nullVented">{{data.row_data.vented}}</p>
+                <ng-template #nullVented><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Deployment Type</p>
+                <p class="content-right" *ngIf="data.row_data.deploymentType !== undefined && data.row_data.deploymentType !== ''; else nullDeploymentType">{{data.row_data.deploymentType}}</p>
+                <ng-template #nullDeploymentType><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Location Description</p>
+                <p class="content-right" *ngIf="data.row_data.location_description !== undefined && data.row_data.location_description !== ''; else nullLocDesc">{{data.row_data.location_description}}</p>
+                <ng-template #nullLocDesc><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Interval</p>
+                <p class="content-right" *ngIf="data.row_data.interval !== undefined && data.row_data.interval !== '' && data.row_data.interval !== 0; else nullInterval">{{data.row_data.interval}} seconds</p>
+                <ng-template #nullInterval><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Deploy Date</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampDeployed">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.format_time_stamp !== undefined && instrument.format_time_stamp !== ''">{{instrument.format_time_stamp}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.format_time_stamp === undefined || instrument.format_time_stamp === ''">---</p>
                     </div>
-                    <ng-template #nullTimestampDeployed><p class="content-right">---</p></ng-template>
                 </div>
-                <div class="cell-container">
-                    <p class="content-left">Time Zone</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneDeployed">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone !== undefined && instrument.time_zone !== ''">{{instrument.time_zone}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone === undefined || instrument.time_zone === ''">---</p>
-                        </div>
+                <ng-template #nullTimestampDeployed><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Time Zone</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneDeployed">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone !== undefined && instrument.time_zone !== ''">{{instrument.time_zone}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone === undefined || instrument.time_zone === ''">---</p>
                     </div>
-                    <ng-template #nullTimezoneDeployed><p class="content-right">---</p></ng-template>
                 </div>
-                <div class="cell-container">
-                    <p class="content-left">Preview Time in UTC</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0 && data.utcPreview !== undefined; else nullUTCPreview">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone !== undefined && instrument.time_zone !== '' && instrument.time_zone !== 'UTC'">{{data.utcPreview}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.time_zone === undefined || instrument.time_zone === '' || instrument.time_zone === 'UTC')">---</p>
-                        </div>
+                <ng-template #nullTimezoneDeployed><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Preview Time in UTC</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0 && data.utcPreview !== undefined; else nullUTCPreview">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone !== undefined && instrument.time_zone !== '' && instrument.time_zone !== 'UTC'">{{data.utcPreview}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.time_zone === undefined || instrument.time_zone === '' || instrument.time_zone === 'UTC')">---</p>
                     </div>
-                    <ng-template #nullUTCPreview><p class="content-right">---</p></ng-template>
                 </div>
-                <div class="cell-container">
-                    <p class="content-left">Note</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullNotesDeployed">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.notes !== undefined && instrument.notes !== ''">{{instrument.notes}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.notes === undefined || instrument.notes === ''">---</p>
-                        </div>
+                <ng-template #nullUTCPreview><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Note</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0; else nullNotesDeployed">
+                    <div *ngFor="let instrument of data.row_data.instrument_status">
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.notes !== undefined && instrument.notes !== ''">{{instrument.notes}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.notes === undefined || instrument.notes === ''">---</p>
                     </div>
-                    <ng-template #nullNotesDeployed><p class="content-right">---</p></ng-template>
                 </div>
-                <div class="cell-container">
-                    <p class="content-left">Deploy Member</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
-                        <div *ngFor="let item of members">
-                            <p class="content-right" *ngIf="item.status === 'Deployed' && item.name !== undefined && item.name !== ''">{{item.name}}</p>
-                            <p class="content-right" *ngIf="item.status === 'Deployed' && item.name === undefined || item.name === ''">---</p>
-                        </div>
+                <ng-template #nullNotesDeployed><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Deploy Member</p>
+                <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
+                    <div *ngFor="let item of members">
+                        <p class="content-right" *ngIf="item.status === 'Deployed' && item.name !== undefined && item.name !== ''">{{item.name}}</p>
+                        <p class="content-right" *ngIf="item.status === 'Deployed' && item.name === undefined || item.name === ''">---</p>
                     </div>
-                    <ng-template #nullMember><p class="content-right">---</p></ng-template>
                 </div>
+                <ng-template #nullMember><p class="content-right">---</p></ng-template>
             </div>
         </div>
         </mat-expansion-panel>
@@ -164,96 +162,98 @@
                     Retrieved Sensor Information
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="cell-container">
+            <div class="table-container">
                 <div class="cell-container">
-                    <p class="content-left">Status</p>
-                    <p class="content-right" *ngIf="data.row_data.statusType !== undefined && data.row_data.statusType !== ''; else nullStatusType">{{data.row_data.statusType}}</p>
-                    <ng-template #nullStatusType><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Collection Conditions</p>
-                    <p class="content-right" *ngIf="data.row_data.instCollection !== undefined && data.row_data.instCollection !== ''; else nullInstCollection">{{data.row_data.instCollection}}</p>
-                    <ng-template #nullInstCollection><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Note</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullNoteRetrieved">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.notes !== undefined && instrument.notes !== ''">{{instrument.notes}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.notes === undefined || instrument.notes === '')">---</p>
-                        </div>
+                    <div class="cell-container">
+                        <p class="content-left">Status</p>
+                        <p class="content-right" *ngIf="data.row_data.statusType !== undefined && data.row_data.statusType !== ''; else nullStatusType">{{data.row_data.statusType}}</p>
+                        <ng-template #nullStatusType><p class="content-right">---</p></ng-template>
                     </div>
-                    <ng-template #nullNoteRetrieved><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Retrieve Date</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampRetrieved">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument !== undefined && instrument.status !== undefined && instrument.status === 'Retrieved'">{{instrument.format_time_stamp}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.format_time_stamp === undefined || instrument.format_time_stamp === '')">---</p>
-                        </div>
+                    <div class="cell-container">
+                        <p class="content-left">Collection Conditions</p>
+                        <p class="content-right" *ngIf="data.row_data.instCollection !== undefined && data.row_data.instCollection !== ''; else nullInstCollection">{{data.row_data.instCollection}}</p>
+                        <ng-template #nullInstCollection><p class="content-right">---</p></ng-template>
                     </div>
-                    <ng-template #nullTimestampRetrieved><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Time Zone</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneRetrieved">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument !== undefined && instrument.status !== undefined && instrument.status === 'Retrieved'">{{instrument.time_zone}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.time_zone === undefined || instrument.time_zone === '')">---</p>
+                    <div class="cell-container">
+                        <p class="content-left">Note</p>
+                        <div *ngIf="data.row_data.instrument_status.length > 0; else nullNoteRetrieved">
+                            <div *ngFor="let instrument of data.row_data.instrument_status">
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.notes !== undefined && instrument.notes !== ''">{{instrument.notes}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.notes === undefined || instrument.notes === '')">---</p>
+                            </div>
                         </div>
+                        <ng-template #nullNoteRetrieved><p class="content-right">---</p></ng-template>
                     </div>
-                    <ng-template #nullTimezoneRetrieved><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Sensor Elevation</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElRetrieved">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
+                    <div class="cell-container">
+                        <p class="content-left">Retrieve Date</p>
+                        <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampRetrieved">
+                            <div *ngFor="let instrument of data.row_data.instrument_status">
+                                <p class="content-right" *ngIf="instrument !== undefined && instrument.status !== undefined && instrument.status === 'Retrieved'">{{instrument.format_time_stamp}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.format_time_stamp === undefined || instrument.format_time_stamp === '')">---</p>
+                            </div>
                         </div>
+                        <ng-template #nullTimestampRetrieved><p class="content-right">---</p></ng-template>
                     </div>
-                    <ng-template #nullSensorElRetrieved><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Water Surface Elevation</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSERetrieved">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
+                    <div class="cell-container">
+                        <p class="content-left">Time Zone</p>
+                        <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneRetrieved">
+                            <div *ngFor="let instrument of data.row_data.instrument_status">
+                                <p class="content-right" *ngIf="instrument !== undefined && instrument.status !== undefined && instrument.status === 'Retrieved'">{{instrument.time_zone}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.time_zone === undefined || instrument.time_zone === '')">---</p>
+                            </div>
                         </div>
+                        <ng-template #nullTimezoneRetrieved><p class="content-right">---</p></ng-template>
                     </div>
-                    <ng-template #nullWSERetrieved><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Ground Elevation</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSERetrieved">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
+                    <div class="cell-container">
+                        <p class="content-left">Sensor Elevation</p>
+                        <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElRetrieved">
+                            <div *ngFor="let instrument of data.row_data.instrument_status">
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
+                            </div>
                         </div>
+                        <ng-template #nullSensorElRetrieved><p class="content-right">---</p></ng-template>
                     </div>
-                    <ng-template #nullGSERetrieved><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">In Feet Above</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveRetrieved">
-                        <div *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
+                    <div class="cell-container">
+                        <p class="content-left">Water Surface Elevation</p>
+                        <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSERetrieved">
+                            <div *ngFor="let instrument of data.row_data.instrument_status">
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
+                            </div>
                         </div>
+                        <ng-template #nullWSERetrieved><p class="content-right">---</p></ng-template>
                     </div>
-                    <ng-template #nullInFeetAboveRetrieved><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Member</p>
-                    <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
-                        <div *ngFor="let item of members">
-                            <p class="content-right" *ngIf="item.status === 'Retrieved' && (item.name !== undefined && item.name !== '')">{{item.name}}</p>
-                            <p class="content-right" *ngIf="item.status === 'Retrieved' && (item.name === undefined || item.name === '')">---</p>
+                    <div class="cell-container">
+                        <p class="content-left">Ground Elevation</p>
+                        <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSERetrieved">
+                            <div *ngFor="let instrument of data.row_data.instrument_status">
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
+                            </div>
                         </div>
+                        <ng-template #nullGSERetrieved><p class="content-right">---</p></ng-template>
                     </div>
-                    <ng-template #nullMember><p class="content-right">---</p></ng-template>
+                    <div class="cell-container">
+                        <p class="content-left">In Feet Above</p>
+                        <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveRetrieved">
+                            <div *ngFor="let instrument of data.row_data.instrument_status">
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
+                            </div>
+                        </div>
+                        <ng-template #nullInFeetAboveRetrieved><p class="content-right">---</p></ng-template>
+                    </div>
+                    <div class="cell-container">
+                        <p class="content-left">Member</p>
+                        <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
+                            <div *ngFor="let item of members">
+                                <p class="content-right" *ngIf="item.status === 'Retrieved' && (item.name !== undefined && item.name !== '')">{{item.name}}</p>
+                                <p class="content-right" *ngIf="item.status === 'Retrieved' && (item.name === undefined || item.name === '')">---</p>
+                            </div>
+                        </div>
+                        <ng-template #nullMember><p class="content-right">---</p></ng-template>
+                    </div>
                 </div>
             </div>
         </mat-expansion-panel>
@@ -266,95 +266,97 @@
                     Lost Sensor Information
                     </mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="cell-container">
-                <p class="content-left">Status</p>
-                <p class="content-right" *ngIf="data.row_data.statusType !== undefined && data.row_data.statusType !== ''; else nullLostStatusType">{{data.row_data.statusType}}</p>
-                <ng-template #nullLostStatusType><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">Collection Conditions</p>
-                <p class="content-right" *ngIf="data.row_data.instCollection !== undefined && data.row_data.instCollection !== ''; else nullInstCollection">{{data.row_data.instCollection}}</p>
-                <ng-template #nullInstCollection><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">Note</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0; else nullNotesLost">
-                    <div *ngFor="let instrument of data.row_data.instrument_status">
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.notes !== undefined && instrument.notes !== '')">{{instrument.notes}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.notes === undefined || instrument.notes === '')">---</p>
-                    </div>
+            <div class="table-container">
+                <div class="cell-container">
+                    <p class="content-left">Status</p>
+                    <p class="content-right" *ngIf="data.row_data.statusType !== undefined && data.row_data.statusType !== ''; else nullLostStatusType">{{data.row_data.statusType}}</p>
+                    <ng-template #nullLostStatusType><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template #nullNotesLost><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">Retrieve Date</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampLost">
-                    <div class="content-right" *ngFor="let instrument of data.row_data.instrument_status">
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.format_time_stamp !== undefined && instrument.format_time_stamp !== '')">{{instrument.format_time_stamp}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.format_time_stamp === undefined || instrument.format_time_stamp === '')">---</p>
-                    </div>
+                <div class="cell-container">
+                    <p class="content-left">Collection Conditions</p>
+                    <p class="content-right" *ngIf="data.row_data.instCollection !== undefined && data.row_data.instCollection !== ''; else nullInstCollection">{{data.row_data.instCollection}}</p>
+                    <ng-template #nullInstCollection><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template #nullTimestampLost><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">Time Zone</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneLost">
-                    <div class="content-right" *ngFor="let instrument of data.row_data.instrument_status">
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_zone !== undefined && instrument.time_zone !== '')">{{instrument.time_zone}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_zone === undefined || instrument.time_zone === '')">---</p>
+                <div class="cell-container">
+                    <p class="content-left">Note</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullNotesLost">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.notes !== undefined && instrument.notes !== '')">{{instrument.notes}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.notes === undefined || instrument.notes === '')">---</p>
+                        </div>
                     </div>
+                    <ng-template #nullNotesLost><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template #nullTimezoneLost><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">Sensor Elevation</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElLost">
-                    <div *ngFor="let instrument of data.row_data.instrument_status">
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
+                <div class="cell-container">
+                    <p class="content-left">Retrieve Date</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampLost">
+                        <div class="content-right" *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.format_time_stamp !== undefined && instrument.format_time_stamp !== '')">{{instrument.format_time_stamp}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.format_time_stamp === undefined || instrument.format_time_stamp === '')">---</p>
+                        </div>
                     </div>
+                    <ng-template #nullTimestampLost><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template #nullSensorElLost><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">Water Surface Elevation</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSELost">
-                    <div *ngFor="let instrument of data.row_data.instrument_status">
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
+                <div class="cell-container">
+                    <p class="content-left">Time Zone</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimezoneLost">
+                        <div class="content-right" *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_zone !== undefined && instrument.time_zone !== '')">{{instrument.time_zone}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_zone === undefined || instrument.time_zone === '')">---</p>
+                        </div>
                     </div>
+                    <ng-template #nullTimezoneLost><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template #nullWSELost><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">Ground Elevation</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSELost">
-                    <div *ngFor="let instrument of data.row_data.instrument_status">
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
+                <div class="cell-container">
+                    <p class="content-left">Sensor Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullSensorElLost">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.sensor_elevation !== undefined && instrument.sensor_elevation !== ''">{{instrument.sensor_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.sensor_elevation === undefined || instrument.sensor_elevation === '')">---</p>
+                        </div>
                     </div>
+                    <ng-template #nullSensorElLost><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template #nullGSELost><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">In Feet Above</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveLost">
-                    <div *ngFor="let instrument of data.row_data.instrument_status">
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
+                <div class="cell-container">
+                    <p class="content-left">Water Surface Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullWSELost">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.ws_elevation !== undefined && instrument.ws_elevation !== ''">{{instrument.ws_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.ws_elevation === undefined || instrument.ws_elevation === '')">---</p>
+                        </div>
                     </div>
+                    <ng-template #nullWSELost><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template #nullInFeetAboveLost><p class="content-right">---</p></ng-template>
-            </div>
-            <div class="cell-container">
-                <p class="content-left">Member</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
-                    <div *ngFor="let item of members">
-                        <p class="content-right" *ngIf="item.status === 'Lost' && (item.name !== undefined && item.name !== '')">{{item.name}}</p>
-                        <p class="content-right" *ngIf="item.status === 'Lost' && (item.name === undefined || item.name === '')">---</p>
+                <div class="cell-container">
+                    <p class="content-left">Ground Elevation</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullGSELost">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.gs_elevation !== undefined && instrument.gs_elevation !== ''">{{instrument.gs_elevation}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.gs_elevation === undefined || instrument.gs_elevation === '')">---</p>
+                        </div>
                     </div>
+                    <ng-template #nullGSELost><p class="content-right">---</p></ng-template>
                 </div>
-                <ng-template #nullMember><p class="content-right">---</p></ng-template>
+                <div class="cell-container">
+                    <p class="content-left">In Feet Above</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0; else nullInFeetAboveLost">
+                        <div *ngFor="let instrument of data.row_data.instrument_status">
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && instrument.vdatum_id !== undefined && instrument.vdatum_id !== ''">{{instrument.vdatum}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.vdatum_id === undefined || instrument.vdatum_id === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullInFeetAboveLost><p class="content-right">---</p></ng-template>
+                </div>
+                <div class="cell-container">
+                    <p class="content-left">Member</p>
+                    <div *ngIf="data.row_data.instrument_status.length > 0 && members.length > 0; else nullMember">
+                        <div *ngFor="let item of members">
+                            <p class="content-right" *ngIf="item.status === 'Lost' && (item.name !== undefined && item.name !== '')">{{item.name}}</p>
+                            <p class="content-right" *ngIf="item.status === 'Lost' && (item.name === undefined || item.name === '')">---</p>
+                        </div>
+                    </div>
+                    <ng-template #nullMember><p class="content-right">---</p></ng-template>
+                </div>
             </div>
         </mat-expansion-panel>
         <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">

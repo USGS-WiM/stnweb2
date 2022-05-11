@@ -14,18 +14,16 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="table-container">
-                <div class="outer-content">
-                    <div class="title">High Water Marks</div>
-                    <div *ngFor="let hwm of hwms; let i = index">
-                        <div class="header" *ngIf="hwm.selected">HWM {{hwm.hwm_id}} - {{hwm.elev_ft || '--'}} ft</div>
-                    </div>
-                    <div class="title">Sensors</div>
-                    <div *ngFor="let sensor of sensors; let i = index">
-                        <div class="sensor-group">
-                            <div class="header" *ngIf="sensor.selected">{{sensor.deploymentType || sensor.sensorType}} Sensor
-                                <div class="file" *ngFor="let file of sensor.files">
-                                    <li *ngIf="file.selected">{{file.name || '---'}}</li>
-                                </div>
+                <div class="title">High Water Marks</div>
+                <div *ngFor="let hwm of hwms; let i = index">
+                    <div class="header" *ngIf="hwm.selected">HWM {{hwm.hwm_id}} - {{hwm.elev_ft || '--'}} ft</div>
+                </div>
+                <div class="title">Sensors</div>
+                <div *ngFor="let sensor of sensors; let i = index">
+                    <div class="sensor-group">
+                        <div class="header" *ngIf="sensor.selected">{{sensor.deploymentType || sensor.sensorType}} Sensor
+                            <div class="file" *ngFor="let file of sensor.files">
+                                <li *ngIf="file.selected">{{file.name || '---'}}</li>
                             </div>
                         </div>
                     </div>
@@ -42,92 +40,90 @@
             </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="table-container">
-            <div class="outer-content">
-                <div class="cell-container">
-                    <p class="content-left">Peak Calculation Notes</p>
-                    <p class="content-right" *ngIf="peak.calc_notes !== undefined && peak.calc_notes !== ''; else nullCalcNotes">{{peak.calc_notes}}</p>
-                    <ng-template #nullCalcNotes><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Peak Creator</p>
-                    <p class="content-right" *ngIf="creator !== undefined && creator !== ''; else nullCreator">{{creator}}</p>
-                    <ng-template #nullCreator><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Peak Date</p>
-                    <p class="content-right" *ngIf="peak.peak_date !== undefined && peak.peak_date !== ''; else nullPeakDate">{{peak.format_peak_date}}</p>
-                    <ng-template #nullPeakDate><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Is Peak Estimated?</p>
-                    <p class="content-right" *ngIf="peak.is_peak_estimated !== undefined && peak.is_peak_estimated !== ''; else nullPeakEstimated">{{peak.is_peak_estimated}}</p>
-                    <ng-template #nullPeakEstimated><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Is Peak Time Estimated?</p>
-                    <p class="content-right" *ngIf="peak.is_peak_time_estimated !== undefined && peak.is_peak_time_estimated !== ''; else nullPeakTimeEstimated">{{peak.is_peak_time_estimated}}</p>
-                    <ng-template #nullPeakTimeEstimated><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Peak Recorded In</p>
-                    <p class="content-right" *ngIf="peak.time_zone !== undefined && peak.time_zone !== ''; else nullTimeZone">{{peak.time_zone}}</p>
-                    <ng-template #nullTimeZone><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Peak Stage</p>
-                    <p class="content-right" *ngIf="peak.peak_stage !== undefined && peak.peak_stage !== ''; else nullPeakStage">{{peak.peak_stage}}</p>
-                    <ng-template #nullPeakStage><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Is Peak Stage Estimated?</p>
-                    <p class="content-right" *ngIf="peak.is_peak_stage_estimated !== undefined && peak.is_peak_stage_estimated !== ''; else nullPeakStageEstimated">{{peak.is_peak_stage_estimated}}</p>
-                    <ng-template #nullPeakStageEstimated><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Vertical Datum</p>
-                    <p class="content-right" *ngIf="peak.vdatum_id !== undefined && peak.vdatum_id !== ''; else nullVDatum">{{vdatum}}</p>
-                    <ng-template #nullVDatum><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Height Above Ground (Depth of water in ft)</p>
-                    <p class="content-right" *ngIf="peak.height_above_gnd !== undefined && peak.height_above_gnd !== ''; else nullHeightAboveGnd">{{peak.height_above_gnd}}</p>
-                    <ng-template #nullHeightAboveGnd><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Is Height Above Ground Estimated?</p>
-                    <p class="content-right" *ngIf="peak.is_hag_estimated !== undefined && peak.is_hag_estimated !== ''; else nullHAGEstimated">{{peak.is_hag_estimated}}</p>
-                    <ng-template #nullHAGEstimated><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Peak Discharge</p>
-                    <p class="content-right" *ngIf="peak.peak_discharge !== undefined && peak.peak_discharge !== ''; else nullPeakDischarge">{{peak.peak_discharge}}</p>
-                    <ng-template #nullPeakDischarge><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">Is Peak Discharge Estimated?</p>
-                    <p class="content-right" *ngIf="peak.is_peak_discharge_estimated !== undefined && peak.is_peak_discharge_estimated !== ''; else nullPeakDischargeEstimated">{{peak.is_peak_discharge_estimated}}</p>
-                    <ng-template #nullPeakDischargeEstimated><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">AEP</p>
-                    <p class="content-right" *ngIf="peak.aep !== undefined && peak.aep !== ''; else nullAEP">{{peak.aep}}</p>
-                    <ng-template #nullAEP><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">AEP Confidence Interval (Lower Limit)</p>
-                    <p class="content-right" *ngIf="peak.aep_lowci !== undefined && peak.aep_lowci !== ''; else nullAEPLowci">{{peak.aep_lowci}}</p>
-                    <ng-template #nullAEPLowci><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">AEP Confidence Interval (Upper Limit)</p>
-                    <p class="content-right" *ngIf="peak.aep_upperci !== undefined && peak.aep_upperci !== ''; else nullAEPUpperci">{{peak.aep_upperci}}</p>
-                    <ng-template #nullAEPUpperci><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                    <p class="content-left">AEP Confidence Interval (Percentage of Limits)</p>
-                    <p class="content-right" *ngIf="peak.aep_range !== undefined && peak.aep_range !== ''; else nullAEPRange">{{peak.aep_range}}</p>
-                    <ng-template #nullAEPRange><p class="content-right">---</p></ng-template>
-                </div>
+            <div class="cell-container">
+                <p class="content-left">Peak Calculation Notes</p>
+                <p class="content-right" *ngIf="peak.calc_notes !== undefined && peak.calc_notes !== ''; else nullCalcNotes">{{peak.calc_notes}}</p>
+                <ng-template #nullCalcNotes><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Peak Creator</p>
+                <p class="content-right" *ngIf="creator !== undefined && creator !== ''; else nullCreator">{{creator}}</p>
+                <ng-template #nullCreator><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Peak Date</p>
+                <p class="content-right" *ngIf="peak.peak_date !== undefined && peak.peak_date !== ''; else nullPeakDate">{{peak.format_peak_date}}</p>
+                <ng-template #nullPeakDate><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Is Peak Estimated?</p>
+                <p class="content-right" *ngIf="peak.is_peak_estimated !== undefined && peak.is_peak_estimated !== ''; else nullPeakEstimated">{{peak.is_peak_estimated}}</p>
+                <ng-template #nullPeakEstimated><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Is Peak Time Estimated?</p>
+                <p class="content-right" *ngIf="peak.is_peak_time_estimated !== undefined && peak.is_peak_time_estimated !== ''; else nullPeakTimeEstimated">{{peak.is_peak_time_estimated}}</p>
+                <ng-template #nullPeakTimeEstimated><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Peak Recorded In</p>
+                <p class="content-right" *ngIf="peak.time_zone !== undefined && peak.time_zone !== ''; else nullTimeZone">{{peak.time_zone}}</p>
+                <ng-template #nullTimeZone><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Peak Stage</p>
+                <p class="content-right" *ngIf="peak.peak_stage !== undefined && peak.peak_stage !== ''; else nullPeakStage">{{peak.peak_stage}}</p>
+                <ng-template #nullPeakStage><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Is Peak Stage Estimated?</p>
+                <p class="content-right" *ngIf="peak.is_peak_stage_estimated !== undefined && peak.is_peak_stage_estimated !== ''; else nullPeakStageEstimated">{{peak.is_peak_stage_estimated}}</p>
+                <ng-template #nullPeakStageEstimated><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Vertical Datum</p>
+                <p class="content-right" *ngIf="peak.vdatum_id !== undefined && peak.vdatum_id !== ''; else nullVDatum">{{vdatum}}</p>
+                <ng-template #nullVDatum><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Height Above Ground (Depth of water in ft)</p>
+                <p class="content-right" *ngIf="peak.height_above_gnd !== undefined && peak.height_above_gnd !== ''; else nullHeightAboveGnd">{{peak.height_above_gnd}}</p>
+                <ng-template #nullHeightAboveGnd><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Is Height Above Ground Estimated?</p>
+                <p class="content-right" *ngIf="peak.is_hag_estimated !== undefined && peak.is_hag_estimated !== ''; else nullHAGEstimated">{{peak.is_hag_estimated}}</p>
+                <ng-template #nullHAGEstimated><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Peak Discharge</p>
+                <p class="content-right" *ngIf="peak.peak_discharge !== undefined && peak.peak_discharge !== ''; else nullPeakDischarge">{{peak.peak_discharge}}</p>
+                <ng-template #nullPeakDischarge><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">Is Peak Discharge Estimated?</p>
+                <p class="content-right" *ngIf="peak.is_peak_discharge_estimated !== undefined && peak.is_peak_discharge_estimated !== ''; else nullPeakDischargeEstimated">{{peak.is_peak_discharge_estimated}}</p>
+                <ng-template #nullPeakDischargeEstimated><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">AEP</p>
+                <p class="content-right" *ngIf="peak.aep !== undefined && peak.aep !== ''; else nullAEP">{{peak.aep}}</p>
+                <ng-template #nullAEP><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">AEP Confidence Interval (Lower Limit)</p>
+                <p class="content-right" *ngIf="peak.aep_lowci !== undefined && peak.aep_lowci !== ''; else nullAEPLowci">{{peak.aep_lowci}}</p>
+                <ng-template #nullAEPLowci><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">AEP Confidence Interval (Upper Limit)</p>
+                <p class="content-right" *ngIf="peak.aep_upperci !== undefined && peak.aep_upperci !== ''; else nullAEPUpperci">{{peak.aep_upperci}}</p>
+                <ng-template #nullAEPUpperci><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+                <p class="content-left">AEP Confidence Interval (Percentage of Limits)</p>
+                <p class="content-right" *ngIf="peak.aep_range !== undefined && peak.aep_range !== ''; else nullAEPRange">{{peak.aep_range}}</p>
+                <ng-template #nullAEPRange><p class="content-right">---</p></ng-template>
             </div>
         </div>
         </mat-expansion-panel>

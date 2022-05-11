@@ -999,10 +999,10 @@ export class SiteDetailsComponent implements OnInit {
 
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
-            dialogWidth = '80%';
+            dialogWidth = '100%';
         }
         else {
-            dialogWidth = '30%';
+            dialogWidth = '40%';
         }
 
         const dialogRef = this.dialog.open(ReferenceDatumDialogComponent, {
@@ -1051,10 +1051,10 @@ export class SiteDetailsComponent implements OnInit {
 
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
-            dialogWidth = '80%';
+            dialogWidth = '100%';
         }
         else {
-            dialogWidth = '30%';
+            dialogWidth = '40%';
         }
 
         const dialogRef = this.dialog.open(HwmDialogComponent, {
@@ -1127,10 +1127,10 @@ export class SiteDetailsComponent implements OnInit {
 
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
-            dialogWidth = '80%';
+            dialogWidth = '100%';
         }
         else {
-            dialogWidth = '30%';
+            dialogWidth = '40%';
         }
 
         const dialogRef = this.dialog.open(SensorDialogComponent, {
@@ -1168,6 +1168,13 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openPeaksDetailsDialog(row): void {
+        let dialogWidth;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            dialogWidth = '100%';
+        }
+        else {
+            dialogWidth = '40%';
+        }
         this.dialog.open(PeakDialogComponent, {
             data: {
                 peak: row,
@@ -1231,10 +1238,10 @@ export class SiteDetailsComponent implements OnInit {
     openFileDetailsDialog(row, type): void {
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
-            dialogWidth = '80%';
+            dialogWidth = '100%';
         }
         else {
-            dialogWidth = '30%';
+            dialogWidth = '40%';
         }
 
         const dialogRef = this.dialog.open(FileDetailsDialogComponent, {

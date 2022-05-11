@@ -15,94 +15,92 @@
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="table-container">
-              <div class="outer-content">
-                <div class="cell-container">
-                  <p class="content-left">Name</p>
-                  <p class="content-right" *ngIf="data.row_data.name !== undefined && data.row_data.name !== ''; else nullName">{{data.row_data.name}}</p>
-                  <ng-template #nullName><p class="content-right">---</p></ng-template>
+            <div class="cell-container">
+              <p class="content-left">Name</p>
+              <p class="content-right" *ngIf="data.row_data.name !== undefined && data.row_data.name !== ''; else nullName">{{data.row_data.name}}</p>
+              <ng-template #nullName><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Type</p>
+              <p class="content-right" *ngIf="data.row_data.op_type_id !== undefined && data.row_data.op_type_id !== '' && opType !== undefined && opType !== ''; else nullOPType">{{opType}}</p>
+              <ng-template #nullOPType><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Description</p>
+              <p class="content-right" *ngIf="data.row_data.description !== undefined && data.row_data.description !== undefined; else nullDesc">{{data.row_data.description}}</p>
+              <ng-template #nullDesc><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Control Identifier</p>
+              <div *ngIf="controlID !== undefined; else nullControlID">
+                <div *ngFor="let control of controlID">
+                  <p class="content-right">
+                      {{control.identifier}} ({{control.identifier_type}})
+                  </p>
                 </div>
-                <div class="cell-container">
-                  <p class="content-left">Type</p>
-                  <p class="content-right" *ngIf="data.row_data.op_type_id !== undefined && data.row_data.op_type_id !== '' && opType !== undefined && opType !== ''; else nullOPType">{{opType}}</p>
-                  <ng-template #nullOPType><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Description</p>
-                  <p class="content-right" *ngIf="data.row_data.description !== undefined && data.row_data.description !== undefined; else nullDesc">{{data.row_data.description}}</p>
-                  <ng-template #nullDesc><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Control Identifier</p>
-                  <div *ngIf="controlID !== undefined; else nullControlID">
-                    <div *ngFor="let control of controlID">
-                      <p class="content-right">
-                          {{control.identifier}} ({{control.identifier_type}})
-                      </p>
-                    </div>
-                  </div>
-                  <ng-template #nullControlID><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Latitude</p>
-                  <p class="content-right" *ngIf="data.row_data.latitude_dd !== undefined && data.row_data.latitude_dd !== ''; else nullLat">{{data.row_data.latitude_dd}}</p>
-                  <ng-template #nullLat><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Longitude</p>
-                  <p class="content-right" *ngIf="data.row_data.longitude_dd !== undefined && data.row_data.longitude_dd !== ''; else nullLon">{{data.row_data.longitude_dd}}</p>
-                  <ng-template #nullLon><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Horizontal Datum</p>
-                  <p class="content-right"  *ngIf="data.row_data.hdatum_id !== undefined && data.row_data.hdatum_id !== '' && hdatum !== undefined && hdatum !== ''; else nullHDatum">{{hdatum}}</p>
-                  <ng-template #nullHDatum><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Horizontal Collection Method</p>
-                  <p class="content-right"  *ngIf="data.row_data.hcollect_method_id !== undefined && data.row_data.hcollect_method_id !== '' && hmethod !== '' && hmethod !== undefined; else nullHMethod">{{hmethod}}</p>
-                  <ng-template #nullHMethod><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Elevation</p>
-                  <p class="content-right" *ngIf="data.row_data.elev_ft !== undefined || data.row_data.elev_ft !== ''; else nullElev">{{data.row_data.elev_ft}} ft</p>
-                  <ng-template #nullElev><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Vertical Datum</p>
-                  <p class="content-right"  *ngIf="data.row_data.vdatum_id !== undefined && data.row_data.vdatum_id !== '' && vdatum !== '' && vdatum !== undefined; else nullVDatum">{{vdatum}}</p>
-                  <ng-template #nullVDatum><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Vertical Collection Method</p>
-                  <p class="content-right"  *ngIf="data.row_data.vcollect_method_id !== undefined && data.row_data.vcollect_method_id !== '' && vmethod !== '' && vmethod !== undefined; else nullVMethod">{{vmethod}}</p>
-                  <ng-template #nullVMethod><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Uncertainty</p>
-                  <p class="content-right" *ngIf="data.row_data.uncertainty !== undefined && data.row_data.uncertainty !== '' && data.row_data.unquantified !== '1'">{{data.row_data.uncertainty}}</p>
-                  <p class="content-right" *ngIf="data.row_data.unquantified === '1'">Unquantified</p>
-                  <p class="content-right" *ngIf="data.row_data.uncertainty === undefined && data.row_data.uncertainty === '' || data.row_data.unquantified !== '1'">---</p>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Quality</p>
-                  <p class="content-right"  *ngIf="data.row_data.op_quality_id !== undefined && data.row_data.op_quality !== '' && opQuality !== '' && opQuality !== undefined; else nullOPQuality">{{opQuality}}</p>
-                  <ng-template #nullOPQuality><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Notes</p>
-                  <p class="content-right" *ngIf="data.row_data.op_notes !== undefined && data.row_data.op_notes !== ''; else nullNotes">{{data.row_data.op_notes}}</p>
-                  <ng-template #nullNotes><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Date Established</p>
-                  <p class="content-right" *ngIf="data.row_data.date_established_format !== undefined && data.row_data.date_established_format !== ''; else nullEstDate">{{data.row_data.date_established_format}}</p>
-                  <ng-template #nullEstDate><p class="content-right">---</p></ng-template>
-                </div>
-                <div class="cell-container">
-                  <p class="content-left">Date Recovered</p>
-                  <p class="content-right" *ngIf="data.row_data.date_recovered_format !== undefined && data.row_data.date_recovered_format !== ''; else nullRecovDate">{{data.row_data.date_recovered_format}}</p>
-                  <ng-template #nullRecovDate><p class="content-right">---</p></ng-template>
-                </div>
+              </div>
+              <ng-template #nullControlID><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Latitude</p>
+              <p class="content-right" *ngIf="data.row_data.latitude_dd !== undefined && data.row_data.latitude_dd !== ''; else nullLat">{{data.row_data.latitude_dd}}</p>
+              <ng-template #nullLat><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Longitude</p>
+              <p class="content-right" *ngIf="data.row_data.longitude_dd !== undefined && data.row_data.longitude_dd !== ''; else nullLon">{{data.row_data.longitude_dd}}</p>
+              <ng-template #nullLon><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Horizontal Datum</p>
+              <p class="content-right"  *ngIf="data.row_data.hdatum_id !== undefined && data.row_data.hdatum_id !== '' && hdatum !== undefined && hdatum !== ''; else nullHDatum">{{hdatum}}</p>
+              <ng-template #nullHDatum><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Horizontal Collection Method</p>
+              <p class="content-right"  *ngIf="data.row_data.hcollect_method_id !== undefined && data.row_data.hcollect_method_id !== '' && hmethod !== '' && hmethod !== undefined; else nullHMethod">{{hmethod}}</p>
+              <ng-template #nullHMethod><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Elevation</p>
+              <p class="content-right" *ngIf="data.row_data.elev_ft !== undefined || data.row_data.elev_ft !== ''; else nullElev">{{data.row_data.elev_ft}} ft</p>
+              <ng-template #nullElev><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Vertical Datum</p>
+              <p class="content-right"  *ngIf="data.row_data.vdatum_id !== undefined && data.row_data.vdatum_id !== '' && vdatum !== '' && vdatum !== undefined; else nullVDatum">{{vdatum}}</p>
+              <ng-template #nullVDatum><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Vertical Collection Method</p>
+              <p class="content-right"  *ngIf="data.row_data.vcollect_method_id !== undefined && data.row_data.vcollect_method_id !== '' && vmethod !== '' && vmethod !== undefined; else nullVMethod">{{vmethod}}</p>
+              <ng-template #nullVMethod><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Uncertainty</p>
+              <p class="content-right" *ngIf="data.row_data.uncertainty !== undefined && data.row_data.uncertainty !== '' && data.row_data.unquantified !== '1'">{{data.row_data.uncertainty}}</p>
+              <p class="content-right" *ngIf="data.row_data.unquantified === '1'">Unquantified</p>
+              <p class="content-right" *ngIf="data.row_data.uncertainty === undefined && data.row_data.uncertainty === '' || data.row_data.unquantified !== '1'">---</p>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Quality</p>
+              <p class="content-right"  *ngIf="data.row_data.op_quality_id !== undefined && data.row_data.op_quality !== '' && opQuality !== '' && opQuality !== undefined; else nullOPQuality">{{opQuality}}</p>
+              <ng-template #nullOPQuality><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Notes</p>
+              <p class="content-right" *ngIf="data.row_data.op_notes !== undefined && data.row_data.op_notes !== ''; else nullNotes">{{data.row_data.op_notes}}</p>
+              <ng-template #nullNotes><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Date Established</p>
+              <p class="content-right" *ngIf="data.row_data.date_established_format !== undefined && data.row_data.date_established_format !== ''; else nullEstDate">{{data.row_data.date_established_format}}</p>
+              <ng-template #nullEstDate><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
+              <p class="content-left">Date Recovered</p>
+              <p class="content-right" *ngIf="data.row_data.date_recovered_format !== undefined && data.row_data.date_recovered_format !== ''; else nullRecovDate">{{data.row_data.date_recovered_format}}</p>
+              <ng-template #nullRecovDate><p class="content-right">---</p></ng-template>
             </div>
           </div>
         </mat-expansion-panel>

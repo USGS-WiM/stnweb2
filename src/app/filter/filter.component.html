@@ -43,11 +43,11 @@
                             id="eventStateOptions"
                             type="text"
                             aria-label="Dropdown menu for state selection"
-                            matInput
                             placeholder="All States"
                             formControlName="eventStateControl"
                             [matAutocomplete]="eventStateAutocomplete"
                         />
+                        <mat-icon class="dropdown-icon" matSuffix>arrow_drop_down</mat-icon>
                         <mat-hint
                             >Start typing for suggestions</mat-hint
                         >
@@ -85,6 +85,7 @@
                             formControlName="eventsControl"
                             [matAutocomplete]="eventAutocomplete"
                         />
+                        <mat-icon class="dropdown-icon" matSuffix>arrow_drop_down</mat-icon>
                         <mat-hint
                             >Start typing for suggestions</mat-hint
                         >
