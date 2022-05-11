@@ -510,6 +510,7 @@ export class MapComponent implements OnInit {
                 .valueChanges.pipe(
                     debounceTime(300),
                     distinctUntilChanged(),
+                    startWith(''),
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
@@ -604,6 +605,7 @@ export class MapComponent implements OnInit {
             .valueChanges.pipe(
                 debounceTime(200),
                 distinctUntilChanged(),
+                startWith(''),
                 /* istanbul ignore else */
                 map((searchTerm) =>
                     searchTerm

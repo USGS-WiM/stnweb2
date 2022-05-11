@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/USGS-WiM/stnweb2/tree/dev)
 
 ### Added
- -
+
+ -  Dropdown functionality to state and event filters on map page
  
 ### Changed
 
+ -  Clear filters button styling to link
  -  Increased details modal widths
  -  Improved responsiveness of tables in details modals
+
  
  ### Fixed
  

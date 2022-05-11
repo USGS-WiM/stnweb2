@@ -504,6 +504,11 @@ $borderRadius: 4px;
     }
 }
 
+.link-button {
+    text-decoration: underline;
+    color: blue;
+}
+
 // Minimize map button for mobile screens
 #mobile-minimize-button{
     display: none;
