@@ -685,94 +685,176 @@ export class PeakEditComponent implements OnInit {
     peakSubmission.peak_date = this.timezonesService.convertTimezone(peakSubmission.time_zone, peakSubmission.peak_date, peakSubmission.minute)
     peakSubmission.time_zone = "UTC";
     delete peakSubmission.ampm; delete peakSubmission.hour; delete peakSubmission.minute; delete peakSubmission.utc_preview;
-    
+    console.log(this.removedDFs)
+    console.log(this.removedHWMs)
+    console.log(this.selectedDFs)
+    console.log(this.selectedHWMs)
     // Edit peak
-    if(this.editOrCreate === "Edit"){
+    // if(this.editOrCreate === "Edit"){
 
-      const updatePeak = new Promise<string>((resolve, reject) => this.peakEditService.putPeak(peakSubmission.peak_summary_id, peakSubmission).subscribe(results => {
-        if(results.length !== 0){
-          this.returnData.peak = results;
+    //   const updatePeak = new Promise<string>((resolve, reject) => this.peakEditService.putPeak(peakSubmission.peak_summary_id, peakSubmission).subscribe(results => {
+    //     if(results.length !== 0){
+    //       this.returnData.peak = results;
           
-          // Remove DFs
-          if(this.removedDFs.length > 0) {
-            this.removedDFs.forEach(function(df) {
-              df.peak_summary_id = null;
-              self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
-                console.log(results);
-              });
-            });
-          }
-          // Remove HWMs
-          if(this.removedHWMs.length > 0) {
-            this.removedHWMs.forEach(function(hwm) {
-              hwm.peak_summary_id = null;
-              const removeHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
-                console.log(results);
-                self.returnData.hwmsToRemove.push(results.hwm_id)
-                resolve("Success");
-              }));
-              promises.push(removeHWM);
-            });
-          }
-          // Add DFs
-          if(this.selectedDFs.length > 0) {
-            this.selectedDFs.forEach(function(df) {
-              df.peak_summary_id = results.peak_summary_id;
-              self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
-                console.log(results);
-              });
-            });
-          }
-          // Add HWMs
-          if(this.selectedHWMs.length > 0) {
-            this.selectedHWMs.forEach(function(hwm) {
-              hwm.peak_summary_id = results.peak_summary_id;
-              const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
-                console.log(results);
-                self.returnData.hwmsToAdd.push(results.hwm_id);
-                resolve("Success");
-              }));
-              promises.push(addHWM);
-            });
-          }
-          Promise.all(promises).then(() => {
-            resolve("Peak Success");
-          })
-        }else{
-          // Error
-          this.dialog.open(ConfirmComponent, {
-            data: {
-              title: "Error updating Peak",
-              titleIcon: "close",
-              message: null,
-              confirmButtonText: "OK",
-              showCancelButton: false,
-            },
-          });
-          reject(new Error("Error updating Peak."));
-        }
-      }));
+    //       // Remove DFs
+    //       if(this.removedDFs.length > 0) {
+    //         this.removedDFs.forEach(function(df) {
+    //           df.peak_summary_id = null;
+    //           self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
+    //             console.log(results);
+    //           });
+    //         });
+    //       }
+    //       // Remove HWMs
+    //       if(this.removedHWMs.length > 0) {
+    //         this.removedHWMs.forEach(function(hwm) {
+    //           hwm.peak_summary_id = null;
+    //           const removeHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
+    //             console.log(results);
+    //             self.returnData.hwmsToRemove.push(results.hwm_id)
+    //             resolve("Success");
+    //           }));
+    //           promises.push(removeHWM);
+    //         });
+    //       }
+    //       // Add DFs
+    //       if(this.selectedDFs.length > 0) {
+    //         this.selectedDFs.forEach(function(df) {
+    //           df.peak_summary_id = results.peak_summary_id;
+    //           self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
+    //             console.log(results);
+    //           });
+    //         });
+    //       }
+    //       // Add HWMs
+    //       if(this.selectedHWMs.length > 0) {
+    //         this.selectedHWMs.forEach(function(hwm) {
+    //           hwm.peak_summary_id = results.peak_summary_id;
+    //           const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
+    //             console.log(results);
+    //             self.returnData.hwmsToAdd.push(results.hwm_id);
+    //             resolve("Success");
+    //           }));
+    //           promises.push(addHWM);
+    //         });
+    //       }
+    //       Promise.all(promises).then(() => {
+    //         resolve("Peak Success");
+    //       })
+    //     }else{
+    //       // Error
+    //       this.dialog.open(ConfirmComponent, {
+    //         data: {
+    //           title: "Error updating Peak",
+    //           titleIcon: "close",
+    //           message: null,
+    //           confirmButtonText: "OK",
+    //           showCancelButton: false,
+    //         },
+    //       });
+    //       reject(new Error("Error updating Peak."));
+    //     }
+    //   }));
 
-      updatePeak.then(() => {
-        this.loading = false;
-        this.dialogRef.close(this.returnData);
-        this.dialog.open(ConfirmComponent, {
-          data: {
-            title: "Successfully updated Peak",
-            titleIcon: "check",
-            message: null,
-            confirmButtonText: "OK",
-            showCancelButton: false,
-          },
-        });
-      }).catch(function(error) {
-        console.log(error.message);
-        this.loading = false;
-      });
-    }else if(this.editOrCreate === "Create"){
-      // Create new peak
+    //   updatePeak.then(() => {
+    //     this.loading = false;
+    //     this.dialogRef.close(this.returnData);
+    //     this.dialog.open(ConfirmComponent, {
+    //       data: {
+    //         title: "Successfully updated Peak",
+    //         titleIcon: "check",
+    //         message: null,
+    //         confirmButtonText: "OK",
+    //         showCancelButton: false,
+    //       },
+    //     });
+    //   }).catch(function(error) {
+    //     console.log(error.message);
+    //     this.loading = false;
+    //   });
+    // }else if(this.editOrCreate === "Create"){
+    //   // Create new peak
+    //   const createPeak = new Promise<string>((resolve, reject) => this.peakEditService.putPeak(peakSubmission.peak_summary_id, peakSubmission).subscribe(results => {
+    //     if(results.length !== 0){
+    //       this.returnData.peak = results;
+          
+    //       // Remove DFs
+    //       if(this.removedDFs.length > 0) {
+    //         this.removedDFs.forEach(function(df) {
+    //           df.peak_summary_id = null;
+    //           self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
+    //             console.log(results);
+    //           });
+    //         });
+    //       }
+    //       // Remove HWMs
+    //       if(this.removedHWMs.length > 0) {
+    //         this.removedHWMs.forEach(function(hwm) {
+    //           hwm.peak_summary_id = null;
+    //           const removeHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
+    //             console.log(results);
+    //             self.returnData.hwmsToRemove.push(results.hwm_id)
+    //             resolve("Success");
+    //           }));
+    //           promises.push(removeHWM);
+    //         });
+    //       }
+    //       // Add DFs
+    //       if(this.selectedDFs.length > 0) {
+    //         this.selectedDFs.forEach(function(df) {
+    //           df.peak_summary_id = results.peak_summary_id;
+    //           self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
+    //             console.log(results);
+    //           });
+    //         });
+    //       }
+    //       // Add HWMs
+    //       if(this.selectedHWMs.length > 0) {
+    //         this.selectedHWMs.forEach(function(hwm) {
+    //           hwm.peak_summary_id = results.peak_summary_id;
+    //           const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
+    //             console.log(results);
+    //             self.returnData.hwmsToAdd.push(results.hwm_id);
+    //             resolve("Success");
+    //           }));
+    //           promises.push(addHWM);
+    //         });
+    //       }
+    //       Promise.all(promises).then(() => {
+    //         resolve("Peak Success");
+    //       })
+    //     }else{
+    //       // Error
+    //       this.dialog.open(ConfirmComponent, {
+    //         data: {
+    //           title: "Error creating Peak",
+    //           titleIcon: "close",
+    //           message: null,
+    //           confirmButtonText: "OK",
+    //           showCancelButton: false,
+    //         },
+    //       });
+    //       reject(new Error("Error creating Peak."));
+    //     }
+    //   }));
 
-    }
+    //   createPeak.then(() => {
+    //     this.loading = false;
+    //     this.dialogRef.close(this.returnData);
+    //     this.dialog.open(ConfirmComponent, {
+    //       data: {
+    //         title: "Successfully created Peak",
+    //         titleIcon: "check",
+    //         message: null,
+    //         confirmButtonText: "OK",
+    //         showCancelButton: false,
+    //       },
+    //     });
+    //   }).catch(function(error) {
+    //     console.log(error.message);
+    //     this.loading = false;
+    //   });
+    // }
   }
 
 }

@@ -60,6 +60,23 @@ export class PeakEditService {
         );
   }
 
+  // Create peak
+  public postPeak(peak): Observable<any> {
+    return this.httpClient
+        .post(APP_SETTINGS.API_ROOT + 'PeakSummaries.json', peak, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postPeak response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postPeak', []))
+        );
+  }
+
   // Update Data File
   public updateDF(data_file_id, df): Observable<any> {
     return this.httpClient
