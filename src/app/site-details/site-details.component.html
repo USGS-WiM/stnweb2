@@ -810,8 +810,13 @@
                         <mat-paginator [hidden]="siteFullInstruments === undefined || siteFullInstruments.length === 0" #sensorPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                     </mat-tab>
                     <mat-tab label="High Water Marks ({{hwm.length}})">
-                        <mat-card class="mat-elevation-z0 header-card"><p>High Water Marks ({{hwm.length}})</p></mat-card>
-                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To create a HWM, first choose an Event above.</p></mat-card>
+                        <mat-card class="mat-elevation-z0 header-card">
+                            <p>High Water Marks ({{hwm.length}})</p>
+                            <button *ngIf="currentEvent !== null && (role === '1' || role === '2' || role === '3')" mat-button (click)="openHWMEditDialog(null)"
+                                aria-label="Add HWM"><mat-icon class="add-buttons">add</mat-icon>
+                            </button>
+                        </mat-card>
+                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To create a HWM, first choose an Event above.</p></mat-card>
                         <div class="tableContainer" *ngIf="hwm !== undefined; else noHWMTable">
                             <table *ngIf="hwm.length > 0; else noHWMTable"
                                 mat-table
@@ -1169,7 +1174,7 @@
                                     </mat-panel-title>
                                     
                                     <button mat-button (click)="addFile('Site File', $event)"
-                                        aria-label="Add File"><mat-icon class="add-file">add</mat-icon>
+                                        aria-label="Add File"><mat-icon class="add-buttons">add</mat-icon>
                                     </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="siteFiles !== undefined; else noSiteFileTable">
@@ -1322,7 +1327,7 @@
                                         Reference Datum Files ({{datumLocFiles.length}})
                                     </mat-panel-title>
                                     <button mat-button (click)="addFile('Reference Datum File', $event)"
-                                        aria-label="Add File"><mat-icon class="add-file">add</mat-icon>
+                                        aria-label="Add File"><mat-icon class="add-buttons">add</mat-icon>
                                     </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="datumLocFiles !== undefined; else noDatumFileTable">
@@ -1496,7 +1501,7 @@
                                         Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
                                     <!-- <button mat-button (click)="addFile('Sensor File', $event)"
-                                        aria-label="Add File"><mat-icon class="add-file">add</mat-icon>
+                                        aria-label="Add File"><mat-icon class="add-buttons">add</mat-icon>
                                     </button> -->
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="sensorFiles !== undefined; else noSensorFileTable">
@@ -1670,7 +1675,7 @@
                                         HWM Files ({{hwmFiles.length}})
                                     </mat-panel-title>
                                     <button mat-button (click)="addFile('HWM File', $event)"
-                                        aria-label="Add File"><mat-icon class="add-file">add</mat-icon>
+                                        aria-label="Add File"><mat-icon class="add-buttons">add</mat-icon>
                                     </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="hwmFiles !== undefined; else noHWMFileTable">

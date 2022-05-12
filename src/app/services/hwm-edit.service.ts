@@ -89,6 +89,24 @@ export class HwmEditService {
         );
   }
 
+  /* istanbul ignore next */
+  //Create a HWM
+  public postHWM(hwm): Observable<any> {
+    return this.httpClient
+        .post(APP_SETTINGS.API_ROOT + 'hwms.json', hwm, {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postHWM response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postHWM', []))
+        );
+  }
+
   /**
      * Handle Http operation that failed.
      * Let the app continue.
