@@ -89,6 +89,7 @@ export class HwmEditService {
         );
   }
 
+  /* istanbul ignore next */
   //Create a HWM
   public postHWM(hwm): Observable<any> {
     return this.httpClient

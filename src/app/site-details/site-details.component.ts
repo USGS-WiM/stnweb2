@@ -980,6 +980,7 @@ export class SiteDetailsComponent implements OnInit {
         }
     }
 
+    /* istanbul ignore next */
     openRefMarkDetailsDialog(row): void {
         // Format date established
         if(row.date_established !== undefined && !row.date_established.includes("/")){
@@ -1013,6 +1014,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     openRefDatumEditDialog(row): void {
         let self = this;
         const dialogRef = this.dialog.open(RefDatumEditComponent, {
@@ -1040,6 +1042,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     openHWMDetailsDialog(row): void {
         // Format surveyed date
         if(row.survey_date !== undefined && !row.survey_date.includes("/")){
@@ -1066,6 +1069,7 @@ export class SiteDetailsComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {});
     }
 
+    /* istanbul ignore next */
     openHWMEditDialog(row): void {
         const dialogRef = this.dialog.open(HwmEditComponent, {
             data: {
@@ -1096,6 +1100,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     openSensorDetailsDialog(row): void {
         // Format dates
         let self = this;
@@ -1143,6 +1148,7 @@ export class SiteDetailsComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {});
     }
 
+    /* istanbul ignore next */
     openSensorEditDialog(row): void {
         let self = this;
         const dialogRef = this.dialog.open(SensorEditComponent, {
@@ -1166,7 +1172,7 @@ export class SiteDetailsComponent implements OnInit {
             }
         });
     }
-
+    /* istanbul ignore next */
     openPeaksDetailsDialog(row): void {
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
