@@ -54,6 +54,8 @@ export class HwmEditComponent implements OnInit {
   infoExpanded = true;
   filesExpanded = false;
   loading = false;
+  editOrCreate;
+  eventName;
 
   constructor(
     private dialogRef: MatDialogRef<HwmEditComponent>,
@@ -66,36 +68,64 @@ export class HwmEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.hwm = this.data.hwm;
-    this.hwm_environment = this.hwm.hwm_environment;
-    this.hwmBank = this.hwm.bank;
     this.hmethods = this.data.hmethodList;
     this.hdatums = this.data.hdatumList;
-
-    if(this.hwm.stillwater === 1){
-      this.isStillwater = "Yes";
-    }else{
-      this.isStillwater = "No";
-    }
-
-    // Admins can change event
-    if(this.role === 1){
-      this.getEventList();
-    }
-
-    this.getInitFiles();
+    
     this.getVDatums();
     this.getVMethods();
     this.getHWMTypes();
     this.getHWMMarkers();
     this.getHWMQualities();
-    this.setMembers();
-    if(this.hwm.approval_id){
-      this.getApproval();
-      this.approved = true;
+
+    // Edit hwm
+    if(this.hwm !== null){
+      this.editOrCreate = "Edit";
+
+      // Admins can change event
+      if(this.role === 1){
+        this.getEventList();
+      }
+
+      this.getInitFiles();
+      if(this.hwm.approval_id){
+        this.getApproval();
+        this.approved = true;
+      }else{
+        this.approved = false;
+      }
+      this.initForm();
     }else{
-      this.approved = false;
+      // Add hwm
+      this.editOrCreate = "Create";
+      // Default values for new HWM
+      this.hwm = {
+        site_id: this.data.site_id,
+        event_id: this.data.event_id,
+        hwm_environment: 'Riverine',
+        bank: 'N/A',
+        hwm_label: 'no_label',
+        stillwater: 0,
+        latitude_dd: this.data.hwmSite.latitude_dd,
+        longitude_dd: this.data.hwmSite.longitude_dd,
+        waterbody: this.data.hwmSite.waterbody,
+        hdatum_id: this.data.hwmSite.hdatum_id,
+        hcollect_method_id: this.data.hwmSite.hcollect_method_id,
+        flag_date: this.makeAdate(""),
+        flag_member_id: JSON.parse(localStorage.getItem('currentUser')).member_id
+      }
+      // Populate event with session event
+      this.eventName = this.data.event;
+      this.initForm();
     }
-    this.initForm();
+    
+    this.setMembers();
+    this.hwm_environment = this.hwm.hwm_environment;
+    this.hwmBank = this.hwm.bank;
+    if(this.hwm.stillwater === 1){
+      this.isStillwater = "Yes";
+    }else{
+      this.isStillwater = "No";
+    }
   }
 
   getEventList() {
@@ -160,13 +190,15 @@ export class HwmEditComponent implements OnInit {
 
   setMembers() {
     // Survey member
-    this.siteService
-    .getMemberName(this.hwm.survey_member_id)
-    .subscribe((results) => {
-      if(results.length > 0 || results.length === undefined){
-        this.surveyMember =  results.fname + " " + results.lname;
-      }
-    })
+    if(this.hwm.survey_member_id){
+      this.siteService
+      .getMemberName(this.hwm.survey_member_id)
+      .subscribe((results) => {
+        if(results.length > 0 || results.length === undefined){
+          this.surveyMember =  results.fname + " " + results.lname;
+        }
+      })
+    }
 
     // Flagging member
     this.siteService
@@ -537,51 +569,97 @@ export class HwmEditComponent implements OnInit {
   }
 
   sendRequests() {
+    let self = this;
     // Copy form value object and delete extra fields
     let hwmSubmission = JSON.parse(JSON.stringify(this.form.getRawValue()));
     delete hwmSubmission.latdeg; delete hwmSubmission.latmin; delete hwmSubmission.latsec; delete hwmSubmission.londeg; delete hwmSubmission.lonmin; delete hwmSubmission.lonsec;
 
-    console.log(hwmSubmission);
-    const updateHWM = new Promise<string>((resolve, reject) => this.hwmEditService.putHWM(hwmSubmission.hwm_id, hwmSubmission).subscribe(results => {
-      if(results.length !== 0){
-        this.returnData = results;
-        // Add formatted date
-        let flagDate = this.returnData.flag_date.split("T")[0];
-        flagDate = flagDate.split("-");
-        flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
-        this.returnData.format_flag_date = flagDate;
-        resolve("Success");
-      }else{
-        // Error
+    if(this.editOrCreate === "Edit"){
+      const updateHWM = new Promise<string>((resolve, reject) => this.hwmEditService.putHWM(hwmSubmission.hwm_id, hwmSubmission).subscribe(results => {
+        if(results.length !== 0){
+          this.returnData = results;
+          // Add formatted date
+          let flagDate = this.returnData.flag_date.split("T")[0];
+          flagDate = flagDate.split("-");
+          flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
+          this.returnData.format_flag_date = flagDate;
+          resolve("Success");
+        }else{
+          // Error
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error updating HWM",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+          reject(new Error("Error updating HWM."));
+        }
+      }));
+
+      updateHWM.then(() => {
+        this.loading = false;
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
-            title: "Error updating HWM",
-            titleIcon: "close",
+            title: "Successfully updated HWM",
+            titleIcon: "check",
             message: null,
             confirmButtonText: "OK",
             showCancelButton: false,
           },
         });
-        reject(new Error("Error updating HWM."));
-      }
-    }));
-
-    updateHWM.then(() => {
-      this.loading = false;
-      this.dialogRef.close(this.returnData);
-      this.dialog.open(ConfirmComponent, {
-        data: {
-          title: "Successfully updated HWM",
-          titleIcon: "check",
-          message: null,
-          confirmButtonText: "OK",
-          showCancelButton: false,
-        },
+      }).catch(function(error) {
+        console.log(error.message);
+        this.loading = false;
       });
-    }).catch(function(error) {
-      console.log(error.message);
-      this.loading = false;
-    });
+    }else if(this.editOrCreate === "Create"){
+      delete hwmSubmission.hwm_id;
+      const createHWM = new Promise<string>((resolve, reject) => this.hwmEditService.postHWM(hwmSubmission).subscribe(results => {
+        if(results.length !== 0){
+          this.returnData = results;
+          // Add formatted date
+          let flagDate = this.returnData.flag_date.split("T")[0];
+          flagDate = flagDate.split("-");
+          flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
+          this.returnData.format_flag_date = flagDate;
+          resolve("Success");
+        }else{
+          // Error
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error creating HWM",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+          reject(new Error("Error creating HWM."));
+        }
+      }));
+
+      createHWM.then(() => {
+        this.loading = false;
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Successfully created HWM",
+            titleIcon: "check",
+            message: null,
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+      }).catch(function(error) {
+        console.log(error.message);
+        self.loading = false;
+      });
+    }
   }
 
 }
