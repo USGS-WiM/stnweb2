@@ -15,6 +15,7 @@ import { Sort } from '@angular/material/sort';
 import { ReferenceDatumDialogComponent } from '@app/reference-datum-dialog/reference-datum-dialog.component';
 import { SensorDialogComponent } from '@app/sensor-dialog/sensor-dialog.component';
 import { HwmDialogComponent } from '@app/hwm-dialog/hwm-dialog.component';
+import { HwmEditService } from '@app/services/hwm-edit.service';
 import { FileDetailsDialogComponent } from '@app/file-details-dialog/file-details-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 declare let L: any;
@@ -218,6 +219,7 @@ export class SiteDetailsComponent implements OnInit {
         public dialog: MatDialog,
         public filtersService: FiltersService,
         public fileEditService: FileEditService,
+        public hwmEditService: HwmEditService,
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -1096,6 +1098,64 @@ export class SiteDetailsComponent implements OnInit {
             else if(result.result && result.editOrCreate === "Create") {
                 self.hwmDataSource.data.push(result.result); 
                 self.hwmDataSource.data = [...self.hwmDataSource.data];
+            }
+        });
+    }
+
+    /* istanbul ignore next */
+    deleteHWM(row): void {
+        let self = this;
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove HWM",
+              titleIcon: "close",
+              message: "Are you sure you want to remove this HWM? Flagged on: " + row.format_flag_date,
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                // Delete hwm
+                this.hwmEditService.deleteHWM(row.hwm_id).subscribe((results) => {
+                    if(results === null){
+                        // Update hwm data source
+                        self.hwmDataSource.data.forEach(function(hwm, i){
+                            if(hwm.hwm_id === row.hwm_id){
+                                self.hwmDataSource.data.splice(i, 1);
+                                self.hwmDataSource.data = [...self.hwmDataSource.data];
+                            }
+                        })
+                        // Update files data source
+                        self.hwmFilesDataSource.data.forEach(function(file, i){
+                            if(file.hwm_id === row.hwm_id){
+                                self.hwmFilesDataSource.data.splice(i, 1);
+                                self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                            }
+                        })
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "Successfully removed HWM",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error removing HWM",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }
+                })
             }
         });
     }
