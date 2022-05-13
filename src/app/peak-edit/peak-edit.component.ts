@@ -83,14 +83,12 @@ export class PeakEditComponent implements OnInit {
       this.editOrCreate = "Create";
       let newdate = new Date()
       // let newPeakDate = newdate.toISOString();
-      console.log(newdate)
       this.peak = { peak_date: newdate , hour: this.calcAMPM(newdate.getHours()).hour, minute: newdate.getMinutes(), ampm: this.calcAMPM(newdate.getHours()).ampm , member_id: JSON.parse(localStorage.getItem('currentUser')).member_id };
       this.setMembers();
-      console.log(this.peak)
-      // this.setPeakTimeAndDate();
-      // this.peak.time_zone = "UTC";
       // TODO - display local timezone
-      // this.peak.peak_date = this.timezonesService.convertTimezone(this.peak.time_zone, this.peak.peak_date, this.peak.minute)
+      // IANA timezone
+      let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      console.log(timezone)
       this.initForm();
       // this.previewUTC();
     }
