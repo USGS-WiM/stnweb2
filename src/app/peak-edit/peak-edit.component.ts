@@ -64,24 +64,35 @@ export class PeakEditComponent implements OnInit {
     this.sensorFiles = JSON.parse(JSON.stringify(this.data.sensorFiles));
     this.hwmFiles = JSON.parse(JSON.stringify(this.data.hwmFiles));
 
-    this.setPeakTimeAndDate();
     // Add boolean field to show/hide details of each hwm
     this.hideAllSensorDetails();
     this.hideAllHWMDetails();
-
-    this.getPeakSummary();
-    this.getPeakDataFiles();
     this.getVDatums();
     this.getSensorFiles();
     this.getHWMFiles();
-    this.reorderInstruments();
-    this.getSelectedHWMs();
-    this.initForm();
 
     if(this.peak !== null){
       this.editOrCreate = "Edit";
+      this.setPeakTimeAndDate();
+      this.getPeakSummary();
+      this.getPeakDataFiles();
+      this.reorderInstruments();
+      this.getSelectedHWMs();
+      this.initForm();
     }else{
       this.editOrCreate = "Create";
+      let newdate = new Date()
+      // let newPeakDate = newdate.toISOString();
+      console.log(newdate)
+      this.peak = { peak_date: newdate , hour: this.calcAMPM(newdate.getHours()).hour, minute: newdate.getMinutes(), ampm: this.calcAMPM(newdate.getHours()).ampm , member_id: JSON.parse(localStorage.getItem('currentUser')).member_id };
+      this.setMembers();
+      console.log(this.peak)
+      // this.setPeakTimeAndDate();
+      // this.peak.time_zone = "UTC";
+      // TODO - display local timezone
+      // this.peak.peak_date = this.timezonesService.convertTimezone(this.peak.time_zone, this.peak.peak_date, this.peak.minute)
+      this.initForm();
+      // this.previewUTC();
     }
   }
 
@@ -123,21 +134,26 @@ export class PeakEditComponent implements OnInit {
     }
   }
 
+  calcAMPM(hour) {
+    if(hour > 12){
+      hour = String(hour - 12).padStart(2, '0');
+      return {ampm: "PM", hour: hour};
+    }else{
+      if(String(hour) === '00'){
+        hour = '12';
+        return {ampm: "AM", hour: hour};
+      }else{
+        hour = String(hour).padStart(2, '0');
+        return {ampm: "AM", hour: hour};
+      }
+    }
+  }
+
   setTimeAndDate(time_stamp) {
       let hour = (time_stamp.split('T')[1]).split(':')[0];
-      let ampm;
-      if(hour > 12){
-        hour = String(hour - 12).padStart(2, '0');
-        ampm = "PM";
-      }else{
-        if(String(hour) === '00'){
-          hour = '12';
-          ampm = "AM";
-        }else{
-          hour = String(hour).padStart(2, '0');
-          ampm = "AM";
-        }
-      }
+      let hourampmObj = this.calcAMPM(hour);
+      hour = hourampmObj.hour;
+      let ampm = hourampmObj.ampm;
       // minute
       let minute = time_stamp.split('T')[1].split(':')[1];
       minute = String(minute).padStart(2, '0');
@@ -149,18 +165,10 @@ export class PeakEditComponent implements OnInit {
 
   setPeakTimeAndDate() {
     let hour = (this.peak.peak_date.split('T')[1]).split(':')[0];
-    if(hour > 12){
-      this.peak.hour = String(hour - 12).padStart(2, '0');
-      this.peak.ampm = "PM";
-    }else{
-      if(String(hour) === '00'){
-        this.peak.hour = '12';
-        this.peak.ampm = "AM";
-      }else{
-        this.peak.hour = String(hour).padStart(2, '0');
-        this.peak.ampm = "AM";
-      }
-    }
+    let hourampmObj = this.calcAMPM(hour);
+    this.peak.hour = hourampmObj.hour;
+    this.peak.ampm = hourampmObj.ampm;
+
     // minute
     let minute = this.peak.peak_date.split('T')[1].split(':')[1];
     this.peak.minute = String(minute).padStart(2, '0');

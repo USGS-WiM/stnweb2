@@ -1205,6 +1205,8 @@ export class SiteDetailsComponent implements OnInit {
                 siteSensors: sensors,
                 sensorFiles: this.sensorFilesDataSource.data,
                 hwmFiles: this.hwmFilesDataSource.data,
+                event_id: this.currentEvent,
+                event: this.event,
             },
             width: '100%',
             autoFocus: false
