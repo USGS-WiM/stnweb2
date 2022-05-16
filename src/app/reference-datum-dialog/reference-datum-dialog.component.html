@@ -63,7 +63,7 @@
             </div>
             <div class="cell-container">
               <p class="content-left">Elevation</p>
-              <p class="content-right" *ngIf="data.row_data.elev_ft !== undefined || data.row_data.elev_ft !== ''; else nullElev">{{data.row_data.elev_ft}} ft</p>
+              <p class="content-right" *ngIf="data.row_data.elev_ft !== undefined && data.row_data.elev_ft !== ''; else nullElev">{{data.row_data.elev_ft}} ft</p>
               <ng-template #nullElev><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">

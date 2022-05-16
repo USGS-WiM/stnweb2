@@ -277,6 +277,7 @@ describe('RefDatumEditComponent', () => {
     component.form.get("date_established").setValue("2018-12-20T22:55:17.129");
     component.controlsToAdd = [];
     component.controlsToRemove = [];
+    component.editOrCreate = "Edit";
 
     let rdResponse = {op_type_id: 0, description: "test", name: "test", vdatum: 2, date_established: "2018-12-20T22:55:17.129"};
     spyOn(component.opEditService, 'putReferenceDatum').and.returnValue(
@@ -288,6 +289,7 @@ describe('RefDatumEditComponent', () => {
 
       expect(component.returnData.referenceDatums).toEqual(rdResponse);
       done();
+      component.editOrCreate = "";
     });
   });
 
@@ -306,6 +308,7 @@ describe('RefDatumEditComponent', () => {
     let opUpdateResponse = {op_control_identifier_id: 3, objective_point_id: 0, identifier: "test3", identifier_type: "PID", last_updated: "2018-12-20T22:55:17.129", last_updated_by: 0};
 
     let rdResponse = {op_type_id: 0, description: "test", name: "test", vdatum: 2, date_established: "2018-12-20T22:55:17.129"};
+    component.editOrCreate = "Edit";
     spyOn(component.opEditService, 'putReferenceDatum').and.returnValue(
       of(rdResponse)
     );
@@ -327,6 +330,7 @@ describe('RefDatumEditComponent', () => {
 
       expect(component.returnData.opControlID).toEqual([opControlResponse, opUpdateResponse]);
       done();
+      component.editOrCreate = "";
     });
   });
 

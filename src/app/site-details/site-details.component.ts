@@ -1026,20 +1026,24 @@ export class SiteDetailsComponent implements OnInit {
                 hmethodList: this.hmethodList,
                 files: this.refMarkFilesDataSource.data,
                 site_id: this.site.site_id,
+                rdSite: this.site,
             },
             width: '100%',
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result){
-                if(result.referenceDatums !== null){
+            if(result.result && result.editOrCreate === "Edit") {
+                if(result.result.referenceDatums !== null){
                     this.refMarkDataSource.data.forEach(function(row, i){
-                        if(row.objective_point_id === result.referenceDatums.objective_point_id){
+                        if(row.objective_point_id === result.result.referenceDatums.objective_point_id){
                             // replace row with new info
-                            self.refMarkDataSource.data = [result.referenceDatums];
+                            self.refMarkDataSource.data = [result.result.referenceDatums];
                         }
                     });
                 }
+            } else if(result.result && result.editOrCreate === "Create") {
+                self.refMarkDataSource.data.push(result.result.referenceDatums); 
+                self.refMarkDataSource.data = [...self.refMarkDataSource.data];
             }
         });
     }

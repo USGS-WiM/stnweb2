@@ -467,7 +467,12 @@
                 </mat-tab>
                 <div *ngIf="noSiteInfo !== undefined">
                     <mat-tab label="Reference Datums ({{referenceDatums.length}})">
-                        <mat-card class="mat-elevation-z0 header-card"><p>Reference Datums ({{referenceDatums.length}})</p></mat-card>
+                        <mat-card class="mat-elevation-z0 header-card">
+                            <p>Reference Datums ({{referenceDatums.length}})</p>
+                            <button *ngIf="role === '1' || role === '2' || role === '3'" mat-button (click)="openRefDatumEditDialog(null)"
+                                aria-label="Add Reference Datum"><mat-icon class="add-buttons">add</mat-icon>
+                            </button>
+                        </mat-card>
                         <div class="tableContainer" *ngIf="referenceDatums !== undefined; else noRMTable">
                             <table *ngIf="referenceDatums.length > 0; else noRMTable"
                                 mat-table

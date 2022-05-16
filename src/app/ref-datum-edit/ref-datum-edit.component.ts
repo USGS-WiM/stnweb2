@@ -52,6 +52,7 @@ export class RefDatumEditComponent implements OnInit {
 
   infoExpanded = true;
   filesExpanded = false;
+  editOrCreate;
 
   constructor(
     private dialogRef: MatDialogRef<RefDatumEditComponent>,
@@ -66,16 +67,29 @@ export class RefDatumEditComponent implements OnInit {
     this.hmethods = this.data.hmethodList;
     this.hdatums = this.data.hdatumList;
 
-    if(this.rd.unquantified === "1"){
-      this.unquantified = true;
-    }
-    
-    this.getInitFiles();
     this.getOPQuality();
     this.getOPTypes();
     this.getVDatums();
     this.getVMethods();
-    this.getControlID();
+
+    if(this.rd !== null){
+      this.editOrCreate = "Edit";
+      if(this.rd.unquantified === "1"){
+        this.unquantified = true;
+      }
+
+      this.getInitFiles();
+      this.getControlID();
+
+    }else {
+      this.editOrCreate = "Create";
+      this.rd = {};
+      this.rd.latitude_dd = this.data.rdSite.latitude_dd;
+      this.rd.longitude_dd = this.data.rdSite.longitude_dd;
+      this.rd.hdatum_id = this.data.rdSite.hdatum_id;
+      //default today for established date
+      this.rd.date_established = this.makeAdate("");
+    }
     this.initForm();
   }
 
@@ -119,7 +133,6 @@ export class RefDatumEditComponent implements OnInit {
     this.siteService
     .getOPControlID(this.rd.objective_point_id)
     .subscribe((results) => {
-      console.log(results)
       if(results.length > 0){
         results.forEach(function(control){
           self.controlID.push(control);
@@ -261,6 +274,21 @@ export class RefDatumEditComponent implements OnInit {
       this.form.controls.lonsec.setValidators();
     }
   }
+
+  // Create a date without time
+  makeAdate(d) {
+    var aDate = new Date();
+    if (d !== "" && d !== undefined) {
+        //provided date
+        aDate = new Date(d);
+    }
+    var year = aDate.getFullYear();
+    var month = aDate.getMonth();
+    var day = ('0' + aDate.getDate()).slice(-2);
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var dateWOtime = new Date(monthNames[month] + " " + day + ", " + year);
+    return dateWOtime;
+  };
 
   range = function (x, min, max) {
     return x < min || x > max;
@@ -443,101 +471,157 @@ export class RefDatumEditComponent implements OnInit {
     delete rdSubmission.latdeg; delete rdSubmission.latmin; delete rdSubmission.latsec; delete rdSubmission.londeg; delete rdSubmission.lonmin; delete rdSubmission.lonsec;
     delete rdSubmission.op_control_identifier;
 
-    // Get list of initial objective points
-    let initOPs = [];
-    self.controlID.forEach(function(control){
-      initOPs.push(control.op_control_identifier_id);
-    })
-    // Add control identifier array
-    if(this.controlsToAdd.length > 0){
-      for(let newControl of this.controlsToAdd){
-        if((newControl.op_control_identifier_id !== null) && (initOPs.join(',').includes(newControl.op_control_identifier_id.toString()))){
-          // Existing control was changed - put
-          let changed = false;
-          for(let control of self.controlID){
-            if(control.op_control_identifier_id === newControl.op_control_identifier_id){
-              if(JSON.stringify(control) !== JSON.stringify(newControl)){
-                changed = true;
+    // set null values to 0
+    rdSubmission.op_is_destroyed = rdSubmission.op_is_destroyed !== null ? rdSubmission.op_is_destroyed : 0;
+    rdSubmission.vdatum_id = rdSubmission.vdatum_id !== null ? rdSubmission.vdatum_id : 0;
+    rdSubmission.hdatum_id = rdSubmission.hdatum_id !== null ? rdSubmission.hdatum_id : 0;
+    rdSubmission.hcollect_method_id = rdSubmission.hcollect_method_id !== null ? rdSubmission.hcollect_method_id : 0;
+    rdSubmission.vcollect_method_id = rdSubmission.vcollect_method_id !== null ? rdSubmission.vcollect_method_id : 0;
+    
+    if(this.editOrCreate === "Edit"){
+      // Get list of initial objective points
+      let initOPs = [];
+      self.controlID.forEach(function(control){
+        initOPs.push(control.op_control_identifier_id);
+      })
+      // Add control identifier array
+      if(this.controlsToAdd.length > 0){
+        for(let newControl of this.controlsToAdd){
+          if((newControl.op_control_identifier_id !== null) && (initOPs.join(',').includes(newControl.op_control_identifier_id.toString()))){
+            // Existing control was changed - put
+            let changed = false;
+            for(let control of self.controlID){
+              if(control.op_control_identifier_id === newControl.op_control_identifier_id){
+                if(JSON.stringify(control) !== JSON.stringify(newControl)){
+                  changed = true;
+                }
               }
             }
-          }
-          if(changed){
-            const updateOPControl = new Promise<string>(resolve => this.opEditService.updateControlID(newControl.op_control_identifier_id, newControl)
+            if(changed){
+              const updateOPControl = new Promise<string>(resolve => this.opEditService.updateControlID(newControl.op_control_identifier_id, newControl)
+                  .subscribe(
+                      (data) => {
+                          this.returnData.opControlID.push(data);
+                          resolve("Update OP control success.");
+                      }
+                  )
+                )
+
+              promises.push(updateOPControl);
+            }else{
+              // Initial id was not changed or removed
+              self.returnData.opControlID.push(newControl);
+            }
+          }else{
+            delete newControl.last_updated; delete newControl.last_updated_by; delete newControl.op_control_identifier_id;
+            // Add new control - post
+            newControl.objective_point_id = rdSubmission.objective_point_id;
+            const addOPControl = new Promise<string>(resolve => this.opEditService.postControlID(newControl)
                 .subscribe(
                     (data) => {
                         this.returnData.opControlID.push(data);
-                        resolve("Update OP control success.");
+                        resolve("Add OP control success.");
                     }
                 )
               )
 
-            promises.push(updateOPControl);
-          }else{
-            // Initial id was not changed or removed
-            self.returnData.opControlID.push(newControl);
+            promises.push(addOPControl);
           }
-        }else{
-          delete newControl.last_updated; delete newControl.last_updated_by; delete newControl.op_control_identifier_id;
-          // Add new control - post
-          newControl.objective_point_id = rdSubmission.objective_point_id;
-          const addOPControl = new Promise<string>(resolve => this.opEditService.postControlID(newControl)
-              .subscribe(
-                  (data) => {
-                      this.returnData.opControlID.push(data);
-                      resolve("Add OP control success.");
-                  }
-              )
+        };
+      }
+
+      // Remove control identitier array
+      if(this.controlsToRemove.length > 0){
+        // Only send new controls
+        for(let control of this.controlsToRemove){
+          if(control.op_control_identifier_id !== null){
+          // delete control
+          const deleteOPControl = new Promise<string>(resolve => this.opEditService.deleteControlID(control.op_control_identifier_id)
+            .subscribe(
+                (data) => {
+                    resolve("Delete OP control success.");
+                }
             )
+          )
 
-          promises.push(addOPControl);
-        }
-      };
-    }
+          promises.push(deleteOPControl);
+          }
+        };
+      }
 
-    // Remove control identitier array
-    if(this.controlsToRemove.length > 0){
-      // Only send new controls
-      for(let control of this.controlsToRemove){
-        if(control.op_control_identifier_id !== null){
-        // delete control
-        const deleteOPControl = new Promise<string>(resolve => this.opEditService.deleteControlID(control.op_control_identifier_id)
+      const updateRD = new Promise<string>(resolve => this.opEditService.putReferenceDatum(rdSubmission.objective_point_id, rdSubmission)
           .subscribe(
               (data) => {
-                  resolve("Delete OP control success.");
+                  this.returnData.referenceDatums = data;
+                  resolve("Update reference datum success.");
               }
           )
         )
 
-        promises.push(deleteOPControl);
-        }
-      };
-    }
+      promises.push(updateRD)
 
-    const updateRD = new Promise<string>(resolve => this.opEditService.putReferenceDatum(rdSubmission.objective_point_id, rdSubmission)
-      .subscribe(
-          (data) => {
+      Promise.all(promises).then(() => {
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
+        this.loading = false;
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Successfully updated Reference Datum",
+            titleIcon: "check",
+            message: null,
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+        return;
+      })
+    }else if (this.editOrCreate === "Create") {
+      delete rdSubmission.objective_point_id;
+      const createRD = new Promise<string>(resolve => this.opEditService.createReferenceDatum(rdSubmission)
+        .subscribe(
+            (data) => {
               this.returnData.referenceDatums = data;
-              resolve("Update reference datum success.");
-          }
+              resolve("Create reference datum success.");
+              // Add control identifier array
+              if(this.controlsToAdd.length > 0){
+                for(let newControl of this.controlsToAdd){
+                  delete newControl.last_updated; delete newControl.last_updated_by; delete newControl.op_control_identifier_id;
+                  // Add new control - post
+                  newControl.objective_point_id = data.objective_point_id;
+                  const addOPControl = new Promise<string>(resolve => this.opEditService.postControlID(newControl)
+                      .subscribe(
+                          (data) => {
+                              this.returnData.opControlID.push(data);
+                              resolve("Add OP control success.");
+                          }
+                      )
+                    )
+
+                  promises.push(addOPControl);
+                }
+              }
+            }
+        )
       )
-    )
 
-    promises.push(updateRD)
+      promises.push(createRD)
 
-    Promise.all(promises).then(() => {
-      this.dialogRef.close(this.returnData);
-      this.loading = false;
-      this.dialog.open(ConfirmComponent, {
-        data: {
-          title: "Successfully updated Reference Datum",
-          titleIcon: "check",
-          message: null,
-          confirmButtonText: "OK",
-          showCancelButton: false,
-        },
-      });
-      return;
-    })
+      Promise.all(promises).then(() => {
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
+        this.loading = false;
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Successfully created Reference Datum",
+            titleIcon: "check",
+            message: null,
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+        return;
+      })
+    }
   }
 
 }
