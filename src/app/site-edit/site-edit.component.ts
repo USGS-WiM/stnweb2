@@ -553,16 +553,18 @@ export class SiteEditComponent implements OnInit {
     
     // Set source name and agency automatically
     // Member id
-    let member_id = JSON.parse(localStorage.getItem('currentUser')).member_id;
-    this.siteFiles.FileEntity.source_id = member_id;
-    this.siteFileForm.controls['source_id'].setValue(member_id);
-    // FULLname
-    this.siteFiles.FileEntity.FULLname = JSON.parse(localStorage.getItem('currentUser')).fname + " " +  JSON.parse(localStorage.getItem('currentUser')).lname;
-    this.siteFileForm.controls['FULLname'].setValue(this.siteFiles.FileEntity.FULLname);
-    // Agency
-    this.siteFiles.FileEntity.agency_id = JSON.parse(localStorage.getItem('currentUser')).agency_id;
-    this.agencyNameForCap = JSON.parse(localStorage.getItem('currentUser')).agency_name;
-    this.siteFileForm.controls['agency_id'].setValue(this.siteFiles.FileEntity.agency_id);
+    if(JSON.parse(localStorage.getItem('currentUser'))){
+      let member_id = JSON.parse(localStorage.getItem('currentUser')).member_id;
+      this.siteFiles.FileEntity.source_id = member_id;
+      this.siteFileForm.controls['source_id'].setValue(member_id);
+      // FULLname
+      this.siteFiles.FileEntity.FULLname = JSON.parse(localStorage.getItem('currentUser')).fname + " " +  JSON.parse(localStorage.getItem('currentUser')).lname;
+      this.siteFileForm.controls['FULLname'].setValue(this.siteFiles.FileEntity.FULLname);
+      // Agency
+      this.siteFiles.FileEntity.agency_id = JSON.parse(localStorage.getItem('currentUser')).agency_id;
+      this.agencyNameForCap = JSON.parse(localStorage.getItem('currentUser')).agency_name;
+      this.siteFileForm.controls['agency_id'].setValue(this.siteFiles.FileEntity.agency_id);
+    }
   }
 
   getFileTypeSelection(event) {
