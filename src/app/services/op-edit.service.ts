@@ -30,6 +30,7 @@ export class OpEditService {
           );
     }
 
+    /* istanbul ignore next */
     //Update existing reference datum by ID
     public deleteRD(opID: string): Observable<any> {
         return this.httpClient

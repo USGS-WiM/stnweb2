@@ -1070,7 +1070,7 @@ export class SiteDetailsComponent implements OnInit {
                     data: {
                     title: "Remove Reference Datum",
                     titleIcon: "close",
-                    message: "Are you sure you want to remove this Reference Datum? " + row.name,
+                    message: "Are you sure you want to remove this Reference Datum: " + row.name,
                     confirmButtonText: "OK",
                     showCancelButton: true,
                     },
@@ -1080,7 +1080,7 @@ export class SiteDetailsComponent implements OnInit {
                         // Delete reference datum
                         this.opEditService.deleteRD(row.objective_point_id).subscribe((results) => {
                             if(results === null){
-                                // Update hwm data source
+                                // Update reference datum data source
                                 self.refMarkDataSource.data.forEach(function(rd, i){
                                     if(rd.objective_point_id === row.objective_point_id){
                                         self.refMarkDataSource.data.splice(i, 1);
