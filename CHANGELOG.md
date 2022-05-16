@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Clear filters button styling to link
  -  Increased details modal widths
  -  Improved responsiveness of tables in details modals
+ -  Autopopulate source and agency when adding file in site edit form
 
  
  ### Fixed
