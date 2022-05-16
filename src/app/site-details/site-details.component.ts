@@ -27,6 +27,7 @@ import { ResultDetailsComponent } from '@app/result-details/result-details.compo
 import { networkInterfaces } from 'os';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
+import { OpEditService } from '@app/services/op-edit.service';
 import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
 import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
@@ -220,6 +221,7 @@ export class SiteDetailsComponent implements OnInit {
         public filtersService: FiltersService,
         public fileEditService: FileEditService,
         public hwmEditService: HwmEditService,
+        public opEditService: OpEditService,
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -1040,6 +1042,83 @@ export class SiteDetailsComponent implements OnInit {
                         }
                     });
                 }
+            }
+        });
+    }
+
+    /* istanbul ignore next */
+    deleteRD(row): void {
+        let self = this;
+        // First check if any sensors are using this reference datum
+        self.opEditService
+        .getOPMeasurements(row.objective_point_id)
+        .subscribe((results) => {
+            if (results.length > 0) {
+                // If there are sensors using the reference datum
+                this.dialog.open(ConfirmComponent, {
+                    data: {
+                    title: "Cannot Delete",
+                    titleIcon: "close",
+                    message: "This Reference Datum is being used for one or more sensor tape downs. Please delete the tape down before deleting the reference datum.",
+                    confirmButtonText: "OK",
+                    showCancelButton: true,
+                    },
+                });
+            }else{
+                // If no sensors are using the reference datum
+                const dialogRef = this.dialog.open(ConfirmComponent, {
+                    data: {
+                    title: "Remove Reference Datum",
+                    titleIcon: "close",
+                    message: "Are you sure you want to remove this Reference Datum? " + row.name,
+                    confirmButtonText: "OK",
+                    showCancelButton: true,
+                    },
+                });
+                dialogRef.afterClosed().subscribe((result) => {
+                    if(result) {
+                        // Delete reference datum
+                        this.opEditService.deleteRD(row.objective_point_id).subscribe((results) => {
+                            if(results === null){
+                                // Update hwm data source
+                                self.refMarkDataSource.data.forEach(function(rd, i){
+                                    if(rd.objective_point_id === row.objective_point_id){
+                                        self.refMarkDataSource.data.splice(i, 1);
+                                        self.refMarkDataSource.data = [...self.refMarkDataSource.data];
+                                    }
+                                })
+                                // Update files data source
+                                self.refMarkFilesDataSource.data.forEach(function(file, i){
+                                    if(file.objective_point_id === row.objective_point_id){
+                                        self.refMarkFilesDataSource.data.splice(i, 1);
+                                        self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                                    }
+                                })
+                                // success
+                                this.dialog.open(ConfirmComponent, {
+                                    data: {
+                                    title: "",
+                                    titleIcon: "close",
+                                    message: "Successfully removed Reference Datum",
+                                    confirmButtonText: "OK",
+                                    showCancelButton: false,
+                                    },
+                                });
+                            }else{
+                                // error
+                                this.dialog.open(ConfirmComponent, {
+                                    data: {
+                                    title: "Error",
+                                    titleIcon: "close",
+                                    message: "Error removing Reference Datum",
+                                    confirmButtonText: "OK",
+                                    showCancelButton: false,
+                                    },
+                                });
+                            }
+                        })
+                    }
+                });
             }
         });
     }
