@@ -471,6 +471,12 @@ export class RefDatumEditComponent implements OnInit {
     delete rdSubmission.latdeg; delete rdSubmission.latmin; delete rdSubmission.latsec; delete rdSubmission.londeg; delete rdSubmission.lonmin; delete rdSubmission.lonsec;
     delete rdSubmission.op_control_identifier;
 
+    // set null values to 0
+    rdSubmission.op_is_destroyed = rdSubmission.op_is_destroyed !== null ? rdSubmission.op_is_destroyed : 0;
+    rdSubmission.vdatum_id = rdSubmission.vdatum_id !== null ? rdSubmission.vdatum_id : 0;
+    rdSubmission.hdatum_id = rdSubmission.hdatum_id !== null ? rdSubmission.hdatum_id : 0;
+    rdSubmission.hcollect_method_id = rdSubmission.hcollect_method_id !== null ? rdSubmission.hcollect_method_id : 0;
+    rdSubmission.vcollect_method_id = rdSubmission.vcollect_method_id !== null ? rdSubmission.vcollect_method_id : 0;
     
     if(this.editOrCreate === "Edit"){
       // Get list of initial objective points
@@ -581,7 +587,7 @@ export class RefDatumEditComponent implements OnInit {
                 for(let newControl of this.controlsToAdd){
                   delete newControl.last_updated; delete newControl.last_updated_by; delete newControl.op_control_identifier_id;
                   // Add new control - post
-                  newControl.objective_point_id = rdSubmission.objective_point_id;
+                  newControl.objective_point_id = data.objective_point_id;
                   const addOPControl = new Promise<string>(resolve => this.opEditService.postControlID(newControl)
                       .subscribe(
                           (data) => {

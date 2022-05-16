@@ -1042,7 +1042,7 @@ export class SiteDetailsComponent implements OnInit {
                     });
                 }
             } else if(result.result && result.editOrCreate === "Create") {
-                self.refMarkDataSource.data.push(result.result); 
+                self.refMarkDataSource.data.push(result.result.referenceDatums); 
                 self.refMarkDataSource.data = [...self.refMarkDataSource.data];
             }
         });

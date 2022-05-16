@@ -30,6 +30,7 @@ export class OpEditService {
           );
     }
 
+    /* istanbul ignore next */
     //Create reference datum
     public createReferenceDatum(op): Observable<any> {
         return this.httpClient
