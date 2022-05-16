@@ -1,6 +1,6 @@
 #siteDetailsContainer {
     margin: auto;
-    padding: 40px;
+    padding: 10px 40px 40px 40px;
 }
 
 .site-title {
@@ -288,35 +288,26 @@ table {
 
 .map-button {
     margin: 5px 5px;
-    background-color: white;
-    border: 1px solid rgba(0, 0, 0, 0.2);;
-    font-size: 15px;
-    font-weight: bold;
 }
 
 .delete-button {
     margin-left: 5px;
 }
 
-.delete-btn {
-    background-color: #E70000;
-    color: #F4F4F4;
-    border: 1px solid #ce0000;
-    margin: 5px 5px;
-}
-
 .view-details-btn {
     margin: 5px 5px;
-    border: 1px solid #404040;
 }
 
 .edit-details-btn {
     margin: 5px 5px;
-    border: 1px solid #404040;
 }
 
 .edit-icon {
     font-size: 22px;
+}
+
+.add-buttons {
+    color: #FFF;
 }
 
 .table-container {
@@ -394,11 +385,16 @@ table {
     background-color: #03274B;
     height: 70px;
     padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
 }
 
 .header-card p {
     color: #FFF;
     font-size: 20px;
+    margin: 0px;
 }
 
 .event-alert {

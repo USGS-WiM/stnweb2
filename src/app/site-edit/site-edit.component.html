@@ -194,7 +194,10 @@
                         </mat-form-field>
                         <mat-form-field appearance="fill">
                             <mat-label>Zip</mat-label>
-                            <input aria-label="Zip" matInput formControlName="zip" [value]="site.zip"/>
+                            <input aria-label="Zip" matInput maxLength="5" formControlName="zip" [value]="site.zip"/>
+                            <mat-error>
+                                Invalid zip code
+                            </mat-error>
                         </mat-form-field>
                         <mat-form-field appearance="fill">
                             <mat-label>County</mat-label>
@@ -286,7 +289,7 @@
                                             <label class="form-header">Landowner Contact</label><mat-icon matSuffix class="info-icon" matTooltip="Do not record information that private citizens have a reasonable expectation of privacy about. No names or phone numbers of private citizens.  Business contact information is acceptable." 
                                             aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                         </div>
-                                        <button mat-raised-button class="add-button" (click)="addLandownerContact()" type="button"><mat-icon>add</mat-icon> Add Landowner</button>
+                                        <button mat-stroked-button class="add-button add" (click)="addLandownerContact()" type="button"><mat-icon>add</mat-icon> Add Landowner</button>
                                         <form [formGroup]="landownerForm" [hidden]="!hasLandownerContact && !addLandownerCheck">
                                             <mat-expansion-panel hideToggle expanded="true">
                                                 <mat-expansion-panel-header>
@@ -326,19 +329,31 @@
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Zip</mat-label>
-                                                    <input aria-label="Zip" formControlName="zip" matInput [value]="landownerContact.zip"/>
+                                                    <input aria-label="Zip" maxLength="5" formControlName="zip" matInput [value]="landownerContact.zip"/>
+                                                    <mat-error>
+                                                        Invalid zip code
+                                                    </mat-error>
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Primary Phone</mat-label>
-                                                    <input aria-label="Primary Phone" formControlName="primaryphone" matInput [value]="landownerContact.primaryphone"/>
+                                                    <input id="primary-phone" aria-label="Primary Phone" (keydown)="this.phoneNumberFormatter($event)" formControlName="primaryphone" matInput [value]="landownerContact.primaryphone"/>
+                                                    <mat-error>
+                                                        Invalid phone format
+                                                    </mat-error>
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Secondary Phone</mat-label>
-                                                    <input aria-label="Secondary Phone" formControlName="secondaryphone" matInput [value]="landownerContact.secondaryphone"/>
+                                                    <input id="secondary-phone" aria-label="Secondary Phone" (keydown)="this.phoneNumberFormatter($event)" formControlName="secondaryphone" matInput [value]="landownerContact.secondaryphone"/>
+                                                    <mat-error>
+                                                        Invalid phone format
+                                                    </mat-error>
                                                 </mat-form-field>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Email</mat-label>
                                                     <input aria-label="Email" formControlName="email" matInput [value]="landownerContact.email"/>
+                                                    <mat-error>
+                                                        Invalid email format
+                                                    </mat-error>
                                                 </mat-form-field>
                                             </mat-expansion-panel>
                                         </form>
@@ -429,8 +444,8 @@
                                     </div>
                             </mat-expansion-panel>
                             <div class="site-button-group">
-                                <button class="save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
-                                <button class="cancel-btn" mat-raised-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                                <button class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                                <button class="cancel-btn secondary" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
                             </div>
                         </mat-accordion>
             </mat-expansion-panel>
@@ -444,7 +459,7 @@
                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
-                <button mat-raised-button class="add-button" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
+                <button mat-stroked-button class="add-button add" (click)="addSiteFile()" type="button"><mat-icon>add</mat-icon> Add File</button>
                 <div class="tableContainer" [hidden]="initSiteFiles?.length === 0">
                     <table
                         mat-table
@@ -634,7 +649,7 @@
                                                 <input #upload [hidden]="true" id="Upload" type="file" max="500000" file-model="existingFile.File" (change)="getFileName($event)">
                                                 <span *ngIf="fileUploading" class="file-upload-span">
                                                     Correct File?
-                                                    <button aria-label="Upload" mat-button class="save-btn" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
+                                                    <button aria-label="Upload" mat-button class="primary" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
                                                 </span>
                                             </div>
                                             <!-- change out the existing fileItem with a different one-->
@@ -647,16 +662,16 @@
                                                 </div>
                                                 <span *ngIf="fileUploading" class="file-upload-span">
                                                     Correct File?
-                                                    <button aria-label="Is this file correct?" mat-button class="save-btn" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
+                                                    <button aria-label="Is this file correct?" mat-button class="primary" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div [hidden]="siteFileIsUploading" class="file-button-group">
-                                        <button aria-label="Save File" mat-button type="button" class="save-btn" *ngIf="siteFiles.FileEntity.file_id !== null" (click)="saveFile()">Save File</button>
-                                        <button aria-label="Delete File" mat-button class="delete-btn" type="button" *ngIf="siteFiles.FileEntity.file_id !== null" (click)="deleteFile()">Delete File</button>
-                                        <button aria-label="Create File" mat-button type="button" class="save-btn" *ngIf="siteFiles.FileEntity.file_id == null" (click)="createFile()">Create File</button>
-                                        <button aria-label="Close or Cancel File" mat-raised-button style="margin-left: 10px" type="button" (click)="cancelFile()">Close/Cancel File</button>
+                                        <button aria-label="Save File" mat-button type="button" class="save-btn primary" *ngIf="siteFiles.FileEntity.file_id !== null" (click)="saveFile()">Save File</button>
+                                        <button aria-label="Delete File" mat-button class="delete-btn delete" type="button" *ngIf="siteFiles.FileEntity.file_id !== null" (click)="deleteFile()">Delete File</button>
+                                        <button aria-label="Create File" mat-button type="button" class="save-btn primary" *ngIf="siteFiles.FileEntity.file_id == null" (click)="createFile()">Create File</button>
+                                        <button aria-label="Close or Cancel File" mat-stroked-button class="secondary" style="margin-left: 10px" type="button" (click)="cancelFile()">Close/Cancel File</button>
                                     </div>
                 </form>
             </mat-expansion-panel>
@@ -664,7 +679,7 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
-            <button mat-raised-button [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Close">Close</button>
+            <button mat-stroked-button class="secondary" [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Close">Close</button>
             <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
         </div>
     </mat-dialog-actions>

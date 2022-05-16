@@ -19,16 +19,9 @@ import 'leaflet';
 })
 export class SiteService {
     // public currentEvent;
-    private event = new BehaviorSubject<number>(0);
-    currentEvent = this.event.asObservable();
 
     constructor(private httpClient: HttpClient) {
     }
-
-    //private eventSitesSubject: Subject<any>;
-    // public get eventSites(): Observable<any> {
-    //     return this.eventSitesSubject.asObservable();
-    // }
 
     // Event Sites
     public getEventSites(eventID: number): Observable<Site[]> {
@@ -765,7 +758,7 @@ export class SiteService {
     //Get File Type Lookup
     public getFileTypeLookup(): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + 'FileTypes/.json')
+            .get(APP_SETTINGS.API_ROOT + 'FileTypes.json')
             .pipe(
                 tap((response) => {
                     console.log(
@@ -957,7 +950,7 @@ export class SiteService {
     // Get File Item
     public getFileItem(file_id): Observable<any> {
         return this.httpClient
-            .get(APP_SETTINGS.API_ROOT + 'Files/' + file_id + '/item', {headers: APP_SETTINGS.AUTH_JSON_HEADERS},)
+            .get(APP_SETTINGS.API_ROOT + 'Files/' + file_id + '/Item', {headers: APP_SETTINGS.AUTH_JSON_HEADERS},)
             .pipe(
                 tap((response) => {
                     console.log(
@@ -966,21 +959,6 @@ export class SiteService {
                     return response;
                 }),
                 catchError(this.handleError<any>('getFileItem', []))
-            );
-    }
-
-    public setCurrentEvent(currentEvent: number) {
-        this.event.next(currentEvent);
-    }
-    
-    //Get site events
-    public getCurrentEvent(): Observable<any> {
-        return this.currentEvent
-            .pipe(
-                tap((response) => {
-                    return response;
-                }),
-                catchError(this.handleError<any>('getCurrentEvent', []))
             );
     }
 

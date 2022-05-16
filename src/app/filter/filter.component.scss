@@ -14,12 +14,10 @@ $borderRadius: 4px;
 // Structure.scss
 // Scaffolding and flex styles for basic structure of page
 
-.form-container .mat-form-field + .mat-form-field {
-    margin-left: 8px;
-}
-
 .form-container .mat-form-field {
-    width: 220px;
+    width: 90%;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 .checkbox-section {
@@ -33,4 +31,28 @@ $borderRadius: 4px;
 .filter-label {
     font-weight: bold;
     padding: 10px;
+}
+
+.event-card {
+    background-color: rgba(0, 0, 0, 0.04);
+    margin-bottom: 10px;
+
+    label {
+        margin-left: 8px;
+        font-size: 15px;
+    }
+}
+
+.form-div {
+    padding-top: 10px;
+}
+
+.event-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.dropdown-icon {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 24px;
 }

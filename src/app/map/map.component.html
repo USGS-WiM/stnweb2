@@ -23,37 +23,26 @@
                 <mat-icon>filter_alt</mat-icon>&nbsp;Map Filters
             </button>
         </div>
-
-        <!-- Minimize/maximize map button displayed on mobile screen sizes -->
-        <div id="mobile-minimize-button">
-            <button
-				class="navBarBtnActive"
-                mat-button
-                aria-label="Display Map View"
-                (click)="toggleMap()"
-            >
-                <span *ngIf="!mapPanelMinimized">Minimize Map</span>
-                <span *ngIf="mapPanelMinimized">Maximize Map</span>
-			</button>
-        </div>
 					
         <div id="mapPanel" [ngStyle]="{'display': isClicked? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}">
 
 			<div id="mapControls">
                 <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><mat-spinner [diameter]="20" class="mat-spinner"></mat-spinner>
                     <span> Loading Layers...</span></div>
-                    
-				<button
-					class="navBarBtnActive"
-					mat-button
-					aria-label="Display Map View"
-					(click)="toggleMap()"
-				>
-					<span *ngIf="!mapPanelMinimized">Minimize Map</span>
-					<span *ngIf="mapPanelMinimized">Maximize Map</span>
-				</button>
+                <mat-card class="session-event">Session Event:<p>{{currentEventName}}</p></mat-card>
 		
 			</div>
+
+            <div id="jumpToResults">
+                <button
+                    mat-button
+					class="secondary"
+                    aria-label="View Results"
+                    (click)="jumpToResult()"
+                >
+                    <mat-icon>arrow_downward</mat-icon>&nbsp;View Results
+                </button>
+            </div>
 
             <a id="siteRouterLink"></a>
 
@@ -267,8 +256,8 @@
                 </div>
                 <div class="button-row">
                     <button
-                        mat-raised-button
-                        color="accent"
+                        mat-button
+                        class="primary"
                         type="submit"
                         aria-label="Filter Sites"
                         (click)="submitMapFilter()"
@@ -276,21 +265,22 @@
                         <mat-icon>filter_alt</mat-icon>&nbsp;Filter
                         Sites
                     </button>
-                    <button
-                        mat-raised-button
-                        color="warn"
+                    <a
+                        mat-button
                         type="reset"
                         aria-label="Clear filters"
                         (click)="clearMapFilterForm()"
+                        class="link-button"
                     >
-                        <mat-icon>clear_all</mat-icon>&nbsp;Clear
-                        Filters
-                    </button>
+                        Clear Filters
+                    </a>
                 </div>
             </mat-card-content>
-            <app-filter-results [ngStyle]="{'display': isClicked ? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}"
-                    [mapFilterForm]="mapFilterForm"
-            ></app-filter-results>
+            <div #jumpToResults>
+                <app-filter-results [ngStyle]="{'display': isClicked ? 'none' : (firstLoaded ? 'block' : (isSubmitted ? 'block' : 'none'))}"
+                        [mapFilterForm]="mapFilterForm"
+                ></app-filter-results>
+            </div>
         </mat-card>
     </div>
 </div>

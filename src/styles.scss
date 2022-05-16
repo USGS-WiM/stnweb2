@@ -17,9 +17,26 @@ $stn-app-theme: mat-light-theme(
 
 .primary {
     background-color: #1a237e !important;
+    color: #F4F4F4 !important;
 }
 
-// secondary button: border: 2px solid #404040
+.secondary {
+    border: 1px solid #404040 !important;
+}
+
+.delete {
+    color: #ce0000 !important;
+    border: 1px solid #ce0000 !important;
+}
+
+.delete-borderless {
+    color: #ce0000 !important;
+}
+
+.add {
+    color: #2B7059 !important; 
+    border: 1px solid #2B7059 !important;
+}
 
 @include angular-material-theme($stn-app-theme);
 
@@ -50,6 +67,10 @@ mat-icon {
 //leaflet draw adjustment
 .leaflet-touch .leaflet-draw-toolbar {
     margin-top: -1px;
+}
+
+.event-card .mat-form-field-appearance-fill .mat-form-field-flex {
+    background-color: #FFF !important;
 }
 
 // Expansion Panels

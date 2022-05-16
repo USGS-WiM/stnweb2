@@ -8,8 +8,35 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+ -  Ability to create HWMs
+ -  Dropdown functionality to state and event filters on map page
+ 
+### Changed
+
+ -  Clear filters button styling to link
+ -  Increased details modal widths
+ -  Improved responsiveness of tables in details modals
+
+ 
+ ### Fixed
+ 
+ -
+
+## [v0.7.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.7.0) - 2022-01-17
+
+### Added
+
 -   Edit ability for Peaks
 -   View details for Peaks
+-   Adds view sensor button to results table which opens dialog listing sensors; includes button to site page
+-   Makes siteid a link to site page
+-   Event populated in map filter form on page load
+-   Map filters after navigating from map page
+-   Session event displayed on each page
+-   Back to Map button displayed on each page
+-   Add ability to add, edit and delete Site, Reference Datum and HWM files in Files Tab
+-   Add View Results button on map
+-   Phone, email and zip code format/validation in site edit form
 
 ### Changed
 
@@ -19,6 +46,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Updated Reference Datum Edit dialog layout
 -   Updated radio button/form field layout for all edit dialogs
 -   View Details and Edit buttons move within button menu on smaller screens
+-   Implement consistent button styling throughout app
+-   Remove second navbar
+-   Restyle event filters on map page
+-   Remove minimize/maximize map button
+-   Change placeholders in map filters to All __
 
 ### Fixed
 
@@ -26,6 +58,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -  Sensor and HWM files not always displaying in peak dialogs when event selected
 -  Sensor markers not displaying on map when no deployment type
 -  View Details/Edit buttons displayed in both column and menu
+-  Site icon not displayed on map on site pages when no sensors or hwms
+-  Surveyed RP Only Sites not send with map filter query
+-  Markers not showing up after returning to map page
 
 ## [v0.6.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.6.0) - 2022-01-25
 

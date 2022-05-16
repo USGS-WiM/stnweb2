@@ -26,6 +26,7 @@ table {
     width: 100%;
     margin-bottom: 20px;
     margin-top: 10px;
+    overflow-x: auto;
 }
 
 .mat-column-FileDate{
@@ -69,6 +70,11 @@ table {
     font-weight: bold;
 }
 
+.table-container {
+    display: table;
+    margin: 0 auto;
+}
+
 .cell-container {
     display: table-row;
 }
@@ -80,4 +86,8 @@ table {
 
 [hidden] {
     display: none !important;
+}
+
+.close-button {
+    float: right;
 }

@@ -81,20 +81,20 @@ describe('SiteDetailsComponent', () => {
         expect(component.lowerHeight).toEqual("1:1");
     });
 
-    it('should call getCurrentEvent and return current event', () => {
-        const response: any[] = [];
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+    it('should call getCurrentFilters and return current event', () => {
+        const response = {event_id: 5};
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(response)
         );
         component.getEvent();
         fixture.detectChanges();
-        expect(component.currentEvent).toEqual(response);
+        expect(component.currentEvent).toEqual(response.event_id);
     });
 
     it('should call getSiteEvents and set the current event to event name if not 0', () => {
         const response: any[] = [{event_name: "Hurricane Delta", event_id: 4}];
-        const currentEvent = 4;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        const currentEvent = {event_id: 4};
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -107,8 +107,8 @@ describe('SiteDetailsComponent', () => {
 
     it('should call getSiteEvents and set the current event to "All Events" if not 0', () => {
         const response: any[] = [];
-        const currentEvent = 0;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        const currentEvent = {event_id: null};
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -352,8 +352,8 @@ describe('SiteDetailsComponent', () => {
             {file_date: "2020-09-16T16:05:04.931548"}
         ]
         const siteResponse = [{site: 7}]
-        const currentEvent = 0;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        const currentEvent = {event_id: null};
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
@@ -392,9 +392,9 @@ describe('SiteDetailsComponent', () => {
             {file_date: "2020-09-16T16:05:04.931548"},
         ]
         const siteResponse = [{site: 7}]
-        const currentEvent = 0;
+        const currentEvent = {event_id: null};
         const sensorFileResponse = 1;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSingleSite').and.returnValue(
@@ -435,9 +435,9 @@ describe('SiteDetailsComponent', () => {
         ]
         const siteResponse = [{site: 7}]
         const fullSensorResponse = [{sensorBrand: "test", sensorType: "test", instrument_status: []}]
-        const currentEvent = 4;
+        const currentEvent ={event_id: 4};
         const eventResponse = [{event_id: 4, event_name: "test"}];
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -490,9 +490,9 @@ describe('SiteDetailsComponent', () => {
         const statusResponse = {status_type_id: 4}
         
         const siteResponse = [{site: 7}]
-        const currentEvent = 4;
+        const currentEvent = {event_id: 4};
         const eventResponse = [{event_id: 4, event_name: "test"}];
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -537,10 +537,10 @@ describe('SiteDetailsComponent', () => {
             {file_date: "2020-09-16T16:05:04.931548"},
         ]
         const siteResponse = [{site: 7}]
-        const currentEvent = 4;
+        const currentEvent = {event_id: 4};
         const eventResponse = [{event_id: 4, event_name: "test"}];
         const sensorFileResponse = 1;
-        spyOn(component.siteService, 'getCurrentEvent').and.returnValue(
+        spyOn(component.filtersService, 'getCurrentFilters').and.returnValue(
             of(currentEvent)
         )
         spyOn(component.siteService, 'getSiteEvents').and.returnValue(
@@ -726,6 +726,106 @@ describe('SiteDetailsComponent', () => {
         expect(table).toBeInstanceOf(MatTableDataSource);
     });
 
+    it('should edit a site file', () => {
+        let row = {file_id: 1, filetype_id: 1, description: "test2"};
+        component.siteFilesDataSource.data = [{file_id: 1, filetype_id: 1, description: "test1"}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (row)} as MatDialogRef<typeof component>);
+
+        component.openFileEditDialog(component.siteFilesDataSource.data[0], 'Site File');  
+        fixture.detectChanges();
+
+        expect(component.siteFilesDataSource.data[0]).toEqual(row);
+    })
+
+    it('should edit a reference datum file', () => {
+        let row = {file_id: 1, filetype_id: 1, description: "test2"};
+        component.refMarkFilesDataSource.data = [{file_id: 1, filetype_id: 1, description: "test1"}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (row)} as MatDialogRef<typeof component>);
+
+        component.openFileEditDialog(component.refMarkFilesDataSource.data[0], 'Reference Datum File');  
+        fixture.detectChanges();
+
+        expect(component.refMarkFilesDataSource.data[0]).toEqual(row);
+    })
+
+    it('should edit an hwm file', () => {
+        let row = {file_id: 1, filetype_id: 1, description: "test2"};
+        component.hwmFilesDataSource.data = [{file_id: 1, filetype_id: 1, description: "test1"}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (row)} as MatDialogRef<typeof component>);
+
+        component.openFileEditDialog(component.hwmFilesDataSource.data[0], 'HWM File');  
+        fixture.detectChanges();
+
+        expect(component.hwmFilesDataSource.data[0]).toEqual(row);
+    })
+
+    it('should edit a sensor file', () => {
+        let row = {file_id: 1, filetype_id: 1, description: "test2"};
+        component.sensorFilesDataSource.data = [{file_id: 1, filetype_id: 1, description: "test1"}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (row)} as MatDialogRef<typeof component>);
+
+        component.openFileEditDialog(component.sensorFilesDataSource.data[0], 'Sensor File');  
+        fixture.detectChanges();
+
+        expect(component.sensorFilesDataSource.data[0]).toEqual(row);
+    })
+
+    it('should delete a site file', () => {
+        let row = {file_id: 1};
+        component.siteFilesDataSource.data = [{file_id: 1}, {file_id: 2}, {file_id: 3}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (true)} as MatDialogRef<typeof component>);
+        spyOn(component.fileEditService, 'deleteFile').and.returnValue(
+            of(null)
+          );
+
+        component.deleteFile(row, 'Site File');  
+        fixture.detectChanges();
+
+        expect(component.siteFilesDataSource.data).toEqual([{file_id: 2}, {file_id: 3}]);
+    })
+
+    it('should delete a reference datum file', () => {
+        let row = {file_id: 1, objective_point_id: 1};
+        component.refMarkFilesDataSource.data = [{file_id: 1, objective_point_id: 1}, {file_id: 2, objective_point_id: 1}, {file_id: 3, objective_point_id: 2}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (true)} as MatDialogRef<typeof component>);
+        spyOn(component.fileEditService, 'deleteFile').and.returnValue(
+            of(null)
+          );
+
+        component.deleteFile(row, 'Reference Datum File');  
+        fixture.detectChanges();
+
+        expect(component.refMarkFilesDataSource.data).toEqual([{file_id: 2, objective_point_id: 1}, {file_id: 3, objective_point_id: 2}]);
+    })
+
+    it('should delete a hwm file', () => {
+        let row = {file_id: 1, hwm_id: 1};
+        component.hwmFilesDataSource.data = [{file_id: 1, hwm_id: 1}, {file_id: 2, hwm_id: 1}, {file_id: 3, hwm_id: 2}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (true)} as MatDialogRef<typeof component>);
+        spyOn(component.fileEditService, 'deleteFile').and.returnValue(
+            of(null)
+          );
+
+        component.deleteFile(row, 'HWM File');
+        fixture.detectChanges();
+
+        expect(component.hwmFilesDataSource.data).toEqual([{file_id: 2, hwm_id: 1}, {file_id: 3, hwm_id: 2}]);
+    })
+
+    it('should delete a sensor file', () => {
+        let row = {file_id: 1, instrument_id: 1};
+        component.sensorFilesDataSource.data = [{file_id: 1, instrument_id: 1}, {file_id: 2, instrument_id: 1}, {file_id: 3, instrument_id: 2}];
+        let dialogSpy = spyOn(component.dialog, 'open').and.returnValue({afterClosed: () => of (true)} as MatDialogRef<typeof component>);
+        spyOn(component.fileEditService, 'deleteFile').and.returnValue(
+            of(null)
+          );
+
+        component.deleteFile(row, 'Sensor File');  
+        fixture.detectChanges();
+
+        expect(component.sensorFilesDataSource.data).toEqual([{file_id: 2, instrument_id: 1}, {file_id: 3, instrument_id: 2}]);
+    })
+
     it('should sort sensors', () => {
         fixture.detectChanges();
         const sort: Sort = {active: 'sensorType', direction: 'asc'};
@@ -836,11 +936,11 @@ describe('SiteDetailsComponent', () => {
 
         expect(component.refMarkFilesDataSource.data).toEqual([{file_date: "02/20/2020"}, {file_date: "01/21/2021"}]);
 
-        const sort2: Sort = {active: 'datum_name', direction: 'asc'};
-        component.refMarkFilesDataSource.data = [{datum_name: "test"}, {datum_name: "datumtest"}]
+        const sort2: Sort = {active: 'rd_name', direction: 'asc'};
+        component.refMarkFilesDataSource.data = [{rd_name: "test"}, {rd_name: "datumtest"}]
         component.sortRefMarkFilesData(sort2);
 
-        expect(component.refMarkFilesDataSource.data).toEqual([{datum_name: "datumtest"}, {datum_name: "test"}]);
+        expect(component.refMarkFilesDataSource.data).toEqual([{rd_name: "datumtest"}, {rd_name: "test"}]);
     });
 
     it('should sort site files', () => {

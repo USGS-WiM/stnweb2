@@ -1,5 +1,9 @@
-<h2 mat-dialog-title>
+<h2 *ngIf="editOrCreate === 'Edit'" mat-dialog-title>
     HWM Edit
+    <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button>
+</h2>
+<h2 *ngIf="editOrCreate === 'Create'" mat-dialog-title>
+    Create new HWM
     <button class="close-button" mat-button mat-dialog-close aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 
@@ -19,10 +23,15 @@
                 <mat-label>Waterbody</mat-label>
                 <input aria-label="Waterbody" matInput formControlName="waterbody" [value]="hwm.waterbody"/>
             </mat-form-field>
-            <div *ngIf="role === 3 || role === 2">
+            <!-- Event is automtically populated when new HWM is being created -->
+            <div *ngIf="editOrCreate === 'Create'">
+                <label class="form-header">Event: </label> {{this.eventName}}
+            </div>
+            <!-- Users with role 1 can edit the event -->
+            <div *ngIf="editOrCreate === 'Edit' && (role === 3 || role === 2)">
                 <label class="form-header">Event: </label> {{this.hwm.eventName}}
             </div>
-            <div *ngIf="role === 1">
+            <div *ngIf="editOrCreate === 'Edit' && role === 1">
                 <mat-form-field appearance="fill">
                     <mat-label>Event</mat-label>
                     <mat-select aria-label="Event" required formControlName="event_id">
@@ -307,7 +316,7 @@
                 </div>
             </div>
             </mat-expansion-panel>
-            <mat-expansion-panel hideToggle [expanded]="filesExpanded"  (opened)="filesExpanded = true" (closed)="filesExpanded = false">
+            <mat-expansion-panel *ngIf="editOrCreate === 'Edit'" hideToggle [expanded]="filesExpanded"  (opened)="filesExpanded = true" (closed)="filesExpanded = false">
             <mat-expansion-panel-header>
                 <mat-panel-title *ngIf="!filesExpanded" style="color: grey; font-weight: 500">
                     HWM File Information
@@ -316,7 +325,7 @@
                     HWM File Information
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-stroked-button class="add-button" type="button"><mat-icon>add</mat-icon> Add File</button>
+            <button mat-stroked-button class="add" type="button"><mat-icon>add</mat-icon> Add File</button>
             <div class="tableContainer" [hidden]="initHWMFiles?.length === 0">
                 <table
                     mat-table
@@ -358,8 +367,9 @@
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
             <div class="ref-button-group">
-                <button class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
-                <button class="cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
+                <button *ngIf="editOrCreate === 'Edit'" class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+                <button *ngIf="editOrCreate === 'Create'" class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Create</button>
+                <button class="secondary cancel-btn" mat-stroked-button mat-dialog-close cdkFocusInitial aria-label="Cancel">Cancel</button>
             </div>
         </div>
     </mat-dialog-actions>

@@ -135,14 +135,15 @@ describe('HwmEditComponent', () => {
   it('should get the survey and flag member name', () => {
     const response = {member_id: 1, fname: "John", lname: "Smith"};
 
-    spyOn(component.siteService, 'getMemberName').and.returnValue(
+    let memberSpy = spyOn(component.siteService, 'getMemberName').and.returnValue(
         of(response)
     );
 
     component.setMembers();
     fixture.detectChanges();
-    expect(component.surveyMember).toEqual("John Smith");
+    expect(component.surveyMember).toEqual(undefined);
     expect(component.flagMember).toEqual("John Smith");
+    expect(memberSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should get the approval info', () => {
@@ -391,7 +392,6 @@ describe('HwmEditComponent', () => {
   });
 
   it('should convert form values and send requests if form is valid', () => {
-    console.log(component.form)
     component.uncertainty_unit = "cm";
     component.latLngUnit = "dms";
     component.form.get("latdeg").setValue(47);
@@ -416,8 +416,9 @@ describe('HwmEditComponent', () => {
     expect(requestSpy).toHaveBeenCalled();
   });
 
-  it('should send requests and set return data to results', () => {
+  it('should send update requests and set return data to results', () => {
     let response = data.hwm;
+    component.editOrCreate = "Edit";
     let returnData = {
       hwm_type_id: 1,
       hwm_quality_id: 1,
@@ -441,5 +442,35 @@ describe('HwmEditComponent', () => {
     fixture.detectChanges();
 
     expect(component.returnData).toEqual(returnData);
+    component.editOrCreate = "";
+  });
+
+  it('should send create requests and set return data to results', () => {
+    let response = data.hwm;
+    component.editOrCreate = "Create";
+    let returnData = {
+      hwm_type_id: 1,
+      hwm_quality_id: 1,
+      hwm_environment: "Riverine",
+      latitude_dd: 45,
+      longitude_dd: 78,
+      hdatum_id: 1,
+      hcollect_method_id: 1,
+      flag_date: "2022-01-01T21:20:00.000000",
+      hwm_label: "test",
+      hwm_locationdescription: "test",
+      hwm_id: 0,
+      format_flag_date: "01/01/2022",
+    }
+
+    spyOn(component.hwmEditService, 'postHWM').and.returnValue(
+      of(response)
+    );
+
+    component.sendRequests();
+    fixture.detectChanges();
+
+    expect(component.returnData).toEqual(returnData);
+    component.editOrCreate = "";
   });
 });

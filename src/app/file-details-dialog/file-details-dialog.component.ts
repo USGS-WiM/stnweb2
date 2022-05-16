@@ -20,6 +20,7 @@ export class FileDetailsDialogComponent implements OnInit {
   public processorName;
   public elevation;
   public previewCaption;
+  public fileItemExists;
 
   constructor(
     private dialogRef: MatDialogRef<FileDetailsDialogComponent>,
@@ -35,11 +36,7 @@ export class FileDetailsDialogComponent implements OnInit {
         this.setSource();
       }
 
-      this.associatedFileUrl = APP_SETTINGS.API_ROOT + 'Files/' + this.data.row_data.file_id + '/Item';
-      let associatedFile = document.querySelector("#associatedFile");
-      if(associatedFile !== null){
-        associatedFile.setAttribute('href', this.associatedFileUrl);
-      }
+      this.getFile();
 
       this.previewCaption = {
         description: this.data.row_data.description,
@@ -67,6 +64,21 @@ export class FileDetailsDialogComponent implements OnInit {
       if (this.data.row_data.photo_date === undefined || this.data.row_data.photo_date == ''){
         this.previewCaption.photo_date = '(photo date)'
       }
+    }
+  }
+
+  getFile() {
+    if(this.data.row_data.file_id !== null && this.data.row_data.file_id !== undefined){
+      this.siteService.getFileItem(this.data.row_data.file_id).subscribe((results) => {
+        if(results.Length > 0) {
+          this.fileItemExists = true;
+          this.associatedFileUrl = APP_SETTINGS.API_ROOT + 'Files/' + this.data.row_data.file_id + '/Item';
+        }else{
+          this.fileItemExists = false;
+        }
+      });
+    }else{
+      this.fileItemExists = false;
     }
   }
 
