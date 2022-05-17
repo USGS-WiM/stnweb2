@@ -31,6 +31,25 @@ export class OpEditService {
     }
 
     /* istanbul ignore next */
+    //Create reference datum
+    public createReferenceDatum(op): Observable<any> {
+        return this.httpClient
+            .post(APP_SETTINGS.API_ROOT + 'ObjectivePoints.json', op, {
+              headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+          })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'createReferenceDatum response received' //: ' +
+                        // JSON.stringify(response)
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('createReferenceDatum', []))
+            );
+    }
+
+    /* istanbul ignore next */
     //Update existing reference datum by ID
     public deleteRD(opID: string): Observable<any> {
         return this.httpClient
@@ -47,7 +66,7 @@ export class OpEditService {
                 }),
                 catchError(this.handleError<any>('deleteRD', []))
             );
-      }
+    }
 
     //Add new control ID
     public postControlID(controlID): Observable<any> {
