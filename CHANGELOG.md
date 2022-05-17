@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Dropdown functionality to state and event filters on map page
  -  Added ability to delete HWMs
  -  Ability to create Reference Datums
+ -  Added ability to delete reference datums
  
 ### Changed
 
