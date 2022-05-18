@@ -67,9 +67,11 @@ export class SensorEditComponent implements OnInit {
   deployedExpanded = false;
   retrievedExpanded = false;
   lostExpanded = false;
+  tapedownsExpanded = false;
   filesExpanded = false;
   nwisExpanded = false;
   loading = false;
+  editOrCreate;
 
   displayedFileColumns: string[] = [
     'FileName',
@@ -92,36 +94,69 @@ export class SensorEditComponent implements OnInit {
   ngOnInit(): void {
     // Copy of initial sensor
     this.sensor = JSON.parse(JSON.stringify(this.data.sensor));
-    if(this.sensor.statusType === "Deployed"){
-      this.deployedExpanded = true;
+    if(this.sensor !== null){
+      this.editOrCreate = "Edit";
+      this.tapedownsExpanded = true;
+      if(this.sensor.statusType === "Deployed"){
+        this.deployedExpanded = true;
+        this.initStatusID = 1;
+      }else if (this.sensor.statusType === "Retrieved"){
+        this.retrievedExpanded = true;
+        this.initStatusID = 2;
+      }else if (this.sensor.statusType === "Lost"){
+        this.lostExpanded = true;
+        this.initStatusID = 3;
+      }
+
+      this.returnData = this.sensor;
+      if(this.data.siteRefMarks.length > 0){
+        this.opsPresent = true;
+      }
+
+      if(this.role === 1){
+        this.getEventList();
+      }
+      this.createTapedownTable();
+      this.getSensorTypes();
+      this.getSensorBrands();
+      this.getHousingTypes();
+      this.getDeploymentTypes();
+      this.getVDatums();
+      this.setTimeAndDate();
+      this.collectConditionLookup();
+      this.getInitFiles();
+      this.setMembers();
+      this.initForm();
+    }else{
+      this.editOrCreate = "Create";
       this.initStatusID = 1;
-    }else if (this.sensor.statusType === "Retrieved"){
-      this.retrievedExpanded = true;
-      this.initStatusID = 2;
-    }else if (this.sensor.statusType === "Lost"){
-      this.lostExpanded = true;
-      this.initStatusID = 3;
+      this.sensor = {
+        event_id: this.data.event_id,
+        eventName: this.data.event,
+        instrument_status: [],
+        statusType: "Deployed",
+      };
+      let newDate = new Date();
+      let isoDate = newDate.toISOString();
+      //displaying date / time in user's timezone
+      this.sensor.instrument_status = [{
+        time_stamp: isoDate,
+        time_zone: "UTC", //will be converted to utc on post
+        member_id: JSON.parse(localStorage.getItem('currentUser')).member_id, // member logged in is deploying it
+        status: "Deployed",
+        status_type_id: 1,
+      }]
+      this.sensor.instrument_status[0].member_name = JSON.parse(localStorage.getItem('currentUser')).fname + " " + JSON.parse(localStorage.getItem('currentUser')).lname; 
+      this.deployedExpanded = true;
+      this.getSensorTypes();
+      this.getSensorBrands();
+      this.getHousingTypes();
+      this.getDeploymentTypes();
+      this.getVDatums();
+      this.setTimeAndDate();
+      this.collectConditionLookup();
+      this.initForm();
     }
-
-    this.returnData = this.sensor;
-    if(this.data.siteRefMarks.length > 0){
-      this.opsPresent = true;
-    }
-
-    if(this.role === 1){
-      this.getEventList();
-    }
-    this.createTapedownTable();
-    this.getSensorTypes();
-    this.getSensorBrands();
-    this.getHousingTypes();
-    this.getDeploymentTypes();
-    this.getVDatums();
-    this.setTimeAndDate();
-    this.collectConditionLookup();
-    this.getInitFiles();
-    this.setMembers();
-    this.initForm();
   }
 
   getEventList() {
@@ -824,7 +859,6 @@ export class SensorEditComponent implements OnInit {
       if(this.interval_unit === "min"){
         this.form.controls.interval.setValue(this.form.controls.interval.value * 60);
       }
-
       this.sendRequests(statusID);
     }else{
       this.loading = false;
@@ -889,112 +923,204 @@ export class SensorEditComponent implements OnInit {
       }
     })
     sensorStatusSubmission = sensorStatusSubmission[0];
-    const updateInstrument = new Promise<string>((resolve, reject) => this.sensorEditService.putInstrument(sensorSubmission.instrument_id, sensorSubmission).subscribe(results => {
-      if(results.length !== 0){
-        this.returnData = results;
-        this.returnData.sensorType = sensorSubmission.sensor_type_id !== null && sensorSubmission.sensor_type_id !== 0 ? this.sensorTypes.filter(function (i) { return i.sensor_type_id === sensorSubmission.sensor_type_id; })[0].sensor : "";
-        this.returnData.deploymentType = sensorSubmission.deployment_type_id !== null && sensorSubmission.deployment_type_id !== 0 ? this.deploymentTypes.filter(function (i) { return i.deployment_type_id === sensorSubmission.deployment_type_id; })[0].method : "";
-        this.returnData.instCollection = sensorSubmission.inst_collection_id !== null && sensorSubmission.inst_collection_id !== 0 ? this.collectConds.filter(function (i) { return i.id === sensorSubmission.inst_collection_id; })[0].condition : "";
-        this.returnData.housingType = sensorSubmission.housing_type_id !== null && sensorSubmission.housing_type_id !== 0 ? this.housingTypes.filter(function (i) { return i.housing_type_id === sensorSubmission.housing_type_id; })[0].type_name : "";
-        this.returnData.sensorBrand = sensorSubmission.sensor_brand_id !== null && sensorSubmission.sensor_brand_id !== 0 ? this.sensorBrands.filter(function (i) { return i.sensor_brand_id === sensorSubmission.sensor_brand_id; })[0].brand_name : "";
-        // Deployed can't change statusType
-        if(this.sensor.statusType === "Deployed"){
-          this.returnData.statusType = this.sensor.statusType;
-        }else if (this.sensor.statusType === "Lost" || this.sensor.statusType === "Retrieved"){
-          // If lost or retrieved form was submitted and status type changed
-          if(statusID !== "1"){
-            for(let statusType of self.allStatusTypes){
-              if(statusType.status_type_id === sensorStatusSubmission.status_type_id) {
-                this.returnData.statusType = statusType.status;
-              }
-            }
-          }else{
+    if(this.editOrCreate === "Edit"){
+      const updateInstrument = new Promise<string>((resolve, reject) => this.sensorEditService.putInstrument(sensorSubmission.instrument_id, sensorSubmission).subscribe(results => {
+        if(results.length !== 0){
+          // Format everything to send back to site
+          this.returnData = results;
+          this.returnData.sensorType = sensorSubmission.sensor_type_id !== null && sensorSubmission.sensor_type_id !== 0 ? this.sensorTypes.filter(function (i) { return i.sensor_type_id === sensorSubmission.sensor_type_id; })[0].sensor : "";
+          this.returnData.deploymentType = sensorSubmission.deployment_type_id !== null && sensorSubmission.deployment_type_id !== 0 ? this.deploymentTypes.filter(function (i) { return i.deployment_type_id === sensorSubmission.deployment_type_id; })[0].method : "";
+          this.returnData.instCollection = sensorSubmission.inst_collection_id !== null && sensorSubmission.inst_collection_id !== 0 ? this.collectConds.filter(function (i) { return i.id === sensorSubmission.inst_collection_id; })[0].condition : "";
+          this.returnData.housingType = sensorSubmission.housing_type_id !== null && sensorSubmission.housing_type_id !== 0 ? this.housingTypes.filter(function (i) { return i.housing_type_id === sensorSubmission.housing_type_id; })[0].type_name : "";
+          this.returnData.sensorBrand = sensorSubmission.sensor_brand_id !== null && sensorSubmission.sensor_brand_id !== 0 ? this.sensorBrands.filter(function (i) { return i.sensor_brand_id === sensorSubmission.sensor_brand_id; })[0].brand_name : "";
+          // Deployed can't change statusType
+          if(this.sensor.statusType === "Deployed"){
             this.returnData.statusType = this.sensor.statusType;
+          }else if (this.sensor.statusType === "Lost" || this.sensor.statusType === "Retrieved"){
+            // If lost or retrieved form was submitted and status type changed
+            if(statusID !== "1"){
+              for(let statusType of self.allStatusTypes){
+                if(statusType.status_type_id === sensorStatusSubmission.status_type_id) {
+                  this.returnData.statusType = statusType.status;
+                }
+              }
+            }else{
+              this.returnData.statusType = this.sensor.statusType;
+            }
           }
-        }
-        this.returnData.eventName = this.sensor.eventName;
-        // convert to UTC
-        sensorStatusSubmission.time_stamp = this.timezonesService.convertTimezone(sensorStatusSubmission.time_zone, sensorStatusSubmission.time_stamp, sensorStatusSubmission.minute)
-        sensorStatusSubmission.time_zone = "UTC";
-        delete sensorStatusSubmission.ampm; delete sensorStatusSubmission.hour; delete sensorStatusSubmission.minute; delete sensorStatusSubmission.utc_preview;
-        this.returnData.instrument_status = this.sensor.instrument_status;
-        this.sensorEditService.putInstrumentStatus(sensorStatusSubmission.instrument_status_id, sensorStatusSubmission).subscribe(results => {
-          if(results.length !== 0){
-            for(let statusType of self.allStatusTypes){
-              if(statusType.status_type_id === results.status_type_id) {
-                results.status = statusType.status;
+          this.returnData.eventName = this.sensor.eventName;
+          // convert to UTC
+          sensorStatusSubmission.time_stamp = this.timezonesService.convertTimezone(sensorStatusSubmission.time_zone, sensorStatusSubmission.time_stamp, sensorStatusSubmission.minute)
+          sensorStatusSubmission.time_zone = "UTC";
+          delete sensorStatusSubmission.ampm; delete sensorStatusSubmission.hour; delete sensorStatusSubmission.minute; delete sensorStatusSubmission.utc_preview;
+          this.returnData.instrument_status = this.sensor.instrument_status;
+          this.sensorEditService.putInstrumentStatus(sensorStatusSubmission.instrument_status_id, sensorStatusSubmission).subscribe(results => {
+            if(results.length !== 0){
+              for(let statusType of self.allStatusTypes){
+                if(statusType.status_type_id === results.status_type_id) {
+                  results.status = statusType.status;
+                }
               }
-            }
-            this.sensor.instrument_status.forEach(function(inst_status, i){
-              if(inst_status.instrument_status_id === results.instrument_status_id){
-                self.returnData.instrument_status[i] = results;
+              this.sensor.instrument_status.forEach(function(inst_status, i){
+                if(inst_status.instrument_status_id === results.instrument_status_id){
+                  self.returnData.instrument_status[i] = results;
+                }
+              })
+              let tapedownsToAdd = [];
+              let tapedownsToRemove = [];
+              let tapedownsToUpdate = [];
+              if(statusID === "1"){
+                tapedownsToAdd = this.addTapedowns(this.initDeployedTapedowns, deployedTapedowns);
+                tapedownsToRemove = this.deleteTapedowns(this.initDeployedTapedowns, deployedTapedowns);
+                tapedownsToUpdate = this.updateTapedowns(this.initDeployedTapedowns, deployedTapedowns);
+                this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+              }else if(statusID === "2"){
+                tapedownsToAdd = this.addTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
+                tapedownsToRemove = this.deleteTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
+                tapedownsToUpdate = this.updateTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
+                this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+              }else if(statusID === "3"){
+                tapedownsToAdd = this.addTapedowns(this.initLostTapedowns, lostTapedowns);
+                tapedownsToRemove = this.deleteTapedowns(this.initLostTapedowns, lostTapedowns);
+                tapedownsToUpdate = this.updateTapedowns(this.initLostTapedowns, lostTapedowns);
+                this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
               }
-            })
-            let tapedownsToAdd = [];
-            let tapedownsToRemove = [];
-            let tapedownsToUpdate = [];
-            if(statusID === "1"){
-              tapedownsToAdd = this.addTapedowns(this.initDeployedTapedowns, deployedTapedowns);
-              tapedownsToRemove = this.deleteTapedowns(this.initDeployedTapedowns, deployedTapedowns);
-              tapedownsToUpdate = this.updateTapedowns(this.initDeployedTapedowns, deployedTapedowns);
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
-            }else if(statusID === "2"){
-              tapedownsToAdd = this.addTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
-              tapedownsToRemove = this.deleteTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
-              tapedownsToUpdate = this.updateTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
-            }else if(statusID === "3"){
-              tapedownsToAdd = this.addTapedowns(this.initLostTapedowns, lostTapedowns);
-              tapedownsToRemove = this.deleteTapedowns(this.initLostTapedowns, lostTapedowns);
-              tapedownsToUpdate = this.updateTapedowns(this.initLostTapedowns, lostTapedowns);
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
-            }
 
-            resolve("Success");
-          }else{
-            this.dialog.open(ConfirmComponent, {
-              data: {
-                title: "Error updating Instrument Status.",
-                titleIcon: "close",
-                message: null,
-                confirmButtonText: "OK",
-                showCancelButton: false,
-              },
-            });
-            resolve("Success");
-          }
-        })
-      }
-      else{
+              resolve("Success");
+            }else{
+              this.dialog.open(ConfirmComponent, {
+                data: {
+                  title: "Error updating Instrument Status.",
+                  titleIcon: "close",
+                  message: null,
+                  confirmButtonText: "OK",
+                  showCancelButton: false,
+                },
+              });
+              resolve("Success");
+            }
+          })
+        }
+        else{
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error updating Sensor.",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+          reject(new Error("Error updating Sensor."));
+        }
+      }));
+
+      updateInstrument.then(() => {
+        this.loading = false;
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
-            title: "Error updating Sensor.",
-            titleIcon: "close",
+            title: "Successfully updated Sensor",
+            titleIcon: "check",
             message: null,
             confirmButtonText: "OK",
             showCancelButton: false,
           },
         });
-        reject(new Error("Error updating Sensor."));
-      }
-    }));
-
-    updateInstrument.then(() => {
-      this.loading = false;
-      this.dialogRef.close(this.returnData);
-      this.dialog.open(ConfirmComponent, {
-        data: {
-          title: "Successfully updated Sensor",
-          titleIcon: "check",
-          message: null,
-          confirmButtonText: "OK",
-          showCancelButton: false,
-        },
+      }).catch(function(error) {
+        console.log(error.message);
+        self.loading = false;
       });
-    }).catch(function(error) {
-      console.log(error.message);
-      self.loading = false;
-    });
+    }else if(this.editOrCreate === "Create"){
+      sensorSubmission.site_id = this.data.site_id;
+      console.log(sensorSubmission)
+      // const deployInstrument = new Promise<string>((resolve, reject) => this.sensorEditService.postInstrument(sensorSubmission).subscribe(results => {
+      //   if(results.length !== 0){
+      //     // Format everything to send back to site
+      //     this.returnData = results;
+      //     this.returnData.sensorType = sensorSubmission.sensor_type_id !== null && sensorSubmission.sensor_type_id !== 0 ? this.sensorTypes.filter(function (i) { return i.sensor_type_id === sensorSubmission.sensor_type_id; })[0].sensor : "";
+      //     this.returnData.deploymentType = sensorSubmission.deployment_type_id !== null && sensorSubmission.deployment_type_id !== 0 ? this.deploymentTypes.filter(function (i) { return i.deployment_type_id === sensorSubmission.deployment_type_id; })[0].method : "";
+      //     this.returnData.instCollection = sensorSubmission.inst_collection_id !== null && sensorSubmission.inst_collection_id !== 0 ? this.collectConds.filter(function (i) { return i.id === sensorSubmission.inst_collection_id; })[0].condition : "";
+      //     this.returnData.housingType = sensorSubmission.housing_type_id !== null && sensorSubmission.housing_type_id !== 0 ? this.housingTypes.filter(function (i) { return i.housing_type_id === sensorSubmission.housing_type_id; })[0].type_name : "";
+      //     this.returnData.sensorBrand = sensorSubmission.sensor_brand_id !== null && sensorSubmission.sensor_brand_id !== 0 ? this.sensorBrands.filter(function (i) { return i.sensor_brand_id === sensorSubmission.sensor_brand_id; })[0].brand_name : "";
+      //     // Deployed statusType
+      //     this.returnData.statusType = this.sensor.statusType;
+      //     this.returnData.eventName = this.sensor.eventName;
+          // convert to UTC
+          sensorStatusSubmission.time_stamp = this.timezonesService.convertTimezone(sensorStatusSubmission.time_zone, sensorStatusSubmission.time_stamp, sensorStatusSubmission.minute)
+          sensorStatusSubmission.time_zone = "UTC";
+          delete sensorStatusSubmission.ampm; delete sensorStatusSubmission.hour; delete sensorStatusSubmission.minute; delete sensorStatusSubmission.utc_preview;
+          console.log(sensorStatusSubmission)
+          // this.returnData.instrument_status = this.sensor.instrument_status;
+          // sensorStatusSubmission.instrument_id = results.instrument_id;
+          // this.sensorEditService.postInstrumentStatus(sensorStatusSubmission).subscribe(response => {
+            // if(response.length !== 0){
+            //   for(let statusType of self.allStatusTypes){
+            //     if(statusType.status_type_id === response.status_type_id) {
+            //       response.status = statusType.status;
+            //     }
+            //   }
+            //   this.returnData.instrument_status[0] = response;
+              let tapedownsToAdd = [];
+              // No tapedowns to remove or update
+              let tapedownsToRemove = [];
+              let tapedownsToUpdate = [];
+              // tapedownsToAdd.forEach(tapedownToAdd => {
+              //   tapedownToAdd.instrument_status_id = response.instrument_status_id;
+              // });
+              
+              tapedownsToAdd = this.addTapedowns(this.initDeployedTapedowns, deployedTapedowns);
+              console.log(tapedownsToAdd)
+              // this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+
+              // resolve("Success");
+            // }else{
+            //   this.dialog.open(ConfirmComponent, {
+            //     data: {
+            //       title: "Error saving Instrument Status.",
+            //       titleIcon: "close",
+            //       message: null,
+            //       confirmButtonText: "OK",
+            //       showCancelButton: false,
+            //     },
+            //   });
+            //   resolve("Success");
+            // }
+        //   })
+        // }
+        // else{
+        //   this.dialog.open(ConfirmComponent, {
+        //     data: {
+        //       title: "Error deploying Sensor.",
+        //       titleIcon: "close",
+        //       message: null,
+        //       confirmButtonText: "OK",
+        //       showCancelButton: false,
+        //     },
+        //   });
+        //   reject(new Error("Error deploying Sensor."));
+        // }
+      // }));
+
+      // deployInstrument.then(() => {
+      //   this.loading = false;
+      //   let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+      //   this.dialogRef.close(result);
+      //   this.dialog.open(ConfirmComponent, {
+      //     data: {
+      //       title: "Successfully deployed Sensor",
+      //       titleIcon: "check",
+      //       message: null,
+      //       confirmButtonText: "OK",
+      //       showCancelButton: false,
+      //     },
+      //   });
+      // }).catch(function(error) {
+      //   console.log(error.message);
+      //   self.loading = false;
+      // });
+    }
 
   }
 
