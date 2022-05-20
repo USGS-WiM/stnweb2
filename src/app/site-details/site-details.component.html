@@ -700,6 +700,9 @@
                                     <button mat-stroked-button class="edit-details-btn secondary" (click)="openSensorEditDialog(row)"
                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
                                     </button>
+                                    <button *ngIf="row.statusType === 'Deployed'" mat-stroked-button class="retrieve-btn secondary" (click)="openSensorRetrieveDialog(row)"
+                                        aria-label="Retrieve">Retrieve
+                                    </button>
                                     <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
@@ -711,6 +714,10 @@
                                         <button mat-menu-item class="edit-details-mobile" (click)="openSensorEditDialog(row)"
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                             <span> Edit</span>
+                                        </button>
+                                        <button *ngIf="row.statusType === 'Deployed'" mat-menu-item class="retrieve-mobile" (click)="openSensorRetrieveDialog(row)"
+                                            aria-label="Retrieve"><mat-icon>sync</mat-icon>
+                                            <span>Retrieve</span>
                                         </button>
                                         <button mat-menu-item  class="delete-borderless"
                                             aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>

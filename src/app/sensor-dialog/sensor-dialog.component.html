@@ -81,7 +81,7 @@
                 </div>
                 <ng-template #nullInFeetAboveDeployed><p class="content-right">---</p></ng-template>
             </div>
-            <div class="cell-container">
+            <div class="cell-container" *ngIf="sensor.sensor_type_id === 1">
                 <p class="content-left">Vented</p>
                 <p class="content-right" *ngIf="data.row_data.vented !== undefined && data.row_data.vented !== ''; else nullVented">{{data.row_data.vented}}</p>
                 <ng-template #nullVented><p class="content-right">---</p></ng-template>
