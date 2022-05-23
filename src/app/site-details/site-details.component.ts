@@ -461,6 +461,7 @@ export class SiteDetailsComponent implements OnInit {
                                         })
                                     })
                                     this.sensorDataSource.data = this.siteFullInstruments;
+                                    console.log(this.sensorDataSource.data)
                                     this.sensorDataSource.paginator = this.sensorPaginator;
                                     this.getSensorsForMap();
                                 }
