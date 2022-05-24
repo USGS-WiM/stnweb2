@@ -122,6 +122,7 @@ export class OpEditService {
           );
     }
 
+    /* istanbul ignore next */
     //Get Datum Location OP Measurements
     public getOPMeasurements(opID): Observable<any> {
         return this.httpClient

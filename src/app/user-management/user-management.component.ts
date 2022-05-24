@@ -141,6 +141,7 @@ export class UserManagementComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   sortData(sort: Sort) {
     const data = this.userDataSource.data.slice();
     if (!sort.active || sort.direction === '') {
@@ -209,6 +210,7 @@ export class UserManagementComponent implements OnInit {
     this.userDataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  /* istanbul ignore next */
   openNewUserDialog(): void {
     const dialogRef = this.dialog.open(AddUserDialogComponent, {
       data: {

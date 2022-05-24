@@ -67,9 +67,11 @@ export class SensorEditComponent implements OnInit {
   deployedExpanded = false;
   retrievedExpanded = false;
   lostExpanded = false;
+  tapedownsExpanded = false;
   filesExpanded = false;
   nwisExpanded = false;
   loading = false;
+  editOrCreate;
 
   displayedFileColumns: string[] = [
     'FileName',
@@ -92,36 +94,71 @@ export class SensorEditComponent implements OnInit {
   ngOnInit(): void {
     // Copy of initial sensor
     this.sensor = JSON.parse(JSON.stringify(this.data.sensor));
-    if(this.sensor.statusType === "Deployed"){
-      this.deployedExpanded = true;
+    if(this.sensor !== null){
+      this.editOrCreate = "Edit";
+      this.tapedownsExpanded = true;
+      if(this.sensor.statusType === "Deployed"){
+        this.deployedExpanded = true;
+        this.initStatusID = 1;
+      }else if (this.sensor.statusType === "Retrieved"){
+        this.retrievedExpanded = true;
+        this.initStatusID = 2;
+      }else if (this.sensor.statusType === "Lost"){
+        this.lostExpanded = true;
+        this.initStatusID = 3;
+      }
+
+      this.returnData = this.sensor;
+      if(this.data.siteRefMarks.length > 0){
+        this.opsPresent = true;
+      }
+
+      if(this.role === 1){
+        this.getEventList();
+      }
+      this.createTapedownTable();
+      this.getSensorTypes();
+      this.getSensorBrands();
+      this.getHousingTypes();
+      this.getDeploymentTypes();
+      this.getVDatums();
+      this.setTimeAndDate();
+      this.collectConditionLookup();
+      this.getInitFiles();
+      this.setMembers();
+      this.initForm();
+    }else{
+      this.editOrCreate = "Create";
       this.initStatusID = 1;
-    }else if (this.sensor.statusType === "Retrieved"){
-      this.retrievedExpanded = true;
-      this.initStatusID = 2;
-    }else if (this.sensor.statusType === "Lost"){
-      this.lostExpanded = true;
-      this.initStatusID = 3;
+      this.sensor = {
+        event_id: this.data.event_id,
+        eventName: this.data.event,
+        instrument_status: [],
+        statusType: "Deployed",
+      };
+      let newDate = new Date();
+      let isoDate = newDate.toISOString();
+      let utcDate = newDate.toUTCString();
+      //displaying date / time in user's timezone
+      this.sensor.instrument_status = [{
+        time_stamp: isoDate,
+        time_zone: "UTC", //will be converted to utc on post
+        member_id: JSON.parse(localStorage.getItem('currentUser')).member_id, // member logged in is deploying it
+        status: "Deployed",
+        status_type_id: 1,
+        utc_preview: utcDate,
+      }]
+      this.sensor.instrument_status[0].member_name = JSON.parse(localStorage.getItem('currentUser')).fname + " " + JSON.parse(localStorage.getItem('currentUser')).lname; 
+      this.deployedExpanded = true;
+      this.getSensorTypes();
+      this.getSensorBrands();
+      this.getHousingTypes();
+      this.getDeploymentTypes();
+      this.getVDatums();
+      this.setTimeAndDate();
+      this.collectConditionLookup();
+      this.initForm();
     }
-
-    this.returnData = this.sensor;
-    if(this.data.siteRefMarks.length > 0){
-      this.opsPresent = true;
-    }
-
-    if(this.role === 1){
-      this.getEventList();
-    }
-    this.createTapedownTable();
-    this.getSensorTypes();
-    this.getSensorBrands();
-    this.getHousingTypes();
-    this.getDeploymentTypes();
-    this.getVDatums();
-    this.setTimeAndDate();
-    this.collectConditionLookup();
-    this.getInitFiles();
-    this.setMembers();
-    this.initForm();
   }
 
   getEventList() {
@@ -178,6 +215,7 @@ export class SensorEditComponent implements OnInit {
   setTimeAndDate() {
     let self = this;
     this.sensor.instrument_status.forEach(function(instrument, i){
+      // Get hours, minutes and ampm for datepicker
       // hour
       let hour = (instrument.time_stamp.split('T')[1]).split(':')[0];
       if(hour > 12){
@@ -194,11 +232,20 @@ export class SensorEditComponent implements OnInit {
       }
       // minute
       let minute = instrument.time_stamp.split('T')[1].split(':')[1];
+      let second = instrument.time_stamp.split('T')[1].split(':')[2];
       self.sensor.instrument_status[i].minute = String(minute).padStart(2, '0');
       let timestamp = instrument.time_stamp.split("T")[0];
       timestamp = timestamp.split("-");
+      let day = timestamp[0]
+      let month = timestamp[1]
+      let year = timestamp[2]
       timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + self.sensor.instrument_status[i].minute;
-      instrument.utc_preview = timestamp.replace(/T/, ' ').replace(/\..+/, '');
+      // UTC Preview
+      // If Create, utc string already set
+      if(self.editOrCreate === "Edit"){
+        let utcDate = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(hour), Number(self.sensor.instrument_status[i].minute)));
+        instrument.utc_preview = new Date(utcDate).toUTCString();
+      }
     })
   }
 
@@ -337,7 +384,7 @@ export class SensorEditComponent implements OnInit {
       housing_serial_number: new FormControl(this.sensor.housing_serial_number !== undefined && this.sensor.housing_serial_number !== "" ? this.sensor.housing_serial_number : null),
       housing_type_id: new FormControl(this.sensor.housing_type_id !== undefined && this.sensor.housing_type_id !== "" ? this.sensor.housing_type_id : null),
       vented: new FormControl(this.sensor.vented !== undefined && this.sensor.vented !== "" ? this.sensor.vented : null),
-      deployment_type_id: new FormControl(this.sensor.deployment_type_id !== undefined && this.sensor.deployment_type_id !== "" ? this.sensor.deployment_type_id : null, Validators.required),
+      deployment_type_id: new FormControl(this.sensor.deployment_type_id !== undefined && this.sensor.deployment_type_id !== "" ? this.sensor.deployment_type_id : null),
       location_description: new FormControl(this.sensor.location_description !== undefined && this.sensor.location_description !== "" ? this.sensor.location_description : null),
       interval: new FormControl(this.sensor.interval !== undefined && this.sensor.interval !== "" ? this.sensor.interval : null),
       instrument_status: new FormArray(this.sensor.instrument_status.map((instrument) => new FormGroup(this.createInstrumentArray(instrument)))),
@@ -352,7 +399,7 @@ export class SensorEditComponent implements OnInit {
     })
 
     this.sensor.instrument_status.forEach(function(instrument){
-      if(instrument.timezone !== 'UTC'){
+      if(instrument.time_zone !== 'UTC'){
         self.previewUTC(instrument);
       }
     })
@@ -382,7 +429,6 @@ export class SensorEditComponent implements OnInit {
       notes: new FormControl(instrument.notes ? instrument.notes: null),
       member_id: new FormControl(instrument.member_id ? instrument.member_id : null),
       vdatum_id: new FormControl(instrument.vdatum_id ? instrument.vdatum_id : null),
-      vdatum: new FormControl(instrument.vdatum ? instrument.vdatum : null),
       sensor_elevation: new FormControl(instrument.sensor_elevation ? instrument.sensor_elevation : null, [this.isNum()]),
       ws_elevation: new FormControl(instrument.ws_elevation ? instrument.ws_elevation : null, [this.isNum()]),
       gs_elevation: new FormControl(instrument.gs_elevation ? instrument.gs_elevation : null, [this.isNum()]),
@@ -643,11 +689,6 @@ export class SensorEditComponent implements OnInit {
   }
 
   setTimeZone(instrument) {
-    this.form.controls["instrument_status"].controls.forEach(function(instrument_status, i){
-      if(instrument_status.controls.status_type_id.value === instrument.status_type_id){
-          instrument.time_zone = instrument_status.controls.time_zone.value;
-      }
-    });
     this.previewUTC(instrument);
   }
 
@@ -677,14 +718,19 @@ export class SensorEditComponent implements OnInit {
           let date = initDate + "T" + hour + ":" + minute + ":00";
           // Convert to UTC
           let utcDate;
-          utcDate = self.timezonesService.convertTimezone(instrument.time_zone, date, minute);
+          utcDate = self.timezonesService.convertTimezone(instrument_status.controls.time_zone.value, date, minute);
           let utchour = (utcDate.split('T')[1]).split(':')[0].padStart(2, '0');
           self.form.controls["instrument_status"].controls[i].controls["time_stamp"].setValue(date);
           self.form.controls["instrument_status"].controls[i].controls["minute"].setValue(minute);
           let timestamp = utcDate.split("T")[0];
           timestamp = timestamp.split("-");
+          let day = timestamp[0]
+          let month = timestamp[1]
+          let year = timestamp[2]
           timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + utchour + ":" + minute;
-          instrument.utc_preview = timestamp.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
+          // UTC Preview
+          let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(utchour), Number(self.sensor.instrument_status[i].minute)));
+          instrument.utc_preview = new Date(utcPreview).toUTCString();
       }
     });
   }
@@ -802,7 +848,6 @@ export class SensorEditComponent implements OnInit {
         self.form.controls["instrument_status"].controls[i].controls["notes"].setValue(instrument.notes ? instrument.notes: null);
         self.form.controls["instrument_status"].controls[i].controls["member_id"].setValue(instrument.member_id ? instrument.member_id : null);
         self.form.controls["instrument_status"].controls[i].controls["vdatum_id"].setValue(instrument.vdatum_id ? instrument.vdatum_id : null);
-        self.form.controls["instrument_status"].controls[i].controls["vdatum"].setValue(instrument.vdatum ? instrument.vdatum : null);
         self.form.controls["instrument_status"].controls[i].controls["sensor_elevation"].setValue(instrument.sensor_elevation ? instrument.sensor_elevation : null);
         self.form.controls["instrument_status"].controls[i].controls["ws_elevation"].setValue(instrument.ws_elevation ? instrument.ws_elevation : null);
         self.form.controls["instrument_status"].controls[i].controls["gs_elevation"].setValue(instrument.gs_elevation ? instrument.gs_elevation : null);
@@ -810,7 +855,7 @@ export class SensorEditComponent implements OnInit {
         self.form.controls["instrument_status"].controls[i].controls["hour"].setValue(instrument.hour ? instrument.hour : null);
         self.form.controls["instrument_status"].controls[i].controls["minute"].setValue(instrument.minute ? instrument.minute : null);
         self.form.controls["instrument_status"].controls[i].controls["ampm"].setValue(instrument.ampm ? instrument.ampm : null);
-        self.previewUTC(instrument);
+        self.setTimeAndDate();
       }
     })
   }
@@ -824,7 +869,6 @@ export class SensorEditComponent implements OnInit {
       if(this.interval_unit === "min"){
         this.form.controls.interval.setValue(this.form.controls.interval.value * 60);
       }
-
       this.sendRequests(statusID);
     }else{
       this.loading = false;
@@ -889,112 +933,212 @@ export class SensorEditComponent implements OnInit {
       }
     })
     sensorStatusSubmission = sensorStatusSubmission[0];
-    const updateInstrument = new Promise<string>((resolve, reject) => this.sensorEditService.putInstrument(sensorSubmission.instrument_id, sensorSubmission).subscribe(results => {
-      if(results.length !== 0){
-        this.returnData = results;
-        this.returnData.sensorType = sensorSubmission.sensor_type_id !== null && sensorSubmission.sensor_type_id !== 0 ? this.sensorTypes.filter(function (i) { return i.sensor_type_id === sensorSubmission.sensor_type_id; })[0].sensor : "";
-        this.returnData.deploymentType = sensorSubmission.deployment_type_id !== null && sensorSubmission.deployment_type_id !== 0 ? this.deploymentTypes.filter(function (i) { return i.deployment_type_id === sensorSubmission.deployment_type_id; })[0].method : "";
-        this.returnData.instCollection = sensorSubmission.inst_collection_id !== null && sensorSubmission.inst_collection_id !== 0 ? this.collectConds.filter(function (i) { return i.id === sensorSubmission.inst_collection_id; })[0].condition : "";
-        this.returnData.housingType = sensorSubmission.housing_type_id !== null && sensorSubmission.housing_type_id !== 0 ? this.housingTypes.filter(function (i) { return i.housing_type_id === sensorSubmission.housing_type_id; })[0].type_name : "";
-        this.returnData.sensorBrand = sensorSubmission.sensor_brand_id !== null && sensorSubmission.sensor_brand_id !== 0 ? this.sensorBrands.filter(function (i) { return i.sensor_brand_id === sensorSubmission.sensor_brand_id; })[0].brand_name : "";
-        // Deployed can't change statusType
-        if(this.sensor.statusType === "Deployed"){
-          this.returnData.statusType = this.sensor.statusType;
-        }else if (this.sensor.statusType === "Lost" || this.sensor.statusType === "Retrieved"){
-          // If lost or retrieved form was submitted and status type changed
-          if(statusID !== "1"){
-            for(let statusType of self.allStatusTypes){
-              if(statusType.status_type_id === sensorStatusSubmission.status_type_id) {
-                this.returnData.statusType = statusType.status;
-              }
-            }
-          }else{
+    if(this.editOrCreate === "Edit"){
+      const updateInstrument = new Promise<string>((resolve, reject) => this.sensorEditService.putInstrument(sensorSubmission.instrument_id, sensorSubmission).subscribe(results => {
+        if(results.length !== 0){
+          // Format everything to send back to site
+          this.returnData = results;
+          this.returnData.sensorType = sensorSubmission.sensor_type_id !== null && sensorSubmission.sensor_type_id !== 0 ? this.sensorTypes.filter(function (i) { return i.sensor_type_id === sensorSubmission.sensor_type_id; })[0].sensor : "";
+          this.returnData.deploymentType = sensorSubmission.deployment_type_id !== null && sensorSubmission.deployment_type_id !== 0 ? this.deploymentTypes.filter(function (i) { return i.deployment_type_id === sensorSubmission.deployment_type_id; })[0].method : "";
+          this.returnData.instCollection = sensorSubmission.inst_collection_id !== null && sensorSubmission.inst_collection_id !== 0 ? this.collectConds.filter(function (i) { return i.id === sensorSubmission.inst_collection_id; })[0].condition : "";
+          this.returnData.housingType = sensorSubmission.housing_type_id !== null && sensorSubmission.housing_type_id !== 0 ? this.housingTypes.filter(function (i) { return i.housing_type_id === sensorSubmission.housing_type_id; })[0].type_name : "";
+          this.returnData.sensorBrand = sensorSubmission.sensor_brand_id !== null && sensorSubmission.sensor_brand_id !== 0 ? this.sensorBrands.filter(function (i) { return i.sensor_brand_id === sensorSubmission.sensor_brand_id; })[0].brand_name : "";
+          // Deployed can't change statusType
+          if(this.sensor.statusType === "Deployed"){
             this.returnData.statusType = this.sensor.statusType;
+          }else if (this.sensor.statusType === "Lost" || this.sensor.statusType === "Retrieved"){
+            // If lost or retrieved form was submitted and status type changed
+            if(statusID !== "1"){
+              for(let statusType of self.allStatusTypes){
+                if(statusType.status_type_id === sensorStatusSubmission.status_type_id) {
+                  this.returnData.statusType = statusType.status;
+                }
+              }
+            }else{
+              this.returnData.statusType = this.sensor.statusType;
+            }
           }
-        }
-        this.returnData.eventName = this.sensor.eventName;
-        // convert to UTC
-        sensorStatusSubmission.time_stamp = this.timezonesService.convertTimezone(sensorStatusSubmission.time_zone, sensorStatusSubmission.time_stamp, sensorStatusSubmission.minute)
-        sensorStatusSubmission.time_zone = "UTC";
-        delete sensorStatusSubmission.ampm; delete sensorStatusSubmission.hour; delete sensorStatusSubmission.minute; delete sensorStatusSubmission.utc_preview;
-        this.returnData.instrument_status = this.sensor.instrument_status;
-        this.sensorEditService.putInstrumentStatus(sensorStatusSubmission.instrument_status_id, sensorStatusSubmission).subscribe(results => {
-          if(results.length !== 0){
-            for(let statusType of self.allStatusTypes){
-              if(statusType.status_type_id === results.status_type_id) {
-                results.status = statusType.status;
-              }
+          this.returnData.eventName = this.sensor.eventName;
+          // convert to UTC
+          this.sensor.instrument_status.forEach(function(instrument_status, i){
+            if(instrument_status.status_type_id === sensorStatusSubmission.status_type_id){
+              sensorStatusSubmission.time_stamp = instrument_status.utc_preview;
             }
-            this.sensor.instrument_status.forEach(function(inst_status, i){
-              if(inst_status.instrument_status_id === results.instrument_status_id){
-                self.returnData.instrument_status[i] = results;
+          });
+          sensorStatusSubmission.time_zone = "UTC";
+          delete sensorStatusSubmission.ampm; delete sensorStatusSubmission.hour; delete sensorStatusSubmission.minute; delete sensorStatusSubmission.utc_preview;
+          this.returnData.instrument_status = this.sensor.instrument_status;
+          this.sensorEditService.putInstrumentStatus(sensorStatusSubmission.instrument_status_id, sensorStatusSubmission).subscribe(results => {
+            if(results.length !== 0){
+              for(let statusType of self.allStatusTypes){
+                if(statusType.status_type_id === results.status_type_id) {
+                  results.status = statusType.status;
+                }
               }
-            })
-            let tapedownsToAdd = [];
-            let tapedownsToRemove = [];
-            let tapedownsToUpdate = [];
-            if(statusID === "1"){
-              tapedownsToAdd = this.addTapedowns(this.initDeployedTapedowns, deployedTapedowns);
-              tapedownsToRemove = this.deleteTapedowns(this.initDeployedTapedowns, deployedTapedowns);
-              tapedownsToUpdate = this.updateTapedowns(this.initDeployedTapedowns, deployedTapedowns);
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
-            }else if(statusID === "2"){
-              tapedownsToAdd = this.addTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
-              tapedownsToRemove = this.deleteTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
-              tapedownsToUpdate = this.updateTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
-            }else if(statusID === "3"){
-              tapedownsToAdd = this.addTapedowns(this.initLostTapedowns, lostTapedowns);
-              tapedownsToRemove = this.deleteTapedowns(this.initLostTapedowns, lostTapedowns);
-              tapedownsToUpdate = this.updateTapedowns(this.initLostTapedowns, lostTapedowns);
-              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
-            }
+              this.sensor.instrument_status.forEach(function(inst_status, i){
+                if(inst_status.instrument_status_id === results.instrument_status_id){
+                  self.returnData.instrument_status[i] = results;
+                }
+              })
+              let tapedownsToAdd = [];
+              let tapedownsToRemove = [];
+              let tapedownsToUpdate = [];
+              if(statusID === "1"){
+                tapedownsToAdd = this.addTapedowns(this.initDeployedTapedowns, deployedTapedowns);
+                tapedownsToRemove = this.deleteTapedowns(this.initDeployedTapedowns, deployedTapedowns);
+                tapedownsToUpdate = this.updateTapedowns(this.initDeployedTapedowns, deployedTapedowns);
+                this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+              }else if(statusID === "2"){
+                tapedownsToAdd = this.addTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
+                tapedownsToRemove = this.deleteTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
+                tapedownsToUpdate = this.updateTapedowns(this.initRetrievedTapedowns, retrievedTapedowns);
+                this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+              }else if(statusID === "3"){
+                tapedownsToAdd = this.addTapedowns(this.initLostTapedowns, lostTapedowns);
+                tapedownsToRemove = this.deleteTapedowns(this.initLostTapedowns, lostTapedowns);
+                tapedownsToUpdate = this.updateTapedowns(this.initLostTapedowns, lostTapedowns);
+                this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+              }
 
-            resolve("Success");
-          }else{
-            this.dialog.open(ConfirmComponent, {
-              data: {
-                title: "Error updating Instrument Status.",
-                titleIcon: "close",
-                message: null,
-                confirmButtonText: "OK",
-                showCancelButton: false,
-              },
-            });
-            resolve("Success");
-          }
-        })
-      }
-      else{
+              resolve("Success");
+            }else{
+              this.dialog.open(ConfirmComponent, {
+                data: {
+                  title: "Error updating Instrument Status.",
+                  titleIcon: "close",
+                  message: null,
+                  confirmButtonText: "OK",
+                  showCancelButton: false,
+                },
+              });
+              resolve("Success");
+            }
+          })
+        }
+        else{
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error updating Sensor.",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+          reject(new Error("Error updating Sensor."));
+        }
+      }));
+
+      updateInstrument.then(() => {
+        this.loading = false;
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
-            title: "Error updating Sensor.",
-            titleIcon: "close",
+            title: "Successfully updated Sensor",
+            titleIcon: "check",
             message: null,
             confirmButtonText: "OK",
             showCancelButton: false,
           },
         });
-        reject(new Error("Error updating Sensor."));
-      }
-    }));
-
-    updateInstrument.then(() => {
-      this.loading = false;
-      this.dialogRef.close(this.returnData);
-      this.dialog.open(ConfirmComponent, {
-        data: {
-          title: "Successfully updated Sensor",
-          titleIcon: "check",
-          message: null,
-          confirmButtonText: "OK",
-          showCancelButton: false,
-        },
+      }).catch(function(error) {
+        console.log(error.message);
+        self.loading = false;
       });
-    }).catch(function(error) {
-      console.log(error.message);
-      self.loading = false;
-    });
+    }else if(this.editOrCreate === "Create"){
+      sensorSubmission.site_id = this.data.site_id;
+      delete sensorSubmission.instrument_id;
+      /* istanbul ignore next */
+      const deployInstrument = new Promise<string>((resolve, reject) => this.sensorEditService.postInstrument(sensorSubmission).subscribe(results => {
+        if(results.length !== 0){
+          // Format everything to send back to site
+          this.returnData = results;
+          this.returnData.sensorType = sensorSubmission.sensor_type_id !== null && sensorSubmission.sensor_type_id !== 0 ? this.sensorTypes.filter(function (i) { return i.sensor_type_id === sensorSubmission.sensor_type_id; })[0].sensor : "";
+          this.returnData.deploymentType = sensorSubmission.deployment_type_id !== null && sensorSubmission.deployment_type_id !== 0 ? this.deploymentTypes.filter(function (i) { return i.deployment_type_id === sensorSubmission.deployment_type_id; })[0].method : "";
+          this.returnData.instCollection = sensorSubmission.inst_collection_id !== null && sensorSubmission.inst_collection_id !== 0 ? this.collectConds.filter(function (i) { return i.id === sensorSubmission.inst_collection_id; })[0].condition : "";
+          this.returnData.housingType = sensorSubmission.housing_type_id !== null && sensorSubmission.housing_type_id !== 0 ? this.housingTypes.filter(function (i) { return i.housing_type_id === sensorSubmission.housing_type_id; })[0].type_name : "";
+          this.returnData.sensorBrand = sensorSubmission.sensor_brand_id !== null && sensorSubmission.sensor_brand_id !== 0 ? this.sensorBrands.filter(function (i) { return i.sensor_brand_id === sensorSubmission.sensor_brand_id; })[0].brand_name : "";
+          // Deployed statusType
+          this.returnData.statusType = this.sensor.statusType;
+          this.returnData.eventName = this.sensor.eventName;
+          // convert to UTC
+          this.sensor.instrument_status.forEach(function(instrument_status, i){
+            if(instrument_status.status_type_id === sensorStatusSubmission.status_type_id){
+              sensorStatusSubmission.time_stamp = instrument_status.utc_preview;
+            }
+          });
+          sensorStatusSubmission.time_zone = "UTC";
+          delete sensorStatusSubmission.ampm; delete sensorStatusSubmission.hour; delete sensorStatusSubmission.minute; delete sensorStatusSubmission.instrument_status_id; delete sensorStatusSubmission.utc_preview;
+          this.returnData.instrument_status = this.sensor.instrument_status;
+          sensorStatusSubmission.instrument_id = results.instrument_id;
+          this.sensorEditService.postInstrumentStatus(sensorStatusSubmission).subscribe(response => {
+            if(response.length !== 0){
+              for(let statusType of self.allStatusTypes){
+                if(statusType.status_type_id === response.status_type_id) {
+                  response.status = statusType.status;
+                }
+              }
+              this.returnData.instrument_status[0] = response;
+              let tapedownsToAdd = [];
+              // No tapedowns to remove or update
+              let tapedownsToRemove = [];
+              let tapedownsToUpdate = [];
+              
+              tapedownsToAdd = this.addTapedowns(this.initDeployedTapedowns, deployedTapedowns);
+              tapedownsToAdd.forEach(tapedownToAdd => {
+                tapedownToAdd.instrument_status_id = response.instrument_status_id;
+              });
+              this.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
+
+              resolve("Success");
+            }else{
+              this.dialog.open(ConfirmComponent, {
+                data: {
+                  title: "Error saving Instrument Status.",
+                  titleIcon: "close",
+                  message: null,
+                  confirmButtonText: "OK",
+                  showCancelButton: false,
+                },
+              });
+              resolve("Success");
+            }
+          })
+        }
+        else{
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error deploying Sensor.",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+          reject(new Error("Error deploying Sensor."));
+        }
+      }));
+
+      /* istanbul ignore next */
+      deployInstrument.then(() => {
+        this.loading = false;
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Successfully deployed Sensor",
+            titleIcon: "check",
+            message: null,
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+      }).catch(function(error) {
+        console.log(error.message);
+        self.loading = false;
+      });
+    }
 
   }
 

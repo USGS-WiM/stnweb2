@@ -29,6 +29,7 @@ import { connectableObservableDescriptor } from 'rxjs/internal/observable/Connec
 import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
 import { OpEditService } from '@app/services/op-edit.service';
 import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
+import { SensorEditService } from '@app/services/sensor-edit.service';
 import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
@@ -223,6 +224,7 @@ export class SiteDetailsComponent implements OnInit {
         public fileEditService: FileEditService,
         public hwmEditService: HwmEditService,
         public opEditService: OpEditService,
+        public sensorEditService: SensorEditService,
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -462,6 +464,7 @@ export class SiteDetailsComponent implements OnInit {
                                         })
                                     })
                                     this.sensorDataSource.data = this.siteFullInstruments;
+                                    console.log(this.sensorDataSource.data)
                                     this.sensorDataSource.paginator = this.sensorPaginator;
                                     this.getSensorsForMap();
                                 }
@@ -1099,6 +1102,20 @@ export class SiteDetailsComponent implements OnInit {
                                         self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
                                     }
                                 })
+                                // Update site files data source
+                                self.siteFilesDataSource.data.forEach(function(file, i){
+                                    if(file.objective_point_id === row.objective_point_id){
+                                        self.siteFilesDataSource.data.splice(i, 1);
+                                        self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                                    }
+                                })
+                                // Update site files count
+                                self.siteFiles.forEach(function(file, i){
+                                    if(file.objective_point_id === row.objective_point_id){
+                                        self.siteFiles.splice(i, 1);
+                                        self.siteFiles = [...self.siteFiles];
+                                    }
+                                })
                                 // success
                                 this.dialog.open(ConfirmComponent, {
                                     data: {
@@ -1217,6 +1234,20 @@ export class SiteDetailsComponent implements OnInit {
                                 self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
                             }
                         })
+                        // Update site files data source
+                        self.siteFilesDataSource.data.forEach(function(file, i){
+                            if(file.hwm_id === row.hwm_id){
+                                self.siteFilesDataSource.data.splice(i, 1);
+                                self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                            }
+                        })
+                        // Update site files count
+                        self.siteFiles.forEach(function(file, i){
+                            if(file.hwm_id === row.hwm_id){
+                                self.siteFiles.splice(i, 1);
+                                self.siteFiles = [...self.siteFiles];
+                            }
+                        })
                         // success
                         this.dialog.open(ConfirmComponent, {
                             data: {
@@ -1301,16 +1332,94 @@ export class SiteDetailsComponent implements OnInit {
                 files: this.sensorFilesDataSource.data,
                 site_id: this.site.site_id,
                 siteRefMarks: this.refMarkDataSource.data,
+                event_id: this.currentEvent,
+                event: this.event,
             },
             width: '100%',
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result){
+            if (result.result && result.editOrCreate === "Edit"){
                 this.sensorDataSource.data.forEach(function(sensor, i){
-                    if(sensor.instrument_id === result.instrument_id){
-                        self.sensorDataSource.data[i] = result; 
+                    if(sensor.instrument_id === result.result.instrument_id){
+                        self.sensorDataSource.data[i] = result.result; 
                         self.sensorDataSource.data = [...self.sensorDataSource.data];
+                    }
+                })
+            }
+            else if(result.result && result.editOrCreate === "Create") {
+                self.sensorDataSource.data.push(result.result); 
+                self.sensorDataSource.data = [...self.sensorDataSource.data];
+            }
+        });
+    }
+
+    /* istanbul ignore next */
+    deleteSensor(row): void {
+        let self = this;
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove Sensor",
+              titleIcon: "close",
+              message: "Are you sure you want to remove this Sensor?" + row.deploymentType,
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                // Delete sensor
+                this.sensorEditService.deleteInstrument(row.instrument_id).subscribe((results) => {
+                    if(results === null){
+                        // Update hwm data source
+                        self.sensorDataSource.data.forEach(function(sensor, i){
+                            if(sensor.instrument_id === row.instrument_id){
+                                self.sensorDataSource.data.splice(i, 1);
+                                self.sensorDataSource.data = [...self.sensorDataSource.data];
+                            }
+                        })
+                        // Update files data source
+                        self.sensorFilesDataSource.data.forEach(function(file, i){
+                            if(file.instrument_id === row.instrument_id){
+                                self.sensorFilesDataSource.data.splice(i, 1);
+                                self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                            }
+                        })
+                        // Update site files data source
+                        self.siteFilesDataSource.data.forEach(function(file, i){
+                            if(file.instrument_id === row.instrument_id){
+                                self.siteFilesDataSource.data.splice(i, 1);
+                                self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                            }
+                        })
+                        // Update site files count
+                        self.siteFiles.forEach(function(file, i){
+                            if(file.instrument_id === row.instrument_id){
+                                self.siteFiles.splice(i, 1);
+                                self.siteFiles = [...self.siteFiles];
+                            }
+                        })
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "Successfully removed Sensor",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error removing Sensor",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
                     }
                 })
             }

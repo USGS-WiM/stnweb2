@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Added ability to delete HWMs
  -  Ability to create Reference Datums
  -  Added ability to delete reference datums
+ -  Added ability to deploy a sensor
+ -  Added ability to delete sensors
  
 ### Changed
 
@@ -24,7 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  
  ### Fixed
  
- -
+ -  Time reset in sensor edit modal when Cancel Edits is clicked
 
 ## [v0.7.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.7.0) - 2022-01-17
 
