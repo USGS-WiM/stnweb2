@@ -1049,6 +1049,7 @@ export class SensorEditComponent implements OnInit {
     }else if(this.editOrCreate === "Create"){
       sensorSubmission.site_id = this.data.site_id;
       delete sensorSubmission.instrument_id;
+      /* istanbul ignore next */
       const deployInstrument = new Promise<string>((resolve, reject) => this.sensorEditService.postInstrument(sensorSubmission).subscribe(results => {
         if(results.length !== 0){
           // Format everything to send back to site
@@ -1119,6 +1120,7 @@ export class SensorEditComponent implements OnInit {
         }
       }));
 
+      /* istanbul ignore next */
       deployInstrument.then(() => {
         this.loading = false;
         let result = {result: this.returnData, editOrCreate: this.editOrCreate}

@@ -194,6 +194,7 @@ export class ResultDetailsComponent implements OnInit {
         // Need to update the data source to update the table rows
         this.sensorDataSource.data = this.sortedData;
     }
+    /* istanbul ignore next */
     initCompare(a: string, b: string) {
         if(a === "Deployed"){
             a = "1";
