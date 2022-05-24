@@ -92,6 +92,24 @@ export class SensorEditService {
         );
   }
 
+  /* istanbul ignore next */
+  //Deploy/create instrument
+  public postInstrument(instrument): Observable<any> {
+    return this.httpClient
+        .post(APP_SETTINGS.API_ROOT + 'Instruments.json', instrument, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postInstrument response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postInstrument', []))
+        );
+  }
+
   //Update instrument status
   public putInstrumentStatus(instrumentStatusID: string, instrumentStatus): Observable<any> {
     return this.httpClient
@@ -106,6 +124,24 @@ export class SensorEditService {
                 return response;
             }),
             catchError(this.handleError<any>('putInstrumentStatus', []))
+        );
+  }
+
+  /* istanbul ignore next */
+  //Create instrument status
+  public postInstrumentStatus(instrumentStatus): Observable<any> {
+    return this.httpClient
+        .post(APP_SETTINGS.API_ROOT + 'InstrumentStatus.json', instrumentStatus, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postInstrumentStatus response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postInstrumentStatus', []))
         );
   }
 

@@ -41,6 +41,7 @@ export class SensorService {
             );
     }
 
+    /* istanbul ignore next */
     // retrieve all site sensors for an event -- currently not in use
     public getSiteEventInstruments(siteID, eventID): Observable<Event> {
         return this.httpClient

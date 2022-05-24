@@ -72,6 +72,7 @@ export class HwmEditService {
         );
   }
 
+  /* istanbul ignore next */
   //Update a HWM
   public putHWM(hwm_id, hwm): Observable<any> {
     return this.httpClient

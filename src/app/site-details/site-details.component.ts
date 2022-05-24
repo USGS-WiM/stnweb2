@@ -463,6 +463,7 @@ export class SiteDetailsComponent implements OnInit {
                                         })
                                     })
                                     this.sensorDataSource.data = this.siteFullInstruments;
+                                    console.log(this.sensorDataSource.data)
                                     this.sensorDataSource.paginator = this.sensorPaginator;
                                     this.getSensorsForMap();
                                 }
@@ -1330,18 +1331,24 @@ export class SiteDetailsComponent implements OnInit {
                 files: this.sensorFilesDataSource.data,
                 site_id: this.site.site_id,
                 siteRefMarks: this.refMarkDataSource.data,
+                event_id: this.currentEvent,
+                event: this.event,
             },
             width: '100%',
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result){
+            if (result.result && result.editOrCreate === "Edit"){
                 this.sensorDataSource.data.forEach(function(sensor, i){
-                    if(sensor.instrument_id === result.instrument_id){
-                        self.sensorDataSource.data[i] = result; 
+                    if(sensor.instrument_id === result.result.instrument_id){
+                        self.sensorDataSource.data[i] = result.result; 
                         self.sensorDataSource.data = [...self.sensorDataSource.data];
                     }
                 })
+            }
+            else if(result.result && result.editOrCreate === "Create") {
+                self.sensorDataSource.data.push(result.result); 
+                self.sensorDataSource.data = [...self.sensorDataSource.data];
             }
         });
     }
