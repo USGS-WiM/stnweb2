@@ -321,6 +321,7 @@ export class RefDatumEditComponent implements OnInit {
     };
   }
 
+  /* istanbul ignore next */
   checkDDLonDegValue() {
     return (control: AbstractControl): ValidationErrors | null => {
       const incorrect = this.range(control.value, -175, -60) || this.checkNaN(control.value) || control.value === undefined;
@@ -328,6 +329,7 @@ export class RefDatumEditComponent implements OnInit {
     };
   }
 
+  /* istanbul ignore next */
   checkDDLonMinValue() {
     return (control: AbstractControl): ValidationErrors | null => {
       const incorrect = this.checkNaN(control.value) || control.value === undefined;
@@ -335,6 +337,7 @@ export class RefDatumEditComponent implements OnInit {
     };
   }
 
+  /* istanbul ignore next */
   checkDDLonSecValue() {
     return (control: AbstractControl): ValidationErrors | null => {
       const incorrect = this.checkNaN(control.value) || control.value === undefined;
@@ -342,6 +345,7 @@ export class RefDatumEditComponent implements OnInit {
     };
   }
 
+  /* istanbul ignore next */
   checkDDLatDegValue() {
     return (control: AbstractControl): ValidationErrors | null => {
       const incorrect = this.range(control.value, 0, 73) || this.checkNaN(control.value) || control.value === undefined;
@@ -349,6 +353,7 @@ export class RefDatumEditComponent implements OnInit {
     };
   }
 
+  /* istanbul ignore next */
   checkDDLatMinValue() {
     return (control: AbstractControl): ValidationErrors | null => {
       const incorrect = this.checkNaN(control.value) || control.value === undefined;
@@ -356,6 +361,7 @@ export class RefDatumEditComponent implements OnInit {
     };
   }
 
+  /* istanbul ignore next */
   checkDDLatSecValue() {
     return (control: AbstractControl): ValidationErrors | null => {
       const incorrect = this.checkNaN(control.value) || control.value === undefined;

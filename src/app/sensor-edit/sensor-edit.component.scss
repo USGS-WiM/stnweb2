@@ -109,6 +109,11 @@ table {
     display: inline-flex;
 }
 
+.date-span {
+    height: 60%;
+    margin: auto;
+}
+
 .disabled {
     color: #000;
 }
@@ -167,6 +172,12 @@ table {
 
 .tapedown-header {
     margin: 5px;
+}
+
+.info-icon-white {
+    font-size: 20px;
+    color: #FFF;
+    text-align: right;
 }
 
 .inline-fields {
