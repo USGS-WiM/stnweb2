@@ -685,6 +685,9 @@
                                         <ng-template #displayStatusType>
                                             <mat-icon class="deployed-icon" *ngIf="sensor.statusType === 'Deployed'">check_circle</mat-icon>
                                             {{ sensor.statusType }}
+                                            <button *ngIf="sensor.statusType === 'Deployed'" mat-button class="retrieve-btn" (click)="openSensorRetrieveDialog(sensor)"
+                                                aria-label="Retrieve">Retrieve
+                                            </button>
                                         </ng-template>
                                     </td>
                                 </ng-container>
@@ -695,13 +698,10 @@
                                     </th>
                                     <td mat-cell *matCellDef="let row">
                                     <button mat-stroked-button class="view-details-btn secondary" (click)="openSensorDetailsDialog(row)"
-                                        aria-label="Edit">View Details
+                                        aria-label="View Details">View Details
                                     </button>
                                     <button mat-stroked-button class="edit-details-btn secondary" (click)="openSensorEditDialog(row)"
                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
-                                    </button>
-                                    <button *ngIf="row.statusType === 'Deployed'" mat-stroked-button class="retrieve-btn secondary" (click)="openSensorRetrieveDialog(row)"
-                                        aria-label="Retrieve">Retrieve
                                     </button>
                                     <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                         <mat-icon>more_vert</mat-icon>
@@ -715,7 +715,7 @@
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                             <span> Edit</span>
                                         </button>
-                                        <button *ngIf="row.statusType === 'Deployed'" mat-menu-item class="retrieve-mobile" (click)="openSensorRetrieveDialog(row)"
+                                        <button *ngIf="row.statusType === 'Deployed'" mat-menu-item (click)="openSensorRetrieveDialog(row)"
                                             aria-label="Retrieve"><mat-icon>sync</mat-icon>
                                             <span>Retrieve</span>
                                         </button>
