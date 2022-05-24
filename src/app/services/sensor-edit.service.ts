@@ -73,6 +73,24 @@ export class SensorEditService {
             catchError(this.handleError<any>('putInstrument', []))
         );
   }
+    
+  /* istanbul ignore next */
+  //Delete instrument
+  public deleteInstrument(instrumentID: string): Observable<any> {
+    return this.httpClient
+        .delete(APP_SETTINGS.API_ROOT + 'Instruments/' + instrumentID + '.json', {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteInstrument response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteInstrument', []))
+        );
+  }
 
   //Update instrument status
   public putInstrumentStatus(instrumentStatusID: string, instrumentStatus): Observable<any> {
