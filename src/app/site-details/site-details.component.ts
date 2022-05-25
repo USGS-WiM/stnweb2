@@ -1475,7 +1475,6 @@ export class SiteDetailsComponent implements OnInit {
         const dialogRef = this.dialog.open(SensorRetrieveComponent, {
             data: {
                 sensor: row,
-                files: this.sensorFilesDataSource.data,
                 site_id: this.site.site_id,
                 siteRefMarks: this.refMarkDataSource.data,
             },

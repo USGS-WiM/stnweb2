@@ -24,8 +24,8 @@ export class SensorRetrieveComponent implements OnInit {
   private vDatumList;
   private collectConds;
   private deployMember = [];
-  private retrieveMemberID = JSON.parse(localStorage.getItem('currentUser')).member_id;
-  private retrieveMember = JSON.parse(localStorage.getItem('currentUser')).fname + " " + JSON.parse(localStorage.getItem('currentUser')).lname;
+  private retrieveMemberID = JSON.parse(localStorage.getItem('currentUser')) !== null ? JSON.parse(localStorage.getItem('currentUser')).member_id : null;
+  private retrieveMember = JSON.parse(localStorage.getItem('currentUser')) !== null ? JSON.parse(localStorage.getItem('currentUser')).fname + " " + JSON.parse(localStorage.getItem('currentUser')).lname: null;
   public form;
   private tapedowns = []; 
   private instrument;
@@ -60,39 +60,42 @@ export class SensorRetrieveComponent implements OnInit {
 
   ngOnInit(): void {
     // Copy of initial sensor
-    this.sensor = JSON.parse(JSON.stringify(this.data.sensor));
+    if(this.data.sensor !== undefined){
+      this.sensor = JSON.parse(JSON.stringify(this.data.sensor));
 
-    if(this.data.siteRefMarks.length > 0){
-      this.opsPresent = true;
-    }
-    
-    this.minDate = new Date(this.sensor.instrument_status[0].time_stamp);
-    this.initUTCDate = {
-      time_stamp: this.sensor.instrument_status[0].time_stamp,
-      time_zone: this.sensor.instrument_status[0].time_zone,
-    }
-    this.setTimeAndDate(this.initUTCDate, "init");
+      if(this.data.siteRefMarks.length > 0){
+        this.opsPresent = true;
+      }
+      
+      this.minDate = new Date(this.sensor.instrument_status[0].time_stamp);
+      this.initUTCDate = {
+        time_stamp: this.sensor.instrument_status[0].time_stamp,
+        time_zone: this.sensor.instrument_status[0].time_zone,
+      }
+      this.setTimeAndDate(this.initUTCDate, "init");
 
-    // Create blank instrument array
-    let newDate = new Date();
-    let isoDate = newDate.toISOString();
-    let utcDate = newDate.toUTCString();
-    this.instrument = {
-      time_zone: "UTC",
-      time_stamp: isoDate,
-      utc_preview: utcDate,
+      // Create blank instrument array
+      let newDate = new Date();
+      let isoDate = newDate.toISOString();
+      let utcDate = newDate.toUTCString();
+      this.instrument = {
+        time_zone: "UTC",
+        time_stamp: isoDate,
+        utc_preview: utcDate,
+      }
+      this.getSensorTypes();
+      this.getSensorBrands();
+      this.getHousingTypes();
+      this.getDeploymentTypes();
+      this.getVDatums();
+      this.collectConditionLookup();
+      this.setTimeAndDate(this.instrument, "new");
+      this.setDeployMember();
+      this.initForm();
     }
-    this.getSensorTypes();
-    this.getSensorBrands();
-    this.getHousingTypes();
-    this.getDeploymentTypes();
-    this.getVDatums();
-    this.collectConditionLookup();
-    this.setTimeAndDate(this.instrument, "new");
-    this.setDeployMember();
-    this.initForm();
   }
 
+  /* istanbul ignore next */
   initForm() {
     this.form = new FormGroup({
       instrument_status: new FormGroup(this.createInstrumentArray(this.instrument)),
@@ -113,7 +116,7 @@ export class SensorRetrieveComponent implements OnInit {
       site_id: new FormControl(this.sensor.site_id !== undefined && this.sensor.site_id !== "" ? this.sensor.site_id : null),
     })
   }
-
+  /* istanbul ignore next */
   previewUTC() {
     let self = this;
     let hour = this.form.controls["instrument_status"].controls.ampm.value === "PM" ? (Number(this.form.controls["instrument_status"].controls.hour.value) + 12) : this.form.controls["instrument_status"].controls.hour.value;
@@ -160,11 +163,11 @@ export class SensorRetrieveComponent implements OnInit {
       self.form.controls["instrument_status"].controls["time_stamp"].setErrors(null);
     };
   }
-
+  /* istanbul ignore next */
   checkNaN = function(x){
     return isNaN(x);
   }
-
+  /* istanbul ignore next */
   // Validate interval
   isNum() {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -172,7 +175,7 @@ export class SensorRetrieveComponent implements OnInit {
       return incorrect ? {incorrectValue: {value: control.value}} : null;
     };
   }
-
+  /* istanbul ignore next */
   createInstrumentArray(instrument) {
     let timezone = this.timezonesService.matchTimezone(instrument.time_zone);
     return {
@@ -193,7 +196,7 @@ export class SensorRetrieveComponent implements OnInit {
       ampm: new FormControl(this.instrument.ampm ? this.instrument.ampm : null),
     };
   }
-
+  /* istanbul ignore next */
   createTapedownArray(tapedown) {
     // Tapedowns initially blank
     return {
@@ -208,35 +211,35 @@ export class SensorRetrieveComponent implements OnInit {
       instrument_status_id: new FormControl(tapedown.instrument_status_id ? tapedown.instrument_status_id: null),
     } as FormArray["value"];
   }
-
+  /* istanbul ignore next */
   getSensorTypes() {
     this.sensorEditService.getSensorTypeLookup()
       .subscribe((results) => {
         this.sensorTypes = results;
       })
   }
-
+  /* istanbul ignore next */
   getSensorBrands() {
     this.sensorEditService.getSensorBrandLookup()
     .subscribe((results) => {
       this.sensorBrands = results;
     })
   }
-
+  /* istanbul ignore next */
   getHousingTypes() {
     this.siteService.getAllHousingTypes()
       .subscribe((results) => {
         this.housingTypes = results;
       })
   }
-
+  /* istanbul ignore next */
   getDeploymentTypes() {
     this.siteService.getDeploymentTypes()
       .subscribe((results) => {
         this.deploymentTypes = results;
       })
   }
-
+  /* istanbul ignore next */
   getVDatums() {
     let self = this;
     this.siteService.getVDatumLookup()
@@ -253,14 +256,14 @@ export class SensorRetrieveComponent implements OnInit {
         }
       })
   }
-
+  /* istanbul ignore next */
   collectConditionLookup() {
     this.sensorEditService.getCollectConditions()
     .subscribe((results) => {
       this.collectConds = results;
     })
   }
-
+  /* istanbul ignore next */
   setDeployMember() {
     let self = this;
 
@@ -274,7 +277,7 @@ export class SensorRetrieveComponent implements OnInit {
       })
     })
   }
-
+  /* istanbul ignore next */
   setTimeAndDate(instrument, type) {
       // hour
       let hour = (instrument.time_stamp.split('T')[1]).split(':')[0];
@@ -310,14 +313,14 @@ export class SensorRetrieveComponent implements OnInit {
         instrument.utc_preview = new Date(utcPreview).toUTCString();
       }
   }
-
+  /* istanbul ignore next */
   changeTime() {
     let newValue = this.instrument.ampm === "PM" ? "AM" : "PM";
     this.form.controls["instrument_status"].controls["ampm"].setValue(newValue);
     this.instrument.ampm = newValue;
     this.previewUTC();
   }
-
+  /* istanbul ignore next */
   changeTableValue(value, status){
     let newObject = {
       ground_surface: null,
@@ -420,7 +423,7 @@ export class SensorRetrieveComponent implements OnInit {
         });
       }
   }
-
+  /* istanbul ignore next */
   submit() {
     this.form.markAllAsTouched();
     if(this.form.valid){
@@ -439,7 +442,7 @@ export class SensorRetrieveComponent implements OnInit {
       });
     }
   }
-
+  /* istanbul ignore next */
   async sendRequests() {
     let self = this;
 
@@ -533,7 +536,7 @@ export class SensorRetrieveComponent implements OnInit {
     });
 
   }
-
+  /* istanbul ignore next */
   // Need to populate edit form with new tapedown info, but don't need to return them to site details component
   sendTapedownRequests(tapedownsToAdd) {
     // Add tapedowns
