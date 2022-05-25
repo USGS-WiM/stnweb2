@@ -73,6 +73,42 @@ export class SensorEditService {
             catchError(this.handleError<any>('putInstrument', []))
         );
   }
+    
+  /* istanbul ignore next */
+  //Delete instrument
+  public deleteInstrument(instrumentID: string): Observable<any> {
+    return this.httpClient
+        .delete(APP_SETTINGS.API_ROOT + 'Instruments/' + instrumentID + '.json', {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteInstrument response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteInstrument', []))
+        );
+  }
+
+  /* istanbul ignore next */
+  //Deploy/create instrument
+  public postInstrument(instrument): Observable<any> {
+    return this.httpClient
+        .post(APP_SETTINGS.API_ROOT + 'Instruments.json', instrument, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postInstrument response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postInstrument', []))
+        );
+  }
 
   //Update instrument status
   public putInstrumentStatus(instrumentStatusID: string, instrumentStatus): Observable<any> {
@@ -88,6 +124,24 @@ export class SensorEditService {
                 return response;
             }),
             catchError(this.handleError<any>('putInstrumentStatus', []))
+        );
+  }
+
+  /* istanbul ignore next */
+  //Create instrument status
+  public postInstrumentStatus(instrumentStatus): Observable<any> {
+    return this.httpClient
+        .post(APP_SETTINGS.API_ROOT + 'InstrumentStatus.json', instrumentStatus, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'postInstrumentStatus response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('postInstrumentStatus', []))
         );
   }
 

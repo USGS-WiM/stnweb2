@@ -1,5 +1,9 @@
-<h2 mat-dialog-title>
+<h2 *ngIf="editOrCreate === 'Edit'" mat-dialog-title>
     Edit Sensor
+    <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
+</h2>
+<h2 *ngIf="editOrCreate === 'Create'" mat-dialog-title>
+    Deploy Sensor
     <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <div [hidden]="!loading" class="loading">
@@ -9,7 +13,7 @@
     <mat-dialog-content>
         <mat-accordion multi="true">
             <mat-expansion-panel hideToggle [expanded]="deployedExpanded" (opened)="deployedExpanded = true" (closed)="deployedExpanded = false">
-                <mat-expansion-panel-header>
+                <mat-expansion-panel-header *ngIf="editOrCreate === 'Edit'">
                     <mat-panel-title *ngIf="!deployedExpanded" style="color: grey; font-weight: 500">
                         Deployed Sensor Information
                     </mat-panel-title>
@@ -17,10 +21,10 @@
                         Deployed Sensor Information
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <div *ngIf="role === 2 || role === 3">
+                <div *ngIf="(editOrCreate === 'Edit' && (role === 2 || role === 3)) || editOrCreate === 'Create'">
                     <label class="form-header">Event: </label> {{this.sensor.eventName}}
                 </div>
-                <div *ngIf="role === 1">
+                <div *ngIf="role === 1 && editOrCreate === 'Edit'">
                     <mat-form-field appearance="fill">
                         <mat-label>Event</mat-label>
                         <mat-select required aria-label="Event" formControlName="event_id">
@@ -67,197 +71,224 @@
                     </mat-select>
                 </mat-form-field>
                 <mat-divider></mat-divider>
-                <div class="tapedown-header">
-                    <label class="form-header">Tapedowns: </label>
-                </div>
-                <div class="tapedowns" [hidden]="!opsPresent">
-                        <mat-form-field appearance="fill">
-                            <mat-label>Reference Datums</mat-label>
-                                    <mat-select aria-label="Reference Datums" formControlName="deployedRefMarks" (selectionChange)="changeTableValue($event.value, 'Deployed')" multiple>
-                                        <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
-                                        {{refmark.name}}
-                                        </mat-option>
-                                    </mat-select>
-                                <mat-icon matSuffix class="info-icon" matTooltip="These elevations and tapedown data are used for both field activities and final products. Please pay attention to how your data is entered." 
-                                aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                        </mat-form-field>
-                </div>
-                <div class="tapedowns" [hidden]="opsPresent">
-                    <label>
-                        No Datum Locations have been added to this site yet to use for a tape down
-                    </label>
-                </div>
-                <div class="tableContainer">
-                    <table [hidden]="!form.controls.deployedTapedowns.length > 0"
-                        #deployedTable
-                        mat-table
-                        id="tapedownsTable"
-                        [dataSource]="deployedTapedowns"
-                        formArrayName="deployedTapedowns"
-                        class="mat-elevation-z5"
-                        matSort
-                    >
+                <!-- Edit Deployed tapedowns -->
+                <mat-expansion-panel hideToggle [expanded]="tapedownsExpanded" (opened)="tapedownsExpanded = true" (closed)="tapedownsExpanded = false">
+                    <mat-expansion-panel-header *ngIf="editOrCreate === 'Create'">
+                        <mat-panel-title *ngIf="!tapedownsExpanded" style="color: grey; font-weight: 500">
+                            Tapedown Information
+                        </mat-panel-title>
+                        <mat-panel-title *ngIf="tapedownsExpanded" style="color: #FFF; font-weight: 550">
+                            Tapedown Information
+                        </mat-panel-title>
+                        <mat-icon matSuffix class="info-icon-white" matTooltip="These elevations and tapedown data are used for both field activities and final products. Please pay attention to how your data is entered." 
+                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                    </mat-expansion-panel-header>
+                    <mat-form-field appearance="fill" *ngIf="editOrCreate === 'Create'">
+                        <mat-label>Reference Datums</mat-label>
+                        <mat-select aria-label="Reference Datums" formControlName="deployedRefMarks" (selectionChange)="changeTableValue($event.value, 'Deployed')" multiple>
+                            <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
+                            {{refmark.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div class="tapedown-header" *ngIf="editOrCreate === 'Edit'">
+                        <label class="form-header">Tapedowns: </label>
+                    </div>
+                    <div class="tapedowns" [hidden]="!opsPresent">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Reference Datums</mat-label>
+                                        <mat-select aria-label="Reference Datums" formControlName="deployedRefMarks" (selectionChange)="changeTableValue($event.value, 'Deployed')" multiple>
+                                            <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
+                                            {{refmark.name}}
+                                            </mat-option>
+                                        </mat-select>
+                                    <mat-icon matSuffix class="info-icon" matTooltip="These elevations and tapedown data are used for both field activities and final products. Please pay attention to how your data is entered." 
+                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                            </mat-form-field>
+                    </div>
+                    <div class="tapedowns" [hidden]="opsPresent || editOrCreate !== 'Edit'">
+                        <label>
+                            No Datum Locations have been added to this site yet to use for a tape down
+                        </label>
+                    </div>
+                    <div class="tableContainer">
+                        <table [hidden]="!form.controls.deployedTapedowns.length > 0"
+                            #deployedTable
+                            mat-table
+                            id="tapedownsTable"
+                            [dataSource]="deployedTapedowns"
+                            formArrayName="deployedTapedowns"
+                            class="mat-elevation-z5"
+                            matSort
+                        >
 
-                        <!-- Reference Datum name column -->
-                        <ng-container matColumnDef="ReferenceDatum">
-                            <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
-                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
-                                <mat-form-field>
-                                    <input matInput formControlName="op_name" [value]="tapedown.op_name" class="disabled"/>
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
-    
-                        <!-- Elevation column -->
-                        <ng-container matColumnDef="Elevation">
-                            <th mat-header-cell *matHeaderCellDef>Elevation</th>
-                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
-                                <mat-form-field>
-                                    <div class="inline-fields">
-                                        <div *ngIf="tapedown.elevation !== undefined">
-                                            <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                            <!-- Reference Datum name column -->
+                            <ng-container matColumnDef="ReferenceDatum">
+                                <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field>
+                                        <input matInput formControlName="op_name" [value]="tapedown.op_name" class="disabled"/>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+        
+                            <!-- Elevation column -->
+                            <ng-container matColumnDef="Elevation">
+                                <th mat-header-cell *matHeaderCellDef>Elevation</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field>
+                                        <div class="inline-fields">
+                                            <div *ngIf="tapedown.elevation !== undefined && tapedown.elevation !== null">
+                                                <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                            </div>
+                                            <input matInput formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>
                                         </div>
-                                        <input matInput formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>
+                                    </mat-form-field>
+                                    <!-- Elevation Validator -->
+                                    <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.elevation.invalid && (form.controls.deployedTapedowns.controls[i].controls.elevation.dirty || form.controls.deployedTapedowns.controls[i].controls.elevation.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.elevation.errors?.['incorrectValue']">
+                                            Elevation must be a numeric value.
+                                        </div>
                                     </div>
-                                </mat-form-field>
-                                <!-- Elevation Validator -->
-                                <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.elevation.invalid && (form.controls.deployedTapedowns.controls[i].controls.elevation.dirty || form.controls.deployedTapedowns.controls[i].controls.elevation.touched)"
-                                    class="alert alert-danger">
-                                    <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.elevation.errors?.['incorrectValue']">
-                                        Elevation must be a numeric value.
-                                    </div>
-                                </div>
-                            </td>
-                        </ng-container>
+                                </td>
+                            </ng-container>
 
-                        <!-- Offset correction column -->
-                        <ng-container matColumnDef="OffsetCorrection">
-                            <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
-                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
-                                <mat-form-field appearance="fill">
-                                    <input matInput type="number" formControlName="offset_correction" [value]="tapedown.offset_correction"/>
-                                    <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the sensor orifice."
-                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                </mat-form-field>
-                                <!-- Offset Correction Validator -->
-                                <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.offset_correction.invalid && (form.controls.deployedTapedowns.controls[i].controls.offset_correction.dirty || form.controls.deployedTapedowns.controls[i].controls.offset_correction.touched)"
-                                    class="alert alert-danger">
-                                    <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.offset_correction.errors?.['incorrectValue']">
-                                        Offset Correction must be a numeric value.
+                            <!-- Offset correction column -->
+                            <ng-container matColumnDef="OffsetCorrection">
+                                <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field appearance="fill">
+                                        <input matInput type="number" formControlName="offset_correction" [value]="tapedown.offset_correction"/>
+                                        <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the sensor orifice."
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                    </mat-form-field>
+                                    <!-- Offset Correction Validator -->
+                                    <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.offset_correction.invalid && (form.controls.deployedTapedowns.controls[i].controls.offset_correction.dirty || form.controls.deployedTapedowns.controls[i].controls.offset_correction.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.offset_correction.errors?.['incorrectValue']">
+                                            Offset Correction must be a numeric value.
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                        </ng-container>
+                                </td>
+                            </ng-container>
 
-                        <!-- WS column -->
-                        <ng-container matColumnDef="WaterSurface">
-                            <th mat-header-cell *matHeaderCellDef>Water Surface</th>
-                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
-                                <mat-form-field appearance="fill">
-                                    <input matInput formControlName="water_surface" type="number" [value]="tapedown.water_surface"/>
-                                    <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the water surface."
-                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                </mat-form-field>
-                                <!-- Water Surface Validator -->
-                                <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.water_surface.invalid && (form.controls.deployedTapedowns.controls[i].controls.water_surface.dirty || form.controls.deployedTapedowns.controls[i].controls.water_surface.touched)"
-                                    class="alert alert-danger">
-                                    <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.water_surface.errors?.['incorrectValue']">
-                                        Water Surface must be a numeric value.
+                            <!-- WS column -->
+                            <ng-container matColumnDef="WaterSurface">
+                                <th mat-header-cell *matHeaderCellDef>Water Surface</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field appearance="fill">
+                                        <input matInput formControlName="water_surface" type="number" [value]="tapedown.water_surface"/>
+                                        <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the water surface."
+                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                    </mat-form-field>
+                                    <!-- Water Surface Validator -->
+                                    <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.water_surface.invalid && (form.controls.deployedTapedowns.controls[i].controls.water_surface.dirty || form.controls.deployedTapedowns.controls[i].controls.water_surface.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.water_surface.errors?.['incorrectValue']">
+                                            Water Surface must be a numeric value.
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                        </ng-container>
+                                </td>
+                            </ng-container>
 
-                        <!-- GS column -->
-                        <ng-container matColumnDef="GroundSurface">
-                            <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
-                            <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
-                                <mat-form-field appearance="fill">
-                                    <input matInput formControlName="ground_surface" type="number" [value]="tapedown.ground_surface"/>
-                                    <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the ground surface."
-                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                </mat-form-field>
-                                <!-- Ground Surface Validator -->
-                                <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.ground_surface.invalid && (form.controls.deployedTapedowns.controls[i].controls.ground_surface.dirty || form.controls.deployedTapedowns.controls[i].controls.ground_surface.touched)"
-                                    class="alert alert-danger">
-                                    <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.ground_surface.errors?.['incorrectValue']">
-                                        Ground Surface must be a numeric value.
-                                    </div>
-                                </div>
-                            </td>
-                        </ng-container>
-    
-                        <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
-                        <tr
-                            mat-row
-                            *matRowDef="let row; columns: displayedTapedownColumns"
-                            class="results-row"
-                        ></tr>
-                    </table>
-                </div>
-                <div class="note">
-                    <label>Note: these are not used for any calculations but are to facilitate field activities.</label>
-                </div>
-                <div *ngIf="sensor.instrument_status.length > 0">
-                    <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
-                        <div *ngIf="instrument.status === 'Deployed'">
-                            <div [formGroupName]="i">
-                                <mat-form-field appearance="fill">
-                                    <mat-label>Sensor Elevation</mat-label>
-                                    <input aria-label="Sensor Elevation" matInput type="number" formControlName="sensor_elevation" [value]="instrument.sensor_elevation">
-                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the offset correction, elevation of the sensor orifice." 
+                            <!-- GS column -->
+                            <ng-container matColumnDef="GroundSurface">
+                                <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
+                                <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
+                                    <mat-form-field appearance="fill">
+                                        <input matInput formControlName="ground_surface" type="number" [value]="tapedown.ground_surface"/>
+                                        <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the ground surface."
                                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                </mat-form-field>
-                                <!-- Sensor Elevation Validator -->
-                                <div *ngIf="form.controls.instrument_status.controls[i].controls.sensor_elevation.invalid && (form.controls.instrument_status.controls[i].controls.sensor_elevation.dirty || form.controls.instrument_status.controls[i].controls.sensor_elevation.touched)"
-                                    class="alert alert-danger">
-                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.sensor_elevation.errors?.['incorrectValue']">
-                                        Sensor Elevation must be a numeric value.
+                                    </mat-form-field>
+                                    <!-- Ground Surface Validator -->
+                                    <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.ground_surface.invalid && (form.controls.deployedTapedowns.controls[i].controls.ground_surface.dirty || form.controls.deployedTapedowns.controls[i].controls.ground_surface.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="form.controls.deployedTapedowns.controls[i].controls.ground_surface.errors?.['incorrectValue']">
+                                            Ground Surface must be a numeric value.
+                                        </div>
+                                    </div>
+                                </td>
+                            </ng-container>
+        
+                            <tr mat-header-row *matHeaderRowDef="displayedTapedownColumns"></tr>
+                            <tr
+                                mat-row
+                                *matRowDef="let row; columns: displayedTapedownColumns"
+                                class="results-row"
+                            ></tr>
+                        </table>
+                        <div class="note" *ngIf="form.controls.deployedTapedowns.length > 0">
+                            <label>Note: these are not used for any calculations but are to facilitate field activities.</label>
+                        </div>
+                    </div>
+                    <!-- Edit: sensor status fields for tapedown -->
+                    <!-- Create: Display these fields when reference datum is selected, Edit: always display these fields -->
+                    <div *ngIf="(editOrCreate === 'Create' && form.controls.deployedTapedowns.length > 0) || editOrCreate === 'Edit'">
+                        <div *ngIf="sensor.instrument_status.length > 0">
+                            <div *ngFor="let instrument of sensor.instrument_status; let i = index" formArrayName="instrument_status">
+                                <div *ngIf="instrument.status === 'Deployed'">
+                                    <div [formGroupName]="i">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Sensor Elevation</mat-label>
+                                            <input aria-label="Sensor Elevation" matInput type="number" formControlName="sensor_elevation" [value]="instrument.sensor_elevation">
+                                            <mat-icon matSuffix class="info-icon" matTooltip="Using the offset correction, elevation of the sensor orifice." 
+                                                aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                        </mat-form-field>
+                                        <!-- Sensor Elevation Validator -->
+                                        <div *ngIf="form.controls.instrument_status.controls[i].controls.sensor_elevation.invalid && (form.controls.instrument_status.controls[i].controls.sensor_elevation.dirty || form.controls.instrument_status.controls[i].controls.sensor_elevation.touched)"
+                                            class="alert alert-danger">
+                                            <div *ngIf="form.controls.instrument_status.controls[i].controls.sensor_elevation.errors?.['incorrectValue']">
+                                                Sensor Elevation must be a numeric value.
+                                            </div>
+                                        </div>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Water Surface Elevation</mat-label>
+                                            <input aria-label="Water Surface Elevation" matInput type="number" formControlName="ws_elevation" [value]="instrument.ws_elevation">
+                                            <mat-icon matSuffix class="info-icon" matTooltip="Using the water surface tape down, elevation of the water surface." 
+                                                aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                        </mat-form-field>
+                                        <!-- Water Surface Elevation Validator -->
+                                        <div *ngIf="form.controls.instrument_status.controls[i].controls.ws_elevation.invalid && (form.controls.instrument_status.controls[i].controls.ws_elevation.dirty || form.controls.instrument_status.controls[i].controls.ws_elevation.touched)"
+                                            class="alert alert-danger">
+                                            <div *ngIf="form.controls.instrument_status.controls[i].controls.ws_elevation.errors?.['incorrectValue']">
+                                                Water Surface Elevation must be a numeric value.
+                                            </div>
+                                        </div>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Ground Elevation</mat-label>
+                                            <input aria-label="Ground Elevation" matInput type="number" formControlName="gs_elevation" [value]="instrument.gs_elevation">
+                                            <mat-icon matSuffix class="info-icon" matTooltip="Using the ground surface tape down, elevation of the ground surface." 
+                                                aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
+                                        </mat-form-field>
+                                        <!-- Ground Surface Elevation Validator -->
+                                        <div *ngIf="form.controls.instrument_status.controls[i].controls.gs_elevation.invalid && (form.controls.instrument_status.controls[i].controls.gs_elevation.dirty || form.controls.instrument_status.controls[i].controls.gs_elevation.touched)"
+                                            class="alert alert-danger">
+                                            <div *ngIf="form.controls.instrument_status.controls[i].controls.gs_elevation.errors?.['incorrectValue']">
+                                                Ground Surface Elevation must be a numeric value.
+                                            </div>
+                                        </div>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>In Feet Above</mat-label>
+                                            <mat-select aria-label="In Feet Above" formControlName="vdatum_id">
+                                                <mat-option *ngFor="let datum of vDatumList" [value]="datum.datum_id">
+                                                {{datum.datum_name}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
                                     </div>
                                 </div>
-                                <mat-form-field appearance="fill">
-                                    <mat-label>Water Surface Elevation</mat-label>
-                                    <input aria-label="Water Surface Elevation" matInput type="number" formControlName="ws_elevation" [value]="instrument.ws_elevation">
-                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the water surface tape down, elevation of the water surface." 
-                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                </mat-form-field>
-                                <!-- Water Surface Elevation Validator -->
-                                <div *ngIf="form.controls.instrument_status.controls[i].controls.ws_elevation.invalid && (form.controls.instrument_status.controls[i].controls.ws_elevation.dirty || form.controls.instrument_status.controls[i].controls.ws_elevation.touched)"
-                                    class="alert alert-danger">
-                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.ws_elevation.errors?.['incorrectValue']">
-                                        Water Surface Elevation must be a numeric value.
-                                    </div>
-                                </div>
-                                <mat-form-field appearance="fill">
-                                    <mat-label>Ground Elevation</mat-label>
-                                    <input aria-label="Ground Elevation" matInput type="number" formControlName="gs_elevation" [value]="instrument.gs_elevation">
-                                    <mat-icon matSuffix class="info-icon" matTooltip="Using the ground surface tape down, elevation of the ground surface." 
-                                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
-                                </mat-form-field>
-                                <!-- Ground Surface Elevation Validator -->
-                                <div *ngIf="form.controls.instrument_status.controls[i].controls.gs_elevation.invalid && (form.controls.instrument_status.controls[i].controls.gs_elevation.dirty || form.controls.instrument_status.controls[i].controls.gs_elevation.touched)"
-                                    class="alert alert-danger">
-                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.gs_elevation.errors?.['incorrectValue']">
-                                        Ground Surface Elevation must be a numeric value.
-                                    </div>
-                                </div>
-                                <mat-form-field appearance="fill">
-                                    <mat-label>In Feet Above</mat-label>
-                                    <mat-select aria-label="In Feet Above" formControlName="vdatum_id">
-                                        <mat-option *ngFor="let datum of vDatumList" [value]="datum.datum_id">
-                                        {{datum.datum_name}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
+                            </div>
+                            <div class="note">
+                                <label>Note: these elevations are used in the sensor processing and the final products.</label>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="note">
-                    <label>Note: these elevations are used in the sensor processing and the final products.</label>
-                </div>
+                    <!-- Create: sensor status fields for tapedown -->
+                </mat-expansion-panel>
                 <mat-divider></mat-divider>
-                <mat-radio-group class="radio-btn-group" [(value)]="vented" (change)="ventedChange($event.value)">
+                <!-- Vented (only if Sensor Type is Pressure Transducer)-->
+                <mat-radio-group *ngIf="form.controls.sensor_type_id.value === 1" class="radio-btn-group" [(value)]="vented" (change)="ventedChange($event.value)">
                     <mat-label class="form-header">Vented: </mat-label>
                     <mat-radio-button class="radio-button" value="Yes">Yes</mat-radio-button>
                     <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
@@ -304,7 +335,8 @@
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                         <mat-datepicker [value]="instrument.time_stamp" #deployDatePicker></mat-datepicker>
                                     </mat-form-field>
-                                    <input class="date-input" formControlName="hour" type="number" aria-label="Deploy Hour" [value]="instrument.hour" required placeholder="00"> : 
+                                    <input class="date-input" formControlName="hour" type="number" aria-label="Deploy Hour" [value]="instrument.hour" required placeholder="00">
+                                    <span class="date-span"> : </span>
                                     <input class="date-input" formControlName="minute" type="number" aria-label="Deploy Minute" [value]="instrument.minute" required placeholder="00">
                                     <button mat-stroked-button class="date-input date-button secondary" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
                                 </div>
@@ -319,7 +351,7 @@
                                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                 </mat-form-field>
                                 <div>
-                                    <label class="form-header">Preview time in UTC: </label> {{instrument.utc_preview}} GMT
+                                    <label class="form-header">Preview time in UTC: </label> {{instrument.utc_preview}}
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label for="description">Note</mat-label>
@@ -333,8 +365,8 @@
                     </div>
                 </div>
                 <div class="ref-button-group">
-                    <button class="primary" mat-button cdkFocusInitial aria-label="Save" id="1" type="submit">Save</button>
-                    <button class="secondary cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Deployed')">Cancel Edits</button>
+                    <button *ngIf="editOrCreate === 'Edit'" class="primary" mat-button cdkFocusInitial aria-label="Save" id="1" type="submit">Save</button>
+                    <button *ngIf="editOrCreate === 'Edit'" class="secondary cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Deployed')">Cancel Edits</button>
                 </div>
             </mat-expansion-panel>
             <mat-expansion-panel hideToggle [expanded]="retrievedExpanded" (opened)="retrievedExpanded = true" (closed)="retrievedExpanded = false" *ngIf="sensor.statusType === 'Retrieved'">
@@ -383,7 +415,8 @@
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                         <mat-datepicker [value]="instrument.time_stamp" #deployDatePicker></mat-datepicker>
                                     </mat-form-field>
-                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="instrument.hour" required placeholder="00"> : 
+                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="instrument.hour" required placeholder="00"> 
+                                    <span class="date-span"> : </span>
                                     <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" [value]="instrument.minute" required placeholder="00">
                                     <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
                                 </div>
@@ -398,7 +431,7 @@
                                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                 </mat-form-field>
                                 <div>
-                                    <label class="form-header">Preview time in UTC: </label> {{instrument.utc_preview}} GMT
+                                    <label class="form-header">Preview time in UTC: </label> {{instrument.utc_preview}}
                                 </div>
                             </div>
                         </div>
@@ -648,7 +681,8 @@
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                         <mat-datepicker [value]="instrument.time_stamp" #deployDatePicker></mat-datepicker>
                                     </mat-form-field>
-                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="instrument.hour" required placeholder="00"> : 
+                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="instrument.hour" required placeholder="00">
+                                    <span class="date-span"> : </span>
                                     <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" [value]="instrument.minute" required placeholder="00">
                                     <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
                                 </div>
@@ -663,7 +697,7 @@
                                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                 </mat-form-field>
                                 <div>
-                                    <label class="form-header">Preview time in UTC: </label> {{instrument.utc_preview}} GMT
+                                    <label class="form-header">Preview time in UTC: </label> {{instrument.utc_preview}}
                                 </div>
                             </div>
                         </div>
@@ -867,7 +901,7 @@
                     <button class="secondary cancel-btn" type="button" mat-stroked-button cdkFocusInitial aria-label="Cancel Edits" (click)="cancelForm('Lost')">Cancel Edits</button>
                 </div>
             </mat-expansion-panel>
-            <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false">
+            <mat-expansion-panel hideToggle [expanded]="filesExpanded" (opened)="filesExpanded = true" (closed)="filesExpanded = false" *ngIf="editOrCreate === 'Edit'">
                 <mat-expansion-panel-header>
                     <mat-panel-title *ngIf="!filesExpanded" style="color: grey; font-weight: 500">
                         Sensor File Information
@@ -915,7 +949,7 @@
                     </table>
                 </div>
             </mat-expansion-panel>
-            <mat-expansion-panel hideToggle [expanded]="nwisExpanded"  (opened)="nwisExpanded = true" (closed)="nwisExpanded = false" *ngIf="sensor.statusType === 'Deployed'">
+            <mat-expansion-panel hideToggle [expanded]="nwisExpanded"  (opened)="nwisExpanded = true" (closed)="nwisExpanded = false" *ngIf="sensor.statusType === 'Deployed' && editOrCreate === 'Edit'">
                 <mat-expansion-panel-header>
                     <mat-panel-title *ngIf="!nwisExpanded" style="color: grey; font-weight: 500">
                         NWIS Connection
@@ -972,6 +1006,7 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
+            <button *ngIf="editOrCreate === 'Create'" class="primary" mat-button cdkFocusInitial aria-label="Deploy" id="1" type="submit">Deploy</button>
             <button mat-stroked-button class="secondary" [mat-dialog-close]="returnData" cdkFocusInitial aria-label="Cancel">Cancel</button>
             <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
         </div>

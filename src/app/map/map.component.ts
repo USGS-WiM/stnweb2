@@ -781,6 +781,7 @@ export class MapComponent implements OnInit {
         return hasFilters;
     }
 
+    /* istanbul ignore next */
     jumpToResult() {
         let self = this;
         // Open results panel
@@ -1586,6 +1587,7 @@ export class MapComponent implements OnInit {
         })
     }
 
+    /* istanbul ignore next */
     addRouterLink(e){
         let data = e.layer.data;
         this.siteID = data.id;

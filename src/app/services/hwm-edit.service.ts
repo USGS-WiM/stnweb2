@@ -72,6 +72,7 @@ export class HwmEditService {
         );
   }
 
+  /* istanbul ignore next */
   //Update a HWM
   public putHWM(hwm_id, hwm): Observable<any> {
     return this.httpClient
@@ -104,6 +105,24 @@ export class HwmEditService {
                 return response;
             }),
             catchError(this.handleError<any>('postHWM', []))
+        );
+  }
+
+  /* istanbul ignore next */
+  //Delete a HWM
+  public deleteHWM(hwm_id): Observable<any> {
+    return this.httpClient
+        .delete(APP_SETTINGS.API_ROOT + 'hwms/' + hwm_id + '.json', {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteHWM response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteHWM', []))
         );
   }
 

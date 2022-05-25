@@ -30,6 +30,44 @@ export class OpEditService {
           );
     }
 
+    /* istanbul ignore next */
+    //Create reference datum
+    public createReferenceDatum(op): Observable<any> {
+        return this.httpClient
+            .post(APP_SETTINGS.API_ROOT + 'ObjectivePoints.json', op, {
+              headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+          })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'createReferenceDatum response received' //: ' +
+                        // JSON.stringify(response)
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('createReferenceDatum', []))
+            );
+    }
+
+    /* istanbul ignore next */
+    //Update existing reference datum by ID
+    public deleteRD(opID: string): Observable<any> {
+        return this.httpClient
+            .delete(APP_SETTINGS.API_ROOT + 'ObjectivePoints/' + opID + '.json', {
+              headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+          })
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'deleteRD response received' //: ' +
+                        // JSON.stringify(response)
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('deleteRD', []))
+            );
+    }
+
     //Add new control ID
     public postControlID(controlID): Observable<any> {
       return this.httpClient
@@ -82,6 +120,22 @@ export class OpEditService {
               }),
               catchError(this.handleError<any>('deleteControlID', []))
           );
+    }
+
+    /* istanbul ignore next */
+    //Get Datum Location OP Measurements
+    public getOPMeasurements(opID): Observable<any> {
+        return this.httpClient
+            .get(APP_SETTINGS.API_ROOT + 'ObjectivePoints/' + opID + '/OPMeasurements.json')
+            .pipe(
+                tap((response) => {
+                    console.log(
+                        'getOPMeasurements response received'
+                    );
+                    return response;
+                }),
+                catchError(this.handleError<any>('getOPMeasurements', []))
+            );
     }
 
     /**

@@ -194,12 +194,14 @@ describe('SensorEditComponent', () => {
   });
 
   it('should split time stamp for formatting and set utc preview', () => {
+    component.editOrCreate = "Edit";
     component.setTimeAndDate();
     fixture.detectChanges();
     expect(component.sensor.instrument_status[0].hour).toEqual("01");
     expect(component.sensor.instrument_status[0].minute).toEqual("05");
     expect(component.sensor.instrument_status[0].ampm).toEqual("AM");
-    expect(component.sensor.instrument_status[0].utc_preview).toEqual("01/05/2022 01:05");
+    expect(component.sensor.instrument_status[0].utc_preview).toEqual("Wed, 05 Jan 2022 01:05:00 GMT");
+    component.editOrCreate = "";
   });
 
   it('should split initial files into nwis and other sensor file lists', () => {
@@ -256,20 +258,22 @@ describe('SensorEditComponent', () => {
   });
 
   it('should change am/pm', () => {
+    component.editOrCreate = "Edit";
     component.setTimeAndDate();
     component.changeTime(component.sensor.instrument_status[0]);
     fixture.detectChanges();
 
     // Initially AM, switch to PM
     expect(component.sensor.instrument_status[0].ampm).toEqual("PM");
-    expect(component.sensor.instrument_status[0].utc_preview).toEqual("01/05/2022 13:05");
+    expect(component.sensor.instrument_status[0].utc_preview).toEqual("Wed, 05 Jan 2022 13:05:00 GMT");
 
     component.changeTime(component.sensor.instrument_status[0]);
     fixture.detectChanges();
 
     // Initially AM, switch to PM
     expect(component.sensor.instrument_status[0].ampm).toEqual("AM");
-    expect(component.sensor.instrument_status[0].utc_preview).toEqual("01/05/2022 01:05");
+    expect(component.sensor.instrument_status[0].utc_preview).toEqual("Wed, 05 Jan 2022 01:05:00 GMT");
+    component.editOrCreate = "";
   });
 
   it('should set newStatusID value if different from initial status', () => {
@@ -368,11 +372,11 @@ describe('SensorEditComponent', () => {
     component.form.controls["instrument_status"].controls[0].controls["time_zone"].setValue("EST/EDT");
     component.setTimeZone(component.sensor.instrument_status[0]);
     fixture.detectChanges();
-    expect(component.sensor.instrument_status[0].time_zone).toEqual("EST/EDT");
-    expect(component.sensor.instrument_status[0].utc_preview).toEqual("01/05/2022 06:05");
+    expect(component.sensor.instrument_status[0].utc_preview).toEqual("Wed, 05 Jan 2022 06:05:00 GMT");
   });
 
   it('should set the utc preview value and change the timestamp', () => {
+    component.editOrCreate = "Edit";
     component.setTimeAndDate();
     component.initForm();
     component.previewUTC(component.sensor.instrument_status[0]);
@@ -381,7 +385,8 @@ describe('SensorEditComponent', () => {
     expect(
       component.form.controls["instrument_status"].controls[0].controls["time_stamp"].value).toEqual("2022-01-05T01:05:00");
     expect(
-      component.sensor.instrument_status[0].utc_preview).toEqual("01/05/2022 01:05");
+      component.sensor.instrument_status[0].utc_preview).toEqual("Wed, 05 Jan 2022 01:05:00 GMT");
+      component.editOrCreate = "";
   });
 
   it('should change vented form control value', () => {
@@ -623,6 +628,7 @@ describe('SensorEditComponent', () => {
     let removeSpy = spyOn(component.sensorEditService, 'deleteOPMeasure');
     let updateSpy = spyOn(component.sensorEditService, 'updateOPMeasure');
 
+    component.editOrCreate = "Edit";
     component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
     fixture.detectChanges();
 
@@ -630,6 +636,7 @@ describe('SensorEditComponent', () => {
     expect(removeSpy).not.toHaveBeenCalled();
     expect(updateSpy).not.toHaveBeenCalled();
     expect(dialogSpy).not.toHaveBeenCalled();
+    component.editOrCreate = "Create";
   });
 
   it('should show alert if adding tapedowns fails', () => {
@@ -641,12 +648,13 @@ describe('SensorEditComponent', () => {
     let addSpy = spyOn(component.sensorEditService, 'addOPMeasure').and.returnValue(
       of([])
     );
-    
+    component.editOrCreate = "Edit";
     component.sendTapedownRequests(tapedownsToAdd, tapedownsToRemove, tapedownsToUpdate);
     fixture.detectChanges();
 
     expect(addSpy).toHaveBeenCalledTimes(1);
     expect(dialogSpy).toHaveBeenCalled();
+    component.editOrCreate = "";
   });
 
   it('should send requests and set return data to results', () => {
@@ -742,6 +750,7 @@ describe('SensorEditComponent', () => {
         of(collectCondResponse)
     );
 
+    component.editOrCreate = "Edit";
     let instrumentRequestSpy = spyOn(component.sensorEditService, 'putInstrument').and.returnValue(of(response));
     let instrumentStatusRequestSpy = spyOn(component.sensorEditService, 'putInstrumentStatus').and.returnValue(of(statusResponse));
     let tapedownSpy = spyOn(component, 'sendTapedownRequests');
@@ -760,5 +769,6 @@ describe('SensorEditComponent', () => {
     expect(instrumentStatusRequestSpy).toHaveBeenCalled();
     expect(tapedownSpy).toHaveBeenCalledTimes(1);
     expect(component.returnData.instrument_status[0]).toEqual(returnData.instrument_status[0]);
+    component.editOrCreate = "";
   });
 });

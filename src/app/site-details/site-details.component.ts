@@ -15,6 +15,7 @@ import { Sort } from '@angular/material/sort';
 import { ReferenceDatumDialogComponent } from '@app/reference-datum-dialog/reference-datum-dialog.component';
 import { SensorDialogComponent } from '@app/sensor-dialog/sensor-dialog.component';
 import { HwmDialogComponent } from '@app/hwm-dialog/hwm-dialog.component';
+import { HwmEditService } from '@app/services/hwm-edit.service';
 import { FileDetailsDialogComponent } from '@app/file-details-dialog/file-details-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 declare let L: any;
@@ -26,7 +27,9 @@ import { ResultDetailsComponent } from '@app/result-details/result-details.compo
 import { networkInterfaces } from 'os';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { RefDatumEditComponent } from '@app/ref-datum-edit/ref-datum-edit.component';
+import { OpEditService } from '@app/services/op-edit.service';
 import { SensorEditComponent } from '@app/sensor-edit/sensor-edit.component';
+import { SensorEditService } from '@app/services/sensor-edit.service';
 import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
@@ -218,6 +221,9 @@ export class SiteDetailsComponent implements OnInit {
         public dialog: MatDialog,
         public filtersService: FiltersService,
         public fileEditService: FileEditService,
+        public hwmEditService: HwmEditService,
+        public opEditService: OpEditService,
+        public sensorEditService: SensorEditService,
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -457,6 +463,7 @@ export class SiteDetailsComponent implements OnInit {
                                         })
                                     })
                                     this.sensorDataSource.data = this.siteFullInstruments;
+                                    console.log(this.sensorDataSource.data)
                                     this.sensorDataSource.paginator = this.sensorPaginator;
                                     this.getSensorsForMap();
                                 }
@@ -1024,20 +1031,115 @@ export class SiteDetailsComponent implements OnInit {
                 hmethodList: this.hmethodList,
                 files: this.refMarkFilesDataSource.data,
                 site_id: this.site.site_id,
+                rdSite: this.site,
             },
             width: '100%',
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result){
-                if(result.referenceDatums !== null){
+            if(result.result && result.editOrCreate === "Edit") {
+                if(result.result.referenceDatums !== null){
                     this.refMarkDataSource.data.forEach(function(row, i){
-                        if(row.objective_point_id === result.referenceDatums.objective_point_id){
+                        if(row.objective_point_id === result.result.referenceDatums.objective_point_id){
                             // replace row with new info
-                            self.refMarkDataSource.data = [result.referenceDatums];
+                            self.refMarkDataSource.data = [result.result.referenceDatums];
                         }
                     });
                 }
+            } else if(result.result && result.editOrCreate === "Create") {
+                self.refMarkDataSource.data.push(result.result.referenceDatums); 
+                self.refMarkDataSource.data = [...self.refMarkDataSource.data];
+            }
+        });
+    }
+
+    /* istanbul ignore next */
+    deleteRD(row): void {
+        let self = this;
+        // First check if any sensors are using this reference datum
+        self.opEditService
+        .getOPMeasurements(row.objective_point_id)
+        .subscribe((results) => {
+            if (results.length > 0) {
+                // If there are sensors using the reference datum
+                this.dialog.open(ConfirmComponent, {
+                    data: {
+                    title: "Cannot Delete",
+                    titleIcon: "close",
+                    message: "This Reference Datum is being used for one or more sensor tape downs. Please delete the tape down before deleting the reference datum.",
+                    confirmButtonText: "OK",
+                    showCancelButton: true,
+                    },
+                });
+            }else{
+                // If no sensors are using the reference datum
+                const dialogRef = this.dialog.open(ConfirmComponent, {
+                    data: {
+                    title: "Remove Reference Datum",
+                    titleIcon: "close",
+                    message: "Are you sure you want to remove this Reference Datum: " + row.name,
+                    confirmButtonText: "OK",
+                    showCancelButton: true,
+                    },
+                });
+                dialogRef.afterClosed().subscribe((result) => {
+                    if(result) {
+                        // Delete reference datum
+                        this.opEditService.deleteRD(row.objective_point_id).subscribe((results) => {
+                            if(results === null){
+                                // Update reference datum data source
+                                self.refMarkDataSource.data.forEach(function(rd, i){
+                                    if(rd.objective_point_id === row.objective_point_id){
+                                        self.refMarkDataSource.data.splice(i, 1);
+                                        self.refMarkDataSource.data = [...self.refMarkDataSource.data];
+                                    }
+                                })
+                                // Update files data source
+                                self.refMarkFilesDataSource.data.forEach(function(file, i){
+                                    if(file.objective_point_id === row.objective_point_id){
+                                        self.refMarkFilesDataSource.data.splice(i, 1);
+                                        self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                                    }
+                                })
+                                // Update site files data source
+                                self.siteFilesDataSource.data.forEach(function(file, i){
+                                    if(file.objective_point_id === row.objective_point_id){
+                                        self.siteFilesDataSource.data.splice(i, 1);
+                                        self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                                    }
+                                })
+                                // Update site files count
+                                self.siteFiles.forEach(function(file, i){
+                                    if(file.objective_point_id === row.objective_point_id){
+                                        self.siteFiles.splice(i, 1);
+                                        self.siteFiles = [...self.siteFiles];
+                                    }
+                                })
+                                // success
+                                this.dialog.open(ConfirmComponent, {
+                                    data: {
+                                    title: "",
+                                    titleIcon: "close",
+                                    message: "Successfully removed Reference Datum",
+                                    confirmButtonText: "OK",
+                                    showCancelButton: false,
+                                    },
+                                });
+                            }else{
+                                // error
+                                this.dialog.open(ConfirmComponent, {
+                                    data: {
+                                    title: "Error",
+                                    titleIcon: "close",
+                                    message: "Error removing Reference Datum",
+                                    confirmButtonText: "OK",
+                                    showCancelButton: false,
+                                    },
+                                });
+                            }
+                        })
+                    }
+                });
             }
         });
     }
@@ -1101,6 +1203,78 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     /* istanbul ignore next */
+    deleteHWM(row): void {
+        let self = this;
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove HWM",
+              titleIcon: "close",
+              message: "Are you sure you want to remove this HWM? Flagged on: " + row.format_flag_date,
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                // Delete hwm
+                this.hwmEditService.deleteHWM(row.hwm_id).subscribe((results) => {
+                    if(results === null){
+                        // Update hwm data source
+                        self.hwmDataSource.data.forEach(function(hwm, i){
+                            if(hwm.hwm_id === row.hwm_id){
+                                self.hwmDataSource.data.splice(i, 1);
+                                self.hwmDataSource.data = [...self.hwmDataSource.data];
+                            }
+                        })
+                        // Update files data source
+                        self.hwmFilesDataSource.data.forEach(function(file, i){
+                            if(file.hwm_id === row.hwm_id){
+                                self.hwmFilesDataSource.data.splice(i, 1);
+                                self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                            }
+                        })
+                        // Update site files data source
+                        self.siteFilesDataSource.data.forEach(function(file, i){
+                            if(file.hwm_id === row.hwm_id){
+                                self.siteFilesDataSource.data.splice(i, 1);
+                                self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                            }
+                        })
+                        // Update site files count
+                        self.siteFiles.forEach(function(file, i){
+                            if(file.hwm_id === row.hwm_id){
+                                self.siteFiles.splice(i, 1);
+                                self.siteFiles = [...self.siteFiles];
+                            }
+                        })
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "Successfully removed HWM",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error removing HWM",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }
+                })
+            }
+        });
+    }
+
+    /* istanbul ignore next */
     openSensorDetailsDialog(row): void {
         // Format dates
         let self = this;
@@ -1157,21 +1331,100 @@ export class SiteDetailsComponent implements OnInit {
                 files: this.sensorFilesDataSource.data,
                 site_id: this.site.site_id,
                 siteRefMarks: this.refMarkDataSource.data,
+                event_id: this.currentEvent,
+                event: this.event,
             },
             width: '100%',
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result){
+            if (result.result && result.editOrCreate === "Edit"){
                 this.sensorDataSource.data.forEach(function(sensor, i){
-                    if(sensor.instrument_id === result.instrument_id){
-                        self.sensorDataSource.data[i] = result; 
+                    if(sensor.instrument_id === result.result.instrument_id){
+                        self.sensorDataSource.data[i] = result.result; 
                         self.sensorDataSource.data = [...self.sensorDataSource.data];
+                    }
+                })
+            }
+            else if(result.result && result.editOrCreate === "Create") {
+                self.sensorDataSource.data.push(result.result); 
+                self.sensorDataSource.data = [...self.sensorDataSource.data];
+            }
+        });
+    }
+
+    /* istanbul ignore next */
+    deleteSensor(row): void {
+        let self = this;
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove Sensor",
+              titleIcon: "close",
+              message: "Are you sure you want to remove this Sensor?" + row.deploymentType,
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                // Delete sensor
+                this.sensorEditService.deleteInstrument(row.instrument_id).subscribe((results) => {
+                    if(results === null){
+                        // Update hwm data source
+                        self.sensorDataSource.data.forEach(function(sensor, i){
+                            if(sensor.instrument_id === row.instrument_id){
+                                self.sensorDataSource.data.splice(i, 1);
+                                self.sensorDataSource.data = [...self.sensorDataSource.data];
+                            }
+                        })
+                        // Update files data source
+                        self.sensorFilesDataSource.data.forEach(function(file, i){
+                            if(file.instrument_id === row.instrument_id){
+                                self.sensorFilesDataSource.data.splice(i, 1);
+                                self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                            }
+                        })
+                        // Update site files data source
+                        self.siteFilesDataSource.data.forEach(function(file, i){
+                            if(file.instrument_id === row.instrument_id){
+                                self.siteFilesDataSource.data.splice(i, 1);
+                                self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                            }
+                        })
+                        // Update site files count
+                        self.siteFiles.forEach(function(file, i){
+                            if(file.instrument_id === row.instrument_id){
+                                self.siteFiles.splice(i, 1);
+                                self.siteFiles = [...self.siteFiles];
+                            }
+                        })
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "Successfully removed Sensor",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error removing Sensor",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
                     }
                 })
             }
         });
     }
+
     /* istanbul ignore next */
     openPeaksDetailsDialog(row): void {
         let dialogWidth;
