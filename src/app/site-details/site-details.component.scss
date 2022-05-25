@@ -303,7 +303,6 @@ table {
 }
 
 .retrieve-btn {
-    margin: 5px 5px;
     text-decoration: underline;
     color: blue;
 }
@@ -522,7 +521,10 @@ table {
     
     .edit-details-mobile { display: block; }
     
-    .retrieve-btn { display: none; }
+    .retrieve-btn { 
+        display: none; 
+        margin: 5px 5px; 
+    }
   }
 
 @media (min-width: 1000px) {
@@ -534,5 +536,8 @@ table {
     
     .edit-details-mobile { display: none; }
     
-    .retrieve-btn { display: inline-block; }
+    .retrieve-btn { 
+        display: inline-block;
+        padding: 0px;
+    }
   }

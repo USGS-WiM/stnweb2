@@ -446,15 +446,31 @@ export class SiteDetailsComponent implements OnInit {
                                 if(results.length > 0){
                                     this.siteFullInstruments.forEach(function(result, i){
                                         let timestamp = new Date(Math.max(...result.instrument_status.map(e => new Date(e.time_stamp))));
-                                        
+
+                                        // In case 2 timestamps are the same, retrieved/lost status > deployed
+                                        let timeCount = 0;
+                                        let statusTypes = [];
                                         result.instrument_status.forEach(function(statusType){
                                             let time = new Date(statusType.time_stamp);
 
                                             if (timestamp.getTime() === time.getTime()){
+                                                timeCount ++;
                                                 result.statusType = statusType.status;
+                                                statusTypes.push(statusType.status);
                                                 self.siteFullInstruments = self.siteFullInstruments.filter(({ statusType }) => statusType !== 'Proposed');
                                             }
                                         })
+                                        if(timeCount > 1){
+                                            console.log(timeCount)
+                                            console.log(result.instrument_status);
+                                            statusTypes.forEach(type => {
+                                                console.log(type)
+                                                if(type === "Lost" || type === "Retrieved"){
+                                                    result.statusType = type;
+                                                    console.log(result.statusType)
+                                                }
+                                            })
+                                        }
                                         
                                         // Get event name for sensor using sensor_id
                                         self.siteService
@@ -464,7 +480,6 @@ export class SiteDetailsComponent implements OnInit {
                                         })
                                     })
                                     this.sensorDataSource.data = this.siteFullInstruments;
-                                    console.log(this.sensorDataSource.data)
                                     this.sensorDataSource.paginator = this.sensorPaginator;
                                     this.getSensorsForMap();
                                 }
@@ -1277,6 +1292,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openSensorDetailsDialog(row): void {
+        
+        console.log(this.sensorDataSource.data)
         // Format dates
         let self = this;
         let utcPreview;
@@ -1467,6 +1484,7 @@ export class SiteDetailsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result){
+                console.log(result)
                 this.sensorDataSource.data.forEach(function(sensor, i){
                     if(sensor.instrument_id === result.instrument_id){
                         self.sensorDataSource.data[i] = result; 

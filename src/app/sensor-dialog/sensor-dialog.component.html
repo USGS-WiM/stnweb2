@@ -36,6 +36,11 @@
                 <ng-template #nullSerialNum><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
+                <p class="content-left">Housing Serial Number</p>
+                <p class="content-right" *ngIf="data.row_data.housing_serial_number !== undefined && data.row_data.housing_serial_number !== ''; else nullHousingSerialNum">{{data.row_data.housing_serial_number}}</p>
+                <ng-template #nullHousingSerialNum><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
                 <p class="content-left">Housing Type</p>
                 <p class="content-right" *ngIf="data.row_data.housingType !== undefined && data.row_data.housingType !== ''; else nullHousingType">{{data.row_data.housingType}}</p>
                 <ng-template #nullHousingType><p class="content-right">---</p></ng-template>
@@ -81,7 +86,7 @@
                 </div>
                 <ng-template #nullInFeetAboveDeployed><p class="content-right">---</p></ng-template>
             </div>
-            <div class="cell-container" *ngIf="sensor.sensor_type_id === 1">
+            <div class="cell-container" *ngIf="data.row_data.sensor_type_id === 1">
                 <p class="content-left">Vented</p>
                 <p class="content-right" *ngIf="data.row_data.vented !== undefined && data.row_data.vented !== ''; else nullVented">{{data.row_data.vented}}</p>
                 <ng-template #nullVented><p class="content-right">---</p></ng-template>

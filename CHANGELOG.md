@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Added ability to delete reference datums
  -  Added ability to deploy a sensor
  -  Added ability to delete sensors
+ -  Added ability to retrieve a sensor
  
 ### Changed
 

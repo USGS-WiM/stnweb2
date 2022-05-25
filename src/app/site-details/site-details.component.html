@@ -691,7 +691,7 @@
                                             <mat-icon class="deployed-icon" *ngIf="sensor.statusType === 'Deployed'">check_circle</mat-icon>
                                             {{ sensor.statusType }}
                                             <button *ngIf="sensor.statusType === 'Deployed'" mat-button class="retrieve-btn" (click)="openSensorRetrieveDialog(sensor)"
-                                                aria-label="Retrieve">Retrieve
+                                                aria-label="Retrieve"><mat-icon>sync</mat-icon> Retrieve
                                             </button>
                                         </ng-template>
                                     </td>
