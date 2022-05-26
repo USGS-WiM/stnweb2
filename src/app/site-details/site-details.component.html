@@ -617,7 +617,7 @@
                                 aria-label="Add Sensor"><mat-icon class="add-buttons" matTooltip="Deploy a new Sensor" matTooltipPosition="before">add</mat-icon>
                             </button>
                         </mat-card>
-                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
+                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
                         <div class="tableContainer" *ngIf="siteFullInstruments !== undefined; else noSensorTable">
                             <table *ngIf="siteFullInstruments.length > 0; else noSensorTable"
                                 mat-table

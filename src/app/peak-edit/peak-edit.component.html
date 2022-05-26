@@ -271,9 +271,23 @@
                     </mat-form-field>
                 </div>
                 <div class="inline-widths">
-                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="peak.hour" required placeholder="00"> : 
-                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" [value]="peak.minute" required placeholder="00">
+                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" max="12" min="0" [value]="peak.hour" required placeholder="00"> : 
+                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" max="60" min="0" [value]="peak.minute" required placeholder="00">
                     <button mat-stroked-button class="date-input secondary date-button" type="button" (click)="changeTime()" [value]="peak.ampm">{{peak.ampm}}</button>
+                </div>
+            </div>
+            <!-- Minute Validator -->
+            <div *ngIf="form.controls.minute.invalid && (form.controls.minute.dirty || form.controls.minute.touched)"
+                class="alert alert-danger">
+                <div *ngIf="form.controls.minute.errors?.['incorrectValue']">
+                    Minutes must be between 0 and 60.
+                </div>
+            </div>
+            <!-- Hours Validator -->
+            <div *ngIf="form.controls.hour.invalid && (form.controls.hour.dirty || form.controls.hour.touched)"
+                class="alert alert-danger">
+                <div *ngIf="form.controls.hour.errors?.['incorrectValue']">
+                    Hours must be between 0 and 12.
                 </div>
             </div>
             <div class="inline-fields">
