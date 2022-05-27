@@ -320,7 +320,7 @@
             <div class="inline-fields">
                 <mat-form-field appearance="fill" class="inline-widths">
                     <mat-label>Peak Stage (elevation ft)</mat-label>
-                    <input aria-label="Peak Stage" matInput formControlName="peak_stage" [value]="peak.peak_stage"/>
+                    <input aria-label="Peak Stage" matInput formControlName="peak_stage" [value]="peak.peak_stage" (input)="requireVDatum($event.data)"/>
                 </mat-form-field>
                 <!-- Peak Stage Validator -->
                 <div *ngIf="form.controls.peak_stage.invalid && (form.controls.peak_stage.dirty || form.controls.peak_stage.touched)"
@@ -338,11 +338,13 @@
             </div>
             <mat-form-field appearance="fill">
                 <mat-label>Vertical Datum</mat-label>
-                <mat-select aria-label="Vertical Datum" formControlName="vdatum_id">
+                <mat-select aria-label="Vertical Datum" [required]="form.controls.peak_stage.value ? true : null" formControlName="vdatum_id">
                     <mat-option *ngFor="let datum of vdatums" [value]="datum.datum_id">
                     {{datum.datum_name}}
                     </mat-option>
                 </mat-select>
+                <mat-icon *ngIf="form.controls.peak_stage.value" matSuffix class="info-icon" matTooltip="Vertical Datum is required if Peak Stage Elevation is populated."
+                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
             </mat-form-field>
             <div class="inline-fields">
                 <mat-form-field appearance="fill" class="inline-widths">

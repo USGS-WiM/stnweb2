@@ -463,7 +463,6 @@ export class SiteDetailsComponent implements OnInit {
                                         })
                                     })
                                     this.sensorDataSource.data = this.siteFullInstruments;
-                                    console.log(this.sensorDataSource.data)
                                     this.sensorDataSource.paginator = this.sensorPaginator;
                                     this.getSensorsForMap();
                                 }
@@ -1495,7 +1494,9 @@ export class SiteDetailsComponent implements OnInit {
                     }
                 }else if(result.editOrCreate === "Create"){
                     // Add peak
-                    self.peaksDataSource.data.push(result.result); 
+                    result.data.peak.event_name = self.event;
+                    result.data.peak.format_peak_date = self.setTimeAndDate(result.data.peak.peak_date);
+                    self.peaksDataSource.data.push(result.data.peak);
                     self.peaksDataSource.data = [...self.peaksDataSource.data];
                     
                     // Update HWMs

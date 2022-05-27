@@ -91,6 +91,7 @@ export class PeakEditComponent implements OnInit {
         time_zone: "UTC",
       };
       this.setPeakTimeAndDate();
+      this.reorderInstruments();
       this.setMembers();
       this.initForm();
     }
@@ -427,10 +428,14 @@ export class PeakEditComponent implements OnInit {
       aep_range: new FormControl(this.peak.aep_range !== undefined && this.peak.aep_range !== "" ? this.peak.aep_range : null, [this.isNum()]),
       elev_ft: new FormControl(this.peak.elev_ft !== undefined && this.peak.elev_ft !== "" ? this.peak.elev_ft : null),
       vdatum_id: new FormControl(this.peak.vdatum_id !== undefined && this.peak.vdatum_id !== "" ? this.peak.vdatum_id : null),
-      site_id: new FormControl(this.data.site_id !== undefined && this.data.site_id !== "" ? this.data.site_id : null),
+      // site_id: new FormControl(this.data.site_id !== undefined && this.data.site_id !== "" ? this.data.site_id : null),
       member_id: new FormControl(this.peak.member_id !== undefined && this.peak.member_id !== "" ? this.peak.member_id : null),
       calc_notes: new FormControl(this.peak.calc_notes !== undefined && this.peak.calc_notes !== "" ? this.peak.calc_notes : null),
     })
+  }
+
+  requireVDatum(value) {
+    value ? this.form.controls.vdatum_id.setValidators(Validators.required) : this.form.controls.vdatum_id.setValidators();
   }
 
   checkNaN = function(x){
@@ -615,13 +620,10 @@ export class PeakEditComponent implements OnInit {
   //add or remove a hwm from the list of chosen hwms for determining this peak
   addHWM(hwm) {
     let formattedHWM = this.formatHWM(hwm);
-    console.log(hwm)
     if (hwm.selected) {
-      console.log(hwm.selected)
       // Only values not already selected initially are added
-      if(hwm.peak_summary_id === undefined || hwm.peak_summary_id === null){
+      if(hwm.peak_summary_id !== this.peak.peak_summary_id || hwm.peak_summary_id === undefined || hwm.peak_summary_id === null){
         this.selectedHWMs.push(formattedHWM);
-        console.log(this.selectedHWMs)
       }
       // Check if has been re-added and remove from remove list
       let index = this.removedHWMs.map(function (hwm) { return hwm.hwm_id; }).indexOf(hwm.hwm_id)
@@ -688,7 +690,6 @@ export class PeakEditComponent implements OnInit {
 
   submit() {
     this.form.markAllAsTouched();
-    console.log(this.form)
     if(this.editOrCreate === "Create"){
       // First determine that they did chooose a hwm or data file for interpretation
       let isHwmChecked = false; 
@@ -757,11 +758,6 @@ export class PeakEditComponent implements OnInit {
     peakSubmission.peak_date = this.peak.utc_preview;
     peakSubmission.time_zone = "UTC";
     delete peakSubmission.ampm; delete peakSubmission.hour; delete peakSubmission.minute; delete peakSubmission.utc_preview;
-    console.log(this.removedDFs)
-    console.log(this.removedHWMs)
-    console.log(this.selectedDFs)
-    console.log(this.selectedHWMs)
-    console.log(peakSubmission)
     // Edit peak
     if(this.editOrCreate === "Edit"){
 
@@ -773,8 +769,8 @@ export class PeakEditComponent implements OnInit {
           if(this.removedDFs.length > 0) {
             this.removedDFs.forEach(function(df) {
               df.peak_summary_id = null;
-              self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
-                console.log(results);
+              self.peakEditService.updateDF(df.data_file_id, df).subscribe(response => {
+                console.log(response);
               });
             });
           }
@@ -782,9 +778,9 @@ export class PeakEditComponent implements OnInit {
           if(this.removedHWMs.length > 0) {
             this.removedHWMs.forEach(function(hwm) {
               hwm.peak_summary_id = null;
-              const removeHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
-                console.log(results);
-                self.returnData.hwmsToRemove.push(results.hwm_id)
+              const removeHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(response => {
+                console.log(response);
+                self.returnData.hwmsToRemove.push(response.hwm_id)
                 resolve("Success");
               }));
               promises.push(removeHWM);
@@ -794,8 +790,8 @@ export class PeakEditComponent implements OnInit {
           if(this.selectedDFs.length > 0) {
             this.selectedDFs.forEach(function(df) {
               df.peak_summary_id = results.peak_summary_id;
-              self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
-                console.log(results);
+              self.peakEditService.updateDF(df.data_file_id, df).subscribe(response => {
+                console.log(response);
               });
             });
           }
@@ -803,9 +799,9 @@ export class PeakEditComponent implements OnInit {
           if(this.selectedHWMs.length > 0) {
             this.selectedHWMs.forEach(function(hwm) {
               hwm.peak_summary_id = results.peak_summary_id;
-              const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
-                console.log(results);
-                self.returnData.hwmsToAdd.push(results.hwm_id);
+              const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(response => {
+                console.log(response);
+                self.returnData.hwmsToAdd.push(response.hwm_id);
                 resolve("Success");
               }));
               promises.push(addHWM);
@@ -831,7 +827,8 @@ export class PeakEditComponent implements OnInit {
 
       updatePeak.then(() => {
         this.loading = false;
-        this.dialogRef.close(this.returnData);
+        let result = {data: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
             title: "Successfully updated Peak",
@@ -846,6 +843,7 @@ export class PeakEditComponent implements OnInit {
         this.loading = false;
       });
     }else if(this.editOrCreate === "Create"){
+      delete peakSubmission.peak_summary_id;
       // Create new peak
       const createPeak = new Promise<string>((resolve, reject) => this.peakEditService.postPeak(peakSubmission).subscribe(results => {
         if(results.length !== 0){
@@ -855,8 +853,8 @@ export class PeakEditComponent implements OnInit {
           if(this.selectedDFs.length > 0) {
             this.selectedDFs.forEach(function(df) {
               df.peak_summary_id = results.peak_summary_id;
-              self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
-                console.log(results);
+              self.peakEditService.updateDF(df.data_file_id, df).subscribe(response => {
+                console.log(response);
               });
             });
           }
@@ -864,9 +862,9 @@ export class PeakEditComponent implements OnInit {
           if(this.selectedHWMs.length > 0) {
             this.selectedHWMs.forEach(function(hwm) {
               hwm.peak_summary_id = results.peak_summary_id;
-              const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
-                console.log(results);
-                self.returnData.hwmsToAdd.push(results.hwm_id);
+              const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(response => {
+                console.log(response);
+                self.returnData.hwmsToAdd.push(response.hwm_id);
                 resolve("Success");
               }));
               promises.push(addHWM);
@@ -892,7 +890,8 @@ export class PeakEditComponent implements OnInit {
 
       createPeak.then(() => {
         this.loading = false;
-        this.dialogRef.close(this.returnData);
+        let result = {data: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
             title: "Successfully created Peak",
