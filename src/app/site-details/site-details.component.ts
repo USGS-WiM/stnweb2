@@ -34,6 +34,7 @@ import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
 import { PeakEditComponent } from '@app/peak-edit/peak-edit.component';
+import { PeakEditService } from '@app/services/peak-edit.service';
 import { FiltersService } from '@app/services/filters.service';
 import { FileEditComponent } from '@app/file-edit/file-edit.component';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
@@ -224,6 +225,7 @@ export class SiteDetailsComponent implements OnInit {
         public hwmEditService: HwmEditService,
         public opEditService: OpEditService,
         public sensorEditService: SensorEditService,
+        public peakEditService: PeakEditService,
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -1492,6 +1494,142 @@ export class SiteDetailsComponent implements OnInit {
                 }
             }
         });
+    }
+
+    /* istanbul ignore next */
+    deletePeak(row): void {
+        let self = this;
+        let hwms = this.hwmDataSource.data;
+        let hwmFiles = this.hwmFilesDataSource.data;
+        let sensors = this.sensorDataSource.data;
+        let sensorFiles = this.sensorFilesDataSource.data;
+        let peakDFs;
+        
+        this.peakEditService.getPeakSummary(row.peak_summary_id).subscribe((results) => {
+            this.peakEditService.getPeakDataFiles(row.peak_summary_id).subscribe(dfResults => {
+                peakDFs = dfResults;
+                sensors.forEach(function(sensor, i){
+                    sensorFiles.forEach(function(file){
+                        if(file.details.instrument_id === sensor.instrument_id){
+                            //  Add selected property
+                            file.selected = false;
+                            file.showDFDetail = false;
+                            sensors[i].files.push(file);
+                        }
+                    })
+                })
+                sensors.forEach(function(sensor, i){
+                    sensor.files.forEach(function(file, j){
+                    let matches = peakDFs.filter(function (pdf) { return pdf.data_file_id == file.data_file_id; })[0];
+                    if(matches){
+                        sensors[i].files[j].selected = true;
+                    }
+                    })
+                })
+                hwms.forEach(function(hwm, i){
+                    hwmFiles.forEach(function(file){
+                        if(file.hwm_id === hwm.hwm_id){
+                            //  Add selected property
+                            file.selected = false;
+                            hwms[i].files.push(file);
+                        }
+                    })
+                })
+                hwms.forEach(function(hwm, i){
+                    if(hwm.peak_summary_id === row.peak_summary_id){
+                      hwms[i].selected = true;
+                    }else{
+                      hwms[i].selected = false;
+                    }
+                  })
+                sensorFiles.forEach((file) => {
+                    if (file.selected){
+                        console.log(file)
+                        console.log(file.selected)
+                        // updateDFwoPeakID(file.data_file_id);
+                    }
+                })
+
+                // let updateDFwoPeakID = function(dfID) {
+                //     console.log(dfID)
+                // }
+            });
+        });
+
+        // const dialogRef = this.dialog.open(ConfirmComponent, {
+        //     data: {
+        //       title: "Remove Peak",
+        //       titleIcon: "close",
+        //       message: "Are you sure you want to remove this Peak? " + row.peak_summary_id,
+        //       confirmButtonText: "OK",
+        //       showCancelButton: true,
+        //     },
+        //   });
+        // dialogRef.afterClosed().subscribe((result) => {
+        //     if(result) {
+        //         // Delete hwm
+        //         this.peakEditService.deletePeak(row.peak_summary_id).subscribe((results) => {
+        //             if(results === null){
+        //                 // Update hwm data source
+        //                 self.peaksDataSource.data.forEach(function(peak, i){
+        //                     if(peak.peak_summary_id === row.peak_summary_id){
+        //                         self.peaksDataSource.data.splice(i, 1);
+        //                         self.peaksDataSource.data = [...self.peaksDataSource.data];
+        //                     }
+        //                 })
+
+        //                 sensors.forEach((sensor) => {
+        //                     sensor.forEach((file) => {
+        //                         if (file.selected)
+        //                             updateDFwoPeakID(file.data_file_id);
+        //                     })
+        //                 })
+        //                 // Update files data source
+        //                 self.hwmFilesDataSource.data.forEach(function(file, i){
+        //                     if(file.hwm_id === row.hwm_id){
+        //                         self.hwmFilesDataSource.data.splice(i, 1);
+        //                         self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+        //                     }
+        //                 })
+        //                 // Update site files data source
+        //                 self.siteFilesDataSource.data.forEach(function(file, i){
+        //                     if(file.hwm_id === row.hwm_id){
+        //                         self.siteFilesDataSource.data.splice(i, 1);
+        //                         self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+        //                     }
+        //                 })
+        //                 // Update site files count
+        //                 self.siteFiles.forEach(function(file, i){
+        //                     if(file.hwm_id === row.hwm_id){
+        //                         self.siteFiles.splice(i, 1);
+        //                         self.siteFiles = [...self.siteFiles];
+        //                     }
+        //                 })
+        //                 // success
+        //                 this.dialog.open(ConfirmComponent, {
+        //                     data: {
+        //                     title: "",
+        //                     titleIcon: "close",
+        //                     message: "Successfully removed Peak",
+        //                     confirmButtonText: "OK",
+        //                     showCancelButton: false,
+        //                     },
+        //                 });
+        //             }else{
+        //                 // error
+        //                 this.dialog.open(ConfirmComponent, {
+        //                     data: {
+        //                     title: "Error",
+        //                     titleIcon: "close",
+        //                     message: "Error removing Peak",
+        //                     confirmButtonText: "OK",
+        //                     showCancelButton: false,
+        //                     },
+        //                 });
+        //             }
+        //         })
+        //     }
+        // });
     }
 
     openFileDetailsDialog(row, type): void {
