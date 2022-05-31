@@ -135,6 +135,7 @@ export class PeakEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   calcAMPM(hour) {
     if(hour > 12){
       hour = String(hour - 12).padStart(2, '0');
@@ -184,7 +185,7 @@ export class PeakEditComponent implements OnInit {
     }
   }
 
-  setTimeZone(timezone) {
+  setTimeZone() {
     this.previewUTC();
   }
 
@@ -391,6 +392,7 @@ export class PeakEditComponent implements OnInit {
     })
   }
 
+  /* istanbul ignore next */
   // Validate minutes
   validMin() {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -399,6 +401,7 @@ export class PeakEditComponent implements OnInit {
     };
   }
 
+  /* istanbul ignore next */
   // Validate 
   validHour() {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -428,12 +431,12 @@ export class PeakEditComponent implements OnInit {
       aep_range: new FormControl(this.peak.aep_range !== undefined && this.peak.aep_range !== "" ? this.peak.aep_range : null, [this.isNum()]),
       elev_ft: new FormControl(this.peak.elev_ft !== undefined && this.peak.elev_ft !== "" ? this.peak.elev_ft : null),
       vdatum_id: new FormControl(this.peak.vdatum_id !== undefined && this.peak.vdatum_id !== "" ? this.peak.vdatum_id : null),
-      // site_id: new FormControl(this.data.site_id !== undefined && this.data.site_id !== "" ? this.data.site_id : null),
       member_id: new FormControl(this.peak.member_id !== undefined && this.peak.member_id !== "" ? this.peak.member_id : null),
       calc_notes: new FormControl(this.peak.calc_notes !== undefined && this.peak.calc_notes !== "" ? this.peak.calc_notes : null),
     })
   }
 
+  /* istanbul ignore next */
   requireVDatum(value) {
     value ? this.form.controls.vdatum_id.setValidators(Validators.required) : this.form.controls.vdatum_id.setValidators();
   }
@@ -482,6 +485,7 @@ export class PeakEditComponent implements OnInit {
     this.hideAllDFDetails();
   }
 
+  /* istanbul ignore next */
   showIncompleteHWMInfo() {
     this.dialog.open(ConfirmComponent, {
       data: {
@@ -558,6 +562,7 @@ export class PeakEditComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   showIncompleteDFInfo() {
     this.dialog.open(ConfirmComponent, {
       data: {
@@ -570,6 +575,7 @@ export class PeakEditComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   showRetrieveInfo() {
     this.dialog.open(ConfirmComponent, {
       data: {
@@ -644,6 +650,7 @@ export class PeakEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   primaryHWM(hwm) {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       data: {
@@ -667,6 +674,7 @@ export class PeakEditComponent implements OnInit {
     })
   }
 
+  /* istanbul ignore next */
   primaryDataFile(file) {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       data: {

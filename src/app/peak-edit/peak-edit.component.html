@@ -306,7 +306,7 @@
             </div>
             <mat-form-field appearance="fill">
                 <mat-label>Peak Recorded In</mat-label>
-                <mat-select required aria-label="Time Zone" formControlName="time_zone" (selectionChange)="setTimeZone($event.value)">
+                <mat-select required aria-label="Time Zone" formControlName="time_zone" (selectionChange)="setTimeZone()">
                     <mat-option *ngFor="let zone of timeZones" [value]="zone">
                     {{zone}}
                     </mat-option>
