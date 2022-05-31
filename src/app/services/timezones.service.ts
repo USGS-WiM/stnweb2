@@ -32,8 +32,9 @@ export class TimezonesService {
 
     } if (timezone == "PST/PDT") {
         let localTime = DateTime.fromISO(date, {zone: 'America/Los_Angeles'});
-
+      console.log(localTime)
         timePreview = localTime.setZone("UTC").toString();
+        console.log(timePreview)
         let hour = timePreview.split('T')[1].split(":")[0];
         let addDate = (timePreview.split('T')[0]) + "T" + String(hour).padStart(1, '0') + ":" + minute + ":00";
         timePreview = addDate;

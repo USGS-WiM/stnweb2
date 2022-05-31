@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Added ability to delete reference datums
  -  Added ability to deploy a sensor
  -  Added ability to delete sensors
+ -  Alert for deploying and retrieving sensors when no event selected
+ -  Added ability to create a peak
  
 ### Changed
 
@@ -27,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  ### Fixed
  
  -  Time reset in sensor edit modal when Cancel Edits is clicked
+ -  Time validation in sensor edit
 
 ## [v0.7.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.7.0) - 2022-01-17
 
