@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  
  -  Time reset in sensor edit modal when Cancel Edits is clicked
  -  Time validation in sensor edit
+ -  Inability to login after logging out
 
 ## [v0.7.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.7.0) - 2022-01-17
 
