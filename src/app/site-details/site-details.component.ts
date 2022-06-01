@@ -1499,137 +1499,152 @@ export class SiteDetailsComponent implements OnInit {
     /* istanbul ignore next */
     deletePeak(row): void {
         let self = this;
-        let hwms = this.hwmDataSource.data;
-        let hwmFiles = this.hwmFilesDataSource.data;
-        let sensors = this.sensorDataSource.data;
-        let sensorFiles = this.sensorFilesDataSource.data;
+        let hwms = JSON.parse(JSON.stringify(this.hwmDataSource.data));
+        let sensors = JSON.parse(JSON.stringify(this.sensorDataSource.data));
+        let sensorFiles = JSON.parse(JSON.stringify(this.sensorFilesDataSource.data));
         let peakDFs;
-        
-        this.peakEditService.getPeakSummary(row.peak_summary_id).subscribe((results) => {
-            this.peakEditService.getPeakDataFiles(row.peak_summary_id).subscribe(dfResults => {
-                peakDFs = dfResults;
-                sensors.forEach(function(sensor, i){
-                    sensorFiles.forEach(function(file){
-                        if(file.details.instrument_id === sensor.instrument_id){
-                            //  Add selected property
-                            file.selected = false;
-                            file.showDFDetail = false;
-                            sensors[i].files.push(file);
-                        }
-                    })
-                })
-                sensors.forEach(function(sensor, i){
-                    sensor.files.forEach(function(file, j){
-                    let matches = peakDFs.filter(function (pdf) { return pdf.data_file_id == file.data_file_id; })[0];
-                    if(matches){
-                        sensors[i].files[j].selected = true;
-                    }
-                    })
-                })
-                hwms.forEach(function(hwm, i){
-                    hwmFiles.forEach(function(file){
-                        if(file.hwm_id === hwm.hwm_id){
-                            //  Add selected property
-                            file.selected = false;
-                            hwms[i].files.push(file);
-                        }
-                    })
-                })
-                hwms.forEach(function(hwm, i){
-                    if(hwm.peak_summary_id === row.peak_summary_id){
-                      hwms[i].selected = true;
-                    }else{
-                      hwms[i].selected = false;
-                    }
-                  })
-                sensorFiles.forEach((file) => {
-                    if (file.selected){
-                        console.log(file)
-                        console.log(file.selected)
-                        // updateDFwoPeakID(file.data_file_id);
-                    }
-                })
 
-                // let updateDFwoPeakID = function(dfID) {
-                //     console.log(dfID)
-                // }
+        let formatHWM = function(h) {
+            let fhwm = {
+              approval_id: h.approval_id,
+              hwm_label: h.hwm_label,
+              bank: h.bank,
+              elev_ft: h.elev_ft,
+              event_id: h.event_id,
+              flag_date: h.flag_date,
+              flag_member_id: h.flag_member_id,
+              hcollect_method_id: h.hcollect_method_id,
+              hdatum_id: h.hdatum_id,
+              height_above_gnd: h.height_above_gnd,
+              hwm_environment: h.hwm_environment,
+              hwm_id: h.hwm_id,
+              hwm_locationdescription: h.hwm_locationdescription,
+              hwm_notes: h.hwm_notes,
+              hwm_uncertainty: h.hwm_uncertainty,
+              uncertainty: h.uncertainty,
+              hwm_quality_id: h.hwm_quality_id,
+              hwm_type_id: h.hwm_type_id,
+              latitude_dd: h.latitude_dd,
+              longitude_dd: h.longitude_dd,
+              marker_id: h.marker_id,
+              peak_summary_id: h.peak_summary_id,
+              site_id: h.site_id,
+              stillwater: h.stillwater = "No" ? 0 : 1,
+              survey_date: h.survey_date,
+              survey_member_id: h.survey_member_id,
+              vcollect_method_id: h.vcollect_method_id,
+              vdatum_id: h.vdatum_id,
+              waterbody: h.waterbody,
+            };
+            return fhwm;
+        }
+
+        let updateDFwoPeakID = function(dfID) {
+            console.log(dfID)
+            self.siteService.getDataFile(dfID).subscribe((dfToRemove) => {
+                dfToRemove.peak_summary_id = null;
+                console.log(dfToRemove)
+                // self.peakEditService.updateDF(dfToRemove.data_file_id, dfToRemove).subscribe(response => {
+                //     console.log(response);
+                // });
             });
+        }
+
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove Peak",
+              titleIcon: "close",
+              message: "Are you sure you want to remove this Peak? " + row.peak_summary_id,
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                // Delete hwm
+                // this.peakEditService.deletePeak(row.peak_summary_id).subscribe((results) => {
+                //     if(results === null){
+                        this.peakEditService.getPeakDataFiles(row.peak_summary_id).subscribe(dfResults => {
+                            peakDFs = dfResults;
+                            // Get list of sensor files
+                            sensors.forEach(function(sensor, i){
+                                sensorFiles.forEach(function(file){
+                                    if(file.details.instrument_id === sensor.instrument_id){
+                                        //  Add selected property
+                                        file.selected = false;
+                                        sensors[i].files.push(file);
+                                    }
+                                })
+                            })
+                            // Get selected data files for this peak
+                            sensors.forEach(function(sensor, i){
+                                sensor.files.forEach(function(file, j){
+                                let matches = peakDFs.filter(function (pdf) { return pdf.data_file_id == file.data_file_id; })[0];
+                                if(matches){
+                                    sensors[i].files[j].selected = true;
+                                }
+                                })
+                            })
+                            // Get selected hwms for this peak
+                            hwms.forEach(function(hwm, i){
+                                if(hwm.peak_summary_id === row.peak_summary_id){
+                                hwms[i].selected = true;
+                                }else{
+                                hwms[i].selected = false;
+                                }
+                            })
+                            
+                            //remove peakID and PUT selected files
+                            sensorFiles.forEach((file) => {
+                                if (file.selected){
+                                    console.log(file)
+                                    console.log(file.selected)
+                                    updateDFwoPeakID(file.data_file_id);
+                                }
+                            })
+                            
+                            //remove peakID and PUT selected HWMs
+                            hwms.forEach((hwm) => {
+                                if (hwm.selected) {
+                                    hwm.peak_summary_id = null;
+                                    let formattedHWM = formatHWM(hwm); //need to format it to remove all the site stuff
+                                    console.log(formattedHWM)
+                                    // this.peakEditService.updateHWM(formattedHWM.hwm_id, formattedHWM);
+                                }
+                            });
+                        });
+                        // Update peaks data source
+                        self.peaksDataSource.data.forEach(function(peak, i){
+                            if(peak.peak_summary_id === row.peak_summary_id){
+                                self.peaksDataSource.data.splice(i, 1);
+                                self.peaksDataSource.data = [...self.peaksDataSource.data];
+                            }
+                        })
+                        // success
+                        // this.dialog.open(ConfirmComponent, {
+                        //     data: {
+                        //     title: "",
+                        //     titleIcon: "close",
+                        //     message: "Successfully removed Peak",
+                        //     confirmButtonText: "OK",
+                        //     showCancelButton: false,
+                        //     },
+                        // });
+                    // }else{
+                    //     // error
+                    //     this.dialog.open(ConfirmComponent, {
+                    //         data: {
+                    //         title: "Error",
+                    //         titleIcon: "close",
+                    //         message: "Error removing Peak",
+                    //         confirmButtonText: "OK",
+                    //         showCancelButton: false,
+                    //         },
+                    //     });
+                    // }
+            //     })
+            }
         });
-
-        // const dialogRef = this.dialog.open(ConfirmComponent, {
-        //     data: {
-        //       title: "Remove Peak",
-        //       titleIcon: "close",
-        //       message: "Are you sure you want to remove this Peak? " + row.peak_summary_id,
-        //       confirmButtonText: "OK",
-        //       showCancelButton: true,
-        //     },
-        //   });
-        // dialogRef.afterClosed().subscribe((result) => {
-        //     if(result) {
-        //         // Delete hwm
-        //         this.peakEditService.deletePeak(row.peak_summary_id).subscribe((results) => {
-        //             if(results === null){
-        //                 // Update hwm data source
-        //                 self.peaksDataSource.data.forEach(function(peak, i){
-        //                     if(peak.peak_summary_id === row.peak_summary_id){
-        //                         self.peaksDataSource.data.splice(i, 1);
-        //                         self.peaksDataSource.data = [...self.peaksDataSource.data];
-        //                     }
-        //                 })
-
-        //                 sensors.forEach((sensor) => {
-        //                     sensor.forEach((file) => {
-        //                         if (file.selected)
-        //                             updateDFwoPeakID(file.data_file_id);
-        //                     })
-        //                 })
-        //                 // Update files data source
-        //                 self.hwmFilesDataSource.data.forEach(function(file, i){
-        //                     if(file.hwm_id === row.hwm_id){
-        //                         self.hwmFilesDataSource.data.splice(i, 1);
-        //                         self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
-        //                     }
-        //                 })
-        //                 // Update site files data source
-        //                 self.siteFilesDataSource.data.forEach(function(file, i){
-        //                     if(file.hwm_id === row.hwm_id){
-        //                         self.siteFilesDataSource.data.splice(i, 1);
-        //                         self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
-        //                     }
-        //                 })
-        //                 // Update site files count
-        //                 self.siteFiles.forEach(function(file, i){
-        //                     if(file.hwm_id === row.hwm_id){
-        //                         self.siteFiles.splice(i, 1);
-        //                         self.siteFiles = [...self.siteFiles];
-        //                     }
-        //                 })
-        //                 // success
-        //                 this.dialog.open(ConfirmComponent, {
-        //                     data: {
-        //                     title: "",
-        //                     titleIcon: "close",
-        //                     message: "Successfully removed Peak",
-        //                     confirmButtonText: "OK",
-        //                     showCancelButton: false,
-        //                     },
-        //                 });
-        //             }else{
-        //                 // error
-        //                 this.dialog.open(ConfirmComponent, {
-        //                     data: {
-        //                     title: "Error",
-        //                     titleIcon: "close",
-        //                     message: "Error removing Peak",
-        //                     confirmButtonText: "OK",
-        //                     showCancelButton: false,
-        //                     },
-        //                 });
-        //             }
-        //         })
-        //     }
-        // });
     }
 
     openFileDetailsDialog(row, type): void {
