@@ -472,6 +472,10 @@
                             <button *ngIf="role === '1' || role === '2' || role === '3'" mat-button (click)="openRefDatumEditDialog(null)"
                                 aria-label="Add Reference Datum"><mat-icon matTooltip="Add a Reference Datum" matTooltipPosition="before" class="add-buttons">add</mat-icon>
                             </button>
+                            <!-- Disabled button with role tooltip -->
+                            <button mat-button *ngIf="(role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon"
+                                aria-label="Add Reference Datum"><mat-icon matTooltip="To add a Reference Datum, please contact a STN administrator." matTooltipPosition="before">add</mat-icon>
+                            </button>
                         </mat-card>
                         <div class="tableContainer" *ngIf="referenceDatums !== undefined; else noRMTable">
                             <table *ngIf="referenceDatums.length > 0; else noRMTable"
@@ -616,8 +620,16 @@
                             <button *ngIf="currentEvent !== null && role === '1' || role === '2' || role === '3'" mat-button (click)="openSensorEditDialog(null)"
                                 aria-label="Add Sensor"><mat-icon class="add-buttons" matTooltip="Deploy a new Sensor" matTooltipPosition="before">add</mat-icon>
                             </button>
+                            <!-- Disabled button with event tooltip -->
+                            <button mat-button *ngIf="currentEvent === null" disabled class="disabled-icon"
+                                aria-label="Add Sensor"><mat-icon matTooltip="Select an event to deploy a Sensor" matTooltipPosition="before">add</mat-icon>
+                            </button>
+                            <!-- Disabled button with role tooltip -->
+                            <button mat-button *ngIf="(role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon"
+                                aria-label="Add Sensor"><mat-icon matTooltip="To deploy a Sensor, please contact a STN administrator." matTooltipPosition="before">add</mat-icon>
+                            </button>
                         </mat-card>
-                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
+                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
                         <div class="tableContainer" *ngIf="siteFullInstruments !== undefined; else noSensorTable">
                             <table *ngIf="siteFullInstruments.length > 0; else noSensorTable"
                                 mat-table
@@ -832,6 +844,14 @@
                             <button *ngIf="currentEvent !== null && (role === '1' || role === '2' || role === '3')" mat-button (click)="openHWMEditDialog(null)"
                                 aria-label="Add HWM"><mat-icon matTooltip="Add a HWM" matTooltipPosition="before" class="add-buttons">add</mat-icon>
                             </button>
+                            <!-- Disabled button with event tooltip -->
+                            <button mat-button *ngIf="currentEvent === null" disabled class="disabled-icon"
+                                aria-label="Add HWM"><mat-icon matTooltip="Select an event to add a HWM" matTooltipPosition="before">add</mat-icon>
+                            </button>
+                            <!-- Disabled button with role tooltip -->
+                            <button mat-button *ngIf="(role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon"
+                                aria-label="Add HWM"><mat-icon matTooltip="To add a HWM, please contact a STN administrator." matTooltipPosition="before">add</mat-icon>
+                            </button>
                         </mat-card>
                         <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To create a HWM, first choose an Event above.</p></mat-card>
                         <div class="tableContainer" *ngIf="hwm !== undefined; else noHWMTable">
@@ -1014,7 +1034,21 @@
                         <mat-paginator [hidden]="hwm === undefined || hwm.length === 0" #hwmPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                     </mat-tab>
                     <mat-tab label="Peaks ({{peaks.length}})">
-                        <mat-card class="mat-elevation-z0 header-card"><p>Peaks ({{peaks.length}})</p></mat-card>
+                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To create a Peak Summary, first choose an Event above.</p></mat-card>
+                        <mat-card class="mat-elevation-z0 header-card">
+                            <p>Peaks ({{peaks.length}})</p>
+                            <button *ngIf="currentEvent !== null && (role === '1' || role === '2' || role === '3')" mat-button (click)="openPeaksEditDialog(null)"
+                                aria-label="Add Peak Summary"><mat-icon mat-icon matTooltip="Create a Peak" matTooltipPosition="before" class="add-buttons">add</mat-icon>
+                            </button>
+                            <!-- Disabled button with event tooltip -->
+                            <button *ngIf="currentEvent === null" disabled class="disabled-icon" mat-button
+                                aria-label="Add Peak Summary"><mat-icon mat-icon matTooltip="Select an event to create a Peak" matTooltipPosition="before">add</mat-icon>
+                            </button>
+                            <!-- Disabled button with role tooltip -->
+                            <button *ngIf="(role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon" mat-button
+                                aria-label="Add Peak Summary"><mat-icon matTooltip="To create a Peak, please contact a STN administrator." matTooltipPosition="before">add</mat-icon>
+                            </button>
+                        </mat-card>
                         <div class="tableContainer" *ngIf="peaks !== undefined; else noPeakTable">
                             <table *ngIf="peaks.length > 0; else noPeakTable"
                                 mat-table
@@ -1187,7 +1221,7 @@
                                     </mat-panel-title>
                                     
                                     <button mat-button (click)="addFile('Site File', $event)"
-                                        aria-label="Add File"><mat-icon class="add-buttons">add</mat-icon>
+                                        aria-label="Add File"><mat-icon matTooltip="Add a Site File" class="add-buttons">add</mat-icon>
                                     </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="siteFiles !== undefined; else noSiteFileTable">
@@ -1339,8 +1373,12 @@
                                     <mat-panel-title *ngIf="refDatumFilesExpanded" style="color: #FFF; font-weight: 550">
                                         Reference Datum Files ({{datumLocFiles.length}})
                                     </mat-panel-title>
-                                    <button mat-button (click)="addFile('Reference Datum File', $event)"
-                                        aria-label="Add File"><mat-icon class="add-buttons">add</mat-icon>
+                                    <button *ngIf="currentEvent !== null" mat-button (click)="addFile('Reference Datum File', $event)"
+                                        aria-label="Add File"><mat-icon  matTooltip="Add a Reference Datum File" class="add-buttons">add</mat-icon>
+                                    </button>
+                                    <!-- Disabled -->
+                                    <button *ngIf="currentEvent === null" mat-button disabled class="disabled-icon"
+                                        aria-label="Add File"><mat-icon  matTooltip="Select an event to add a Reference Datum File">add</mat-icon>
                                     </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="datumLocFiles !== undefined; else noDatumFileTable">
@@ -1500,7 +1538,11 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
-                                <button mat-stroked-button (click)="addFile('Reference Datum File', $event)" class="add"
+                                <button *ngIf="currentEvent !== null" mat-stroked-button (click)="addFile('Reference Datum File', $event)" class="add"
+                                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
+                                </button>
+                                <!-- Disabled -->
+                                <button *ngIf="currentEvent === null" disabled mat-stroked-button class="disabled-border"
                                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
                                 </button>
                                 <mat-paginator [hidden]="datumLocFiles === undefined || datumLocFiles.length === 0" #refMarkFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
@@ -1513,8 +1555,12 @@
                                     <mat-panel-title *ngIf="sensorFilesExpanded" style="color: #FFF; font-weight: 550">
                                         Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
-                                    <!-- <button mat-button (click)="addFile('Sensor File', $event)"
-                                        aria-label="Add File"><mat-icon class="add-buttons">add</mat-icon>
+                                    <!-- <button *ngIf="currentEvent !== null" mat-button (click)="addFile('Sensor File', $event)"
+                                        aria-label="Add File"><mat-icon matTooltip="Add a Sensor File" class="add-buttons">add</mat-icon>
+                                    </button> -->
+                                    <!-- Disabled -->
+                                    <!-- <button *ngIf="currentEvent === null" disabled mat-button class="disabled-icon"
+                                        aria-label="Add File"><mat-icon matTooltip="Select an event to add a Sensor File">add</mat-icon>
                                     </button> -->
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="sensorFiles !== undefined; else noSensorFileTable">
@@ -1674,7 +1720,11 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
-                                <!-- <button mat-stroked-button (click)="addFile('Sensor File', $event)" class="add"
+                                <!-- <button *ngIf="currentEvent !== null" mat-stroked-button (click)="addFile('Sensor File', $event)" class="add"
+                                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
+                                </button> -->
+                                    <!-- Disabled -->
+                                <!-- <button *ngIf="currentEvent === null" disabled mat-stroked-button class="disabled-border"
                                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
                                 </button> -->
                                 <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
@@ -1687,8 +1737,12 @@
                                     <mat-panel-title *ngIf="hwmFilesExpanded" style="color: #FFF; font-weight: 550">
                                         HWM Files ({{hwmFiles.length}})
                                     </mat-panel-title>
-                                    <button mat-button (click)="addFile('HWM File', $event)"
-                                        aria-label="Add File"><mat-icon class="add-buttons">add</mat-icon>
+                                    <button mat-button *ngIf="currentEvent !== null" (click)="addFile('HWM File', $event)"
+                                        aria-label="Add File"><mat-icon matTooltip="Add a HWM File" class="add-buttons">add</mat-icon>
+                                    </button>
+                                    <!-- Disabled -->
+                                    <button mat-button *ngIf="currentEvent === null" disabled
+                                        aria-label="Add File"><mat-icon class="disabled-icon" matTooltip="Select an event to add a HWM File">add</mat-icon>
                                     </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="hwmFiles !== undefined; else noHWMFileTable">
@@ -1827,7 +1881,10 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
-                                <button mat-stroked-button (click)="addFile('HWM File', $event)" class="add"
+                                <button *ngIf="currentEvent !== null" mat-stroked-button (click)="addFile('HWM File', $event)" class="add"
+                                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
+                                </button>
+                                <button *ngIf="currentEvent === null" disabled mat-stroked-button class="disabled-border"
                                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
                                 </button>
                                 <mat-paginator [hidden]="hwmFiles === undefined || hwmFiles.length === 0" #hwmFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>

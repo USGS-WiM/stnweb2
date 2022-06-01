@@ -1527,37 +1527,57 @@ export class SiteDetailsComponent implements OnInit {
                 siteSensors: sensors,
                 sensorFiles: this.sensorFilesDataSource.data,
                 hwmFiles: this.hwmFilesDataSource.data,
+                event_id: this.currentEvent,
+                event: this.event,
             },
             width: '100%',
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result && result.peak !== undefined && result.peak !== null){
-                // Update peak
-                this.peaksDataSource.data.forEach(function(peak, i){
-                    if (peak.peak_summary_id === result.peak.peak_summary_id){
-                        result.peak.event_name = self.peaksDataSource.data[i].event_name;
-                        result.peak.format_peak_date = self.setTimeAndDate(result.peak.peak_date);
-                        self.peaksDataSource.data[i] = result.peak;
-                        self.peaksDataSource.data = [...self.peaksDataSource.data];
+            if (result.data && result.data.peak !== undefined && result.data.peak !== null){
+                if(result.editOrCreate === "Edit"){
+                    // Update peak
+                    this.peaksDataSource.data.forEach(function(peak, i){
+                        if (peak.peak_summary_id === result.data.peak.peak_summary_id){
+                            result.data.peak.event_name = self.peaksDataSource.data[i].event_name;
+                            result.data.peak.format_peak_date = self.setTimeAndDate(result.data.peak.peak_date);
+                            self.peaksDataSource.data[i] = result.data.peak;
+                            self.peaksDataSource.data = [...self.peaksDataSource.data];
+                        }
+                    })
+                    // Update HWMs
+                    if(result.data.hwmsToAdd.length > 0){
+                        let hwmsToAdd = result.data.hwmsToAdd.join(',');
+                        this.hwmDataSource.data.forEach(function(hwm, h) {
+                            if (hwmsToAdd.includes(String(hwm.hwm_id))){
+                                self.hwmDataSource.data[h].peak_summary_id = result.data.peak.peak_summary_id;
+                            }
+                        })
                     }
-                })
-                // Update HWMs
-                if(result.hwmsToAdd.length > 0){
-                    let hwmsToAdd = result.hwmsToAdd.join(',');
-                    this.hwmDataSource.data.forEach(function(hwm, h) {
-                        if (hwmsToAdd.includes(String(hwm.hwm_id))){
-                            self.hwmDataSource.data[h].peak_summary_id = result.peak.peak_summary_id;
-                        }
-                    })
-                }
-                if(result.hwmsToRemove.length > 0){
-                    let hwmsToRemove = result.hwmsToRemove.join(',');
-                    this.hwmDataSource.data.forEach(function(hwm, h) {
-                        if (hwmsToRemove.includes(String(hwm.hwm_id))){
-                            self.hwmDataSource.data[h].peak_summary_id = null;
-                        }
-                    })
+                    if(result.data.hwmsToRemove.length > 0){
+                        let hwmsToRemove = result.data.hwmsToRemove.join(',');
+                        this.hwmDataSource.data.forEach(function(hwm, h) {
+                            if (hwmsToRemove.includes(String(hwm.hwm_id))){
+                                self.hwmDataSource.data[h].peak_summary_id = null;
+                            }
+                        })
+                    }
+                }else if(result.editOrCreate === "Create"){
+                    // Add peak
+                    result.data.peak.event_name = self.event;
+                    result.data.peak.format_peak_date = self.setTimeAndDate(result.data.peak.peak_date);
+                    self.peaksDataSource.data.push(result.data.peak);
+                    self.peaksDataSource.data = [...self.peaksDataSource.data];
+                    
+                    // Update HWMs
+                    if(result.data.hwmsToAdd.length > 0){
+                        let hwmsToAdd = result.data.hwmsToAdd.join(',');
+                        this.hwmDataSource.data.forEach(function(hwm, h) {
+                            if (hwmsToAdd.includes(String(hwm.hwm_id))){
+                                self.hwmDataSource.data[h].peak_summary_id = result.data.peak.peak_summary_id;
+                            }
+                        })
+                    }
                 }
             }
         });

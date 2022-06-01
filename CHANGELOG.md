@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Added ability to delete reference datums
  -  Added ability to deploy a sensor
  -  Added ability to delete sensors
+ -  Alert for deploying and retrieving sensors when no event selected
+ -  Added ability to create a peak
+ -  Added tooltips to all add button icons
  -  Added ability to retrieve a sensor
  
 ### Changed
@@ -23,11 +26,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Increased details modal widths
  -  Improved responsiveness of tables in details modals
  -  Autopopulate source and agency when adding file in site edit form
+ -  Disabled add button when no event selected for Peaks, Sensors, HWMs and files (except site files)
 
  
  ### Fixed
  
  -  Time reset in sensor edit modal when Cancel Edits is clicked
+ -  Time validation in sensor edit
+ -  Inability to login after logging out
 
 ## [v0.7.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.7.0) - 2022-01-17
 

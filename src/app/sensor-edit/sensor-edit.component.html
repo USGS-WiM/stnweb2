@@ -335,10 +335,24 @@
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                         <mat-datepicker [value]="instrument.time_stamp" #deployDatePicker></mat-datepicker>
                                     </mat-form-field>
-                                    <input class="date-input" formControlName="hour" type="number" aria-label="Deploy Hour" [value]="instrument.hour" required placeholder="00">
+                                    <input class="date-input" formControlName="hour" type="number" max="12" min="0" aria-label="Deploy Hour" [value]="instrument.hour" required placeholder="00">
                                     <span class="date-span"> : </span>
-                                    <input class="date-input" formControlName="minute" type="number" aria-label="Deploy Minute" [value]="instrument.minute" required placeholder="00">
+                                    <input class="date-input" formControlName="minute" type="number" max="60" min="0" aria-label="Deploy Minute" [value]="instrument.minute" required placeholder="00">
                                     <button mat-stroked-button class="date-input date-button secondary" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
+                                </div>
+                                <!-- Minute Validator -->
+                                <div *ngIf="form.controls.instrument_status.controls[i].controls.minute.invalid && (form.controls.instrument_status.controls[i].controls.minute.dirty || form.controls.instrument_status.controls[i].controls.minute.touched)"
+                                    class="alert alert-danger">
+                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.minute.errors?.['incorrectValue']">
+                                        Minutes must be between 0 and 60.
+                                    </div>
+                                </div>
+                                <!-- Hours Validator -->
+                                <div *ngIf="form.controls.instrument_status.controls[i].controls.hour.invalid && (form.controls.instrument_status.controls[i].controls.hour.dirty || form.controls.instrument_status.controls[i].controls.hour.touched)"
+                                    class="alert alert-danger">
+                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.hour.errors?.['incorrectValue']">
+                                        Hours must be between 0 and 12.
+                                    </div>
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Time Zone</mat-label>
@@ -415,10 +429,24 @@
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                         <mat-datepicker [value]="instrument.time_stamp" #deployDatePicker></mat-datepicker>
                                     </mat-form-field>
-                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="instrument.hour" required placeholder="00"> 
+                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" max="12" min="0" type="number" [value]="instrument.hour" required placeholder="00"> 
                                     <span class="date-span"> : </span>
-                                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" [value]="instrument.minute" required placeholder="00">
+                                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" max="60" min="0" type="number" [value]="instrument.minute" required placeholder="00">
                                     <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
+                                </div>
+                                <!-- Minute Validator -->
+                                <div *ngIf="form.controls.instrument_status.controls[i].controls.minute.invalid && (form.controls.instrument_status.controls[i].controls.minute.dirty || form.controls.instrument_status.controls[i].controls.minute.touched)"
+                                    class="alert alert-danger">
+                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.minute.errors?.['incorrectValue']">
+                                        Minutes must be between 0 and 60.
+                                    </div>
+                                </div>
+                                <!-- Hours Validator -->
+                                <div *ngIf="form.controls.instrument_status.controls[i].controls.hour.invalid && (form.controls.instrument_status.controls[i].controls.hour.dirty || form.controls.instrument_status.controls[i].controls.hour.touched)"
+                                    class="alert alert-danger">
+                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.hour.errors?.['incorrectValue']">
+                                        Hours must be between 0 and 12.
+                                    </div>
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Time Zone</mat-label>
@@ -681,10 +709,24 @@
                                         <mat-datepicker-toggle matSuffix [for]="deployDatePicker"></mat-datepicker-toggle>
                                         <mat-datepicker [value]="instrument.time_stamp" #deployDatePicker></mat-datepicker>
                                     </mat-form-field>
-                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="instrument.hour" required placeholder="00">
+                                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" max="12" min="0" [value]="instrument.hour" required placeholder="00">
                                     <span class="date-span"> : </span>
-                                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" [value]="instrument.minute" required placeholder="00">
+                                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" max="12" min="0" [value]="instrument.minute" required placeholder="00">
                                     <button mat-stroked-button class="date-input date-button" type="button" (click)="changeTime(instrument)" [value]="instrument.ampm">{{instrument.ampm}}</button>
+                                </div>
+                                <!-- Minute Validator -->
+                                <div *ngIf="form.controls.instrument_status.controls[i].controls.minute.invalid && (form.controls.instrument_status.controls[i].controls.minute.dirty || form.controls.instrument_status.controls[i].controls.minute.touched)"
+                                    class="alert alert-danger">
+                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.minute.errors?.['incorrectValue']">
+                                        Minutes must be between 0 and 60.
+                                    </div>
+                                </div>
+                                <!-- Hours Validator -->
+                                <div *ngIf="form.controls.instrument_status.controls[i].controls.hour.invalid && (form.controls.instrument_status.controls[i].controls.hour.dirty || form.controls.instrument_status.controls[i].controls.hour.touched)"
+                                    class="alert alert-danger">
+                                    <div *ngIf="form.controls.instrument_status.controls[i].controls.hour.errors?.['incorrectValue']">
+                                        Hours must be between 0 and 12.
+                                    </div>
                                 </div>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Time Zone</mat-label>
