@@ -253,7 +253,7 @@
                                 <th mat-header-cell *matHeaderCellDef>Reference Datum</th>
                                 <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                     <mat-form-field>
-                                        <input matInput formControlName="op_name" [value]="tapedown.op_name" class="disabled"/>
+                                        <input matInput aria-label="Reference Datum" formControlName="op_name" [value]="tapedown.op_name" class="disabled"/>
                                     </mat-form-field>
                                 </td>
                             </ng-container>
@@ -265,9 +265,9 @@
                                     <mat-form-field>
                                         <div class="inline-fields">
                                             <div *ngIf="tapedown.elevation !== undefined && tapedown.elevation !== null">
-                                                <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
+                                                <input matInput aria-label="Tapedown Elevation" formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
                                             </div>
-                                            <input matInput formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>
+                                            <input matInput aria-label="Vertical Datum" formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>
                                         </div>
                                     </mat-form-field>
                                     <!-- Elevation Validator -->
@@ -285,7 +285,7 @@
                                 <th mat-header-cell *matHeaderCellDef>Offset Correction</th>
                                 <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                     <mat-form-field appearance="fill">
-                                        <input matInput type="number" formControlName="offset_correction" [value]="tapedown.offset_correction"/>
+                                        <input matInput type="number" aria-label="Offset Correction" formControlName="offset_correction" [value]="tapedown.offset_correction"/>
                                         <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the sensor orifice."
                                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                     </mat-form-field>
@@ -304,7 +304,7 @@
                                 <th mat-header-cell *matHeaderCellDef>Water Surface</th>
                                 <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                     <mat-form-field appearance="fill">
-                                        <input matInput type="number" formControlName="water_surface" [value]="tapedown.water_surface"/>
+                                        <input matInput type="number" aria-label="Water Surface" formControlName="water_surface" [value]="tapedown.water_surface"/>
                                         <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the water surface."
                                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                     </mat-form-field>
@@ -323,7 +323,7 @@
                                 <th mat-header-cell *matHeaderCellDef>Ground Surface</th>
                                 <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                     <mat-form-field appearance="fill">
-                                        <input matInput type="number" formControlName="ground_surface" [value]="tapedown.ground_surface"/>
+                                        <input matInput type="number" aria-label="Ground Surface" formControlName="ground_surface" [value]="tapedown.ground_surface"/>
                                         <mat-icon matSuffix class="info-icon" matTooltip="From the datum location to the ground surface."
                                         aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                     </mat-form-field>
