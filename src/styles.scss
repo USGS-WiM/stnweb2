@@ -42,6 +42,10 @@ $stn-app-theme: mat-light-theme(
     color: rgba(0, 0, 0, 0.38) !important;
 }
 
+.disabled-icon {
+    color: grey !important;
+}
+
 .add {
     color: #2B7059 !important; 
     border: 1px solid #2B7059 !important;
