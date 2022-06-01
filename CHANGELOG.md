@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Added ability to delete sensors
  -  Alert for deploying and retrieving sensors when no event selected
  -  Added ability to create a peak
+ -  Added tooltips to all add button icons
  
 ### Changed
 
@@ -24,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Increased details modal widths
  -  Improved responsiveness of tables in details modals
  -  Autopopulate source and agency when adding file in site edit form
-
+ -  Disabled add button when no event selected for Peaks, Sensors, HWMs, Ref Datums and files (except site files)
  
  ### Fixed
  
