@@ -235,7 +235,14 @@ table {
     vertical-align: top;
     text-align: right;
     align-self: stretch;
-} 
+}
+
+.mat-column-Description{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
 
 .mat-column-button{
     padding: 10px;

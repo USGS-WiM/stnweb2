@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Alert for deploying and retrieving sensors when no event selected
  -  Added ability to create a peak
  -  Added tooltips to all add button icons
+ -  Added description column in reference datum table
  
 ### Changed
 
