@@ -29,8 +29,21 @@ $stn-app-theme: mat-light-theme(
     border: 1px solid #ce0000 !important;
 }
 
+.disabled-border {
+    color: rgba(0, 0, 0, 0.38) !important;
+    border: 1px solid rgba(0, 0, 0, 0.38) !important;
+}
+
 .delete-borderless {
     color: #ce0000 !important;
+}
+
+.disabled-borderless {
+    color: rgba(0, 0, 0, 0.38) !important;
+}
+
+.disabled-icon {
+    color: grey !important;
 }
 
 .add {
