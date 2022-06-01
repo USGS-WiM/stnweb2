@@ -14,7 +14,44 @@ describe('SensorRetrieveComponent', () => {
     close: () => {},
   };
 
-  let data;
+  let data = {
+    sensor: 
+    {
+      data_files: [],
+      deploymentType: "Wave Height",
+      deployment_type_id: 1,
+      eventName: "Test Event",
+      event_id: 1,
+      files: [],
+      housingType: "Pre-Deployed Bracket",
+      housing_type_id: 1,
+      instCollection: "Air",
+      inst_collection_id: 1,
+      instrument_id: 1111,
+      instrument_status: [{
+        instrument_id: 1111,
+        instrument_status_id: 11001,
+        member_id: 1,
+        notes: "test",
+        status: "Deployed",
+        status_type_id: 3,
+        time_stamp: "2022-01-05T01:05:00",
+        time_zone: "UTC",
+        vdatum: "NAVD88",
+      }],
+      interval: 0,
+      location_description: "Test",
+      sensorBrand: "Hobo",
+      sensorType: "Pressure Transducer",
+      sensor_brand_id: 1,
+      sensor_type_id: 1,
+      serial_number: "000",
+      site_id: 0,
+      statusType: "Deployed",
+    },
+    siteRefMarks: [],
+    
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

@@ -60,39 +60,37 @@ export class SensorRetrieveComponent implements OnInit {
 
   ngOnInit(): void {
     // Copy of initial sensor
-    if(this.data.sensor !== undefined){
-      this.sensor = JSON.parse(JSON.stringify(this.data.sensor));
+    this.sensor = JSON.parse(JSON.stringify(this.data.sensor));
 
-      if(this.data.siteRefMarks.length > 0){
-        this.opsPresent = true;
-      }
-      
-      this.minDate = new Date(this.sensor.instrument_status[0].time_stamp);
-      this.initUTCDate = {
-        time_stamp: this.sensor.instrument_status[0].time_stamp,
-        time_zone: this.sensor.instrument_status[0].time_zone,
-      }
-      this.setTimeAndDate(this.initUTCDate, "init");
-
-      // Create blank instrument array
-      let newDate = new Date();
-      let isoDate = newDate.toISOString();
-      let utcDate = newDate.toUTCString();
-      this.instrument = {
-        time_zone: "UTC",
-        time_stamp: isoDate,
-        utc_preview: utcDate,
-      }
-      this.getSensorTypes();
-      this.getSensorBrands();
-      this.getHousingTypes();
-      this.getDeploymentTypes();
-      this.getVDatums();
-      this.collectConditionLookup();
-      this.setTimeAndDate(this.instrument, "new");
-      this.setDeployMember();
-      this.initForm();
+    if(this.data.siteRefMarks.length > 0){
+      this.opsPresent = true;
     }
+    
+    this.minDate = new Date(this.sensor.instrument_status[0].time_stamp);
+    this.initUTCDate = {
+      time_stamp: this.sensor.instrument_status[0].time_stamp,
+      time_zone: this.sensor.instrument_status[0].time_zone,
+    }
+    this.setTimeAndDate(this.initUTCDate, "init");
+
+    // Create blank instrument array
+    let newDate = new Date();
+    let isoDate = newDate.toISOString();
+    let utcDate = newDate.toUTCString();
+    this.instrument = {
+      time_zone: "UTC",
+      time_stamp: isoDate,
+      utc_preview: utcDate,
+    }
+    this.getSensorTypes();
+    this.getSensorBrands();
+    this.getHousingTypes();
+    this.getDeploymentTypes();
+    this.getVDatums();
+    this.collectConditionLookup();
+    this.setTimeAndDate(this.instrument, "new");
+    this.setDeployMember();
+    this.initForm();
   }
 
   /* istanbul ignore next */

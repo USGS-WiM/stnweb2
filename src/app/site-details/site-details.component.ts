@@ -1583,6 +1583,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     openFileDetailsDialog(row, type): void {
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
@@ -1652,6 +1653,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     addFile(type, event): void {
         let self = this;
         // Prevent expansion panel from toggling
@@ -1776,6 +1778,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     openEditDialog(){
         let siteHousing = JSON.parse(JSON.stringify(this.siteHousing));
 
