@@ -46,6 +46,8 @@ export class PeakEditComponent implements OnInit {
     hwmsToAdd: [],
   };
 
+  editOrCreate;
+
   constructor(
     private dialogRef: MatDialogRef<PeakEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -62,19 +64,37 @@ export class PeakEditComponent implements OnInit {
     this.sensorFiles = JSON.parse(JSON.stringify(this.data.sensorFiles));
     this.hwmFiles = JSON.parse(JSON.stringify(this.data.hwmFiles));
 
-    this.setPeakTimeAndDate();
     // Add boolean field to show/hide details of each hwm
     this.hideAllSensorDetails();
     this.hideAllHWMDetails();
-
-    this.getPeakSummary();
-    this.getPeakDataFiles();
     this.getVDatums();
     this.getSensorFiles();
     this.getHWMFiles();
-    this.reorderInstruments();
-    this.getSelectedHWMs();
-    this.initForm();
+
+    if(this.peak !== null){
+      this.editOrCreate = "Edit";
+      this.setPeakTimeAndDate();
+      this.getPeakSummary();
+      this.getPeakDataFiles();
+      this.reorderInstruments();
+      this.getSelectedHWMs();
+      this.initForm();
+    }else{
+      this.editOrCreate = "Create";
+      let newDate = new Date();
+      let isoDate = newDate.toISOString();
+      let utcDate = newDate.toUTCString();
+      this.peak = { 
+        peak_date: isoDate, 
+        member_id: JSON.parse(localStorage.getItem('currentUser')).member_id,
+        utc_preview: utcDate,
+        time_zone: "UTC",
+      };
+      this.setPeakTimeAndDate();
+      this.reorderInstruments();
+      this.setMembers();
+      this.initForm();
+    }
   }
 
   reorderInstruments() {
@@ -115,21 +135,27 @@ export class PeakEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
+  calcAMPM(hour) {
+    if(hour > 12){
+      hour = String(hour - 12).padStart(2, '0');
+      return {ampm: "PM", hour: hour};
+    }else{
+      if(String(hour) === '00'){
+        hour = '12';
+        return {ampm: "AM", hour: hour};
+      }else{
+        hour = String(hour).padStart(2, '0');
+        return {ampm: "AM", hour: hour};
+      }
+    }
+  }
+
   setTimeAndDate(time_stamp) {
       let hour = (time_stamp.split('T')[1]).split(':')[0];
-      let ampm;
-      if(hour > 12){
-        hour = String(hour - 12).padStart(2, '0');
-        ampm = "PM";
-      }else{
-        if(String(hour) === '00'){
-          hour = '12';
-          ampm = "AM";
-        }else{
-          hour = String(hour).padStart(2, '0');
-          ampm = "AM";
-        }
-      }
+      let hourampmObj = this.calcAMPM(hour);
+      hour = hourampmObj.hour;
+      let ampm = hourampmObj.ampm;
       // minute
       let minute = time_stamp.split('T')[1].split(':')[1];
       minute = String(minute).padStart(2, '0');
@@ -141,29 +167,25 @@ export class PeakEditComponent implements OnInit {
 
   setPeakTimeAndDate() {
     let hour = (this.peak.peak_date.split('T')[1]).split(':')[0];
-    if(hour > 12){
-      this.peak.hour = String(hour - 12).padStart(2, '0');
-      this.peak.ampm = "PM";
-    }else{
-      if(String(hour) === '00'){
-        this.peak.hour = '12';
-        this.peak.ampm = "AM";
-      }else{
-        this.peak.hour = String(hour).padStart(2, '0');
-        this.peak.ampm = "AM";
-      }
-    }
+    let hourampmObj = this.calcAMPM(hour);
+    this.peak.hour = hourampmObj.hour;
+    this.peak.ampm = hourampmObj.ampm;
+
     // minute
     let minute = this.peak.peak_date.split('T')[1].split(':')[1];
     this.peak.minute = String(minute).padStart(2, '0');
     let timestamp = this.peak.peak_date.split("T")[0];
     timestamp = timestamp.split("-");
-    timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + minute;
-    this.peak.utc_preview = timestamp;
+    let day = timestamp[0];
+    let month = timestamp[1];
+    let year = timestamp[2];
+    if(this.editOrCreate === "Edit"){
+      let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(this.peak.hour), Number(minute)));
+      this.peak.utc_preview = new Date(utcPreview).toUTCString();
+    }
   }
 
-  setTimeZone(timezone) {
-    this.form.controls.time_zone.setValue(timezone);
+  setTimeZone() {
     this.previewUTC();
   }
 
@@ -174,40 +196,46 @@ export class PeakEditComponent implements OnInit {
   }
 
   previewUTC() {
-    let ampmValue = this.peak.ampm;
-    let hourValue = this.form.controls["hour"].value;
-    let minuteValue = this.form.controls["minute"].value;
-    let peakDateValue = this.form.controls["peak_date"].value;
+    if(this.form.controls.minute.valid && this.form.controls.hour.valid){
+      let ampmValue = this.peak.ampm;
+      let hourValue = this.form.controls["hour"].value;
+      let minuteValue = this.form.controls["minute"].value;
+      let peakDateValue = this.form.controls["peak_date"].value;
 
-    let hour = ampmValue === "PM" ? (Number(hourValue) + 12) : hourValue;
-    if(String(hour) === '12' && ampmValue === 'AM'){
-      hour = '00';
-    }else if (String(hour) === '24' && ampmValue === 'PM'){
-      hour = '12';
-    }else{
-      hour = String(hour).padStart(2, '0');
+      let hour = ampmValue === "PM" ? (Number(hourValue) + 12) : hourValue;
+      if(String(hour) === '12' && ampmValue === 'AM'){
+        hour = '00';
+      }else if (String(hour) === '24' && ampmValue === 'PM'){
+        hour = '12';
+      }else{
+        hour = String(hour).padStart(2, '0');
+      }
+      let minute = String(minuteValue).padStart(2, '0');
+      let initDate;
+      try{
+        initDate = peakDateValue.split('T')[0];
+      }
+      catch{
+        // If date changed using Datepicker, format will need to be changed
+        initDate = DateTime.fromJSDate(peakDateValue).toString();
+        initDate = initDate.split('T')[0];
+      }
+      let date = initDate + "T" + hour + ":" + minute + ":00";
+      // Convert to UTC
+      let utcDate;
+      utcDate = this.timezonesService.convertTimezone(this.form.controls["time_zone"].value, date, minute);
+      let utchour = (utcDate.split('T')[1]).split(':')[0].padStart(2, '0');
+      this.form.controls["peak_date"].setValue(date);
+      this.form.controls["minute"].setValue(minute);
+      let timestamp = utcDate.split("T")[0];
+      timestamp = timestamp.split("-");
+      let day = timestamp[0]
+      let month = timestamp[1]
+      let year = timestamp[2]
+      // UTC Preview
+      let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(utchour), Number(minute)));
+      this.peak.utc_preview = new Date(utcPreview).toUTCString();
     }
-    let minute = String(minuteValue).padStart(2, '0');
-    let initDate;
-    try{
-      initDate = peakDateValue.split('T')[0];
-    }
-    catch{
-      // If date changed using Datepicker, format will need to be changed
-      initDate = DateTime.fromJSDate(peakDateValue).toString();
-      initDate = initDate.split('T')[0];
-    }
-    let date = initDate + "T" + hour + ":" + minute + ":00";
-    // Convert to UTC
-    let utcDate;
-    utcDate = this.timezonesService.convertTimezone(this.form.controls["time_zone"].value, date, minute);
-    let utchour = (utcDate.split('T')[1]).split(':')[0].padStart(2, '0');
-    this.form.controls["peak_date"].setValue(date);
-    this.form.controls["minute"].setValue(minute);
-    let timestamp = utcDate.split("T")[0];
-    timestamp = timestamp.split("-");
-    timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + utchour + ":" + minute;
-    this.peak.utc_preview = timestamp.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
   }
 
   determineDFPresent(f) {
@@ -364,13 +392,31 @@ export class PeakEditComponent implements OnInit {
     })
   }
 
+  /* istanbul ignore next */
+  // Validate minutes
+  validMin() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const incorrect = control.value >= 60 || control.value < 0;
+      return incorrect ? {incorrectValue: {value: control.value}} : null;
+    };
+  }
+
+  /* istanbul ignore next */
+  // Validate 
+  validHour() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const incorrect = control.value > 12 || control.value < 0;
+      return incorrect ? {incorrectValue: {value: control.value}} : null;
+    };
+  }
+
   initForm() {
     this.form = new FormGroup({
       is_peak_discharge_estimated: new FormControl(this.peak.is_peak_discharge_estimated !== undefined && this.peak.is_peak_discharge_estimated !== "" ? this.peak.is_peak_discharge_estimated : null),
       peak_summary_id: new FormControl(this.peak.peak_summary_id !== undefined && this.peak.peak_summary_id !== "" ? this.peak.peak_summary_id : null),
       peak_date: new FormControl(this.peak.peak_date !== undefined && this.peak.peak_date !== "" ? this.peak.peak_date : null, Validators.required),
-      hour: new FormControl(this.peak.hour !== undefined && this.peak.hour !== "" ? this.peak.hour : null),
-      minute: new FormControl(this.peak.minute !== undefined && this.peak.minute !== "" ? this.peak.minute : null),
+      hour: new FormControl(this.peak.hour !== undefined && this.peak.hour !== "" ? this.peak.hour : null, [this.validHour()]),
+      minute: new FormControl(this.peak.minute !== undefined && this.peak.minute !== "" ? this.peak.minute : null, [this.validMin()]),
       is_peak_time_estimated: new FormControl(this.peak.is_peak_time_estimated !== undefined && this.peak.is_peak_time_estimated !== "" ? this.peak.is_peak_time_estimated : null),
       is_peak_stage_estimated: new FormControl(this.peak.is_peak_stage_estimated !== undefined && this.peak.is_peak_stage_estimated !== "" ? this.peak.is_peak_stage_estimated : null),
       is_peak_estimated: new FormControl(this.peak.is_peak_estimated !== undefined && this.peak.is_peak_estimated !== "" ? this.peak.is_peak_estimated : null),
@@ -385,10 +431,14 @@ export class PeakEditComponent implements OnInit {
       aep_range: new FormControl(this.peak.aep_range !== undefined && this.peak.aep_range !== "" ? this.peak.aep_range : null, [this.isNum()]),
       elev_ft: new FormControl(this.peak.elev_ft !== undefined && this.peak.elev_ft !== "" ? this.peak.elev_ft : null),
       vdatum_id: new FormControl(this.peak.vdatum_id !== undefined && this.peak.vdatum_id !== "" ? this.peak.vdatum_id : null),
-      site_id: new FormControl(this.data.site_id !== undefined && this.data.site_id !== "" ? this.data.site_id : null),
       member_id: new FormControl(this.peak.member_id !== undefined && this.peak.member_id !== "" ? this.peak.member_id : null),
       calc_notes: new FormControl(this.peak.calc_notes !== undefined && this.peak.calc_notes !== "" ? this.peak.calc_notes : null),
     })
+  }
+
+  /* istanbul ignore next */
+  requireVDatum(value) {
+    value ? this.form.controls.vdatum_id.setValidators(Validators.required) : this.form.controls.vdatum_id.setValidators();
   }
 
   checkNaN = function(x){
@@ -435,6 +485,7 @@ export class PeakEditComponent implements OnInit {
     this.hideAllDFDetails();
   }
 
+  /* istanbul ignore next */
   showIncompleteHWMInfo() {
     this.dialog.open(ConfirmComponent, {
       data: {
@@ -511,6 +562,7 @@ export class PeakEditComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   showIncompleteDFInfo() {
     this.dialog.open(ConfirmComponent, {
       data: {
@@ -523,6 +575,7 @@ export class PeakEditComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   showRetrieveInfo() {
     this.dialog.open(ConfirmComponent, {
       data: {
@@ -575,7 +628,7 @@ export class PeakEditComponent implements OnInit {
     let formattedHWM = this.formatHWM(hwm);
     if (hwm.selected) {
       // Only values not already selected initially are added
-      if(hwm.peak_summary_id === undefined || hwm.peak_summary_id === null){
+      if(hwm.peak_summary_id !== this.peak.peak_summary_id || hwm.peak_summary_id === undefined || hwm.peak_summary_id === null){
         this.selectedHWMs.push(formattedHWM);
       }
       // Check if has been re-added and remove from remove list
@@ -597,6 +650,7 @@ export class PeakEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   primaryHWM(hwm) {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       data: {
@@ -620,6 +674,7 @@ export class PeakEditComponent implements OnInit {
     })
   }
 
+  /* istanbul ignore next */
   primaryDataFile(file) {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       data: {
@@ -643,6 +698,40 @@ export class PeakEditComponent implements OnInit {
 
   submit() {
     this.form.markAllAsTouched();
+    if(this.editOrCreate === "Create"){
+      // First determine that they did chooose a hwm or data file for interpretation
+      let isHwmChecked = false; 
+      let isDFChecked = false;
+      this.hwms.forEach((hwm) => {
+          if (hwm.selected) isHwmChecked = true;
+      });
+      this.sensors.forEach((sensor) => {
+        sensor.files.forEach((file) => {
+          if (file.selected) {
+              isDFChecked = true;
+          }
+        });
+      });
+      if (isHwmChecked || isDFChecked) {
+        this.checkValid();
+      }else{
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Error",
+            titleIcon: "close",
+            message: "You must choose at least one HWM or Data File to use for interpretation for this Peak Summary.",
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+      }
+    }else{
+      this.checkValid();
+    }
+  }
+
+  // Check if form fields are valid before submitting
+  checkValid() {
     if(this.form.valid){
       this.loading = true;
 
@@ -674,90 +763,157 @@ export class PeakEditComponent implements OnInit {
     peakSubmission.is_hag_estimated = peakSubmission.is_hag_estimated ? 1 : 0;
     
     // convert to UTC
-    peakSubmission.peak_date = this.timezonesService.convertTimezone(peakSubmission.time_zone, peakSubmission.peak_date, peakSubmission.minute)
+    peakSubmission.peak_date = this.peak.utc_preview;
     peakSubmission.time_zone = "UTC";
     delete peakSubmission.ampm; delete peakSubmission.hour; delete peakSubmission.minute; delete peakSubmission.utc_preview;
+    // Edit peak
+    if(this.editOrCreate === "Edit"){
 
-    const updatePeak = new Promise<string>((resolve, reject) => this.peakEditService.putPeak(peakSubmission.peak_summary_id, peakSubmission).subscribe(results => {
-      if(results.length !== 0){
-        this.returnData.peak = results;
-        
-        // Remove DFs
-        if(this.removedDFs.length > 0) {
-          this.removedDFs.forEach(function(df) {
-            df.peak_summary_id = null;
-            self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
-              console.log(results);
+      const updatePeak = new Promise<string>((resolve, reject) => this.peakEditService.putPeak(peakSubmission.peak_summary_id, peakSubmission).subscribe(results => {
+        if(results.length !== 0){
+          this.returnData.peak = results;
+          
+          // Remove DFs
+          if(this.removedDFs.length > 0) {
+            this.removedDFs.forEach(function(df) {
+              df.peak_summary_id = null;
+              self.peakEditService.updateDF(df.data_file_id, df).subscribe(response => {
+                console.log(response);
+              });
             });
-          });
-        }
-        // Remove HWMs
-        if(this.removedHWMs.length > 0) {
-          this.removedHWMs.forEach(function(hwm) {
-            hwm.peak_summary_id = null;
-            const removeHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
-              console.log(results);
-              self.returnData.hwmsToRemove.push(results.hwm_id)
-              resolve("Success");
-            }));
-            promises.push(removeHWM);
-          });
-        }
-        // Add DFs
-        if(this.selectedDFs.length > 0) {
-          this.selectedDFs.forEach(function(df) {
-            df.peak_summary_id = results.peak_summary_id;
-            self.peakEditService.updateDF(df.data_file_id, df).subscribe(results => {
-              console.log(results);
+          }
+          // Remove HWMs
+          if(this.removedHWMs.length > 0) {
+            this.removedHWMs.forEach(function(hwm) {
+              hwm.peak_summary_id = null;
+              const removeHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(response => {
+                console.log(response);
+                self.returnData.hwmsToRemove.push(response.hwm_id)
+                resolve("Success");
+              }));
+              promises.push(removeHWM);
             });
+          }
+          // Add DFs
+          if(this.selectedDFs.length > 0) {
+            this.selectedDFs.forEach(function(df) {
+              df.peak_summary_id = results.peak_summary_id;
+              self.peakEditService.updateDF(df.data_file_id, df).subscribe(response => {
+                console.log(response);
+              });
+            });
+          }
+          // Add HWMs
+          if(this.selectedHWMs.length > 0) {
+            this.selectedHWMs.forEach(function(hwm) {
+              hwm.peak_summary_id = results.peak_summary_id;
+              const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(response => {
+                console.log(response);
+                self.returnData.hwmsToAdd.push(response.hwm_id);
+                resolve("Success");
+              }));
+              promises.push(addHWM);
+            });
+          }
+          Promise.all(promises).then(() => {
+            resolve("Peak Success");
+          })
+        }else{
+          // Error
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error updating Peak",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
           });
+          reject(new Error("Error updating Peak."));
         }
-        // Add HWMs
-        if(this.selectedHWMs.length > 0) {
-          this.selectedHWMs.forEach(function(hwm) {
-            hwm.peak_summary_id = results.peak_summary_id;
-            const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(results => {
-              console.log(results);
-              self.returnData.hwmsToAdd.push(results.hwm_id);
-              resolve("Success");
-            }));
-            promises.push(addHWM);
-          });
-        }
-        Promise.all(promises).then(() => {
-          resolve("Peak Success");
-        })
-      }else{
-        // Error
+      }));
+
+      updatePeak.then(() => {
+        this.loading = false;
+        let result = {data: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
-            title: "Error updating Peak",
-            titleIcon: "close",
+            title: "Successfully updated Peak",
+            titleIcon: "check",
             message: null,
             confirmButtonText: "OK",
             showCancelButton: false,
           },
         });
-        reject(new Error("Error updating Peak."));
-      }
-    }));
-
-    updatePeak.then(() => {
-      this.loading = false;
-      this.dialogRef.close(this.returnData);
-      this.dialog.open(ConfirmComponent, {
-        data: {
-          title: "Successfully updated Peak",
-          titleIcon: "check",
-          message: null,
-          confirmButtonText: "OK",
-          showCancelButton: false,
-        },
+      }).catch(function(error) {
+        console.log(error.message);
+        this.loading = false;
       });
-    }).catch(function(error) {
-      console.log(error.message);
-      this.loading = false;
-    });
+    }else if(this.editOrCreate === "Create"){
+      delete peakSubmission.peak_summary_id;
+      // Create new peak
+      const createPeak = new Promise<string>((resolve, reject) => this.peakEditService.postPeak(peakSubmission).subscribe(results => {
+        if(results.length !== 0){
+          this.returnData.peak = results;
+          
+          // Add DFs
+          if(this.selectedDFs.length > 0) {
+            this.selectedDFs.forEach(function(df) {
+              df.peak_summary_id = results.peak_summary_id;
+              self.peakEditService.updateDF(df.data_file_id, df).subscribe(response => {
+                console.log(response);
+              });
+            });
+          }
+          // Add HWMs
+          if(this.selectedHWMs.length > 0) {
+            this.selectedHWMs.forEach(function(hwm) {
+              hwm.peak_summary_id = results.peak_summary_id;
+              const addHWM = new Promise<string>((resolve, reject) => self.peakEditService.updateHWM(hwm.hwm_id, hwm).subscribe(response => {
+                console.log(response);
+                self.returnData.hwmsToAdd.push(response.hwm_id);
+                resolve("Success");
+              }));
+              promises.push(addHWM);
+            });
+          }
+          Promise.all(promises).then(() => {
+            resolve("Peak Success");
+          })
+        }else{
+          // Error
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Error creating Peak",
+              titleIcon: "close",
+              message: null,
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+          reject(new Error("Error creating Peak."));
+        }
+      }));
+
+      createPeak.then(() => {
+        this.loading = false;
+        let result = {data: this.returnData, editOrCreate: this.editOrCreate}
+        this.dialogRef.close(result);
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "Successfully created Peak",
+            titleIcon: "check",
+            message: null,
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+      }).catch(function(error) {
+        console.log(error.message);
+        this.loading = false;
+      });
+    }
   }
 
 }

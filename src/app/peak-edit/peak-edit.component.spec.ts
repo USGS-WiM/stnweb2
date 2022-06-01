@@ -217,7 +217,7 @@ describe('PeakEditComponent', () => {
     fixture.detectChanges();
     expect(component.peak.minute).toEqual("10");
     expect(component.peak.hour).toEqual("01");
-    expect(component.peak.utc_preview).toEqual("01/26/2022 01:10");
+    expect(component.peak.utc_preview).toEqual("Wed, 26 Jan 2022 01:10:00 GMT");
   });
 
   it('should set a time and date', () => {
@@ -231,7 +231,7 @@ describe('PeakEditComponent', () => {
     component.form.controls.time_zone.setValue("EST/EDT");
     component.previewUTC();
     fixture.detectChanges();
-    expect(component.peak.utc_preview).toEqual("01/26/2022 06:10");
+    expect(component.peak.utc_preview).toEqual("Wed, 26 Jan 2022 06:10:00 GMT");
   });
 
   it('should change the timezone', () => {
@@ -239,9 +239,8 @@ describe('PeakEditComponent', () => {
     let timezone = "UTC";
     let previewUTCSpy = spyOn(component, 'previewUTC');
 
-    component.setTimeZone(timezone);
+    component.setTimeZone();
     fixture.detectChanges();
-    expect(component.form.controls.time_zone.value).toEqual("UTC");
     expect(previewUTCSpy).toHaveBeenCalled();
   });
 
@@ -605,6 +604,7 @@ describe('PeakEditComponent', () => {
 
     component.removedDFs = [removedDF];
     component.selectedHWMs = [selectedHWM];
+    component.editOrCreate = "Edit";
 
     spyOn(component.peakEditService, 'putPeak').and.returnValue(of(response));
     spyOn(component.peakEditService, 'updateHWM').and.returnValue(of(hwmResponse));
@@ -615,6 +615,7 @@ describe('PeakEditComponent', () => {
     expect(component.returnData.peak).toEqual(response);
     expect(component.returnData.hwmsToAdd).toEqual([hwmResponse.hwm_id]);
     expect(updateDFSpy).toHaveBeenCalledTimes(1);
+    component.editOrCreate = "";
 
   });
 });

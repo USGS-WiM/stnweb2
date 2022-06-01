@@ -1,5 +1,9 @@
-<h2 mat-dialog-title>
+<h2 *ngIf="editOrCreate === 'Edit'" mat-dialog-title>
     Edit Peak Summary
+    <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
+</h2>
+<h2 *ngIf="editOrCreate === 'Create'" mat-dialog-title>
+    Create new Peak Summary
     <button class="close-button" mat-button [mat-dialog-close]="returnData" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <div [hidden]="!loading" class="loading">
@@ -267,9 +271,23 @@
                     </mat-form-field>
                 </div>
                 <div class="inline-widths">
-                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" [value]="peak.hour" required placeholder="00"> : 
-                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" [value]="peak.minute" required placeholder="00">
+                    <input class="date-input" formControlName="hour" aria-label="Deploy Hour" type="number" max="12" min="0" [value]="peak.hour" required placeholder="00"> : 
+                    <input class="date-input" formControlName="minute" aria-label="Deploy Minute" type="number" max="60" min="0" [value]="peak.minute" required placeholder="00">
                     <button mat-stroked-button class="date-input secondary date-button" type="button" (click)="changeTime()" [value]="peak.ampm">{{peak.ampm}}</button>
+                </div>
+            </div>
+            <!-- Minute Validator -->
+            <div *ngIf="form.controls.minute.invalid && (form.controls.minute.dirty || form.controls.minute.touched)"
+                class="alert alert-danger">
+                <div *ngIf="form.controls.minute.errors?.['incorrectValue']">
+                    Minutes must be between 0 and 60.
+                </div>
+            </div>
+            <!-- Hours Validator -->
+            <div *ngIf="form.controls.hour.invalid && (form.controls.hour.dirty || form.controls.hour.touched)"
+                class="alert alert-danger">
+                <div *ngIf="form.controls.hour.errors?.['incorrectValue']">
+                    Hours must be between 0 and 12.
                 </div>
             </div>
             <div class="inline-fields">
@@ -288,7 +306,7 @@
             </div>
             <mat-form-field appearance="fill">
                 <mat-label>Peak Recorded In</mat-label>
-                <mat-select required aria-label="Time Zone" formControlName="time_zone" (selectionChange)="setTimeZone($event.value)">
+                <mat-select required aria-label="Time Zone" formControlName="time_zone" (selectionChange)="setTimeZone()">
                     <mat-option *ngFor="let zone of timeZones" [value]="zone">
                     {{zone}}
                     </mat-option>
@@ -302,7 +320,7 @@
             <div class="inline-fields">
                 <mat-form-field appearance="fill" class="inline-widths">
                     <mat-label>Peak Stage (elevation ft)</mat-label>
-                    <input aria-label="Peak Stage" matInput formControlName="peak_stage" [value]="peak.peak_stage"/>
+                    <input aria-label="Peak Stage" matInput formControlName="peak_stage" [value]="peak.peak_stage" (input)="requireVDatum($event.data)"/>
                 </mat-form-field>
                 <!-- Peak Stage Validator -->
                 <div *ngIf="form.controls.peak_stage.invalid && (form.controls.peak_stage.dirty || form.controls.peak_stage.touched)"
@@ -320,11 +338,13 @@
             </div>
             <mat-form-field appearance="fill">
                 <mat-label>Vertical Datum</mat-label>
-                <mat-select aria-label="Vertical Datum" formControlName="vdatum_id">
+                <mat-select aria-label="Vertical Datum" [required]="form.controls.peak_stage.value ? true : null" formControlName="vdatum_id">
                     <mat-option *ngFor="let datum of vdatums" [value]="datum.datum_id">
                     {{datum.datum_name}}
                     </mat-option>
                 </mat-select>
+                <mat-icon *ngIf="form.controls.peak_stage.value" matSuffix class="info-icon" matTooltip="Vertical Datum is required if Peak Stage Elevation is populated."
+                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
             </mat-form-field>
             <div class="inline-fields">
                 <mat-form-field appearance="fill" class="inline-widths">
@@ -420,7 +440,8 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
-            <button class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+            <button *ngIf="editOrCreate === 'Edit'" class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
+            <button *ngIf="editOrCreate === 'Create'" class="primary" mat-button cdkFocusInitial aria-label="Create" type="submit">Create</button>
             <button type="button"mat-dialog-close mat-stroked-button class="secondary close-btn" cdkFocusInitial aria-label="Close">Cancel</button>
         </div>
     </mat-dialog-actions>

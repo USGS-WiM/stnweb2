@@ -617,7 +617,7 @@
                                 aria-label="Add Sensor"><mat-icon class="add-buttons" matTooltip="Deploy a new Sensor" matTooltipPosition="before">add</mat-icon>
                             </button>
                         </mat-card>
-                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === 0"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
+                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
                         <div class="tableContainer" *ngIf="siteFullInstruments !== undefined; else noSensorTable">
                             <table *ngIf="siteFullInstruments.length > 0; else noSensorTable"
                                 mat-table
@@ -1007,7 +1007,13 @@
                         <mat-paginator [hidden]="hwm === undefined || hwm.length === 0" #hwmPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                     </mat-tab>
                     <mat-tab label="Peaks ({{peaks.length}})">
-                        <mat-card class="mat-elevation-z0 header-card"><p>Peaks ({{peaks.length}})</p></mat-card>
+                        <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To create a Peak Summary, first choose an Event above.</p></mat-card>
+                        <mat-card class="mat-elevation-z0 header-card">
+                            <p>Peaks ({{peaks.length}})</p>
+                            <button *ngIf="currentEvent !== null && (role === '1' || role === '2' || role === '3')" mat-button (click)="openPeaksEditDialog(null)"
+                                aria-label="Add Peak Summary"><mat-icon class="add-buttons">add</mat-icon>
+                            </button>
+                        </mat-card>
                         <div class="tableContainer" *ngIf="peaks !== undefined; else noPeakTable">
                             <table *ngIf="peaks.length > 0; else noPeakTable"
                                 mat-table
