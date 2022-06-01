@@ -14,7 +14,7 @@
                         <button *ngIf="!deleteDisabled" mat-stroked-button class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>
                         <span *ngIf="deleteDisabled" matTooltip="To delete a site, please contact a STN administrator." 
                         aria-label="Displays a tooltip when focused or hovered over">
-                            <button mat-stroked-button disabled class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                            <button mat-stroked-button disabled class="delete-button disabled-border"><mat-icon>delete_forever</mat-icon> Delete Site</button>
                         </span>
                     </div>
                 </div>
@@ -532,10 +532,13 @@
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                             <span> Edit</span>
                                         </button>
-                                        <button mat-menu-item class="delete-borderless" (click)="deleteRD(row)"
+                                        <button *ngIf="role === '1' || role === '2' || role === '3'" mat-menu-item class="delete-borderless" (click)="deleteRD(row)"
                                             aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
+                                        <span *ngIf="role !== '1' && role !== '2' && role !== '3'">
+                                            <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
+                                        </span>
                                     </mat-menu>
                                     </td>
                                 </ng-container>
@@ -717,10 +720,13 @@
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                             <span> Edit</span>
                                         </button>
-                                        <button mat-menu-item  class="delete-borderless" (click)="deleteSensor(row)"
+                                        <button mat-menu-item *ngIf="role === '1' || role === '2' || role === '3'" class="delete-borderless" (click)="deleteSensor(row)"
                                             aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
+                                        <span *ngIf="role !== '1' && role !== '2' && role !== '3'">
+                                            <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
+                                        </span>
                                     </mat-menu>
                                     </td>
                                 </ng-container>
@@ -912,10 +918,13 @@
                                                 aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                                 <span> Edit</span>
                                             </button>
-                                            <button mat-menu-item class="delete-borderless" (click)="deleteHWM(row)"
+                                            <button mat-menu-item class="delete-borderless" *ngIf="role === '1' || role === '2' || role === '3'" (click)="deleteHWM(row)"
                                                 aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                                 <span>Delete</span>
                                             </button>
+                                            <span *ngIf="role !== '1' && role !== '2' && role !== '3'">
+                                                <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
+                                            </span>
                                         </mat-menu>
                                     </td>
                                 </ng-container>
@@ -1085,10 +1094,14 @@
                                                 aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                                 <span> Edit</span>
                                             </button>
-                                            <button mat-menu-item class="delete-borderless" [disabled]="role !== '1'" (click)="deletePeak(row)"
+                                            <button mat-menu-item *ngIf="role === '1'" class="delete-borderless" [disabled]="role !== '1'" (click)="deletePeak(row)"
                                                 aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                                 <span>Delete</span>
-                                        </button>
+                                            </button>
+                                            <span *ngIf="role !== '1'" matTooltip="To delete a peak, please contact a STN administrator." 
+                                            aria-label="Displays a tooltip when focused or hovered over">
+                                                <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
+                                            </span>
                                         </mat-menu>
                                     </td>
                                 </ng-container>
