@@ -28,9 +28,9 @@
                         >HWM {{hwm.hwm_id}} - {{hwm.elev_ft || '--'}} ft</mat-checkbox
                     >
                     <div class="button-group">
-                        <button mat-button type="button" class="secondary" (click)="showHWMDetails(i)"><mat-icon class="info-icon" matTooltip="Show Details">info</mat-icon></button>
-                        <button mat-button *ngIf="hwm.elev_ft" class="secondary" type="button" (click)="primaryHWM(hwm)" class="right-button"><mat-icon class="check-icon" matTooltip="Set as Primary">check_circle_outline</mat-icon></button>
-                        <button mat-button *ngIf="!hwm.elev_ft" class="secondary" type="button" (click)="showIncompleteHWMInfo()" class="right-button"><mat-icon class="warning-icon" matTooltip="Incomplete">warning</mat-icon></button>
+                        <button mat-button type="button" (click)="showHWMDetails(i)"><mat-icon class="info-icon" matTooltip="Show Details">info</mat-icon></button>
+                        <button mat-button *ngIf="hwm.elev_ft" type="button" (click)="primaryHWM(hwm)" class="right-button"><mat-icon class="check-icon" matTooltip="Set as Primary">check_circle_outline</mat-icon></button>
+                        <button mat-button *ngIf="!hwm.elev_ft" type="button" (click)="showIncompleteHWMInfo()" class="right-button"><mat-icon class="warning-icon" matTooltip="Incomplete">warning</mat-icon></button>
                     </div>
                 </div>
                 <!-- HWM Details, not shown unless Show Details clicked -->

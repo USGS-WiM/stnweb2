@@ -1559,13 +1559,11 @@ export class SiteDetailsComponent implements OnInit {
         }
 
         let updateDFwoPeakID = function(dfID) {
-            console.log(dfID)
             self.siteService.getDataFile(dfID).subscribe((dfToRemove) => {
                 dfToRemove.peak_summary_id = null;
-                console.log(dfToRemove)
-                // self.peakEditService.updateDF(dfToRemove.data_file_id, dfToRemove).subscribe(response => {
-                //     console.log(response);
-                // });
+                self.peakEditService.updateDF(dfToRemove.data_file_id, dfToRemove).subscribe(response => {
+                    console.log(response);
+                });
             });
         }
 
@@ -1581,8 +1579,8 @@ export class SiteDetailsComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if(result) {
                 // Delete hwm
-                // this.peakEditService.deletePeak(row.peak_summary_id).subscribe((results) => {
-                //     if(results === null){
+                this.peakEditService.deletePeak(row.peak_summary_id).subscribe((results) => {
+                    if(results === null){
                         this.peakEditService.getPeakDataFiles(row.peak_summary_id).subscribe(dfResults => {
                             peakDFs = dfResults;
                             // Get list of sensor files
@@ -1607,17 +1605,15 @@ export class SiteDetailsComponent implements OnInit {
                             // Get selected hwms for this peak
                             hwms.forEach(function(hwm, i){
                                 if(hwm.peak_summary_id === row.peak_summary_id){
-                                hwms[i].selected = true;
+                                    hwms[i].selected = true;
                                 }else{
-                                hwms[i].selected = false;
+                                    hwms[i].selected = false;
                                 }
                             })
                             
                             //remove peakID and PUT selected files
                             sensorFiles.forEach((file) => {
                                 if (file.selected){
-                                    console.log(file)
-                                    console.log(file.selected)
                                     updateDFwoPeakID(file.data_file_id);
                                 }
                             })
@@ -1627,8 +1623,9 @@ export class SiteDetailsComponent implements OnInit {
                                 if (hwm.selected) {
                                     hwm.peak_summary_id = null;
                                     let formattedHWM = formatHWM(hwm); //need to format it to remove all the site stuff
-                                    console.log(formattedHWM)
-                                    // this.peakEditService.updateHWM(formattedHWM.hwm_id, formattedHWM);
+                                    self.peakEditService.updateHWM(formattedHWM.hwm_id, formattedHWM).subscribe(response => {
+                                        console.log(response);
+                                    });
                                 }
                             });
                         });
@@ -1640,28 +1637,28 @@ export class SiteDetailsComponent implements OnInit {
                             }
                         })
                         // success
-                        // this.dialog.open(ConfirmComponent, {
-                        //     data: {
-                        //     title: "",
-                        //     titleIcon: "close",
-                        //     message: "Successfully removed Peak",
-                        //     confirmButtonText: "OK",
-                        //     showCancelButton: false,
-                        //     },
-                        // });
-                    // }else{
-                    //     // error
-                    //     this.dialog.open(ConfirmComponent, {
-                    //         data: {
-                    //         title: "Error",
-                    //         titleIcon: "close",
-                    //         message: "Error removing Peak",
-                    //         confirmButtonText: "OK",
-                    //         showCancelButton: false,
-                    //         },
-                    //     });
-                    // }
-            //     })
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "Successfully removed Peak",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error removing Peak",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }
+                })
             }
         });
     }

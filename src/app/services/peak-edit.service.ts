@@ -78,7 +78,8 @@ export class PeakEditService {
             catchError(this.handleError<any>('postPeak', []))
         );
   }
-
+  
+  /* istanbul ignore next */
   // Delete peak
   public deletePeak(peak_summary_id): Observable<any> {
     return this.httpClient
@@ -129,6 +130,23 @@ export class PeakEditService {
             catchError(this.handleError<any>('updateHWM', []))
         );
   }
+
+  //Get hwm
+  public getHWM(hwmID): Observable<any> {
+    return this.httpClient
+        .get(APP_SETTINGS.API_ROOT + 'HWMs/' + hwmID + '.json', {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'getHWM response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('getHWM', []))
+        );
+}
 
   /**
      * Handle Http operation that failed.

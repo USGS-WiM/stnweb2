@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Added ability to delete sensors
  -  Alert for deploying and retrieving sensors when no event selected
  -  Added ability to create a peak
+ -  Added ability to delete a peak
  
 ### Changed
 
