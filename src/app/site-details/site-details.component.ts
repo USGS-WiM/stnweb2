@@ -211,6 +211,7 @@ export class SiteDetailsComponent implements OnInit {
         'RefMarkName',
         'RefMarkEl',
         'Description',
+        'Destroyed',
         'button',
     ];
 
@@ -1889,6 +1890,8 @@ export class SiteDetailsComponent implements OnInit {
                     return this.compare(a.elev_ft, b.elev_ft, isAsc);
                 case 'description':
                     return this.compare(a.description, b.description, isAsc);
+                case 'destroyed':
+                    return this.compare(a.op_is_destroyed, b.op_is_destroyed, isAsc);
                 default:
                     return 0;
             }
