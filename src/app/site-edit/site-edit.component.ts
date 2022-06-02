@@ -473,6 +473,29 @@ export class SiteEditComponent implements OnInit {
 
   addLandownerContact() {
     this.addLandownerCheck = true;
+    // Keep same landowner contact id if user deletes current landowner and then clicks Add Landowner again
+    if(this.hasLandownerContact){
+      this.landownerForm.controls.landownercontact_id.setValue(this.data.site.landownercontact_id);
+    }
+  }
+
+  removeLandownerContact() {
+    this.addLandownerCheck = false;
+    if(this.hasLandownerContact === null){
+      this.landownerForm.reset();
+    }else{
+      this.landownerForm.controls.lname.setValue(null);
+      this.landownerForm.controls.fname.setValue(null);
+      this.landownerForm.controls.title.setValue(null);
+      this.landownerForm.controls.address.setValue(null);
+      this.landownerForm.controls.city.setValue(null);
+      this.landownerForm.controls.state.setValue(null);
+      this.landownerForm.controls.zip.setValue(null);
+      this.landownerForm.controls.primaryphone.setValue(null);
+      this.landownerForm.controls.secondaryphone.setValue(null);
+      this.landownerForm.controls.email.setValue(null);
+      this.landownerForm.controls.landownercontact_id.setValue(null);
+    }
   }
 
   initLandownerForm() {
@@ -1316,7 +1339,7 @@ export class SiteEditComponent implements OnInit {
       this.fileUploading = false;
       this.dialog.open(ConfirmComponent, {
         data: {
-          title: "Successfully updated Site",
+          title: "Successfully updated Site " + this.data.site.site_id,
           titleIcon: "check",
           message: null,
           confirmButtonText: "OK",
