@@ -69,6 +69,26 @@ export class SiteEditService {
         );
   }
 
+  /* istanbul ignore next */
+  // Delete landowner
+  public deleteLandowner(landownerContactID): Observable<any> {
+    // rootURL + '/LandOwners/:id.json'
+    return this.httpClient
+        .delete(APP_SETTINGS.API_ROOT + 'LandOwners/' + landownerContactID + '.json', {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteLandowner response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteLandowner', []))
+        );
+  }
+
   public postNetworkNames(siteID, networkNameID): Observable<any> {
     // params: { siteId: '@siteId', NetworkNameId: '@networkNameId' }, isArray: true, url: rootURL + '/sites/:siteId/AddNetworkName'
     return this.httpClient

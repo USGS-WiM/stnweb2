@@ -644,7 +644,7 @@ describe('SiteEditComponent', () => {
     component.siteForm.get("state").setValue("WI");
     component.siteForm.get("waterbody").setValue("test");
 
-    component.siteForm.get("landownercontact_id").setValue(9999);
+    component.siteForm.get("landownercontact_id").setValue(0);
     component.landownerForm.markAsDirty();
     let putSiteSpy = spyOn(component, 'putSite');
     let dialogSpy = spyOn(component.dialog, 'open');
@@ -667,7 +667,7 @@ describe('SiteEditComponent', () => {
     component.siteForm.get("state").setValue("WI");
     component.siteForm.get("waterbody").setValue("test");
 
-    component.landownerForm.get("landownercontact_id").setValue(null);
+    component.landownerForm.get("landownercontactid").setValue(null);
     component.landownerForm.get("fname").setValue("test");
     component.landownerForm.markAsDirty();
     let putSiteSpy = spyOn(component, 'putSite');
@@ -693,7 +693,7 @@ describe('SiteEditComponent', () => {
     component.siteForm.get("waterbody").setValue("test");
 
     component.landownerForm.get("fname").setValue("test");
-    component.landownerForm.get("landownercontact_id").setValue(9999);
+    component.landownerForm.get("landownercontactid").setValue(0);
     component.landownerForm.markAsDirty();
     let putSiteSpy = spyOn(component, 'putSite');
     let putLandownerSpy = spyOn(component.siteEditService, 'putLandowner').and.returnValue(
@@ -705,7 +705,7 @@ describe('SiteEditComponent', () => {
 
     expect(component.landownerValid).toBeTrue();
     expect(putSiteSpy).toHaveBeenCalled();
-    expect(putLandownerSpy).toHaveBeenCalledWith(component.landownerForm.get("landownercontact_id").value, component.landownerForm.value);
+    expect(putLandownerSpy).toHaveBeenCalledWith(component.landownerForm.get("landownercontactid").value, component.landownerForm.value);
   });
 
   it('should delete file and remove from page', () => {
