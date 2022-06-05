@@ -275,8 +275,8 @@
                     <mat-datepicker [value]="rd.date_established" #estDatePicker></mat-datepicker>
                 </mat-form-field>
                 <mat-form-field appearance="fill">
-                    <mat-label>Date Recovered</mat-label>
-                    <input aria-label="Date Recovered" matInput formControlName="date_recovered" [value]="rd.date_recovered" [matDatepicker]="recDatePicker" placeholder="Choose a date">
+                    <mat-label>Date Last Checked</mat-label>
+                    <input aria-label="Date Last Checked" matInput formControlName="date_recovered" [value]="rd.date_recovered" [matDatepicker]="recDatePicker" placeholder="Choose a date">
                     <mat-datepicker-toggle matSuffix [for]="recDatePicker"></mat-datepicker-toggle>
                     <mat-datepicker [value]="rd.date_recovered" #recDatePicker></mat-datepicker>
                     <mat-icon matSuffix class="info-icon" matTooltip="Enter the date the location was recently found in good condition.">info</mat-icon>

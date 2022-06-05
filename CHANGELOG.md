@@ -4,7 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased](https://github.com/USGS-WiM/stnweb2/tree/dev)
+
+### Added
+
+ -   
+ 
+### Changed
+
+ -  
+ 
+ ### Fixed
+ 
+ -   
+
+## [v0.8.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.0) - 2022-06-05
 
 ### Added
 
@@ -19,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Added ability to create a peak
  -  Added tooltips to all add button icons
  -  Added ability to retrieve a sensor
+ -  Added Description and Is Destroyed columns in reference datum table
  
 ### Changed
 
@@ -27,7 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Improved responsiveness of tables in details modals
  -  Autopopulate source and agency when adding file in site edit form
  -  Disabled add button when no event selected for Peaks, Sensors, HWMs and files (except site files)
-
+ -  Date Recovered to Date Last Checked in reference datum detail and edit modals
  
  ### Fixed
  
