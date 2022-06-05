@@ -513,6 +513,32 @@
                                     </td>
                                 </ng-container>
 
+                                <!-- reference datum description column -->
+                                <ng-container matColumnDef="Description">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="description">Description</th>
+                                    <td mat-cell *matCellDef="let rm">
+                                        <div *ngIf="rm.description === '' || rm.description === undefined; else displayReferenceDatumDesc">
+                                            ---
+                                        </div>
+                                        <ng-template #displayReferenceDatumDesc>
+                                            {{ rm.description }}
+                                        </ng-template>
+                                    </td>
+                                </ng-container>
+
+                                <!-- reference datum is destroyed column -->
+                                <ng-container matColumnDef="Destroyed">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header="destroyed">Is Destroyed?</th>
+                                    <td mat-cell *matCellDef="let rm">
+                                        <div *ngIf="rm.op_is_destroyed === '' || rm.op_is_destroyed === undefined; else displayReferenceDatumDestr">
+                                            ---
+                                        </div>
+                                        <ng-template #displayReferenceDatumDestr>
+                                            {{ rm.op_is_destroyed === 0 ? 'False' : 'True' }}
+                                        </ng-template>
+                                    </td>
+                                </ng-container>
+
                                 <!-- Button Column -->
                                 <ng-container matColumnDef="button">
                                     <th mat-header-cell *matHeaderCellDef>
@@ -575,6 +601,22 @@
                                     <th mat-header-cell *matHeaderCellDef>Elevation (ft)</th>
                                     <td mat-cell *matCellDef="let file">
                                         {{file.name}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- reference datum description column -->
+                                <ng-container matColumnDef="Description">
+                                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                                    <td mat-cell *matCellDef="let file">
+                                        {{file.description}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- reference datum destroyed column -->
+                                <ng-container matColumnDef="Destroyed">
+                                    <th mat-header-cell *matHeaderCellDef>Destroyed</th>
+                                    <td mat-cell *matCellDef="let file">
+                                        {{file.destroyed}}
                                     </td>
                                 </ng-container>
 
