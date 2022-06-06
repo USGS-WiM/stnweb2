@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
- -  Added ability to retrieve a sensor
+ -  
  
 ### Changed
 
@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Added tooltips to all add button icons
  -  Added ability to delete a peak
  -  Added Description and Is Destroyed columns in reference datum table
+ -  Added ability to retrieve a sensor
  
 ### Changed
 
