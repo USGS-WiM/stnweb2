@@ -17,41 +17,41 @@ describe('TimezonesService', () => {
   });
 
   it('should convert time to EST', () => {
-    let convertedTime = service.convertTimezone('EST/EDT', dateNoDST , "05");
+    let convertedTime = service.convertTimezone('EST/EDT', dateNoDST);
 
     expect(convertedTime).toEqual("2022-01-05T06:05:00");
 
-    convertedTime = service.convertTimezone('EST/EDT', dateDST , "05");
+    convertedTime = service.convertTimezone('EST/EDT', dateDST);
 
     expect(convertedTime).toEqual("2022-05-05T05:05:00");
   });
 
   it('should convert time to PST', () => {
-    let convertedTime = service.convertTimezone('PST/PDT', dateNoDST , "05");
+    let convertedTime = service.convertTimezone('PST/PDT', dateNoDST);
 
     expect(convertedTime).toEqual("2022-01-05T09:05:00");
 
-    convertedTime = service.convertTimezone('PST/PDT', dateDST , "05");
+    convertedTime = service.convertTimezone('PST/PDT', dateDST);
 
     expect(convertedTime).toEqual("2022-05-05T08:05:00");
   });
 
   it('should convert time to CST', () => {
-    let convertedTime = service.convertTimezone('CST/CDT', dateNoDST , "05");
+    let convertedTime = service.convertTimezone('CST/CDT', dateNoDST);
 
     expect(convertedTime).toEqual("2022-01-05T07:05:00");
 
-    convertedTime = service.convertTimezone('CST/CDT', dateDST , "05");
+    convertedTime = service.convertTimezone('CST/CDT', dateDST);
 
     expect(convertedTime).toEqual("2022-05-05T06:05:00");
   });
 
   it('should convert time to MST', () => {
-    let convertedTime = service.convertTimezone('MST/MDT', dateNoDST , "05");
+    let convertedTime = service.convertTimezone('MST/MDT', dateNoDST);
 
     expect(convertedTime).toEqual("2022-01-05T08:05:00");
 
-    convertedTime = service.convertTimezone('MST/MDT', dateDST , "05");
+    convertedTime = service.convertTimezone('MST/MDT', dateDST);
 
     expect(convertedTime).toEqual("2022-05-05T07:05:00");
   });
