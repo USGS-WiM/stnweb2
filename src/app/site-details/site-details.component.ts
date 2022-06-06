@@ -34,6 +34,7 @@ import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
 import { PeakEditComponent } from '@app/peak-edit/peak-edit.component';
+import { PeakEditService } from '@app/services/peak-edit.service';
 import { FiltersService } from '@app/services/filters.service';
 import { FileEditComponent } from '@app/file-edit/file-edit.component';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
@@ -227,6 +228,7 @@ export class SiteDetailsComponent implements OnInit {
         public hwmEditService: HwmEditService,
         public opEditService: OpEditService,
         public sensorEditService: SensorEditService,
+        public peakEditService: PeakEditService,
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -463,13 +465,9 @@ export class SiteDetailsComponent implements OnInit {
                                             }
                                         })
                                         if(timeCount > 1){
-                                            console.log(timeCount)
-                                            console.log(result.instrument_status);
                                             statusTypes.forEach(type => {
-                                                console.log(type)
                                                 if(type === "Lost" || type === "Retrieved"){
                                                     result.statusType = type;
-                                                    console.log(result.statusType)
                                                 }
                                             })
                                         }
@@ -1294,8 +1292,6 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openSensorDetailsDialog(row): void {
-        
-        console.log(this.sensorDataSource.data)
         // Format dates
         let self = this;
         let utcPreview;
@@ -1586,6 +1582,153 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     /* istanbul ignore next */
+    deletePeak(row): void {
+        let self = this;
+        let hwms = JSON.parse(JSON.stringify(this.hwmDataSource.data));
+        let sensors = JSON.parse(JSON.stringify(this.sensorDataSource.data));
+        let sensorFiles = JSON.parse(JSON.stringify(this.sensorFilesDataSource.data));
+        let peakDFs;
+
+        let formatHWM = function(h) {
+            let fhwm = {
+              approval_id: h.approval_id,
+              hwm_label: h.hwm_label,
+              bank: h.bank,
+              elev_ft: h.elev_ft,
+              event_id: h.event_id,
+              flag_date: h.flag_date,
+              flag_member_id: h.flag_member_id,
+              hcollect_method_id: h.hcollect_method_id,
+              hdatum_id: h.hdatum_id,
+              height_above_gnd: h.height_above_gnd,
+              hwm_environment: h.hwm_environment,
+              hwm_id: h.hwm_id,
+              hwm_locationdescription: h.hwm_locationdescription,
+              hwm_notes: h.hwm_notes,
+              hwm_uncertainty: h.hwm_uncertainty,
+              uncertainty: h.uncertainty,
+              hwm_quality_id: h.hwm_quality_id,
+              hwm_type_id: h.hwm_type_id,
+              latitude_dd: h.latitude_dd,
+              longitude_dd: h.longitude_dd,
+              marker_id: h.marker_id,
+              peak_summary_id: h.peak_summary_id,
+              site_id: h.site_id,
+              stillwater: h.stillwater = "No" ? 0 : 1,
+              survey_date: h.survey_date,
+              survey_member_id: h.survey_member_id,
+              vcollect_method_id: h.vcollect_method_id,
+              vdatum_id: h.vdatum_id,
+              waterbody: h.waterbody,
+            };
+            return fhwm;
+        }
+
+        let updateDFwoPeakID = function(dfID) {
+            self.siteService.getDataFile(dfID).subscribe((dfToRemove) => {
+                dfToRemove.peak_summary_id = null;
+                self.peakEditService.updateDF(dfToRemove.data_file_id, dfToRemove).subscribe(response => {
+                    console.log(response);
+                });
+            });
+        }
+
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove Peak",
+              titleIcon: "close",
+              message: "Are you sure you want to remove this Peak? " + row.peak_summary_id,
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                // Delete hwm
+                this.peakEditService.deletePeak(row.peak_summary_id).subscribe((results) => {
+                    if(results === null){
+                        this.peakEditService.getPeakDataFiles(row.peak_summary_id).subscribe(dfResults => {
+                            peakDFs = dfResults;
+                            // Get list of sensor files
+                            sensors.forEach(function(sensor, i){
+                                sensorFiles.forEach(function(file){
+                                    if(file.details.instrument_id === sensor.instrument_id){
+                                        //  Add selected property
+                                        file.selected = false;
+                                        sensors[i].files.push(file);
+                                    }
+                                })
+                            })
+                            // Get selected data files for this peak
+                            sensors.forEach(function(sensor, i){
+                                sensor.files.forEach(function(file, j){
+                                let matches = peakDFs.filter(function (pdf) { return pdf.data_file_id == file.data_file_id; })[0];
+                                if(matches){
+                                    sensors[i].files[j].selected = true;
+                                }
+                                })
+                            })
+                            // Get selected hwms for this peak
+                            hwms.forEach(function(hwm, i){
+                                if(hwm.peak_summary_id === row.peak_summary_id){
+                                    hwms[i].selected = true;
+                                }else{
+                                    hwms[i].selected = false;
+                                }
+                            })
+                            
+                            //remove peakID and PUT selected files
+                            sensorFiles.forEach((file) => {
+                                if (file.selected){
+                                    updateDFwoPeakID(file.data_file_id);
+                                }
+                            })
+                            
+                            //remove peakID and PUT selected HWMs
+                            hwms.forEach((hwm) => {
+                                if (hwm.selected) {
+                                    hwm.peak_summary_id = null;
+                                    let formattedHWM = formatHWM(hwm); //need to format it to remove all the site stuff
+                                    self.peakEditService.updateHWM(formattedHWM.hwm_id, formattedHWM).subscribe(response => {
+                                        console.log(response);
+                                    });
+                                }
+                            });
+                        });
+                        // Update peaks data source
+                        self.peaksDataSource.data.forEach(function(peak, i){
+                            if(peak.peak_summary_id === row.peak_summary_id){
+                                self.peaksDataSource.data.splice(i, 1);
+                                self.peaksDataSource.data = [...self.peaksDataSource.data];
+                            }
+                        })
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "Successfully removed Peak",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error removing Peak",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }
+                })
+            }
+        });
+    }
+
     openFileDetailsDialog(row, type): void {
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
