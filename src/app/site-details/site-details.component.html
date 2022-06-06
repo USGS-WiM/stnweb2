@@ -743,6 +743,9 @@
                                         <ng-template #displayStatusType>
                                             <mat-icon class="deployed-icon" *ngIf="sensor.statusType === 'Deployed'">check_circle</mat-icon>
                                             {{ sensor.statusType }}
+                                            <button *ngIf="sensor.statusType === 'Deployed'" mat-button class="retrieve-btn" (click)="openSensorRetrieveDialog(sensor)"
+                                                aria-label="Retrieve"><mat-icon>sync</mat-icon> Retrieve
+                                            </button>
                                         </ng-template>
                                     </td>
                                 </ng-container>
@@ -769,6 +772,10 @@
                                         <button mat-menu-item class="edit-details-mobile" (click)="openSensorEditDialog(row)"
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                             <span> Edit</span>
+                                        </button>
+                                        <button *ngIf="row.statusType === 'Deployed'" mat-menu-item (click)="openSensorRetrieveDialog(row)"
+                                            aria-label="Retrieve"><mat-icon>sync</mat-icon>
+                                            <span>Retrieve</span>
                                         </button>
                                         <button mat-menu-item *ngIf="role === '1' || role === '2' || role === '3'" class="delete-borderless" (click)="deleteSensor(row)"
                                             aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>

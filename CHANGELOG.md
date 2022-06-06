@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
- -   
+ -  Added ability to retrieve a sensor
  
 ### Changed
 

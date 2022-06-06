@@ -512,7 +512,7 @@
                                 <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                     <mat-form-field>
                                         <div class="inline-fields">
-                                            <div *ngIf="tapedown.elevation !== undefined">
+                                            <div *ngIf="tapedown.elevation !== undefined && tapedown.elevation !== null">
                                                 <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
                                             </div>
                                             <input matInput formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>
@@ -752,7 +752,7 @@
                         <mat-form-field appearance="fill">
                             <mat-label>Reference Datums</mat-label>
                                 <mat-select aria-label="Reference Datums" formControlName="lostRefMarks" (selectionChange)="changeTableValue($event.value, 'Lost')" multiple>
-                                    <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.vdatum_id">
+                                    <mat-option *ngFor="let refmark of data.siteRefMarks" [value]="refmark.name">
                                     {{refmark.name}}
                                     </mat-option>
                                 </mat-select>
@@ -792,7 +792,7 @@
                                 <td mat-cell *matCellDef="let tapedown; let i = index" [formGroupName]="i">
                                     <mat-form-field>
                                         <div class="inline-fields">
-                                            <div *ngIf="tapedown.elevation !== undefined">
+                                            <div *ngIf="tapedown.elevation !== undefined && tapedown.elevation !== null">
                                                 <input matInput formControlName="elevation" [value]="tapedown.elevation" class="disabled"/>
                                             </div>
                                             <input matInput formControlName="vdatum" [value]="tapedown.vdatum" class="disabled"/>

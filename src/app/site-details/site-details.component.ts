@@ -39,6 +39,7 @@ import { FiltersService } from '@app/services/filters.service';
 import { FileEditComponent } from '@app/file-edit/file-edit.component';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
 import { FileEditService } from '@app/services/file-edit.service';
+import { SensorRetrieveComponent } from '@app/sensor-retrieve/sensor-retrieve.component';
 
 @Component({
     selector: 'app-site-details',
@@ -449,15 +450,27 @@ export class SiteDetailsComponent implements OnInit {
                                 if(results.length > 0){
                                     this.siteFullInstruments.forEach(function(result, i){
                                         let timestamp = new Date(Math.max(...result.instrument_status.map(e => new Date(e.time_stamp))));
-                                        
+
+                                        // In case 2 timestamps are the same, retrieved/lost status > deployed
+                                        let timeCount = 0;
+                                        let statusTypes = [];
                                         result.instrument_status.forEach(function(statusType){
                                             let time = new Date(statusType.time_stamp);
 
                                             if (timestamp.getTime() === time.getTime()){
+                                                timeCount ++;
                                                 result.statusType = statusType.status;
+                                                statusTypes.push(statusType.status);
                                                 self.siteFullInstruments = self.siteFullInstruments.filter(({ statusType }) => statusType !== 'Proposed');
                                             }
                                         })
+                                        if(timeCount > 1){
+                                            statusTypes.forEach(type => {
+                                                if(type === "Lost" || type === "Retrieved"){
+                                                    result.statusType = type;
+                                                }
+                                            })
+                                        }
                                         
                                         // Get event name for sensor using sensor_id
                                         self.siteService
@@ -1429,6 +1442,57 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     /* istanbul ignore next */
+    openSensorRetrieveDialog(row): void {
+        let self = this;
+        // Format time stamp
+        let utcPreview;
+        row.instrument_status.forEach(function(instrument){
+            if(instrument.time_stamp !== undefined && !instrument.time_stamp.includes("/")){
+                let hour = (instrument.time_stamp.split('T')[1]).split(':')[0];
+                let ampm;
+                if(hour > 12){
+                    hour = String(hour - 12).padStart(2, '0');
+                    ampm = "PM";
+                }else{
+                    hour = hour;
+                    ampm = "AM";
+                }
+                if(instrument.status === 'Deployed'){
+                    let minute = ((instrument.time_stamp.split('T')[1]).split(":")[1]).split(":")[0];
+                    utcPreview = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
+                    utcPreview = utcPreview.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
+                }
+                let timestamp = instrument.time_stamp.split("T")[0];
+                let time = instrument.time_stamp.split("T")[1];
+                time = time.split(':');
+                timestamp = timestamp.split("-");
+                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + time[1] + " " + ampm;
+                instrument.format_time_stamp = timestamp;
+            }
+        })
+        const dialogRef = this.dialog.open(SensorRetrieveComponent, {
+            data: {
+                sensor: row,
+                site_id: this.site.site_id,
+                siteRefMarks: this.refMarkDataSource.data,
+            },
+            width: '100%',
+            autoFocus: false
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result){
+                console.log(result)
+                this.sensorDataSource.data.forEach(function(sensor, i){
+                    if(sensor.instrument_id === result.instrument_id){
+                        self.sensorDataSource.data[i] = result; 
+                        self.sensorDataSource.data = [...self.sensorDataSource.data];
+                    }
+                })
+            }
+        });
+    }
+
+    /* istanbul ignore next */
     openPeaksDetailsDialog(row): void {
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
@@ -1734,6 +1798,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     addFile(type, event): void {
         let self = this;
         // Prevent expansion panel from toggling
@@ -1858,6 +1923,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     openEditDialog(){
         let siteHousing = JSON.parse(JSON.stringify(this.siteHousing));
 
