@@ -94,12 +94,12 @@
             </div>
             <div class="cell-container">
               <p class="content-left">Date Established</p>
-              <p class="content-right" *ngIf="data.row_data.date_established_format !== undefined && data.row_data.date_established_format !== ''; else nullEstDate">{{data.row_data.date_established_format}}</p>
+              <p class="content-right" *ngIf="data.row_data.date_established!== undefined && data.row_data.date_established !== ''; else nullEstDate">{{data.row_data.date_established | date: 'MM/dd/yyyy'}}</p>
               <ng-template #nullEstDate><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
               <p class="content-left">Date Last Checked</p>
-              <p class="content-right" *ngIf="data.row_data.date_recovered_format !== undefined && data.row_data.date_recovered_format !== ''; else nullRecovDate">{{data.row_data.date_recovered_format}}</p>
+              <p class="content-right" *ngIf="data.row_data.date_recovered !== undefined && data.row_data.date_recovered !== ''; else nullRecovDate">{{data.row_data.date_recovered | date: 'MM/dd/yyyy'}}</p>
               <ng-template #nullRecovDate><p class="content-right">---</p></ng-template>
             </div>
           </div>
@@ -130,7 +130,7 @@
                             ---
                         </div>
                         <ng-template #displayDatumFileDate>
-                            {{ file.file_date }}
+                            {{ file.file_date | date: 'MM/dd/yyyy'}}
                         </ng-template>
                     </td>
                 </ng-container>

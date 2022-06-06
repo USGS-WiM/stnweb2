@@ -116,13 +116,6 @@ export class FileEditComponent implements OnInit {
         .subscribe((approvalResults) => {
             if(approvalResults !== null){
               this.approvedOn = approvalResults.approval_date;
-              // Format approval date
-              if(this.approvedOn !== undefined){
-                let approvalDate = this.approvedOn.split("T")[0];
-                approvalDate = approvalDate.split("-");
-                approvalDate = approvalDate[1] + "/" + approvalDate[2] + "/" + approvalDate[0];
-                this.approvedOn = approvalDate;
-              }
               if(approvalResults.member_id !== undefined && approvalResults.member_id !== 0){
                 this.siteService
                 .getMemberName(approvalResults.member_id)
@@ -305,10 +298,6 @@ export class FileEditComponent implements OnInit {
         this.agencyNameForCap = this.agencies.filter(function (a) { return a.agency_id == self.form.controls['agency_id'].value; })[0].agency_name;
   }
 
-  formatDate(event){
-    this.file.format_photo_date = (event.value.getMonth() + 1) + '/' + event.value.getDate() + '/' + event.value.getFullYear();
-  }
-
   getFileTypeSelection(event) {
     this.file.filetype_id = event.value;
 
@@ -474,11 +463,6 @@ export class FileEditComponent implements OnInit {
             this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission)
               .subscribe(
                   (data) => {
-                    // Add formatted file date for viewing in table
-                    let fileDate = data.file_date.split("T")[0];
-                    fileDate = fileDate.split("-");
-                    fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                    data.format_file_date = fileDate;
                     this.returnData = data;
                     this.closeDialog("Successfully updated file");
                   }
@@ -601,11 +585,6 @@ export class FileEditComponent implements OnInit {
                       this.fileEditService.uploadFile(fd)
                         .subscribe(
                             (data) => {
-                              // Add formatted file date for viewing in table
-                              let fileDate = data.file_date.split("T")[0];
-                              fileDate = fileDate.split("-");
-                              fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                              data.format_file_date = fileDate;
                               this.returnData = data;
                               this.closeDialog("Successfully added file");
                             }
@@ -624,11 +603,6 @@ export class FileEditComponent implements OnInit {
                     this.fileEditService.addFile(fileSubmission)
                         .subscribe(
                             (data) => {
-                              // Add formatted file date for viewing in table
-                              let fileDate = data.file_date.split("T")[0];
-                              fileDate = fileDate.split("-");
-                              fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                              data.format_file_date = fileDate;
                               this.returnData = data;
                               this.closeDialog("Successfully added file");
                             }

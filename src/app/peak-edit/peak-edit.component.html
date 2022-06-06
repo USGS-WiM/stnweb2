@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="cell-container">
                                     <p class="content-left">Flag Date</p>
-                                    <p class="content-right" *ngIf="hwm.format_flag_date !== undefined && hwm.format_flag_date !== ''; else nullFlagDate">{{hwm.format_flag_date}}</p>
+                                    <p class="content-right" *ngIf="hwm.flag_date !== undefined && hwm.flag_date !== ''; else nullFlagDate">{{hwm.flag_date | date: 'MM/dd/yyyy'}}</p>
                                     <ng-template #nullFlagDate><p class="content-right">---</p></ng-template>
                                 </div>
                                 <div class="cell-container">
@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="cell-container">
                                     <p class="content-left">Retrieved On</p>
-                                    <p class="content-right" *ngIf="sensor.instrument_status[0].time_stamp !== undefined && sensor.instrument_status[0].time_stamp !== ''; else nullRetrievedDate">{{sensor.instrument_status[0].format_time_stamp}}</p>
+                                    <p class="content-right" *ngIf="sensor.instrument_status[0].time_stamp !== undefined && sensor.instrument_status[0].time_stamp !== ''; else nullRetrievedDate">{{sensor.instrument_status[0].time_stamp | date: 'MM/dd/yyyy'}}</p>
                                     <ng-template #nullRetrievedDate><p class="content-right">---</p></ng-template>
                                 </div>
                                 <div class="cell-container">
@@ -204,17 +204,17 @@
                                     </div>
                                     <div class="cell-container">
                                         <p class="content-left">Collected On</p>
-                                        <p class="content-right" *ngIf="df.collect_date !== undefined && df.collect_date !== ''; else nullCollectDate">{{df.format_collect_date}}</p>
+                                        <p class="content-right" *ngIf="df.collect_date !== undefined && df.collect_date !== ''; else nullCollectDate">{{df.collect_date | date: 'MM/dd/yyyy' hh:mm a'}} UTC</p>
                                         <ng-template #nullCollectDate><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
                                         <p class="content-left">Good Start</p>
-                                        <p class="content-right" *ngIf="df.good_start !== undefined && df.good_start !== ''; else nullGoodStart">{{df.format_good_start}}</p>
+                                        <p class="content-right" *ngIf="df.good_start !== undefined && df.good_start !== ''; else nullGoodStart">{{df.good_start | date: 'MM/dd/yyyy hh:mm a'}} UTC</p>
                                         <ng-template #nullGoodStart><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">
                                         <p class="content-left">Good End</p>
-                                        <p class="content-right" *ngIf="df.good_end !== undefined && df.good_end !== ''; else nullGoodEnd">{{df.format_good_end}}</p>
+                                        <p class="content-right" *ngIf="df.good_end !== undefined && df.good_end !== ''; else nullGoodEnd">{{df.good_end | date: 'MM/dd/yyyy hh:mm a'}} UTC</p>
                                         <ng-template #nullGoodEnd><p class="content-right">---</p></ng-template>
                                     </div>
                                     <div class="cell-container">

@@ -431,7 +431,6 @@ describe('HwmEditComponent', () => {
       hwm_label: "test",
       hwm_locationdescription: "test",
       hwm_id: 0,
-      format_flag_date: "01/01/2022",
     }
 
     spyOn(component.hwmEditService, 'putHWM').and.returnValue(
@@ -460,7 +459,6 @@ describe('HwmEditComponent', () => {
       hwm_label: "test",
       hwm_locationdescription: "test",
       hwm_id: 0,
-      format_flag_date: "01/01/2022",
     }
 
     spyOn(component.hwmEditService, 'postHWM').and.returnValue(

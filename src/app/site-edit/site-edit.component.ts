@@ -44,7 +44,6 @@ export class SiteEditComponent implements OnInit {
   public latLngUnit = 'decdeg';
   public agencies = [];
   public agencyNameForCap;
-  public formattedPhotoDate;
   public fileSource;
   public addFileType;
   public valid;
@@ -689,10 +688,6 @@ export class SiteEditComponent implements OnInit {
     })
   }
 
-  formatDate(event){
-    this.formattedPhotoDate = (event.value.getMonth() + 1) + '/' + event.value.getDate() + '/' + event.value.getFullYear();
-  }
-
   changeLatLngUnit(event) {
     this.setLatLngValidators();
     if (event.value == "decdeg") {
@@ -953,10 +948,6 @@ export class SiteEditComponent implements OnInit {
               this.returnData.files.forEach(function(file, i){
                 if(file.file_id === data.file_id){
                   self.returnData.files[i] = data;
-                  let fileDate = self.returnData.files[i].file_date.split("T")[0];
-                  fileDate = fileDate.split("-");
-                  fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                  self.returnData.files[i].format_file_date = fileDate;
                   self.initSiteFiles = self.returnData.files;
                   self.initSiteFiles = [...self.initSiteFiles];
                   self.showFileForm = false;
@@ -1350,10 +1341,6 @@ export class SiteEditComponent implements OnInit {
                       this.returnData.files.forEach(function(file, i){
                         if(file.file_id === data.file_id){
                           self.returnData.files[i] = data;
-                          let fileDate = self.returnData.files[i].file_date.split("T")[0];
-                          fileDate = fileDate.split("-");
-                          fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                          self.returnData.files[i].format_file_date = fileDate;
                           self.initSiteFiles = self.returnData.files;
                           self.initSiteFiles = [...self.initSiteFiles];
                           self.showFileForm = false;
@@ -1473,12 +1460,6 @@ export class SiteEditComponent implements OnInit {
                     (data) => {
                       if(data !== []){
                         this.returnData.files.push(data);
-                        this.returnData.files.forEach(function(file){
-                          let fileDate = file.file_date.split("T")[0];
-                          fileDate = fileDate.split("-");
-                          fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                          file.format_file_date = fileDate;
-                        })
                         this.initSiteFiles = this.returnData.files;
                         this.initSiteFiles = [...this.initSiteFiles];
                       }
@@ -1498,13 +1479,6 @@ export class SiteEditComponent implements OnInit {
                 .subscribe(
                     (data) => {
                       this.returnData.files.push(data);
-                      this.returnData.files.forEach(function(file){
-                        let fileDate = file.file_date.split("T")[0];
-                        fileDate = fileDate.split("-");
-                        fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                        file.format_file_date = fileDate;
-                      })
-                      
                       this.initSiteFiles = this.returnData.files;
                       this.initSiteFiles = [...this.initSiteFiles];
                       this.loading = false;

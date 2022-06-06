@@ -19,7 +19,6 @@ describe('PeakEditComponent', () => {
   let data = {
     peak: {
       event_name: "Test Event",
-      format_peak_date: "01/26/2022",
       latitude: 39,
       longitude: -90,
       peak_date: "2022-01-26T01:10:00",
@@ -82,7 +81,6 @@ describe('PeakEditComponent', () => {
         files: [],
         flag_date: "2022-01-25T01:11:00",
         flag_member_id: 1,
-        format_flag_date: "01/25/2022",
         hcollect_method_id: 1,
         hdatum_id: 1,
         height_above_gnd: 10,
@@ -118,7 +116,6 @@ describe('PeakEditComponent', () => {
         file_date: "2022-01-25T01:10:00",
         file_id: 100,
         filetype_id: 2,
-        format_file_date: "01/25/2022",
         instrument_id: 0,
         name: "Test",
         path: "test/test.txt",
@@ -131,7 +128,6 @@ describe('PeakEditComponent', () => {
         file_date: "2022-01-25T01:10:00",
         file_id: 1,
         filetype_id: 2,
-        format_file_date: "01/25/2022",
         hwm_id: 0,
         name: "test2.txt",
         path: "test/test2.txt",
@@ -218,13 +214,6 @@ describe('PeakEditComponent', () => {
     expect(component.peak.minute).toEqual("10");
     expect(component.peak.hour).toEqual("01");
     expect(component.peak.utc_preview).toEqual("Wed, 26 Jan 2022 01:10:00 GMT");
-  });
-
-  it('should set a time and date', () => {
-    let timestamp = "2022-01-25T01:00:00";
-    let timeResult = component.setTimeAndDate(timestamp);
-    fixture.detectChanges();
-    expect(timeResult).toEqual("01/25/2022 01:00 AM");
   });
 
   it('should convert a time and date to UTC', () => {
@@ -526,7 +515,6 @@ describe('PeakEditComponent', () => {
         file_date: "2022-01-25T01:10:00",
         file_id: 100,
         filetype_id: 2,
-        format_file_date: "01/25/2022",
         instrument_id: 0,
         name: "Test",
         path: "test/test.txt",
@@ -542,7 +530,6 @@ describe('PeakEditComponent', () => {
       files: [],
       flag_date: "2022-01-25T01:11:00",
       flag_member_id: 1,
-      format_flag_date: "01/25/2022",
       hcollect_method_id: 1,
       hdatum_id: 1,
       height_above_gnd: 10,
@@ -576,7 +563,6 @@ describe('PeakEditComponent', () => {
       files: [],
       flag_date: "2022-01-25T01:11:00",
       flag_member_id: 1,
-      format_flag_date: "01/25/2022",
       hcollect_method_id: 1,
       hdatum_id: 1,
       height_above_gnd: 10,

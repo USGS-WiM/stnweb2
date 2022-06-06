@@ -929,11 +929,11 @@
                                 <ng-container matColumnDef="flag_date">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header="flag_date">Flag Date</th>
                                     <td mat-cell *matCellDef="let mark">
-                                        <div *ngIf="mark.format_flag_date === '' || mark.format_flag_date === undefined; else displayFlagDate">
+                                        <div *ngIf="mark.flag_date === '' || mark.flag_date === undefined; else displayFlagDate">
                                             ---
                                         </div>
                                         <ng-template #displayFlagDate>
-                                            {{ mark.format_flag_date }}
+                                            {{ mark.flag_date | date: 'MM/dd/yyyy'}}
                                         </ng-template>
                                     </td>
                                 </ng-container>
@@ -1127,7 +1127,7 @@
                                             ---
                                         </div>
                                         <ng-template #displayPeakDate>
-                                            {{ peak.format_peak_date }}
+                                            {{ peak.peak_date | date: 'MM/dd/yyyy'}}
                                         </ng-template>
                                     </td>
                                 </ng-container>
@@ -1272,11 +1272,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displaySiteFileDate">
+                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySiteFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displaySiteFileDate>
-                                                    {{ file.format_file_date }}
+                                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1344,7 +1344,7 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                {{file.format_file_date}}
+                                                {{file.file_date}}
                                             </td>
                                         </ng-container>
 
@@ -1429,11 +1429,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displayDatumFileDate">
+                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayDatumFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displayDatumFileDate>
-                                                    {{ file.format_file_date }}
+                                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1514,7 +1514,7 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                {{file.format_file_date}}
+                                                {{file.file_date}}
                                             </td>
                                         </ng-container>
 
@@ -1611,11 +1611,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displaySensorFileDate">
+                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySensorFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displaySensorFileDate>
-                                                    {{ file.format_file_date }}
+                                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1696,7 +1696,7 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                {{file.format_file_date}}
+                                                {{file.file_date}}
                                             </td>
                                         </ng-container>
 
@@ -1793,11 +1793,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displayHWMFileDate">
+                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayHWMFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displayHWMFileDate>
-                                                    {{ file.format_file_date }}
+                                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1865,7 +1865,7 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                {{file.format_file_date}}
+                                                {{file.file_date}}
                                             </td>
                                         </ng-container>
 

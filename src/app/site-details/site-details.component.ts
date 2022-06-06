@@ -272,7 +272,7 @@ export class SiteDetailsComponent implements OnInit {
         })
 
         // Display a blank row if no files or table info
-        this.blankFileDataSource.data = [{format_file_date: "---", name: "---"}];
+        this.blankFileDataSource.data = [{file_date: "---", name: "---"}];
         this.blankDataSource.data = [{file_date: "---", name: "---"}];
         this.getEvent();
     }
@@ -478,11 +478,6 @@ export class SiteDetailsComponent implements OnInit {
                             if(results.length > 0){
                                 this.hwm = results;
                                 this.hwm.forEach(function(hwm){
-                                    let flagDate = hwm.flag_date.split("T")[0];
-                                    flagDate = flagDate.split("-");
-                                    flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
-                                    hwm.format_flag_date = flagDate;
-
                                     // Get event name for sensor using sensor_id
                                     self.siteService
                                     .getHWMEvents(hwm.hwm_id)
@@ -502,16 +497,6 @@ export class SiteDetailsComponent implements OnInit {
                             this.files = results;
                             this.fileLength = this.files.length;
                             this.files.forEach(function(file){
-                                let fileDate = file.file_date.split("T")[0];
-                                fileDate = fileDate.split("-");
-                                fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.format_file_date = fileDate;
-                                if(file.photo_date){
-                                    let photoDate = file.photo_date.split("T")[0];
-                                    photoDate = photoDate.split("-");
-                                    photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
-                                    file.format_photo_date = photoDate;
-                                }
                                 if(file.instrument_id !== undefined){
                                     self.siteService.getFileSensor(file.file_id).subscribe((results) => {
                                         file.details = results;
@@ -619,12 +604,6 @@ export class SiteDetailsComponent implements OnInit {
                         .subscribe((results) => {
                             if(results.length > 0){
                                 this.hwm = results;
-                                this.hwm.forEach(function(hwm){
-                                    let flagDate = hwm.flag_date.split("T")[0];
-                                    flagDate = flagDate.split("-");
-                                    flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
-                                    hwm.format_flag_date = flagDate;
-                                })
                                 this.hwmDataSource.data = this.hwm;
                                 this.hwmDataSource.paginator = this.hwmPaginator;
                                 this.getHWMsForMap();
@@ -636,16 +615,6 @@ export class SiteDetailsComponent implements OnInit {
                         this.siteService.getSiteEventFiles(this.siteID, this.currentEvent).subscribe((results) => {
                             this.files = results;
                             this.files.forEach(function(file){
-                                let fileDate = file.file_date.split("T")[0];
-                                fileDate = fileDate.split("-");
-                                fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.format_file_date = fileDate;
-                                if(file.photo_date){
-                                    let photoDate = file.photo_date.split("T")[0];
-                                    photoDate = photoDate.split("-");
-                                    photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
-                                    file.format_photo_date = photoDate;
-                                }
                                 if(file.instrument_id !== undefined){
                                     self.siteService.getFileSensor(file.file_id).subscribe((results) => {
                                         file.details = results;
@@ -674,16 +643,6 @@ export class SiteDetailsComponent implements OnInit {
                         this.siteService.getSiteFiles(this.siteID).subscribe((results) => {
                             let files = results;
                             files.forEach(function(file){
-                                let fileDate = file.file_date.split("T")[0];
-                                fileDate = fileDate.split("-");
-                                fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                                file.format_file_date = fileDate;
-                                if(file.photo_date){
-                                    let photoDate = file.photo_date.split("T")[0];
-                                    photoDate = photoDate.split("-");
-                                    photoDate = photoDate[1] + "/" + photoDate[2] + "/" + photoDate[0];
-                                    file.format_photo_date = photoDate;
-                                }
                                 if (file.objective_point_id !== undefined){
                                     // Add rd name to result
                                     self.refMarkDataSource.data.forEach(function(rd){
@@ -714,7 +673,6 @@ export class SiteDetailsComponent implements OnInit {
                         if(results.length > 0){
                             results.forEach(function(result){
                                 if (self.currentEvent === null || result.event_name === self.event){
-                                    result.format_peak_date = self.setTimeAndDate(result.peak_date);
                                     self.peaks.push(result);
                                 }
                             }) 
@@ -772,6 +730,17 @@ export class SiteDetailsComponent implements OnInit {
                 }
             });
     }
+
+    // Create a date without time
+    makeAdate(d) {
+        var aDate = new Date(d);
+        var year = aDate.getFullYear();
+        var month = aDate.getMonth();
+        var day = ('0' + aDate.getDate()).slice(-2);
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var dateWOtime = monthNames[month] + " " + day + ", " + year;
+        return dateWOtime;
+    };
 
     setTimeAndDate(time_stamp) {
         let hour = (time_stamp.split('T')[1]).split(':')[0];
@@ -990,22 +959,6 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openRefMarkDetailsDialog(row): void {
-        // Format date established
-        if(row.date_established !== undefined && !row.date_established.includes("/")){
-            let estDate = row.date_established.split("T")[0];
-            estDate = estDate.split("-");
-            estDate = estDate[1] + "/" + estDate[2] + "/" + estDate[0];
-            row.date_established_format = estDate;
-        }
-
-        // Format date recovered
-        if(row.date_recovered !== undefined && !row.date_recovered.includes("/")){
-            let recoveredDate = row.date_recovered.split("T")[0];
-            recoveredDate = recoveredDate.split("-");
-            recoveredDate = recoveredDate[1] + "/" + recoveredDate[2] + "/" + recoveredDate[0];
-            row.date_recovered_format = recoveredDate;
-        }
-
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '100%';
@@ -1147,14 +1100,6 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openHWMDetailsDialog(row): void {
-        // Format surveyed date
-        if(row.survey_date !== undefined && !row.survey_date.includes("/")){
-            let surveyDate = row.survey_date.split("T")[0];
-            surveyDate = surveyDate.split("-");
-            surveyDate = surveyDate[1] + "/" + surveyDate[2] + "/" + surveyDate[0];
-            row.format_survey_date = surveyDate;
-        }
-
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '100%';
@@ -1210,7 +1155,7 @@ export class SiteDetailsComponent implements OnInit {
             data: {
               title: "Remove HWM",
               titleIcon: "close",
-              message: "Are you sure you want to remove this HWM? Flagged on: " + row.format_flag_date,
+              message: "Are you sure you want to remove this HWM? Flagged on: " + this.makeAdate(row.flag_date),
               confirmButtonText: "OK",
               showCancelButton: true,
             },
@@ -1281,27 +1226,21 @@ export class SiteDetailsComponent implements OnInit {
         let self = this;
         let utcPreview;
         row.instrument_status.forEach(function(instrument){
-            if(instrument.time_stamp !== undefined && !instrument.time_stamp.includes("/")){
-                let hour = (instrument.time_stamp.split('T')[1]).split(':')[0];
-                let ampm;
-                if(hour > 12){
-                    hour = String(hour - 12).padStart(2, '0');
-                    ampm = "PM";
-                }else{
-                    hour = hour;
-                    ampm = "AM";
-                }
-                if(instrument.status === 'Deployed'){
+            if(instrument.time_stamp){
+                if(instrument.status === 'Deployed' && instrument.time_zone !== 'UTC'){
+                    // Convert to UTC for UTC Preview
                     let minute = ((instrument.time_stamp.split('T')[1]).split(":")[1]).split(":")[0];
-                    utcPreview = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
-                    utcPreview = utcPreview.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
+                    let utcDate = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
+                    let utchour = (utcDate.split('T')[1]).split(':')[0].padStart(2, '0');
+                    let timestamp = utcDate.split("T")[0];
+                    timestamp = timestamp.split("-");
+                    let day = timestamp[0]
+                    let month = timestamp[1]
+                    let year = timestamp[2]
+                    timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + utchour + ":" + minute;
+                    utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(utchour), Number(minute)));
+                    utcPreview = new Date(utcPreview).toUTCString();
                 }
-                let timestamp = instrument.time_stamp.split("T")[0];
-                let time = instrument.time_stamp.split("T")[1];
-                time = time.split(':');
-                timestamp = timestamp.split("-");
-                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + time[1] + " " + ampm;
-                instrument.format_time_stamp = timestamp;
             }
         })
 
@@ -1472,7 +1411,6 @@ export class SiteDetailsComponent implements OnInit {
                     this.peaksDataSource.data.forEach(function(peak, i){
                         if (peak.peak_summary_id === result.data.peak.peak_summary_id){
                             result.data.peak.event_name = self.peaksDataSource.data[i].event_name;
-                            result.data.peak.format_peak_date = self.setTimeAndDate(result.data.peak.peak_date);
                             self.peaksDataSource.data[i] = result.data.peak;
                             self.peaksDataSource.data = [...self.peaksDataSource.data];
                         }
@@ -1497,7 +1435,6 @@ export class SiteDetailsComponent implements OnInit {
                 }else if(result.editOrCreate === "Create"){
                     // Add peak
                     result.data.peak.event_name = self.event;
-                    result.data.peak.format_peak_date = self.setTimeAndDate(result.data.peak.peak_date);
                     self.peaksDataSource.data.push(result.data.peak);
                     self.peaksDataSource.data = [...self.peaksDataSource.data];
                     

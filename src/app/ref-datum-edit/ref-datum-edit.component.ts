@@ -19,8 +19,6 @@ export class RefDatumEditComponent implements OnInit {
   public vdatums;
   public opQualities;
   public types;
-  public formattedEstDate;
-  public formattedRecDate;
   public unquantified = false;
   public elev_unit = "ft";
   public uncertainty_unit = "ft";
@@ -88,7 +86,8 @@ export class RefDatumEditComponent implements OnInit {
       this.rd.longitude_dd = this.data.rdSite.longitude_dd;
       this.rd.hdatum_id = this.data.rdSite.hdatum_id;
       //default today for established date
-      this.rd.date_established = this.makeAdate("");
+      this.rd.date_established = this.makeAdate();
+      console.log(this.rd.date_established)
     }
     this.initForm();
   }
@@ -276,17 +275,13 @@ export class RefDatumEditComponent implements OnInit {
   }
 
   // Create a date without time
-  makeAdate(d) {
+  makeAdate() {
     var aDate = new Date();
-    if (d !== "" && d !== undefined) {
-        //provided date
-        aDate = new Date(d);
-    }
     var year = aDate.getFullYear();
     var month = aDate.getMonth();
     var day = ('0' + aDate.getDate()).slice(-2);
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var dateWOtime = new Date(monthNames[month] + " " + day + ", " + year);
+    var dateWOtime = monthNames[month] + " " + day + ", " + year;
     return dateWOtime;
   };
 

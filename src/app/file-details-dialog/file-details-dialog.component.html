@@ -43,17 +43,17 @@
             </div>
             <div class="cell-container" *ngIf="fileType === 'Data'">
                 <p class="content-left">Date Collected/Processed</p>
-                <p class="content-right" *ngIf="collectDate !== undefined && collectDate !== ''; else nullCollectDate">{{collectDate}}</p>
+                <p class="content-right" *ngIf="collectDate !== undefined && collectDate !== ''; else nullCollectDate">{{collectDate | date: 'MM/dd/yyyy' }}</p>
                 <ng-template #nullCollectDate><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container"  *ngIf="fileType === 'Photo'">
                 <p class="content-left">Photo Date</p>
-                <p class="content-right" *ngIf="data.row_data.photo_date !== undefined && data.row_data.photo_date !== ''; else nullPhotoDate">{{data.row_data.photo_date}}</p>
+                <p class="content-right" *ngIf="data.row_data.photo_date !== undefined && data.row_data.photo_date !== ''; else nullPhotoDate">{{data.row_data.photo_date | date: 'MM/dd/yyyy'}}</p>
                 <ng-template #nullPhotoDate><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
                 <p class="content-left">Date Uploaded</p>
-                <p class="content-right" *ngIf="data.row_data.file_date !== undefined && data.row_data.file_date !== ''; else nullFileDate">{{data.row_data.file_date}}</p>
+                <p class="content-right" *ngIf="data.row_data.file_date !== undefined && data.row_data.file_date !== ''; else nullFileDate">{{data.row_data.file_date | date: 'MM/dd/yyyy'}}</p>
                 <ng-template #nullFileDate><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
@@ -73,7 +73,7 @@
             </div>
             <div class="cell-container" *ngIf="fileType === 'Data' && (data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1)">
                 <p class="content-left">Approval Date</p>
-                <p class="content-right" *ngIf="approvedOn !== undefined && approvedOn !== '' && approvedOn !== null; else nullApprovalOn">{{approvedOn}}</p>
+                <p class="content-right" *ngIf="approvedOn !== undefined && approvedOn !== '' && approvedOn !== null; else nullApprovalOn">{{approvedOn | date: 'MM/dd/yyyy hh:mm a'}}</p>
                 <ng-template #nullApprovalOn><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container" *ngIf="fileType === 'Photo'">

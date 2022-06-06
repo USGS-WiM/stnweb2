@@ -349,14 +349,6 @@ describe('SiteEditComponent', () => {
     expect(component.landownerForm.get('zip').value).toEqual("");
   });
 
-  it('should format date', () => {
-    const testDate = {value: new Date("November 20, 2021 11:00:00")};
-
-    component.formatDate(testDate);
-    fixture.detectChanges();
-    expect(component.formattedPhotoDate).toEqual("11/20/2021");
-  });
-
   it('should convert dd to dms', () => {
     let lat = 45.86;
 
@@ -750,8 +742,8 @@ describe('SiteEditComponent', () => {
     component.createFile();
     fixture.detectChanges();
 
-    expect(component.returnData.files).toEqual([ {filetype_id: 1, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", format_file_date: '12/29/2018'} ]);
-    expect(component.initSiteFiles).toEqual([ {filetype_id: 1, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", format_file_date: '12/29/2018'} ]);
+    expect(component.returnData.files).toEqual([ {filetype_id: 1, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
+    expect(component.initSiteFiles).toEqual([ {filetype_id: 1, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
     expect(component.loading).toBeFalse();
     expect(component.showFileForm).toBeFalse();
   });
@@ -777,8 +769,8 @@ describe('SiteEditComponent', () => {
     component.createFile();
     fixture.detectChanges();
 
-    expect(component.returnData.files).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", format_file_date: '12/29/2018'} ]);
-    expect(component.initSiteFiles).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", format_file_date: '12/29/2018'} ]);
+    expect(component.returnData.files).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
+    expect(component.initSiteFiles).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
     expect(component.loading).toBeFalse();
     expect(component.showFileForm).toBeFalse();
   });
@@ -819,8 +811,8 @@ describe('SiteEditComponent', () => {
     component.saveFile();
     fixture.detectChanges();
 
-    expect(component.returnData.files).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", file_id: 9999, format_file_date: '12/29/2018'} ]);
-    expect(component.initSiteFiles).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", file_id: 9999, format_file_date: '12/29/2018'} ]);
+    expect(component.returnData.files).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", file_id: 9999} ]);
+    expect(component.initSiteFiles).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file", file_id: 9999} ]);
     expect(component.loading).toBeFalse();
     expect(component.showFileForm).toBeFalse();
   });

@@ -99,13 +99,6 @@ export class SensorDialogComponent implements OnInit {
     .subscribe((results) => {
       if(results.length > 0){
         results.forEach(function(result){
-          // Format file date
-          if(result.file_date !== undefined && !result.file_date.includes("/")){
-              let fileDate = result.file_date.split("T")[0];
-              fileDate = fileDate.split("-");
-              fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-              result.file_date = fileDate;
-          }
           if(result.is_nwis !== undefined && result.is_nwis === 1){
             self.nwisFiles.push(result);
           }else{
