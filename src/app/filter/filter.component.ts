@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, SimpleChanges } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { State } from '@interfaces/state';
 import { Event } from '@interfaces/event';
@@ -8,6 +8,7 @@ import { SensorType } from '@interfaces/sensor-type';
 import { SensorTypeService } from '@app/services/sensor-type.service';
 import { NetworkNameService } from '@app/services/network-name.service';
 import { MatSelect } from '@angular/material/select';
+import { FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-filter',
@@ -17,13 +18,15 @@ import { MatSelect } from '@angular/material/select';
 export class FilterComponent implements OnInit {
     @ViewChild('eventTypeOptions') eventTypeOptions: MatSelect;
 
-    @Input('mapFilterForm') mapFilterForm: Object;
+    @Input('mapFilterForm') mapFilterForm: FormGroup;
     @Input('states') states: State[] = [];
     @Input('filteredEvents$') filteredEvents$: Observable<Event[]>;
     @Input('filteredStates$') filteredStates$: Observable<State[]>;
     @Input('selectedStates') selectedStates: Observable<State[]>;
     @Input('eventStates$') eventStates$: Observable<State[]>;
     @Input('eventTypes$') eventTypes$: Observable<EventType[]>;
+    @Input('eventStateLoading') eventStateLoading: Boolean;
+    @Input('eventTypeLoading') eventTypeLoading: Boolean;
     @Output() updateEventFilter = new EventEmitter();
     @Output() submitMapFilter = new EventEmitter();
     @Output() clearMapFilterForm = new EventEmitter();
@@ -44,6 +47,8 @@ export class FilterComponent implements OnInit {
     statesPanelState: boolean = false;
     hmwPanelState: boolean = false;
     additionalFiltersPanelState: boolean = false;
+    eventStateFilterChanged: boolean = false;
+    eventTypeFilterChanged: boolean = false;
 
     constructor(
         private networkNameService: NetworkNameService,
@@ -54,6 +59,24 @@ export class FilterComponent implements OnInit {
     }
 
     ngOnInit(): void {}
+
+    ngOnChanges(changes: SimpleChanges): void {
+        // When event filters change, check if Event Name is still populating
+        if(changes.eventStateLoading){
+            this.eventStateLoading = changes.eventStateLoading.currentValue;
+            // Done loading, reset value indicating this filter was changed
+            if(!this.eventStateLoading){
+                this.eventStateFilterChanged = false;
+            }
+        }
+        if(changes.eventTypeLoading){
+            this.eventTypeLoading = changes.eventTypeLoading.currentValue;
+            // Done loading, reset value indicating this filter was changed
+            if(!this.eventTypeLoading){
+                this.eventTypeFilterChanged = false;
+            }
+        }
+      }
 
     // Update event list when filters are changed
     onEventChange(){
@@ -83,6 +106,19 @@ export class FilterComponent implements OnInit {
     // Add state to selection
     add($event){
         this.addState.emit($event);
+    }
+
+     /* istanbul ignore next */
+    clearEventState() {
+        this.mapFilterForm.get('eventStateControl').setValue('');
+        this.eventStateFilterChanged = true;
+    }
+
+     /* istanbul ignore next */
+    clearEventType() {
+        this.mapFilterForm.get('eventTypeControl').setValue('');
+        this.eventTypeFilterChanged = true;
+        this.onEventChange();
     }
 
 }
