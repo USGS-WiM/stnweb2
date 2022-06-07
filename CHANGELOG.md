@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
- -  
+ -  Clear 'X' button and progress spinner to event state and event type filters
  
 ### Changed
 
