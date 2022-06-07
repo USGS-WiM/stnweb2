@@ -639,6 +639,8 @@ export class SiteDetailsComponent implements OnInit {
                                     flagDate = flagDate.split("-");
                                     flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
                                     hwm.format_flag_date = flagDate;
+
+                                    hwm.eventName = self.event;
                                 })
                                 this.hwmDataSource.data = this.hwm;
                                 this.hwmDataSource.paginator = this.hwmPaginator;
