@@ -28,7 +28,11 @@
                                 >{{ eventType.type }}</mat-option
                             >
                         </mat-select>
+                        <button type="button" *ngIf="mapFilterForm && mapFilterForm.get('eventTypeControl').value" matSuffix mat-icon-button class="clear-icon" (click)="clearEventType()" aria-label="Clear input text">
+                            <mat-icon>close</mat-icon>
+                        </button>
                     </mat-form-field>
+                    <mat-spinner mode="indeterminate" style="display: inline;" diameter="20" *ngIf="eventTypeLoading && eventTypeFilterChanged"></mat-spinner>
                 </div>
             </div>
             <div>
@@ -47,7 +51,6 @@
                             formControlName="eventStateControl"
                             [matAutocomplete]="eventStateAutocomplete"
                         />
-                        <mat-icon class="dropdown-icon" matSuffix>arrow_drop_down</mat-icon>
                         <mat-hint
                             >Start typing for suggestions</mat-hint
                         >
@@ -65,7 +68,14 @@
                                 >{{ eventState.state_name }}</mat-option
                             >
                         </mat-autocomplete>
+                        <div matSuffix>
+                            <mat-icon class="dropdown-icon-inline">arrow_drop_down</mat-icon>
+                            <button type="button" *ngIf="mapFilterForm && mapFilterForm.get('eventStateControl').value" mat-icon-button class="clear-icon" (click)="clearEventState()" aria-label="Clear input text">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
                     </mat-form-field>
+                    <mat-spinner mode="indeterminate" style="display: inline;" diameter="20" *ngIf="eventStateLoading && eventStateFilterChanged"></mat-spinner>
                 </div>
             </div>
             <div class="form-div">
