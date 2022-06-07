@@ -316,6 +316,8 @@
                         <mat-radio-button class="radio-button" value="min">Minutes</mat-radio-button>
                         <mat-radio-button class="radio-button" value="sec">Seconds</mat-radio-button>
                     </mat-radio-group>
+                    <mat-icon matSuffix class="info-icon" matTooltip="Interval will be stored in seconds."
+                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                 </div>
                 <!-- Interval Validator -->
                 <div *ngIf="form.controls.interval.invalid && (form.controls.interval.dirty || form.controls.interval.touched)"

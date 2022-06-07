@@ -1308,7 +1308,7 @@ export class SiteDetailsComponent implements OnInit {
                     hour = hour;
                     ampm = "AM";
                 }
-                if(instrument.status === 'Deployed'){
+                if(instrument.status === 'Deployed' && instrument.time_zone !== 'UTC'){
                     let minute = ((instrument.time_stamp.split('T')[1]).split(":")[1]).split(":")[0];
                     utcPreview = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
                     utcPreview = utcPreview.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
@@ -1356,17 +1356,19 @@ export class SiteDetailsComponent implements OnInit {
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result.result && result.editOrCreate === "Edit"){
-                this.sensorDataSource.data.forEach(function(sensor, i){
-                    if(sensor.instrument_id === result.result.instrument_id){
-                        self.sensorDataSource.data[i] = result.result; 
-                        self.sensorDataSource.data = [...self.sensorDataSource.data];
-                    }
-                })
-            }
-            else if(result.result && result.editOrCreate === "Create") {
-                self.sensorDataSource.data.push(result.result); 
-                self.sensorDataSource.data = [...self.sensorDataSource.data];
+            if(result){
+                if (result.result && result.editOrCreate === "Edit"){
+                    this.sensorDataSource.data.forEach(function(sensor, i){
+                        if(sensor.instrument_id === result.result.instrument_id){
+                            self.sensorDataSource.data[i] = result.result; 
+                            self.sensorDataSource.data = [...self.sensorDataSource.data];
+                        }
+                    })
+                }
+                else if(result.result && result.editOrCreate === "Create") {
+                    self.sensorDataSource.data.push(result.result); 
+                    self.sensorDataSource.data = [...self.sensorDataSource.data];
+                }
             }
         });
     }
