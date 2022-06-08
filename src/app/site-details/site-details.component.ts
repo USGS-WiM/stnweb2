@@ -34,10 +34,12 @@ import { TimezonesService } from '@app/services/timezones.service';
 import { HwmEditComponent } from '@app/hwm-edit/hwm-edit.component';
 import { PeakDialogComponent } from '@app/peak-dialog/peak-dialog.component';
 import { PeakEditComponent } from '@app/peak-edit/peak-edit.component';
+import { PeakEditService } from '@app/services/peak-edit.service';
 import { FiltersService } from '@app/services/filters.service';
 import { FileEditComponent } from '@app/file-edit/file-edit.component';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
 import { FileEditService } from '@app/services/file-edit.service';
+import { SensorRetrieveComponent } from '@app/sensor-retrieve/sensor-retrieve.component';
 
 @Component({
     selector: 'app-site-details',
@@ -102,6 +104,12 @@ export class SiteDetailsComponent implements OnInit {
     siteFilesDataSource = new MatTableDataSource<any>();
     blankFileDataSource = new MatTableDataSource<any>();
     blankDataSource = new MatTableDataSource<any>();
+
+    clickedRMRows = new Set<any>();
+    clickedHWMRows = new Set<any>();
+    clickedSensorRows = new Set<any>();
+    clickedPeakRows = new Set<any>();
+    clickedFileRows = new Set<any>();
 
     siteFilesExpanded = true;
     hwmFilesExpanded = true;
@@ -226,6 +234,7 @@ export class SiteDetailsComponent implements OnInit {
         public hwmEditService: HwmEditService,
         public opEditService: OpEditService,
         public sensorEditService: SensorEditService,
+        public peakEditService: PeakEditService,
     ) {
         currentUserService.currentUser.subscribe((user) => {
             this.currentUser = user;
@@ -447,15 +456,27 @@ export class SiteDetailsComponent implements OnInit {
                                 if(results.length > 0){
                                     this.siteFullInstruments.forEach(function(result, i){
                                         let timestamp = new Date(Math.max(...result.instrument_status.map(e => new Date(e.time_stamp))));
-                                        
+
+                                        // In case 2 timestamps are the same, retrieved/lost status > deployed
+                                        let timeCount = 0;
+                                        let statusTypes = [];
                                         result.instrument_status.forEach(function(statusType){
                                             let time = new Date(statusType.time_stamp);
 
                                             if (timestamp.getTime() === time.getTime()){
+                                                timeCount ++;
                                                 result.statusType = statusType.status;
+                                                statusTypes.push(statusType.status);
                                                 self.siteFullInstruments = self.siteFullInstruments.filter(({ statusType }) => statusType !== 'Proposed');
                                             }
                                         })
+                                        if(timeCount > 1){
+                                            statusTypes.forEach(type => {
+                                                if(type === "Lost" || type === "Retrieved"){
+                                                    result.statusType = type;
+                                                }
+                                            })
+                                        }
                                         
                                         // Get event name for sensor using sensor_id
                                         self.siteService
@@ -604,6 +625,9 @@ export class SiteDetailsComponent implements OnInit {
                         .subscribe((results) => {
                             if(results.length > 0){
                                 this.hwm = results;
+                                this.hwm.forEach(function(hwm){
+                                    hwm.eventName = self.event;
+                                })
                                 this.hwmDataSource.data = this.hwm;
                                 this.hwmDataSource.paginator = this.hwmPaginator;
                                 this.getHWMsForMap();
@@ -959,6 +983,10 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openRefMarkDetailsDialog(row): void {
+        console.log(this.clickedRMRows)
+        this.clickedRMRows.clear();
+        this.clickedRMRows.add(row);
+
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '100%';
@@ -977,6 +1005,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openRefDatumEditDialog(row): void {
+        this.clickedRMRows.clear();
+        this.clickedRMRows.add(row);
         let self = this;
         const dialogRef = this.dialog.open(RefDatumEditComponent, {
             data: {
@@ -996,19 +1026,26 @@ export class SiteDetailsComponent implements OnInit {
                     this.refMarkDataSource.data.forEach(function(row, i){
                         if(row.objective_point_id === result.result.referenceDatums.objective_point_id){
                             // replace row with new info
-                            self.refMarkDataSource.data = [result.result.referenceDatums];
+                            self.refMarkDataSource.data[i] = result.result.referenceDatums;
+                            self.refMarkDataSource.data = [...self.refMarkDataSource.data];
                         }
                     });
                 }
             } else if(result.result && result.editOrCreate === "Create") {
                 self.refMarkDataSource.data.push(result.result.referenceDatums); 
                 self.refMarkDataSource.data = [...self.refMarkDataSource.data];
+                self.clickedRMRows.add(result.result.referenceDatums);
+                // Go to last page if not already there
+                self.refMarkDataSource.paginator.length = self.refMarkDataSource.data.length;
+                self.refMarkDataSource.paginator.lastPage();
             }
         });
     }
 
     /* istanbul ignore next */
     deleteRD(row): void {
+        this.clickedRMRows.clear();
+        this.clickedRMRows.add(row);
         let self = this;
         // First check if any sensors are using this reference datum
         self.opEditService
@@ -1100,6 +1137,9 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openHWMDetailsDialog(row): void {
+        this.clickedHWMRows.clear();
+        this.clickedHWMRows.add(row);
+
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '100%';
@@ -1119,6 +1159,10 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openHWMEditDialog(row): void {
+        this.clickedHWMRows.clear();
+        if(row !== null){
+            this.clickedHWMRows.add(row);
+        }
         const dialogRef = this.dialog.open(HwmEditComponent, {
             data: {
                 hwm: row,
@@ -1144,12 +1188,18 @@ export class SiteDetailsComponent implements OnInit {
             else if(result.result && result.editOrCreate === "Create") {
                 self.hwmDataSource.data.push(result.result); 
                 self.hwmDataSource.data = [...self.hwmDataSource.data];
+                self.clickedHWMRows.add(result.result);
+                // Go to last page if not already there
+                self.hwmDataSource.paginator.length = self.hwmDataSource.data.length;
+                self.hwmDataSource.paginator.lastPage();
             }
         });
     }
 
     /* istanbul ignore next */
     deleteHWM(row): void {
+        this.clickedHWMRows.clear();
+        this.clickedHWMRows.add(row);
         let self = this;
         const dialogRef = this.dialog.open(ConfirmComponent, {
             data: {
@@ -1222,6 +1272,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openSensorDetailsDialog(row): void {
+        this.clickedSensorRows.clear();
+        this.clickedSensorRows.add(row);
         // Format dates
         let self = this;
         let utcPreview;
@@ -1264,6 +1316,10 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openSensorEditDialog(row): void {
+        this.clickedSensorRows.clear();
+        if(row !== null){
+            this.clickedSensorRows.add(row);
+        }
         let self = this;
         const dialogRef = this.dialog.open(SensorEditComponent, {
             data: {
@@ -1278,23 +1334,31 @@ export class SiteDetailsComponent implements OnInit {
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result.result && result.editOrCreate === "Edit"){
-                this.sensorDataSource.data.forEach(function(sensor, i){
-                    if(sensor.instrument_id === result.result.instrument_id){
-                        self.sensorDataSource.data[i] = result.result; 
-                        self.sensorDataSource.data = [...self.sensorDataSource.data];
-                    }
-                })
-            }
-            else if(result.result && result.editOrCreate === "Create") {
-                self.sensorDataSource.data.push(result.result); 
-                self.sensorDataSource.data = [...self.sensorDataSource.data];
+            if(result){
+                if (result.result && result.editOrCreate === "Edit"){
+                    this.sensorDataSource.data.forEach(function(sensor, i){
+                        if(sensor.instrument_id === result.result.instrument_id){
+                            self.sensorDataSource.data[i] = result.result; 
+                            self.sensorDataSource.data = [...self.sensorDataSource.data];
+                        }
+                    })
+                }
+                else if(result.result && result.editOrCreate === "Create") {
+                    self.sensorDataSource.data.push(result.result); 
+                    self.sensorDataSource.data = [...self.sensorDataSource.data];
+                    self.clickedSensorRows.add(result.result);
+                    // Go to last page if not already there
+                    self.sensorDataSource.paginator.length = self.sensorDataSource.data.length;
+                    self.sensorDataSource.paginator.lastPage();
+                }
             }
         });
     }
 
     /* istanbul ignore next */
     deleteSensor(row): void {
+        this.clickedSensorRows.clear();
+        this.clickedSensorRows.add(row);
         let self = this;
         const dialogRef = this.dialog.open(ConfirmComponent, {
             data: {
@@ -1366,7 +1430,61 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     /* istanbul ignore next */
+    openSensorRetrieveDialog(row): void {
+        this.clickedSensorRows.clear();
+        this.clickedSensorRows.add(row);
+        let self = this;
+        // Format time stamp
+        let utcPreview;
+        row.instrument_status.forEach(function(instrument){
+            if(instrument.time_stamp !== undefined && !instrument.time_stamp.includes("/")){
+                let hour = (instrument.time_stamp.split('T')[1]).split(':')[0];
+                let ampm;
+                if(hour > 12){
+                    hour = String(hour - 12).padStart(2, '0');
+                    ampm = "PM";
+                }else{
+                    hour = hour;
+                    ampm = "AM";
+                }
+                if(instrument.status === 'Deployed'){
+                    let minute = ((instrument.time_stamp.split('T')[1]).split(":")[1]).split(":")[0];
+                    utcPreview = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
+                    utcPreview = utcPreview.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
+                }
+                let timestamp = instrument.time_stamp.split("T")[0];
+                let time = instrument.time_stamp.split("T")[1];
+                time = time.split(':');
+                timestamp = timestamp.split("-");
+                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + time[1] + " " + ampm;
+                instrument.format_time_stamp = timestamp;
+            }
+        })
+        const dialogRef = this.dialog.open(SensorRetrieveComponent, {
+            data: {
+                sensor: row,
+                site_id: this.site.site_id,
+                siteRefMarks: this.refMarkDataSource.data,
+            },
+            width: '100%',
+            autoFocus: false
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result){
+                this.sensorDataSource.data.forEach(function(sensor, i){
+                    if(sensor.instrument_id === result.instrument_id){
+                        self.sensorDataSource.data[i] = result; 
+                        self.sensorDataSource.data = [...self.sensorDataSource.data];
+                    }
+                })
+            }
+        });
+    }
+
+    /* istanbul ignore next */
     openPeaksDetailsDialog(row): void {
+        this.clickedPeakRows.clear();
+        this.clickedPeakRows.add(row);
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '100%';
@@ -1386,6 +1504,10 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openPeaksEditDialog(row): void {
+        this.clickedPeakRows.clear();
+        if(row !== null){
+            this.clickedPeakRows.add(row);
+        }
         let self = this;
         let hwms = this.hwmDataSource.data;
         let sensors = this.sensorDataSource.data;
@@ -1437,6 +1559,10 @@ export class SiteDetailsComponent implements OnInit {
                     result.data.peak.event_name = self.event;
                     self.peaksDataSource.data.push(result.data.peak);
                     self.peaksDataSource.data = [...self.peaksDataSource.data];
+                    self.clickedPeakRows.add(result.data.peak);
+                    // Go to last page if not already there
+                    self.peaksDataSource.paginator.length = self.peaksDataSource.data.length;
+                    self.peaksDataSource.paginator.lastPage();
                     
                     // Update HWMs
                     if(result.data.hwmsToAdd.length > 0){
@@ -1452,7 +1578,159 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
+    deletePeak(row): void {
+        this.clickedPeakRows.clear();
+        this.clickedPeakRows.add(row);
+        let self = this;
+        let hwms = JSON.parse(JSON.stringify(this.hwmDataSource.data));
+        let sensors = JSON.parse(JSON.stringify(this.sensorDataSource.data));
+        let sensorFiles = JSON.parse(JSON.stringify(this.sensorFilesDataSource.data));
+        let peakDFs;
+
+        let formatHWM = function(h) {
+            let fhwm = {
+              approval_id: h.approval_id,
+              hwm_label: h.hwm_label,
+              bank: h.bank,
+              elev_ft: h.elev_ft,
+              event_id: h.event_id,
+              flag_date: h.flag_date,
+              flag_member_id: h.flag_member_id,
+              hcollect_method_id: h.hcollect_method_id,
+              hdatum_id: h.hdatum_id,
+              height_above_gnd: h.height_above_gnd,
+              hwm_environment: h.hwm_environment,
+              hwm_id: h.hwm_id,
+              hwm_locationdescription: h.hwm_locationdescription,
+              hwm_notes: h.hwm_notes,
+              hwm_uncertainty: h.hwm_uncertainty,
+              uncertainty: h.uncertainty,
+              hwm_quality_id: h.hwm_quality_id,
+              hwm_type_id: h.hwm_type_id,
+              latitude_dd: h.latitude_dd,
+              longitude_dd: h.longitude_dd,
+              marker_id: h.marker_id,
+              peak_summary_id: h.peak_summary_id,
+              site_id: h.site_id,
+              stillwater: h.stillwater = "No" ? 0 : 1,
+              survey_date: h.survey_date,
+              survey_member_id: h.survey_member_id,
+              vcollect_method_id: h.vcollect_method_id,
+              vdatum_id: h.vdatum_id,
+              waterbody: h.waterbody,
+            };
+            return fhwm;
+        }
+
+        let updateDFwoPeakID = function(dfID) {
+            self.siteService.getDataFile(dfID).subscribe((dfToRemove) => {
+                dfToRemove.peak_summary_id = null;
+                self.peakEditService.updateDF(dfToRemove.data_file_id, dfToRemove).subscribe(response => {
+                    console.log(response);
+                });
+            });
+        }
+
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove Peak",
+              titleIcon: "close",
+              message: "Are you sure you want to remove this Peak? " + row.peak_summary_id,
+              confirmButtonText: "OK",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                // Delete hwm
+                this.peakEditService.deletePeak(row.peak_summary_id).subscribe((results) => {
+                    if(results === null){
+                        this.peakEditService.getPeakDataFiles(row.peak_summary_id).subscribe(dfResults => {
+                            peakDFs = dfResults;
+                            // Get list of sensor files
+                            sensors.forEach(function(sensor, i){
+                                sensorFiles.forEach(function(file){
+                                    if(file.details.instrument_id === sensor.instrument_id){
+                                        //  Add selected property
+                                        file.selected = false;
+                                        sensors[i].files.push(file);
+                                    }
+                                })
+                            })
+                            // Get selected data files for this peak
+                            sensors.forEach(function(sensor, i){
+                                sensor.files.forEach(function(file, j){
+                                let matches = peakDFs.filter(function (pdf) { return pdf.data_file_id == file.data_file_id; })[0];
+                                if(matches){
+                                    sensors[i].files[j].selected = true;
+                                }
+                                })
+                            })
+                            // Get selected hwms for this peak
+                            hwms.forEach(function(hwm, i){
+                                if(hwm.peak_summary_id === row.peak_summary_id){
+                                    hwms[i].selected = true;
+                                }else{
+                                    hwms[i].selected = false;
+                                }
+                            })
+                            
+                            //remove peakID and PUT selected files
+                            sensorFiles.forEach((file) => {
+                                if (file.selected){
+                                    updateDFwoPeakID(file.data_file_id);
+                                }
+                            })
+                            
+                            //remove peakID and PUT selected HWMs
+                            hwms.forEach((hwm) => {
+                                if (hwm.selected) {
+                                    hwm.peak_summary_id = null;
+                                    let formattedHWM = formatHWM(hwm); //need to format it to remove all the site stuff
+                                    self.peakEditService.updateHWM(formattedHWM.hwm_id, formattedHWM).subscribe(response => {
+                                        console.log(response);
+                                    });
+                                }
+                            });
+                        });
+                        // Update peaks data source
+                        self.peaksDataSource.data.forEach(function(peak, i){
+                            if(peak.peak_summary_id === row.peak_summary_id){
+                                self.peaksDataSource.data.splice(i, 1);
+                                self.peaksDataSource.data = [...self.peaksDataSource.data];
+                            }
+                        })
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "Successfully removed Peak",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error removing Peak",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }
+                })
+            }
+        });
+    }
+
     openFileDetailsDialog(row, type): void {
+        this.clickedFileRows.clear();
+        this.clickedFileRows.add(row);
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '100%';
@@ -1473,6 +1751,8 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openFileEditDialog(row, type): void {
+        this.clickedFileRows.clear();
+        this.clickedFileRows.add(row);
         let self = this;
         const dialogRef = this.dialog.open(FileEditComponent, {
             data: {
@@ -1521,7 +1801,9 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     addFile(type, event): void {
+        this.clickedFileRows.clear();
         let self = this;
         // Prevent expansion panel from toggling
         event.stopPropagation();
@@ -1544,10 +1826,16 @@ export class SiteDetailsComponent implements OnInit {
                     // Update files data source and site
                     self.siteFilesDataSource.data.push(result);
                     self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                    // Go to last page if not already there
+                    self.siteFilesDataSource.paginator.length = self.siteFilesDataSource.data.length;
+                    self.siteFilesDataSource.paginator.lastPage();
                 }else if(type === "HWM File") {
                     // Update files data source and hwm
                     self.hwmFilesDataSource.data.push(result);
                     self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                    // Go to last page if not already there
+                    self.hwmFilesDataSource.paginator.length = self.hwmFilesDataSource.data.length;
+                    self.hwmFilesDataSource.paginator.lastPage();
                 }else if(type === "Reference Datum File") {
                     // Add rd name to result
                     self.refMarkDataSource.data.forEach(function(rd){
@@ -1558,16 +1846,25 @@ export class SiteDetailsComponent implements OnInit {
                     // Update files data source and reference datum
                     self.refMarkFilesDataSource.data.push(result);
                     self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                    // Go to last page if not already there
+                    self.refMarkFilesDataSource.paginator.length = self.refMarkFilesDataSource.data.length;
+                    self.refMarkFilesDataSource.paginator.lastPage();
                 }else if(type === "Sensor File") {
                     // Update files data source and sensor
                     self.sensorFilesDataSource.data.push(result);
                     self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                    // Go to last page if not already there
+                    self.sensorFilesDataSource.paginator.length = self.sensorFilesDataSource.data.length;
+                    self.sensorFilesDataSource.paginator.lastPage();
                 }
+                self.clickedFileRows.add(result);
             }
         });
     }
 
     deleteFile(row, type): void {
+        this.clickedFileRows.clear();
+        this.clickedFileRows.add(row);
         let self = this;
 
         const dialogRef = this.dialog.open(ConfirmComponent, {
@@ -1645,6 +1942,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     openEditDialog(){
         let siteHousing = JSON.parse(JSON.stringify(this.siteHousing));
 

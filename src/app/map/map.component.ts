@@ -186,6 +186,9 @@ export class MapComponent implements OnInit {
     eventStates$: Observable<State[]>;
     states$: Observable<State[]>;
 
+    eventStateLoading: Boolean = false;
+    eventTypeLoading: Boolean = false;
+
     //These variables indicate if each layer is checked
     sitesVisible = true;
     manyFiltered = false;
@@ -618,6 +621,8 @@ export class MapComponent implements OnInit {
     // TODO: update this
     updateEventFilter() {
         this.mapFilterForm;
+        this.eventStateLoading = true;
+        this.eventTypeLoading = true;
         this.eventService
             .filterEvents({
                 eventType: this.mapFilterForm.get('eventTypeControl').value
@@ -636,6 +641,8 @@ export class MapComponent implements OnInit {
                 this.getEventList();
                 //Reset event value to null; previous selection will disappear from filter
                 this.mapFilterForm.get('eventsControl').setValue(null);
+                this.eventStateLoading = false;
+                this.eventTypeLoading = false;
             });
 
         // this.events = this.eventService.filterEvents({

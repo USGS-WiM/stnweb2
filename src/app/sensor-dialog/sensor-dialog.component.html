@@ -36,6 +36,11 @@
                 <ng-template #nullSerialNum><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
+                <p class="content-left">Housing Serial Number</p>
+                <p class="content-right" *ngIf="data.row_data.housing_serial_number !== undefined && data.row_data.housing_serial_number !== ''; else nullHousingSerialNum">{{data.row_data.housing_serial_number}}</p>
+                <ng-template #nullHousingSerialNum><p class="content-right">---</p></ng-template>
+            </div>
+            <div class="cell-container">
                 <p class="content-left">Housing Type</p>
                 <p class="content-right" *ngIf="data.row_data.housingType !== undefined && data.row_data.housingType !== ''; else nullHousingType">{{data.row_data.housingType}}</p>
                 <ng-template #nullHousingType><p class="content-right">---</p></ng-template>
@@ -81,7 +86,7 @@
                 </div>
                 <ng-template #nullInFeetAboveDeployed><p class="content-right">---</p></ng-template>
             </div>
-            <div class="cell-container">
+            <div class="cell-container" *ngIf="data.row_data.sensor_type_id === 1">
                 <p class="content-left">Vented</p>
                 <p class="content-right" *ngIf="data.row_data.vented !== undefined && data.row_data.vented !== ''; else nullVented">{{data.row_data.vented}}</p>
                 <ng-template #nullVented><p class="content-right">---</p></ng-template>
@@ -121,12 +126,11 @@
                 </div>
                 <ng-template #nullTimezoneDeployed><p class="content-right">---</p></ng-template>
             </div>
-            <div class="cell-container">
+            <div class="cell-container" *ngIf="data.row_data.instrument_status.length > 0 && data.utcPreview !== undefined;">
                 <p class="content-left">Preview Time in UTC</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0 && data.utcPreview !== undefined; else nullUTCPreview">
+                <div>
                     <div *ngFor="let instrument of data.row_data.instrument_status">
                         <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone !== undefined && instrument.time_zone !== '' && instrument.time_zone !== 'UTC'">{{data.utcPreview}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.time_zone === undefined || instrument.time_zone === '' || instrument.time_zone === 'UTC')">---</p>
                     </div>
                 </div>
                 <ng-template #nullUTCPreview><p class="content-right">---</p></ng-template>

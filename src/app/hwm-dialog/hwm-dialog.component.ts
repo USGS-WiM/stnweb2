@@ -56,10 +56,8 @@ export class HwmDialogComponent implements OnInit {
       this.setHWMType();
       this.setHWMMarker();
       this.setHWMQuality();
-      if(this.data.row_data.vdatum !== undefined){
+      if(this.data.row_data.vdatum_id !== undefined){
         this.setVDatum();
-      }
-      if(this.data.row_data.vdatum !== undefined){
         this.setVCollectionMethod();
       }
       if(this.data.row_data.stillwater === 1){

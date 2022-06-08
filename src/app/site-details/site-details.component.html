@@ -14,7 +14,7 @@
                         <button *ngIf="!deleteDisabled" mat-stroked-button class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>
                         <span *ngIf="deleteDisabled" matTooltip="To delete a site, please contact a STN administrator." 
                         aria-label="Displays a tooltip when focused or hovered over">
-                            <button mat-stroked-button disabled class="delete-button delete"><mat-icon>delete_forever</mat-icon> Delete Site</button>
+                            <button mat-stroked-button disabled class="delete-button disabled-border"><mat-icon>delete_forever</mat-icon> Delete Site</button>
                         </span>
                     </div>
                 </div>
@@ -466,9 +466,9 @@
                     </div>
                 </mat-tab>
                 <div *ngIf="noSiteInfo !== undefined">
-                    <mat-tab label="Reference Datums ({{referenceDatums.length}})">
+                    <mat-tab label="Reference Datums ({{refMarkDataSource.data.length}})">
                         <mat-card class="mat-elevation-z0 header-card">
-                            <p>Reference Datums ({{referenceDatums.length}})</p>
+                            <p>Reference Datums ({{refMarkDataSource.data.length}})</p>
                             <button *ngIf="role === '1' || role === '2' || role === '3'" mat-button (click)="openRefDatumEditDialog(null)"
                                 aria-label="Add Reference Datum"><mat-icon matTooltip="Add a Reference Datum" matTooltipPosition="before" class="add-buttons">add</mat-icon>
                             </button>
@@ -477,8 +477,8 @@
                                 aria-label="Add Reference Datum"><mat-icon matTooltip="To add a Reference Datum, please contact a STN administrator." matTooltipPosition="before">add</mat-icon>
                             </button>
                         </mat-card>
-                        <div class="tableContainer" *ngIf="referenceDatums !== undefined; else noRMTable">
-                            <table *ngIf="referenceDatums.length > 0; else noRMTable"
+                        <div class="tableContainer" *ngIf="refMarkDataSource.data; else noRMTable">
+                            <table *ngIf="refMarkDataSource.data.length > 0; else noRMTable"
                                 mat-table
                                 id="datumLocTable"
                                 [dataSource]="refMarkDataSource"
@@ -562,10 +562,13 @@
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                             <span> Edit</span>
                                         </button>
-                                        <button mat-menu-item class="delete-borderless" (click)="deleteRD(row)"
+                                        <button *ngIf="role === '1' || role === '2' || role === '3'" mat-menu-item class="delete-borderless" (click)="deleteRD(row)"
                                             aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
+                                        <span *ngIf="role !== '1' && role !== '2' && role !== '3'">
+                                            <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
+                                        </span>
                                     </mat-menu>
                                     </td>
                                 </ng-container>
@@ -575,6 +578,7 @@
                                     mat-row
                                     *matRowDef="let row; columns: displayedRMColumns"
                                     class="results-row"
+                                    [class.row-is-clicked]="clickedRMRows.has(row)"
                                 ></tr>
                             </table>
                         </div>
@@ -654,26 +658,22 @@
                                 ></tr>
                             </table>
                         </ng-template>
-                        <mat-paginator [hidden]="referenceDatums === undefined || referenceDatums.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
+                        <mat-paginator [hidden]="refMarkDataSource.data === undefined || refMarkDataSource.data.length === 0" #paginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                     </mat-tab>
-                    <mat-tab label="Sensors ({{siteFullInstruments.length}})">
+                    <mat-tab label="Sensors ({{sensorDataSource.data.length}})">
                         <mat-card class="mat-elevation-z0 header-card">
-                            <p>Sensors ({{siteFullInstruments.length}})</p>
+                            <p>Sensors ({{sensorDataSource.data.length}})</p>
                             <button *ngIf="currentEvent !== null && role === '1' || role === '2' || role === '3'" mat-button (click)="openSensorEditDialog(null)"
                                 aria-label="Add Sensor"><mat-icon class="add-buttons" matTooltip="Deploy a new Sensor" matTooltipPosition="before">add</mat-icon>
                             </button>
-                            <!-- Disabled button with event tooltip -->
-                            <button mat-button *ngIf="currentEvent === null" disabled class="disabled-icon"
-                                aria-label="Add Sensor"><mat-icon matTooltip="Select an event to deploy a Sensor" matTooltipPosition="before">add</mat-icon>
-                            </button>
-                            <!-- Disabled button with role tooltip -->
-                            <button mat-button *ngIf="(role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon"
-                                aria-label="Add Sensor"><mat-icon matTooltip="To deploy a Sensor, please contact a STN administrator." matTooltipPosition="before">add</mat-icon>
+                            <!-- Disabled button with tooltip -->
+                            <button mat-button *ngIf="currentEvent === null || (role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon"
+                                aria-label="Add Sensor"><mat-icon [matTooltip]="(role !== '1' && role !== '2' && role !== '3') ? 'To deploy a Sensor, please contact a STN administrator.' : 'Select an event to deploy a Sensor.'" matTooltipPosition="before">add</mat-icon>
                             </button>
                         </mat-card>
                         <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To deploy or retrieve a sensor, first choose an Event above.</p></mat-card>
-                        <div class="tableContainer" *ngIf="siteFullInstruments !== undefined; else noSensorTable">
-                            <table *ngIf="siteFullInstruments.length > 0; else noSensorTable"
+                        <div class="tableContainer" *ngIf="sensorDataSource.data !== undefined; else noSensorTable">
+                            <table *ngIf="sensorDataSource.data.length > 0; else noSensorTable"
                                 mat-table
                                 #sensorSort
                                 id="sensorTable"
@@ -744,6 +744,12 @@
                                         <ng-template #displayStatusType>
                                             <mat-icon class="deployed-icon" *ngIf="sensor.statusType === 'Deployed'">check_circle</mat-icon>
                                             {{ sensor.statusType }}
+                                            <button *ngIf="sensor.statusType === 'Deployed' && currentEvent !== null" mat-button class="retrieve-btn" (click)="openSensorRetrieveDialog(sensor)"
+                                                aria-label="Retrieve"><mat-icon>sync</mat-icon> Retrieve
+                                            </button>
+                                            <button *ngIf="sensor.statusType === 'Deployed' && currentEvent === null" mat-button class="retrieve-btn" disabled
+                                                aria-label="Retrieve"><mat-icon>sync</mat-icon> Retrieve
+                                            </button>
                                         </ng-template>
                                     </td>
                                 </ng-container>
@@ -754,7 +760,7 @@
                                     </th>
                                     <td mat-cell *matCellDef="let row">
                                     <button mat-stroked-button class="view-details-btn secondary" (click)="openSensorDetailsDialog(row)"
-                                        aria-label="Edit">View Details
+                                        aria-label="View Details">View Details
                                     </button>
                                     <button mat-stroked-button class="edit-details-btn secondary" (click)="openSensorEditDialog(row)"
                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
@@ -771,10 +777,21 @@
                                             aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                             <span> Edit</span>
                                         </button>
-                                        <button mat-menu-item  class="delete-borderless" (click)="deleteSensor(row)"
+                                        <button *ngIf="row.statusType === 'Deployed' && currentEvent !== null" mat-menu-item (click)="openSensorRetrieveDialog(row)"
+                                            aria-label="Retrieve"><mat-icon>sync</mat-icon>
+                                            <span>Retrieve</span>
+                                        </button>
+                                        <button *ngIf="row.statusType === 'Deployed' && currentEvent === null" mat-menu-item disabled
+                                            aria-label="Retrieve"><mat-icon>sync</mat-icon>
+                                            <span>Retrieve</span>
+                                        </button>
+                                        <button mat-menu-item *ngIf="role === '1' || role === '2' || role === '3'" class="delete-borderless" (click)="deleteSensor(row)"
                                             aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                             <span>Delete</span>
                                         </button>
+                                        <span *ngIf="role !== '1' && role !== '2' && role !== '3'">
+                                            <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
+                                        </span>
                                     </mat-menu>
                                     </td>
                                 </ng-container>
@@ -784,6 +801,7 @@
                                     mat-row
                                     *matRowDef="let row; columns: displayedSensorColumns"
                                     class="results-row"
+                                    [class.row-is-clicked]="clickedSensorRows.has(row)"
                                 ></tr>
                             </table>
                         </div>
@@ -871,26 +889,22 @@
                                 ></tr>
                             </table>
                         </ng-template>
-                        <mat-paginator [hidden]="siteFullInstruments === undefined || siteFullInstruments.length === 0" #sensorPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
+                        <mat-paginator [hidden]="sensorDataSource.data === undefined || sensorDataSource.data.length === 0" #sensorPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                     </mat-tab>
-                    <mat-tab label="High Water Marks ({{hwm.length}})">
+                    <mat-tab label="High Water Marks ({{hwmDataSource.data.length}})">
                         <mat-card class="mat-elevation-z0 header-card">
-                            <p>High Water Marks ({{hwm.length}})</p>
+                            <p>High Water Marks ({{hwmDataSource.data.length}})</p>
                             <button *ngIf="currentEvent !== null && (role === '1' || role === '2' || role === '3')" mat-button (click)="openHWMEditDialog(null)"
                                 aria-label="Add HWM"><mat-icon matTooltip="Add a HWM" matTooltipPosition="before" class="add-buttons">add</mat-icon>
                             </button>
-                            <!-- Disabled button with event tooltip -->
-                            <button mat-button *ngIf="currentEvent === null" disabled class="disabled-icon"
-                                aria-label="Add HWM"><mat-icon matTooltip="Select an event to add a HWM" matTooltipPosition="before">add</mat-icon>
-                            </button>
-                            <!-- Disabled button with role tooltip -->
-                            <button mat-button *ngIf="(role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon"
-                                aria-label="Add HWM"><mat-icon matTooltip="To add a HWM, please contact a STN administrator." matTooltipPosition="before">add</mat-icon>
+                            <!-- Disabled button with tooltip -->
+                            <button mat-button *ngIf="currentEvent === null || (role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon"
+                                aria-label="Add HWM"><mat-icon [matTooltip]="(role !== '1' && role !== '2' && role !== '3') ? 'To add a HWM, please contact a STN administrator.' : 'Select an event to add a HWM'" matTooltipPosition="before">add</mat-icon>
                             </button>
                         </mat-card>
                         <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To create a HWM, first choose an Event above.</p></mat-card>
-                        <div class="tableContainer" *ngIf="hwm !== undefined; else noHWMTable">
-                            <table *ngIf="hwm.length > 0; else noHWMTable"
+                        <div class="tableContainer" *ngIf="hwmDataSource.data !== undefined; else noHWMTable">
+                            <table *ngIf="hwmDataSource.data.length > 0; else noHWMTable"
                                 mat-table
                                 #hwmSort
                                 id="hwmTable"
@@ -974,10 +988,13 @@
                                                 aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                                 <span> Edit</span>
                                             </button>
-                                            <button mat-menu-item class="delete-borderless" (click)="deleteHWM(row)"
+                                            <button mat-menu-item class="delete-borderless" *ngIf="role === '1' || role === '2' || role === '3'" (click)="deleteHWM(row)"
                                                 aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                                 <span>Delete</span>
                                             </button>
+                                            <span *ngIf="role !== '1' && role !== '2' && role !== '3'">
+                                                <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
+                                            </span>
                                         </mat-menu>
                                     </td>
                                 </ng-container>
@@ -987,6 +1004,7 @@
                                     mat-row
                                     *matRowDef="let row; columns: displayedHWMColumns"
                                     class="results-row"
+                                    [class.row-is-clicked]="clickedHWMRows.has(row)"
                                 ></tr>
                             </table>
                         </div>
@@ -1066,26 +1084,22 @@
                                 ></tr>
                             </table>
                         </ng-template>
-                        <mat-paginator [hidden]="hwm === undefined || hwm.length === 0" #hwmPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
+                        <mat-paginator [hidden]="hwmDataSource.data === undefined || hwmDataSource.data.length === 0" #hwmPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                     </mat-tab>
-                    <mat-tab label="Peaks ({{peaks.length}})">
+                    <mat-tab label="Peaks ({{peaksDataSource.data.length}})">
                         <mat-card class="mat-elevation-z0 event-alert" *ngIf="currentEvent === null"><mat-icon class="warning-icon">warning</mat-icon><p>To create a Peak Summary, first choose an Event above.</p></mat-card>
                         <mat-card class="mat-elevation-z0 header-card">
-                            <p>Peaks ({{peaks.length}})</p>
+                            <p>Peaks ({{peaksDataSource.data.length}})</p>
                             <button *ngIf="currentEvent !== null && (role === '1' || role === '2' || role === '3')" mat-button (click)="openPeaksEditDialog(null)"
                                 aria-label="Add Peak Summary"><mat-icon mat-icon matTooltip="Create a Peak" matTooltipPosition="before" class="add-buttons">add</mat-icon>
                             </button>
                             <!-- Disabled button with event tooltip -->
-                            <button *ngIf="currentEvent === null" disabled class="disabled-icon" mat-button
-                                aria-label="Add Peak Summary"><mat-icon mat-icon matTooltip="Select an event to create a Peak" matTooltipPosition="before">add</mat-icon>
-                            </button>
-                            <!-- Disabled button with role tooltip -->
-                            <button *ngIf="(role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon" mat-button
-                                aria-label="Add Peak Summary"><mat-icon matTooltip="To create a Peak, please contact a STN administrator." matTooltipPosition="before">add</mat-icon>
+                            <button *ngIf="currentEvent === null || (role !== '1' && role !== '2' && role !== '3')" disabled class="disabled-icon" mat-button
+                                aria-label="Add Peak Summary"><mat-icon mat-icon [matTooltip]="(role !== '1' && role !== '2' && role !== '3') ? 'To create a Peak, please contact a STN administrator.' : 'Select an event to create a Peak'" matTooltipPosition="before">add</mat-icon>
                             </button>
                         </mat-card>
-                        <div class="tableContainer" *ngIf="peaks !== undefined; else noPeakTable">
-                            <table *ngIf="peaks.length > 0; else noPeakTable"
+                        <div class="tableContainer" *ngIf="peaksDataSource.data !== undefined; else noPeakTable">
+                            <table *ngIf="peaksDataSource.data.length > 0; else noPeakTable"
                                 mat-table
                                 id="peakTable"
                                 [dataSource]="peaksDataSource"
@@ -1140,9 +1154,15 @@
                                         <button mat-stroked-button class="view-details-btn secondary" (click)="openPeaksDetailsDialog(row)"
                                             aria-label="View Details"><mat-icon>search</mat-icon> View Details
                                         </button>
-                                        <button mat-stroked-button class="edit-details-btn secondary" (click)="openPeaksEditDialog(row)"
+                                        <button mat-stroked-button *ngIf="currentEvent !== null" class="edit-details-btn secondary" (click)="openPeaksEditDialog(row)"
                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
                                         </button>
+                                        <!-- Edit disabled desktop -->
+                                        <span *ngIf="currentEvent === null" matTooltip="Select an event to edit a peak." aria-label="Edit">
+                                            <button mat-stroked-button disabled class="disabled-border"
+                                                aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
+                                            </button>
+                                        </span>
                                         <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                             <mat-icon>more_vert</mat-icon>
                                         </button>
@@ -1151,14 +1171,26 @@
                                                 aria-label="View Details"><mat-icon>search</mat-icon>
                                                 <span> View Details</span>
                                             </button>
-                                            <button mat-menu-item class="edit-details-mobile" (click)="openPeaksEditDialog(row)"
+                                            <button mat-menu-item *ngIf="currentEvent !== null" class="edit-details-mobile" (click)="openPeaksEditDialog(row)"
                                                 aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                                 <span> Edit</span>
                                             </button>
-                                            <button mat-menu-item class="delete-borderless"
+                                            <!-- Edit disabled mobile -->
+                                            <span *ngIf="currentEvent === null" matTooltip="Select an event to edit a peak." aria-label="Edit">
+                                                <button mat-menu-item disabled class="edit-details-mobile disabled-borderless"
+                                                    aria-label="Edit"><mat-icon matTooltip="Select an event to edit a peak." class="edit-icon">edit</mat-icon>
+                                                    <span> Edit</span>
+                                                </button>
+                                            </span>
+                                            <button mat-menu-item *ngIf="role === '1' && currentEvent !== null" class="delete-borderless" [disabled]="role !== '1'" (click)="deletePeak(row)"
                                                 aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                                 <span>Delete</span>
-                                        </button>
+                                            </button>
+                                            <!-- Disabled role -->
+                                            <span *ngIf="role !== '1' || currentEvent === null" [matTooltip]="role !=='1' ? 'To delete a peak, please contact a STN administrator.' : 'Select an event to delete a peak.'" 
+                                            aria-label="Displays a tooltip when focused or hovered over">
+                                                <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
+                                            </span>
                                         </mat-menu>
                                     </td>
                                 </ng-container>
@@ -1168,6 +1200,7 @@
                                     mat-row
                                     *matRowDef="let row; columns: displayedPeakColumns"
                                     class="results-noclick-row"
+                                    [class.row-is-clicked]="clickedPeakRows.has(row)"
                                 ></tr>
                             </table>
                         </div>
@@ -1241,7 +1274,7 @@
                                 ></tr>
                             </table>
                         </ng-template>
-                        <mat-paginator [hidden]="peaks === undefined || peaks.length === 0" #peaksPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
+                        <mat-paginator [hidden]="peaksDataSource.data === undefined || peaksDataSource.data.length === 0" #peaksPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                     </mat-tab>
                     <mat-tab label="Files ({{fileLength}})">
                         <mat-accordion multi="true">
@@ -1330,6 +1363,7 @@
                                             mat-row
                                             *matRowDef="let row; columns: displayedSiteFileColumns"
                                             class="results-row"
+                                            [class.row-is-clicked]="clickedFileRows.has(row)"
                                         ></tr>
                                     </table>
                                 </div>
@@ -1500,6 +1534,7 @@
                                             mat-row
                                             *matRowDef="let row; columns: displayedDatumFileColumns"
                                             class="results-row"
+                                            [class.row-is-clicked]="clickedFileRows.has(row)"
                                         ></tr>
                                     </table>
                                 </div>
@@ -1682,6 +1717,7 @@
                                             mat-row
                                             *matRowDef="let row; columns: displayedSensorFileColumns"
                                             class="results-row"
+                                            [class.row-is-clicked]="clickedFileRows.has(row)"
                                         ></tr>
                                     </table>
                                 </div>
@@ -1851,6 +1887,7 @@
                                             mat-row
                                             *matRowDef="let row; columns: displayedHWMFileColumns"
                                             class="results-row"
+                                            [class.row-is-clicked]="clickedFileRows.has(row)"
                                         ></tr>
                                     </table>
                                 </div>

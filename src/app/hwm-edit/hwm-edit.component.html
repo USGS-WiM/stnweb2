@@ -292,6 +292,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            <!-- Survey Uncertainty -->
             <div class="inline-fields">
                 <mat-form-field id="uncertainty" class="inline-widths" appearance="fill">
                     <mat-label for="uncertainty">Survey Uncertainty</mat-label>
@@ -301,6 +302,8 @@
                     <mat-radio-button class="radio-button" value="ft">+/- ft</mat-radio-button>
                     <mat-radio-button class="radio-button" value="cm">+/- cm</mat-radio-button>
                 </mat-radio-group>
+                <mat-icon class="info-icon uncertainty-icon" matTooltip="Survey Uncertainty will be stored in feet."
+                aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
             </div>
             <mat-form-field appearance="fill">
                 <mat-label for="description">Notes</mat-label>

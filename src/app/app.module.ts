@@ -81,6 +81,7 @@ import { FileEditComponent } from './file-edit/file-edit.component';
 import { HwmEditComponent } from './hwm-edit/hwm-edit.component';
 import { PeakEditComponent } from './peak-edit/peak-edit.component';
 import { SessionEventComponent } from './session-event/session-event.component';
+import { SensorRetrieveComponent } from './sensor-retrieve/sensor-retrieve.component';
 
 @NgModule({
     declarations: [
@@ -113,6 +114,7 @@ import { SessionEventComponent } from './session-event/session-event.component';
         PeakEditComponent,
         FileEditComponent,
         SessionEventComponent,
+        SensorRetrieveComponent,
     ],
     imports: [
         BrowserModule,

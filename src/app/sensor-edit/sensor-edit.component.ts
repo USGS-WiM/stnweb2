@@ -431,7 +431,6 @@ export class SensorEditComponent implements OnInit {
   validHour() {
     return (control: AbstractControl): ValidationErrors | null => {
       const incorrect = control.value > 12 || control.value < 0;
-      console.log(incorrect)
       return incorrect ? {incorrectValue: {value: control.value}} : null;
     };
   }

@@ -119,6 +119,7 @@
                 <tr mat-row
                     *matRowDef="let row; columns: displayedColumns"
                     class="results-row"
+                    [class.row-is-clicked]="clickedRows.has(row)"
                 ></tr>
             </table>
         </div>
