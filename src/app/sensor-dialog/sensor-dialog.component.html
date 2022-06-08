@@ -126,12 +126,11 @@
                 </div>
                 <ng-template #nullTimezoneDeployed><p class="content-right">---</p></ng-template>
             </div>
-            <div class="cell-container">
+            <div class="cell-container" *ngIf="data.row_data.instrument_status.length > 0 && data.utcPreview !== undefined;">
                 <p class="content-left">Preview Time in UTC</p>
-                <div *ngIf="data.row_data.instrument_status.length > 0 && data.utcPreview !== undefined; else nullUTCPreview">
+                <div>
                     <div *ngFor="let instrument of data.row_data.instrument_status">
                         <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_zone !== undefined && instrument.time_zone !== '' && instrument.time_zone !== 'UTC'">{{data.utcPreview}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && (instrument.time_zone === undefined || instrument.time_zone === '' || instrument.time_zone === 'UTC')">---</p>
                     </div>
                 </div>
                 <ng-template #nullUTCPreview><p class="content-right">---</p></ng-template>
