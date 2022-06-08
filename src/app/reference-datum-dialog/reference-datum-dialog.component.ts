@@ -43,7 +43,6 @@ export class ReferenceDatumDialogComponent implements OnInit {
 
   ngOnInit(): void {
     // Display a blank row if no files
-    console.log(this.data.row_data)
     this.blankFilesDataSource.data = [{date: "---", name: "---"}];
 
     if(this.data.row_data !== undefined){

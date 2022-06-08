@@ -1060,7 +1060,8 @@ export class SiteDetailsComponent implements OnInit {
                     this.refMarkDataSource.data.forEach(function(row, i){
                         if(row.objective_point_id === result.result.referenceDatums.objective_point_id){
                             // replace row with new info
-                            self.refMarkDataSource.data = [result.result.referenceDatums];
+                            self.refMarkDataSource.data[i] = result.result.referenceDatums;
+                            self.refMarkDataSource.data = [...self.refMarkDataSource.data];
                         }
                     });
                 }

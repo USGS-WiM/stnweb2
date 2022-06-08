@@ -80,7 +80,7 @@
               <p class="content-left">Uncertainty</p>
               <p class="content-right" *ngIf="data.row_data.uncertainty !== undefined && data.row_data.uncertainty !== '' && data.row_data.unquantified !== '1'">{{data.row_data.uncertainty}}</p>
               <p class="content-right" *ngIf="data.row_data.unquantified === '1'">Unquantified</p>
-              <p class="content-right" *ngIf="data.row_data.uncertainty === undefined && data.row_data.uncertainty === '' || data.row_data.unquantified !== '1'">---</p>
+              <p class="content-right" *ngIf="data.row_data.uncertainty === undefined && data.row_data.uncertainty === '' && data.row_data.unquantified !== '1'">---</p>
             </div>
             <div class="cell-container">
               <p class="content-left">Quality</p>
