@@ -278,8 +278,13 @@ table {
 }
 
 .row-is-clicked {
-    font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: #99c8ef;
+}
+
+.row-fade {
+    -webkit-transition: background-color 2s linear;
+    -ms-transition: background-color 2s linear;
+    transition: background-color 2s linear;
 }
 
 // Site information

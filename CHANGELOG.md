@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
  -  Disabled sensor retrieve button when no event is selected
+ -  Active highlighting style
+ -  Fade out active highlight when row is added
  
  ### Fixed
  
