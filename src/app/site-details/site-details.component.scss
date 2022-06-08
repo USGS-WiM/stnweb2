@@ -273,6 +273,15 @@ table {
     overflow: auto;
 }
 
+.mat-row:hover .mat-cell {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.row-is-clicked {
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
 // Site information
 #siteMap {
     display: flex;
