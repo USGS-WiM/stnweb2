@@ -645,6 +645,8 @@ export class SiteDetailsComponent implements OnInit {
                                     flagDate = flagDate.split("-");
                                     flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
                                     hwm.format_flag_date = flagDate;
+
+                                    hwm.eventName = self.event;
                                 })
                                 this.hwmDataSource.data = this.hwm;
                                 this.hwmDataSource.paginator = this.hwmPaginator;
@@ -1069,7 +1071,8 @@ export class SiteDetailsComponent implements OnInit {
                     this.refMarkDataSource.data.forEach(function(row, i){
                         if(row.objective_point_id === result.result.referenceDatums.objective_point_id){
                             // replace row with new info
-                            self.refMarkDataSource.data = [result.result.referenceDatums];
+                            self.refMarkDataSource.data[i] = result.result.referenceDatums;
+                            self.refMarkDataSource.data = [...self.refMarkDataSource.data];
                         }
                     });
                 }
@@ -1337,7 +1340,7 @@ export class SiteDetailsComponent implements OnInit {
                     hour = hour;
                     ampm = "AM";
                 }
-                if(instrument.status === 'Deployed'){
+                if(instrument.status === 'Deployed' && instrument.time_zone !== 'UTC'){
                     let minute = ((instrument.time_stamp.split('T')[1]).split(":")[1]).split(":")[0];
                     utcPreview = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
                     utcPreview = utcPreview.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
@@ -1389,21 +1392,23 @@ export class SiteDetailsComponent implements OnInit {
             autoFocus: false
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result.result && result.editOrCreate === "Edit"){
-                this.sensorDataSource.data.forEach(function(sensor, i){
-                    if(sensor.instrument_id === result.result.instrument_id){
-                        self.sensorDataSource.data[i] = result.result; 
-                        self.sensorDataSource.data = [...self.sensorDataSource.data];
-                    }
-                })
-            }
-            else if(result.result && result.editOrCreate === "Create") {
-                self.sensorDataSource.data.push(result.result); 
-                self.sensorDataSource.data = [...self.sensorDataSource.data];
-                self.clickedSensorRows.add(result.result);
-                // Go to last page if not already there
-                self.sensorDataSource.paginator.length = self.sensorDataSource.data.length;
-                self.sensorDataSource.paginator.lastPage();
+            if(result){
+                if (result.result && result.editOrCreate === "Edit"){
+                    this.sensorDataSource.data.forEach(function(sensor, i){
+                        if(sensor.instrument_id === result.result.instrument_id){
+                            self.sensorDataSource.data[i] = result.result; 
+                            self.sensorDataSource.data = [...self.sensorDataSource.data];
+                        }
+                    })
+                }
+                else if(result.result && result.editOrCreate === "Create") {
+                    self.sensorDataSource.data.push(result.result); 
+                    self.sensorDataSource.data = [...self.sensorDataSource.data];
+                    self.clickedSensorRows.add(result.result);
+                    // Go to last page if not already there
+                    self.sensorDataSource.paginator.length = self.sensorDataSource.data.length;
+                    self.sensorDataSource.paginator.lastPage();
+                }
             }
         });
     }

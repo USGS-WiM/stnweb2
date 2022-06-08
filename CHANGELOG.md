@@ -10,14 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
  -  Clear 'X' button and progress spinner to event state and event type filters
+ -  Info tooltips to fields in edit/add modals where units are converted on submit
  
 ### Changed
 
- -  
+ -  Disabled sensor retrieve button when no event is selected
  
  ### Fixed
  
- -   
+ -  Fields not populating in details modals
+ -  Unedited rows removed from reference datum table after edit
 
 ## [v0.8.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.0) - 2022-06-05
 
