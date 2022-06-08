@@ -105,6 +105,12 @@ export class SiteDetailsComponent implements OnInit {
     blankFileDataSource = new MatTableDataSource<any>();
     blankDataSource = new MatTableDataSource<any>();
 
+    clickedRMRows = new Set<any>();
+    clickedHWMRows = new Set<any>();
+    clickedSensorRows = new Set<any>();
+    clickedPeakRows = new Set<any>();
+    clickedFileRows = new Set<any>();
+
     siteFilesExpanded = true;
     hwmFilesExpanded = true;
     refDatumFilesExpanded = true;
@@ -1005,6 +1011,9 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openRefMarkDetailsDialog(row): void {
+        console.log(this.clickedRMRows)
+        this.clickedRMRows.clear();
+        this.clickedRMRows.add(row);
         // Format date established
         if(row.date_established !== undefined && !row.date_established.includes("/")){
             let estDate = row.date_established.split("T")[0];
@@ -1039,6 +1048,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openRefDatumEditDialog(row): void {
+        this.clickedRMRows.clear();
+        this.clickedRMRows.add(row);
         let self = this;
         const dialogRef = this.dialog.open(RefDatumEditComponent, {
             data: {
@@ -1065,12 +1076,18 @@ export class SiteDetailsComponent implements OnInit {
             } else if(result.result && result.editOrCreate === "Create") {
                 self.refMarkDataSource.data.push(result.result.referenceDatums); 
                 self.refMarkDataSource.data = [...self.refMarkDataSource.data];
+                self.clickedRMRows.add(result.result.referenceDatums);
+                // Go to last page if not already there
+                self.refMarkDataSource.paginator.length = self.refMarkDataSource.data.length;
+                self.refMarkDataSource.paginator.lastPage();
             }
         });
     }
 
     /* istanbul ignore next */
     deleteRD(row): void {
+        this.clickedRMRows.clear();
+        this.clickedRMRows.add(row);
         let self = this;
         // First check if any sensors are using this reference datum
         self.opEditService
@@ -1162,6 +1179,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openHWMDetailsDialog(row): void {
+        this.clickedHWMRows.clear();
+        this.clickedHWMRows.add(row);
         // Format surveyed date
         if(row.survey_date !== undefined && !row.survey_date.includes("/")){
             let surveyDate = row.survey_date.split("T")[0];
@@ -1189,6 +1208,10 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openHWMEditDialog(row): void {
+        this.clickedHWMRows.clear();
+        if(row !== null){
+            this.clickedHWMRows.add(row);
+        }
         const dialogRef = this.dialog.open(HwmEditComponent, {
             data: {
                 hwm: row,
@@ -1214,12 +1237,18 @@ export class SiteDetailsComponent implements OnInit {
             else if(result.result && result.editOrCreate === "Create") {
                 self.hwmDataSource.data.push(result.result); 
                 self.hwmDataSource.data = [...self.hwmDataSource.data];
+                self.clickedHWMRows.add(result.result);
+                // Go to last page if not already there
+                self.hwmDataSource.paginator.length = self.hwmDataSource.data.length;
+                self.hwmDataSource.paginator.lastPage();
             }
         });
     }
 
     /* istanbul ignore next */
     deleteHWM(row): void {
+        this.clickedHWMRows.clear();
+        this.clickedHWMRows.add(row);
         let self = this;
         const dialogRef = this.dialog.open(ConfirmComponent, {
             data: {
@@ -1292,6 +1321,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openSensorDetailsDialog(row): void {
+        this.clickedSensorRows.clear();
+        this.clickedSensorRows.add(row);
         // Format dates
         let self = this;
         let utcPreview;
@@ -1340,6 +1371,10 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openSensorEditDialog(row): void {
+        this.clickedSensorRows.clear();
+        if(row !== null){
+            this.clickedSensorRows.add(row);
+        }
         let self = this;
         const dialogRef = this.dialog.open(SensorEditComponent, {
             data: {
@@ -1365,12 +1400,18 @@ export class SiteDetailsComponent implements OnInit {
             else if(result.result && result.editOrCreate === "Create") {
                 self.sensorDataSource.data.push(result.result); 
                 self.sensorDataSource.data = [...self.sensorDataSource.data];
+                self.clickedSensorRows.add(result.result);
+                // Go to last page if not already there
+                self.sensorDataSource.paginator.length = self.sensorDataSource.data.length;
+                self.sensorDataSource.paginator.lastPage();
             }
         });
     }
 
     /* istanbul ignore next */
     deleteSensor(row): void {
+        this.clickedSensorRows.clear();
+        this.clickedSensorRows.add(row);
         let self = this;
         const dialogRef = this.dialog.open(ConfirmComponent, {
             data: {
@@ -1443,6 +1484,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openSensorRetrieveDialog(row): void {
+        this.clickedSensorRows.clear();
+        this.clickedSensorRows.add(row);
         let self = this;
         // Format time stamp
         let utcPreview;
@@ -1481,7 +1524,6 @@ export class SiteDetailsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result){
-                console.log(result)
                 this.sensorDataSource.data.forEach(function(sensor, i){
                     if(sensor.instrument_id === result.instrument_id){
                         self.sensorDataSource.data[i] = result; 
@@ -1494,6 +1536,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openPeaksDetailsDialog(row): void {
+        this.clickedPeakRows.clear();
+        this.clickedPeakRows.add(row);
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '100%';
@@ -1513,6 +1557,10 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openPeaksEditDialog(row): void {
+        this.clickedPeakRows.clear();
+        if(row !== null){
+            this.clickedPeakRows.add(row);
+        }
         let self = this;
         let hwms = this.hwmDataSource.data;
         let sensors = this.sensorDataSource.data;
@@ -1566,6 +1614,10 @@ export class SiteDetailsComponent implements OnInit {
                     result.data.peak.format_peak_date = self.setTimeAndDate(result.data.peak.peak_date);
                     self.peaksDataSource.data.push(result.data.peak);
                     self.peaksDataSource.data = [...self.peaksDataSource.data];
+                    self.clickedPeakRows.add(result.data.peak);
+                    // Go to last page if not already there
+                    self.peaksDataSource.paginator.length = self.peaksDataSource.data.length;
+                    self.peaksDataSource.paginator.lastPage();
                     
                     // Update HWMs
                     if(result.data.hwmsToAdd.length > 0){
@@ -1583,6 +1635,8 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     deletePeak(row): void {
+        this.clickedPeakRows.clear();
+        this.clickedPeakRows.add(row);
         let self = this;
         let hwms = JSON.parse(JSON.stringify(this.hwmDataSource.data));
         let sensors = JSON.parse(JSON.stringify(this.sensorDataSource.data));
@@ -1730,6 +1784,8 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openFileDetailsDialog(row, type): void {
+        this.clickedFileRows.clear();
+        this.clickedFileRows.add(row);
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '100%';
@@ -1750,6 +1806,8 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     openFileEditDialog(row, type): void {
+        this.clickedFileRows.clear();
+        this.clickedFileRows.add(row);
         let self = this;
         const dialogRef = this.dialog.open(FileEditComponent, {
             data: {
@@ -1800,6 +1858,7 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     addFile(type, event): void {
+        this.clickedFileRows.clear();
         let self = this;
         // Prevent expansion panel from toggling
         event.stopPropagation();
@@ -1822,10 +1881,16 @@ export class SiteDetailsComponent implements OnInit {
                     // Update files data source and site
                     self.siteFilesDataSource.data.push(result);
                     self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                    // Go to last page if not already there
+                    self.siteFilesDataSource.paginator.length = self.siteFilesDataSource.data.length;
+                    self.siteFilesDataSource.paginator.lastPage();
                 }else if(type === "HWM File") {
                     // Update files data source and hwm
                     self.hwmFilesDataSource.data.push(result);
                     self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                    // Go to last page if not already there
+                    self.hwmFilesDataSource.paginator.length = self.hwmFilesDataSource.data.length;
+                    self.hwmFilesDataSource.paginator.lastPage();
                 }else if(type === "Reference Datum File") {
                     // Add rd name to result
                     self.refMarkDataSource.data.forEach(function(rd){
@@ -1836,16 +1901,25 @@ export class SiteDetailsComponent implements OnInit {
                     // Update files data source and reference datum
                     self.refMarkFilesDataSource.data.push(result);
                     self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                    // Go to last page if not already there
+                    self.refMarkFilesDataSource.paginator.length = self.refMarkFilesDataSource.data.length;
+                    self.refMarkFilesDataSource.paginator.lastPage();
                 }else if(type === "Sensor File") {
                     // Update files data source and sensor
                     self.sensorFilesDataSource.data.push(result);
                     self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                    // Go to last page if not already there
+                    self.sensorFilesDataSource.paginator.length = self.sensorFilesDataSource.data.length;
+                    self.sensorFilesDataSource.paginator.lastPage();
                 }
+                self.clickedFileRows.add(result);
             }
         });
     }
 
     deleteFile(row, type): void {
+        this.clickedFileRows.clear();
+        this.clickedFileRows.add(row);
         let self = this;
 
         const dialogRef = this.dialog.open(ConfirmComponent, {
