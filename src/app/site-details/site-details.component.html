@@ -995,6 +995,24 @@
                                             <span *ngIf="role !== '1' && role !== '2' && role !== '3'">
                                                 <button mat-menu-item disabled aria-label="Delete" class="disabled-borderless"><mat-icon>delete_forever</mat-icon>Delete</button>
                                             </span>
+                                            <!-- Approval buttons enabled -->
+                                            <button mat-menu-item *ngIf="(role === '1' || role === '2') && !row.approval_id" class="add-borderless" (click)="approveHWM(row)"
+                                                aria-label="Approve HWM"><mat-icon class="add-borderless">check_circle</mat-icon>
+                                                <span>Approve</span>
+                                            </button>
+                                            <button mat-menu-item *ngIf="(role === '1' || role === '2') && row.approval_id" class="delete-borderless" (click)="unapproveHWM(row)"
+                                                aria-label="Unapprove HWM"><mat-icon class="delete-borderless">cancel</mat-icon>
+                                                <span>Unapprove</span>
+                                            </button>
+                                            <!-- Disabled approval buttons -->
+                                            <button mat-menu-item *ngIf="role !== '1' && role !== '2' && !row.approval_id" disabled
+                                                aria-label="Approve HWM"><mat-icon>check_circle</mat-icon>
+                                                <span>Approve</span>
+                                            </button>
+                                            <button mat-menu-item *ngIf="role !== '1' && role !== '2' && row.approval_id" disabled
+                                                aria-label="Unapprove HWM"><mat-icon>cancel</mat-icon>
+                                                <span>Unapprove</span>
+                                            </button>
                                         </mat-menu>
                                     </td>
                                 </ng-container>

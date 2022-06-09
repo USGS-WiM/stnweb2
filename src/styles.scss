@@ -51,6 +51,10 @@ $stn-app-theme: mat-light-theme(
     border: 1px solid #2B7059 !important;
 }
 
+.add-borderless {
+    color: #2B7059 !important;
+}
+
 @include angular-material-theme($stn-app-theme);
 
 body {

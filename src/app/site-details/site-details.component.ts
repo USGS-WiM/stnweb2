@@ -1182,6 +1182,7 @@ export class SiteDetailsComponent implements OnInit {
 
     /* istanbul ignore next */
     openHWMDetailsDialog(row): void {
+        console.log(row)
         this.clickedHWMRows.clear();
         this.clickedHWMRows.add(row);
         // Format surveyed date
@@ -1318,6 +1319,107 @@ export class SiteDetailsComponent implements OnInit {
                         });
                     }
                 })
+            }
+        });
+    }
+
+  /* istanbul ignore next */
+    approveHWM(hwm) {
+        let self = this;
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Approve HWM",
+              titleIcon: "close",
+              message: `Are you ready to approve this HWM? The surveyed elevation is ${hwm.elev_ft || '---'}. The height above ground is ${hwm.height_above_gnd || '---'}.`,
+              confirmButtonText: "Approve",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                this.hwmEditService.approveHWM(hwm.hwm_id).subscribe((results) => {
+                    console.log(results)
+                    if(results){
+                        hwm.approval_id = results.approval_id;
+                        // this.hwmDataSource.data.forEach(function(row, i){
+                        //     if(hwm.hwm_id === row.hwm_id){
+                        //         self.hwmDataSource.data[i].approval_id = results.approval_id;
+                        //         self.hwmDataSource.data = [...self.hwmDataSource.data];
+                        //     }
+                        // })
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "HWM Approved",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // Error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error approving HWM",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    /* istanbul ignore next */
+    unapproveHWM(hwm) {
+        const dialogRef = this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "Remove Approval",
+              titleIcon: "close",
+              message: "Are you sure you want to unapprove this HWM?",
+              confirmButtonText: "Approve",
+              showCancelButton: true,
+            },
+          });
+        dialogRef.afterClosed().subscribe((result) => {
+            if(result) {
+                this.hwmEditService.unapproveHWM(hwm.hwm_id).subscribe((results) => {
+                    console.log(results)
+                    if(results === null){
+                        hwm.approval_id = null;
+                        // this.hwmDataSource.data.forEach(function(row, i){
+                        //     if(hwm.hwm_id === row.hwm_id){
+                        //         self.hwmDataSource.data[i].approval_id = null;
+                        //         self.hwmDataSource.data = [...self.hwmDataSource.data];
+                        //     }
+                        // })
+                        // success
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "",
+                            titleIcon: "close",
+                            message: "HWM Unapproved",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }else{
+                        // Error
+                        this.dialog.open(ConfirmComponent, {
+                            data: {
+                            title: "Error",
+                            titleIcon: "close",
+                            message: "Error unapproving HWM",
+                            confirmButtonText: "OK",
+                            showCancelButton: false,
+                            },
+                        });
+                    }
+                });
             }
         });
     }

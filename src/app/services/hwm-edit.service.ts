@@ -126,6 +126,41 @@ export class HwmEditService {
         );
   }
 
+  /* istanbul ignore next */
+  //Approve a HWM
+  public approveHWM(hwm_id): Observable<any> {
+    return this.httpClient
+        .post(APP_SETTINGS.API_ROOT + 'hwms/' + hwm_id + '/Approve.json', {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'approveHWM response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('approveHWM', []))
+        );
+  }
+
+  //Unapprove a HWM
+  public unapproveHWM(hwm_id): Observable<any> {
+    return this.httpClient
+        .delete(APP_SETTINGS.API_ROOT + 'hwms/' + hwm_id + '/Unapprove.json', {
+            headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+        })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'unapproveHWM response received'
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('unapproveHWM', []))
+        );
+  }
+
   /**
      * Handle Http operation that failed.
      * Let the app continue.
