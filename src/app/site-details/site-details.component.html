@@ -21,7 +21,7 @@
             </div>
         </div>
         <div *ngIf="!noSiteInfo; else noSiteInfoAvailable">
-            <mat-tab-group>
+            <mat-tab-group (selectedTabChange)="clearAllTableHighlights()">
                 <mat-tab label="Site">
                     <div class="map-button-container">
                         <button mat-stroked-button class="map-button secondary" (click)="toggleSiteMap()">

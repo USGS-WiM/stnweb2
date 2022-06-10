@@ -1017,6 +1017,20 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     /* istanbul ignore next */
+    clearAllTableHighlights() {
+        this.clickedRMRows.clear();
+        this.clickedHWMRows.clear();
+        this.clickedSensorRows.clear();
+        this.clickedPeakRows.clear();
+        this.clickedFileRows.clear();
+        this.fadeOutRMRows.clear();
+        this.fadeOutHWMRows.clear();
+        this.fadeOutSensorRows.clear();
+        this.fadeOutPeakRows.clear();
+        this.fadeOutFileRows.clear();
+    }
+
+    /* istanbul ignore next */
     openRefMarkDetailsDialog(row): void {
         this.clickedRMRows.clear();
         this.clickedRMRows.add(row);
