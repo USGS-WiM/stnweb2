@@ -103,7 +103,10 @@ export class FileEditComponent implements OnInit {
       }
     }else{
       // Add file
-      this.file = {};
+      this.file = {
+        source_id: JSON.parse(localStorage.getItem('currentUser')).member_id, // member logged in
+        agency_id: JSON.parse(localStorage.getItem('currentUser')).agency_id
+      };
     }
 
     this.initForm();

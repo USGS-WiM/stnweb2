@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Fields not populating in details modals
  -  Unedited rows removed from reference datum table after edit
  -  Update counts in site page tabs on edit/add/delete
+ -  Source name undefined when adding files
 
 ## [v0.8.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.0) - 2022-06-05
 
