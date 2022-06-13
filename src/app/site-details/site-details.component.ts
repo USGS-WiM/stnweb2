@@ -110,6 +110,11 @@ export class SiteDetailsComponent implements OnInit {
     clickedSensorRows = new Set<any>();
     clickedPeakRows = new Set<any>();
     clickedFileRows = new Set<any>();
+    fadeOutRMRows = new Set<any>();
+    fadeOutHWMRows = new Set<any>();
+    fadeOutSensorRows = new Set<any>();
+    fadeOutPeakRows = new Set<any>();
+    fadeOutFileRows = new Set<any>();
 
     siteFilesExpanded = true;
     hwmFilesExpanded = true;
@@ -982,10 +987,24 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     /* istanbul ignore next */
+    clearAllTableHighlights() {
+        this.clickedRMRows.clear();
+        this.clickedHWMRows.clear();
+        this.clickedSensorRows.clear();
+        this.clickedPeakRows.clear();
+        this.clickedFileRows.clear();
+        this.fadeOutRMRows.clear();
+        this.fadeOutHWMRows.clear();
+        this.fadeOutSensorRows.clear();
+        this.fadeOutPeakRows.clear();
+        this.fadeOutFileRows.clear();
+    }
+
+    /* istanbul ignore next */
     openRefMarkDetailsDialog(row): void {
-        console.log(this.clickedRMRows)
         this.clickedRMRows.clear();
         this.clickedRMRows.add(row);
+        this.fadeOutRMRows.clear();
 
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
@@ -1006,7 +1025,10 @@ export class SiteDetailsComponent implements OnInit {
     /* istanbul ignore next */
     openRefDatumEditDialog(row): void {
         this.clickedRMRows.clear();
-        this.clickedRMRows.add(row);
+        this.fadeOutRMRows.clear();
+        if(row !== null){
+            this.clickedRMRows.add(row);
+        }
         let self = this;
         const dialogRef = this.dialog.open(RefDatumEditComponent, {
             data: {
@@ -1034,10 +1056,17 @@ export class SiteDetailsComponent implements OnInit {
             } else if(result.result && result.editOrCreate === "Create") {
                 self.refMarkDataSource.data.push(result.result.referenceDatums); 
                 self.refMarkDataSource.data = [...self.refMarkDataSource.data];
-                self.clickedRMRows.add(result.result.referenceDatums);
+                // Fade out active highlighting
+                this.clickedRMRows.add(result.result.referenceDatums);
+                setTimeout(() => {
+                    this.fadeOutRMRows.add(result.result.referenceDatums);
+                    this.clickedRMRows.clear();
+                }, 7000)
                 // Go to last page if not already there
-                self.refMarkDataSource.paginator.length = self.refMarkDataSource.data.length;
-                self.refMarkDataSource.paginator.lastPage();
+                if(self.refMarkDataSource.paginator){
+                    self.refMarkDataSource.paginator.length = self.refMarkDataSource.data.length;
+                    self.refMarkDataSource.paginator.lastPage();
+                }
             }
         });
     }
@@ -1160,6 +1189,7 @@ export class SiteDetailsComponent implements OnInit {
     /* istanbul ignore next */
     openHWMEditDialog(row): void {
         this.clickedHWMRows.clear();
+        this.fadeOutHWMRows.clear();
         if(row !== null){
             this.clickedHWMRows.add(row);
         }
@@ -1188,10 +1218,17 @@ export class SiteDetailsComponent implements OnInit {
             else if(result.result && result.editOrCreate === "Create") {
                 self.hwmDataSource.data.push(result.result); 
                 self.hwmDataSource.data = [...self.hwmDataSource.data];
-                self.clickedHWMRows.add(result.result);
+                // Fade out active highlighting
+                this.clickedHWMRows.add(result.result);
+                setTimeout(() => {
+                    this.fadeOutHWMRows.add(result.result);
+                    this.clickedHWMRows.clear();
+                }, 7000)
                 // Go to last page if not already there
-                self.hwmDataSource.paginator.length = self.hwmDataSource.data.length;
-                self.hwmDataSource.paginator.lastPage();
+                if(self.hwmDataSource.paginator){
+                    self.hwmDataSource.paginator.length = self.hwmDataSource.data.length;
+                    self.hwmDataSource.paginator.lastPage();
+                }
             }
         });
     }
@@ -1317,6 +1354,7 @@ export class SiteDetailsComponent implements OnInit {
     /* istanbul ignore next */
     openSensorEditDialog(row): void {
         this.clickedSensorRows.clear();
+        this.fadeOutSensorRows.clear();
         if(row !== null){
             this.clickedSensorRows.add(row);
         }
@@ -1346,10 +1384,17 @@ export class SiteDetailsComponent implements OnInit {
                 else if(result.result && result.editOrCreate === "Create") {
                     self.sensorDataSource.data.push(result.result); 
                     self.sensorDataSource.data = [...self.sensorDataSource.data];
-                    self.clickedSensorRows.add(result.result);
+                    // Fade out active highlighting
+                    this.clickedSensorRows.add(result.result);
+                    setTimeout(() => {
+                        this.fadeOutSensorRows.add(result.result);
+                        this.clickedSensorRows.clear();
+                    }, 7000)
                     // Go to last page if not already there
-                    self.sensorDataSource.paginator.length = self.sensorDataSource.data.length;
-                    self.sensorDataSource.paginator.lastPage();
+                    if(self.sensorDataSource.paginator){
+                        self.sensorDataSource.paginator.length = self.sensorDataSource.data.length;
+                        self.sensorDataSource.paginator.lastPage();
+                    }
                 }
             }
         });
@@ -1505,6 +1550,7 @@ export class SiteDetailsComponent implements OnInit {
     /* istanbul ignore next */
     openPeaksEditDialog(row): void {
         this.clickedPeakRows.clear();
+        this.fadeOutPeakRows.clear();
         if(row !== null){
             this.clickedPeakRows.add(row);
         }
@@ -1559,10 +1605,17 @@ export class SiteDetailsComponent implements OnInit {
                     result.data.peak.event_name = self.event;
                     self.peaksDataSource.data.push(result.data.peak);
                     self.peaksDataSource.data = [...self.peaksDataSource.data];
-                    self.clickedPeakRows.add(result.data.peak);
+                    // Fade out active highlighting
+                    this.clickedPeakRows.add(result.result);
+                    setTimeout(() => {
+                        this.fadeOutPeakRows.add(result.result);
+                        this.clickedPeakRows.clear();
+                    }, 7000)
                     // Go to last page if not already there
-                    self.peaksDataSource.paginator.length = self.peaksDataSource.data.length;
-                    self.peaksDataSource.paginator.lastPage();
+                    if(self.peaksDataSource.paginator){
+                        self.peaksDataSource.paginator.length = self.peaksDataSource.data.length;
+                        self.peaksDataSource.paginator.lastPage();
+                    }
                     
                     // Update HWMs
                     if(result.data.hwmsToAdd.length > 0){
@@ -1827,15 +1880,19 @@ export class SiteDetailsComponent implements OnInit {
                     self.siteFilesDataSource.data.push(result);
                     self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
                     // Go to last page if not already there
-                    self.siteFilesDataSource.paginator.length = self.siteFilesDataSource.data.length;
-                    self.siteFilesDataSource.paginator.lastPage();
+                    if(self.siteFilesDataSource.paginator){
+                        self.siteFilesDataSource.paginator.length = self.siteFilesDataSource.data.length;
+                        self.siteFilesDataSource.paginator.lastPage();
+                    }
                 }else if(type === "HWM File") {
                     // Update files data source and hwm
                     self.hwmFilesDataSource.data.push(result);
                     self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
                     // Go to last page if not already there
-                    self.hwmFilesDataSource.paginator.length = self.hwmFilesDataSource.data.length;
-                    self.hwmFilesDataSource.paginator.lastPage();
+                    if(self.hwmFilesDataSource.paginator){
+                        self.hwmFilesDataSource.paginator.length = self.hwmFilesDataSource.data.length;
+                        self.hwmFilesDataSource.paginator.lastPage();
+                    }
                 }else if(type === "Reference Datum File") {
                     // Add rd name to result
                     self.refMarkDataSource.data.forEach(function(rd){
@@ -1847,17 +1904,26 @@ export class SiteDetailsComponent implements OnInit {
                     self.refMarkFilesDataSource.data.push(result);
                     self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
                     // Go to last page if not already there
-                    self.refMarkFilesDataSource.paginator.length = self.refMarkFilesDataSource.data.length;
-                    self.refMarkFilesDataSource.paginator.lastPage();
+                    if(self.refMarkFilesDataSource.paginator){
+                        self.refMarkFilesDataSource.paginator.length = self.refMarkFilesDataSource.data.length;
+                        self.refMarkFilesDataSource.paginator.lastPage();
+                    }
                 }else if(type === "Sensor File") {
                     // Update files data source and sensor
                     self.sensorFilesDataSource.data.push(result);
                     self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
                     // Go to last page if not already there
-                    self.sensorFilesDataSource.paginator.length = self.sensorFilesDataSource.data.length;
-                    self.sensorFilesDataSource.paginator.lastPage();
+                    if(self.sensorFilesDataSource.paginator){
+                        self.sensorFilesDataSource.paginator.length = self.sensorFilesDataSource.data.length;
+                        self.sensorFilesDataSource.paginator.lastPage();
+                    }
                 }
-                self.clickedFileRows.add(result);
+                // Fade out active highlighting
+                this.clickedFileRows.add(result);
+                setTimeout(() => {
+                    this.fadeOutFileRows.add(result);
+                    this.clickedFileRows.clear();
+                }, 7000)
             }
         });
     }

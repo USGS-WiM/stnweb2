@@ -21,7 +21,7 @@
             </div>
         </div>
         <div *ngIf="!noSiteInfo; else noSiteInfoAvailable">
-            <mat-tab-group>
+            <mat-tab-group (selectedTabChange)="clearAllTableHighlights()">
                 <mat-tab label="Site">
                     <div class="map-button-container">
                         <button mat-stroked-button class="map-button secondary" (click)="toggleSiteMap()">
@@ -579,6 +579,7 @@
                                     *matRowDef="let row; columns: displayedRMColumns"
                                     class="results-row"
                                     [class.row-is-clicked]="clickedRMRows.has(row)"
+                                    [class.row-fade]="fadeOutRMRows.has(row)"
                                 ></tr>
                             </table>
                         </div>
@@ -802,6 +803,7 @@
                                     *matRowDef="let row; columns: displayedSensorColumns"
                                     class="results-row"
                                     [class.row-is-clicked]="clickedSensorRows.has(row)"
+                                    [class.row-fade]="fadeOutSensorRows.has(row)"
                                 ></tr>
                             </table>
                         </div>
@@ -1005,6 +1007,7 @@
                                     *matRowDef="let row; columns: displayedHWMColumns"
                                     class="results-row"
                                     [class.row-is-clicked]="clickedHWMRows.has(row)"
+                                    [class.row-fade]="fadeOutHWMRows.has(row)"
                                 ></tr>
                             </table>
                         </div>
@@ -1201,6 +1204,7 @@
                                     *matRowDef="let row; columns: displayedPeakColumns"
                                     class="results-noclick-row"
                                     [class.row-is-clicked]="clickedPeakRows.has(row)"
+                                    [class.row-fade]="fadeOutPeakRows.has(row)"
                                 ></tr>
                             </table>
                         </div>
@@ -1364,6 +1368,7 @@
                                             *matRowDef="let row; columns: displayedSiteFileColumns"
                                             class="results-row"
                                             [class.row-is-clicked]="clickedFileRows.has(row)"
+                                            [class.row-fade]="fadeOutFileRows.has(row)"
                                         ></tr>
                                     </table>
                                 </div>
@@ -1535,6 +1540,7 @@
                                             *matRowDef="let row; columns: displayedDatumFileColumns"
                                             class="results-row"
                                             [class.row-is-clicked]="clickedFileRows.has(row)"
+                                            [class.row-fade]="fadeOutFileRows.has(row)"
                                         ></tr>
                                     </table>
                                 </div>
@@ -1718,6 +1724,7 @@
                                             *matRowDef="let row; columns: displayedSensorFileColumns"
                                             class="results-row"
                                             [class.row-is-clicked]="clickedFileRows.has(row)"
+                                            [class.row-fade]="fadeOutFileRows.has(row)"
                                         ></tr>
                                     </table>
                                 </div>
@@ -1888,6 +1895,7 @@
                                             *matRowDef="let row; columns: displayedHWMFileColumns"
                                             class="results-row"
                                             [class.row-is-clicked]="clickedFileRows.has(row)"
+                                            [class.row-fade]="fadeOutFileRows.has(row)"
                                         ></tr>
                                     </table>
                                 </div>
