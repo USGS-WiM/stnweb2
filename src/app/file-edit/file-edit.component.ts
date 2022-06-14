@@ -109,6 +109,20 @@ export class FileEditComponent implements OnInit {
     this.initForm();
   }
 
+  formatUTCDates(date) {
+    let hour = (date.split('T')[1]).split(':')[0];
+    // minute
+    let minute = date.split('T')[1].split(':')[1];
+    let timestamp = date.split("T")[0];
+    timestamp = timestamp.split("-");
+    let day = timestamp[0];
+    let month = timestamp[1];
+    let year = timestamp[2];
+    let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(hour), Number(minute)));
+    let formatted_date = new Date(utcPreview).toUTCString();
+    return formatted_date;
+  }
+
   setFileType(){
       if(this.file.filetype_id === 2 && this.file.data_file_id !== undefined){
         this.siteService
@@ -388,6 +402,10 @@ export class FileEditComponent implements OnInit {
     if(this.form.valid){
       this.loading = true;
       if(this.data.addOrEdit === 'Edit'){
+        // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+        fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+        fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+        fileSubmission.collectDate = fileSubmission.collectDate ? this.formatUTCDates(fileSubmission.collectDate) : fileSubmission.collectDate;
         this.saveFile(fileSubmission);
       }else{
         this.createFile(fileSubmission);

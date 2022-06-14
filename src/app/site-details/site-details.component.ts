@@ -1326,7 +1326,6 @@ export class SiteDetailsComponent implements OnInit {
                     let day = timestamp[0]
                     let month = timestamp[1]
                     let year = timestamp[2]
-                    timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + utchour + ":" + minute;
                     utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(utchour), Number(minute)));
                     utcPreview = new Date(utcPreview).toUTCString();
                 }
@@ -1431,6 +1430,7 @@ export class SiteDetailsComponent implements OnInit {
                             if(file.instrument_id === row.instrument_id){
                                 self.sensorFilesDataSource.data.splice(i, 1);
                                 self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                                self.fileLength --;
                             }
                         })
                         // Update site files data source
@@ -1479,32 +1479,7 @@ export class SiteDetailsComponent implements OnInit {
         this.clickedSensorRows.clear();
         this.clickedSensorRows.add(row);
         let self = this;
-        // Format time stamp
-        let utcPreview;
-        row.instrument_status.forEach(function(instrument){
-            if(instrument.time_stamp !== undefined && !instrument.time_stamp.includes("/")){
-                let hour = (instrument.time_stamp.split('T')[1]).split(':')[0];
-                let ampm;
-                if(hour > 12){
-                    hour = String(hour - 12).padStart(2, '0');
-                    ampm = "PM";
-                }else{
-                    hour = hour;
-                    ampm = "AM";
-                }
-                if(instrument.status === 'Deployed'){
-                    let minute = ((instrument.time_stamp.split('T')[1]).split(":")[1]).split(":")[0];
-                    utcPreview = self.timezonesService.convertTimezone(instrument.time_zone, instrument.time_stamp, minute);
-                    utcPreview = utcPreview.replace(/T/, ' ').replace(/\..+/, '').replace(/-/g, '/');
-                }
-                let timestamp = instrument.time_stamp.split("T")[0];
-                let time = instrument.time_stamp.split("T")[1];
-                time = time.split(':');
-                timestamp = timestamp.split("-");
-                timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + time[1] + " " + ampm;
-                instrument.format_time_stamp = timestamp;
-            }
-        })
+
         const dialogRef = this.dialog.open(SensorRetrieveComponent, {
             data: {
                 sensor: row,
@@ -1875,10 +1850,14 @@ export class SiteDetailsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if(result){
+                console.log(result)
                 if(type === "Site File") {
                     // Update files data source and site
                     self.siteFilesDataSource.data.push(result);
                     self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+
+                    self.siteFiles.push(result)
+                    self.fileLength ++;
                     // Go to last page if not already there
                     if(self.siteFilesDataSource.paginator){
                         self.siteFilesDataSource.paginator.length = self.siteFilesDataSource.data.length;
@@ -1888,6 +1867,7 @@ export class SiteDetailsComponent implements OnInit {
                     // Update files data source and hwm
                     self.hwmFilesDataSource.data.push(result);
                     self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                    self.fileLength ++;
                     // Go to last page if not already there
                     if(self.hwmFilesDataSource.paginator){
                         self.hwmFilesDataSource.paginator.length = self.hwmFilesDataSource.data.length;
@@ -1903,6 +1883,7 @@ export class SiteDetailsComponent implements OnInit {
                     // Update files data source and reference datum
                     self.refMarkFilesDataSource.data.push(result);
                     self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                    self.fileLength ++;
                     // Go to last page if not already there
                     if(self.refMarkFilesDataSource.paginator){
                         self.refMarkFilesDataSource.paginator.length = self.refMarkFilesDataSource.data.length;
@@ -1912,6 +1893,7 @@ export class SiteDetailsComponent implements OnInit {
                     // Update files data source and sensor
                     self.sensorFilesDataSource.data.push(result);
                     self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                    self.fileLength ++;
                     // Go to last page if not already there
                     if(self.sensorFilesDataSource.paginator){
                         self.sensorFilesDataSource.paginator.length = self.sensorFilesDataSource.data.length;
@@ -1963,6 +1945,13 @@ export class SiteDetailsComponent implements OnInit {
                                 if(file.file_id === row.file_id){
                                     self.siteFilesDataSource.data.splice(i, 1);
                                     self.siteFilesDataSource.data = [...self.siteFilesDataSource.data];
+                                    self.fileLength --;
+                                }
+                            })
+
+                            self.siteFiles.forEach(function(file, i){
+                                if(file.file_id === row.file_id){
+                                    self.siteFiles.splice(i, 1);
                                 }
                             })
 
@@ -1972,6 +1961,7 @@ export class SiteDetailsComponent implements OnInit {
                                 if(file.file_id === row.file_id){
                                     self.hwmFilesDataSource.data.splice(i, 1);
                                     self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                                    self.fileLength --;
                                 }
                             })
                         }else if(type === "Reference Datum File") {
@@ -1980,6 +1970,7 @@ export class SiteDetailsComponent implements OnInit {
                                 if(file.file_id === row.file_id){
                                     self.refMarkFilesDataSource.data.splice(i, 1);
                                     self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                                    self.fileLength --;
                                 }
                             })
                         }else if(type === "Sensor File") {
@@ -1988,6 +1979,7 @@ export class SiteDetailsComponent implements OnInit {
                                 if(file.file_id === row.file_id){
                                     self.sensorFilesDataSource.data.splice(i, 1);
                                     self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                                    self.fileLength --;
                                 }
                             })
                         }

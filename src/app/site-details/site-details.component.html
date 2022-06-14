@@ -664,7 +664,7 @@
                     <mat-tab label="Sensors ({{sensorDataSource.data.length}})">
                         <mat-card class="mat-elevation-z0 header-card">
                             <p>Sensors ({{sensorDataSource.data.length}})</p>
-                            <button *ngIf="currentEvent !== null && role === '1' || role === '2' || role === '3'" mat-button (click)="openSensorEditDialog(null)"
+                            <button *ngIf="currentEvent !== null && (role === '1' || role === '2' || role === '3')" mat-button (click)="openSensorEditDialog(null)"
                                 aria-label="Add Sensor"><mat-icon class="add-buttons" matTooltip="Deploy a new Sensor" matTooltipPosition="before">add</mat-icon>
                             </button>
                             <!-- Disabled button with tooltip -->
