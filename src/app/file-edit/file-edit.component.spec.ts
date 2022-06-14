@@ -241,7 +241,7 @@ describe('FileEditComponent', () => {
     fixture.detectChanges();
     expect(memberSpy).toHaveBeenCalledTimes(2);
     expect(component.datafile).toEqual(dfResponse);
-    expect(component.approvedOn).toEqual('02/09/2022');
+    expect(component.approvedOn).toEqual('2022-02-09T12:00:00.000');
     expect(component.approvedBy).toEqual("John Doe");
     expect(component.collectDate).toEqual(dfResponse.collect_date);
     expect(component.processorName).toEqual("John Doe");

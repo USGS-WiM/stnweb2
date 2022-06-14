@@ -613,7 +613,6 @@ describe('SiteEditComponent', () => {
     expect(component.showFileForm).toBeTrue();
     expect(component.addFileType).toEqual("New");
     expect(component.siteFileForm.get("file_date").value).not.toEqual(null);
-    expect(component.siteFileForm.get("photo_date").value).not.toEqual(null);
   });
 
   it('should show alert and stop loading if site form is invalid', () => {

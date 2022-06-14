@@ -161,7 +161,7 @@ describe('HwmEditComponent', () => {
     component.getApproval();
     fixture.detectChanges();
     expect(component.approvalMember).toEqual("John Smith");
-    expect(component.approvalDate).toEqual(new Date(response.approval_date));
+    expect(component.approvalDate).toEqual('Sat, 01 Jan 2022 21:20:00 GMT');
   });
 
   it('should set the initial file list for table', () => {
