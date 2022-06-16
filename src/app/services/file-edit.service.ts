@@ -119,6 +119,24 @@ export class FileEditService {
         );
   }
 
+  // Delete data file
+  public deleteDataFile(datafile_id): Observable<any> {
+    return this.httpClient
+        .delete(APP_SETTINGS.API_ROOT + 'DataFiles' + datafile_id + '.json', {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteDataFile response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteDataFile', []))
+        );
+  }
+
   /**
      * Handle Http operation that failed.
      * Let the app continue.
