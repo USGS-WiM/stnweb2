@@ -17,6 +17,7 @@ import { SiteService } from '@app/services/site.service';
 export class FileEditComponent implements OnInit {
   public file;
   public datafile;
+  public nwisFile;
   public site;
   public form;
   public fileType;
@@ -117,6 +118,21 @@ export class FileEditComponent implements OnInit {
         this.selectedSensor = sensor;
       }
     })
+  }
+
+  /* istanbul ignore next */
+  formatUTCDates(date) {
+    let hour = (date.split('T')[1]).split(':')[0];
+    // minute
+    let minute = date.split('T')[1].split(':')[1];
+    let timestamp = date.split("T")[0];
+    timestamp = timestamp.split("-");
+    let day = timestamp[0];
+    let month = timestamp[1];
+    let year = timestamp[2];
+    let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(hour), Number(minute)));
+    let formatted_date = new Date(utcPreview).toUTCString();
+    return formatted_date;
   }
 
   setFileType(){
@@ -283,7 +299,7 @@ export class FileEditComponent implements OnInit {
       photo_direction: new FormControl(this.file.photo_direction !== undefined ? this.file.photo_direction : null),
       latitude_dd: new FormControl(this.file.latitude_dd !== undefined ? this.file.latitude_dd : null, [this.checkLatValue()]),
       longitude_dd: new FormControl(this.file.longitude_dd !== undefined ? this.file.longitude_dd : null, [this.checkLonValue()]),
-      is_nwis: new FormControl(this.file.is_nwis !== undefined ? this.file.is_nwis : null),
+      is_nwis: new FormControl({value: this.file.is_nwis !== undefined ? this.file.is_nwis : null, disabled: this.currentUser.role_id !== 1 && this.currentUser.role_id !== 2}),
       collectDate: new FormControl(this.collectDate !== undefined ? this.collectDate : null),
       elevation_status: new FormControl(this.file.elevation_status !== undefined ? this.file.elevation_status : ""),
     })
@@ -304,8 +320,10 @@ export class FileEditComponent implements OnInit {
   checkIfNWIS(event) {
     if(event.checked){
       this.file.is_nwis = 1;
+      this.form.get("name").setValue("https://waterdata.usgs.gov/nwis/uv?site_no=" + this.site.usgs_sid);
     }else{
       this.file.is_nwis = undefined;
+      this.form.get("name").setValue(null);
     }
   }
 
@@ -408,13 +426,16 @@ export class FileEditComponent implements OnInit {
 
   submit() {
     this.form.markAllAsTouched();
-    console.log(this.form)
     let fileSubmission = JSON.parse(JSON.stringify(this.form.value));
     if(this.form.valid){
       this.loading = true;
       if(this.data.addOrEdit === 'Edit'){
         this.saveFile(fileSubmission);
-      }else{
+      }else{                
+        // Convert dates to correct format
+        fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+        fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+        fileSubmission.collectDate = fileSubmission.collectDate ? this.formatUTCDates(fileSubmission.collectDate) : fileSubmission.collectDate;
         this.createFile(fileSubmission);
       }
     }else{
@@ -505,137 +526,202 @@ export class FileEditComponent implements OnInit {
   createFile(fileSubmission) {
     ///// TODO - In progress to add sensor/data files 
     // Create new file
-    // If NWIS
     // If not NWIS
-    if (fileSubmission.filetype_id == 2) {
+    if (fileSubmission.filetype_id == 2 && !fileSubmission.is_nwis) {
       // Data files don't submit a source
       // Create new data file
       //check timezone and make sure date stays utc
-      console.log(this.datafile)
       this.datafile.instrument_id = fileSubmission.instrument_id;
       // Get id of current user
       this.datafile.processor_id = this.currentUser.member_id;
       // Set good_start and good_end to now in UTC
       this.datafile.good_start = new Date().toUTCString();
       this.datafile.good_end = new Date().toUTCString();
-      this.datafile.timezone = "UTC";
+      this.datafile.time_zone = "UTC";
       this.datafile.collect_date = fileSubmission.collectDate;
-      // Convert collect date to UTC
-      // this.fileEditService.addDataFile(this.datafile).subscribe((dfresults) => {
-      //   //then POST fileParts (Services populate PATH)
-      //   var fileParts = {
-      //       FileEntity: {
-      //           filetype_id: fileSubmission.filetype_id,
-      //           name: fileSubmission.File.name,
-      //           file_date: fileSubmission.file_date,
-      //           description: fileSubmission.description,
-      //           site_id: this.site.site_id,
-      //           data_file_id: dfresults.data_file_id,
-      //           photo_direction: fileSubmission.photo_direction,
-      //           latitude_dd: fileSubmission.latitude_dd,
-      //           longitude_dd: fileSubmission.longitude_dd,
-      //           instrument_id: fileSubmission.instrument_id
-      //       },
-      //       File: fileSubmission.File
-      //   };
-      //   //need to put the fileParts into correct format for post
-      //   var fd = new FormData();
-      //   fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
-      //   fd.append("File", fileParts.File);
-      //   this.fileEditService.uploadFile(fd).subscribe((fresults) => {
-      //     this.returnData = fresults;
-      //     this.closeDialog("Successfully added data file");
-      //   },
-      //   error => {
-      //     // Error handling - if file did not get created, delete data file
-      //     this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
-      //       this.closeDialog("Error creating file");
-      //     })
-      //   });
-      // })
+      this.datafile.elevation_status = fileSubmission.elevation_status ? fileSubmission.elevation_status : null;
+      this.fileEditService.addDataFile(this.datafile).subscribe((dfresults) => {
+        //then POST fileParts (Services populate PATH)
+        let fileParts = {
+            FileEntity: {
+                filetype_id: fileSubmission.filetype_id,
+                name: fileSubmission.name,
+                file_date: fileSubmission.file_date,
+                description: fileSubmission.description,
+                site_id: this.site.site_id,
+                data_file_id: dfresults.data_file_id,
+                photo_direction: fileSubmission.photo_direction,
+                latitude_dd: fileSubmission.latitude_dd,
+                longitude_dd: fileSubmission.longitude_dd,
+                instrument_id: fileSubmission.instrument_id
+            },
+            File: this.form.controls['File'].value
+        };
+        //need to put the fileParts into correct format for post
+        var fd = new FormData();
+        fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
+        fd.append("File", fileParts.File);
+        this.fileEditService.uploadFile(fd).subscribe((fresults) => {
+          this.returnData = fresults;
+          this.closeDialog("Successfully added data file");
+        },
+        error => {
+          // Error handling - if file did not get created, delete data file
+          this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
+            this.closeDialog("Error creating file");
+          })
+        });
+      },
+      error => {
+          this.closeDialog("Error creating file");
+      })
+    }else if (fileSubmission.filetype_id == 2 && fileSubmission.is_nwis) {
+      // If NWIS
+      let nwisDFFile = {
+        good_start: new Date().toUTCString(),
+        good_end: new Date().toUTCString(),
+        time_zone: 'UTC',
+        processor_id: this.currentUser.member_id,
+        instrument_id: fileSubmission.instrument_id,
+        collect_date: fileSubmission.collectDate,
+      };
+      nwisDFFile["elevation_status"] = fileSubmission.elevation_status ? fileSubmission.elevation_status : null;
+      this.fileEditService.addDataFile(nwisDFFile).subscribe((dfresults) => {
+        //then POST fileParts (Services populate PATH)
+        this.nwisFile = {
+                filetype_id: fileSubmission.filetype_id,
+                name: fileSubmission.name,
+                file_date: fileSubmission.file_date,
+                description: fileSubmission.description,
+                site_id: this.site.site_id,
+                data_file_id: dfresults.data_file_id,
+                instrument_id: fileSubmission.instrument_id,
+                is_nwis: 1,
+                path: '<link>',
+        }
+        // NWIS approval sent automatically when created
+        this.postApprovalForNWISfile(dfresults.data_file_id);
+        this.fileEditService.addFile(this.nwisFile).subscribe((fresults) => {
+          this.returnData = fresults;
+          this.closeDialog("Successfully added data file");
+        },
+        error => {
+          // Error handling - if file did not get created, delete data file
+          this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
+            this.closeDialog("Error creating file");
+          })
+        });
+      },
+      error => {
+          this.closeDialog("Error creating file");
+      })
+
     }else {
           // Create new file (not data file)
           let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
-          // this.siteEditService.postSource(theSource)
-          // .subscribe(
-          //     (response) => {
-          //       if(response !== []){
-          //         delete fileSubmission.FULLname; delete fileSubmission.collectDate; delete fileSubmission.elevation_status;
-          //         delete fileSubmission.File; delete fileSubmission.agency_id;
+          this.siteEditService.postSource(theSource)
+          .subscribe(
+              (response) => {
+                if(response !== []){
+                  delete fileSubmission.FULLname; delete fileSubmission.collectDate; delete fileSubmission.elevation_status;
+                  delete fileSubmission.File; delete fileSubmission.agency_id;
 
-          //         if (fileSubmission.filetype_id !== 8) {
-          //             var fileParts = {
-          //               FileEntity: {
-          //                   filetype_id: fileSubmission.filetype_id,
-          //                   name: fileSubmission.name,
-          //                   file_date: fileSubmission.file_date,
-          //                   photo_date: fileSubmission.photo_date,
-          //                   description: fileSubmission.description,
-          //                   site_id: this.site.site_id,
-          //                   source_id: response.source_id,
-          //                   photo_direction: fileSubmission.photo_direction,
-          //                   instrument_id: fileSubmission.instrument_id,
-          //                   hwm_id: fileSubmission.hwm_id,
-          //                   objective_point_id: fileSubmission.objective_point_id,
-          //               },
-          //               File: this.form.controls['File'].value
-          //             };
-          //             // Remove instrument, hwm or op id from fileParts.FileEntity
-          //             if(this.data.type === 'Sensor File'){
-          //               delete fileParts.FileEntity.hwm_id;
-          //               delete fileParts.FileEntity.objective_point_id;
-          //             }else if(this.data.type === 'HWM File'){
-          //               delete fileParts.FileEntity.instrument_id;
-          //               delete fileParts.FileEntity.objective_point_id;
-          //             }else if(this.data.type === 'Reference Datum File'){
-          //               delete fileParts.FileEntity.hwm_id;
-          //               delete fileParts.FileEntity.instrument_id;
-          //             }
-          //             let fd = new FormData();
-          //             fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
-          //             fd.append("File", fileParts.File);
-          //             this.fileEditService.uploadFile(fd)
-          //               .subscribe(
-          //                   (data) => {
-          //                     // Add formatted file date for viewing in table
-          //                     let fileDate = data.file_date.split("T")[0];
-          //                     fileDate = fileDate.split("-");
-          //                     fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-          //                     data.format_file_date = fileDate;
-          //                     this.returnData = data;
-          //                     this.closeDialog("Successfully added file");
-          //                   }
-          //               );
-          //         }else{
-          //           // Link file
-          //           fileSubmission.site_id = this.site.site_id;
-          //           fileSubmission.source_id = response.source_id;
+                  if (fileSubmission.filetype_id !== 8) {
+                      var fileParts = {
+                        FileEntity: {
+                            filetype_id: fileSubmission.filetype_id,
+                            name: fileSubmission.name,
+                            file_date: fileSubmission.file_date,
+                            photo_date: fileSubmission.photo_date,
+                            description: fileSubmission.description,
+                            site_id: this.site.site_id,
+                            source_id: response.source_id,
+                            photo_direction: fileSubmission.photo_direction,
+                            latitude_dd: fileSubmission.latitude_dd,
+                            longitude_dd: fileSubmission.longitude_dd,
+                            instrument_id: fileSubmission.instrument_id,
+                            hwm_id: fileSubmission.hwm_id,
+                            objective_point_id: fileSubmission.objective_point_id,
+                        },
+                        File: this.form.controls['File'].value
+                      };
+                      // Remove instrument, hwm or op id from fileParts.FileEntity
+                      if(this.data.type === 'Sensor File'){
+                        delete fileParts.FileEntity.hwm_id;
+                        delete fileParts.FileEntity.objective_point_id;
+                      }else if(this.data.type === 'HWM File'){
+                        delete fileParts.FileEntity.instrument_id;
+                        delete fileParts.FileEntity.objective_point_id;
+                      }else if(this.data.type === 'Reference Datum File'){
+                        delete fileParts.FileEntity.hwm_id;
+                        delete fileParts.FileEntity.instrument_id;
+                      }
+                      let fd = new FormData();
+                      fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
+                      fd.append("File", fileParts.File);
+                      this.fileEditService.uploadFile(fd)
+                        .subscribe(
+                            (data) => {
+                              // Add formatted file date for viewing in table
+                              let fileDate = data.file_date.split("T")[0];
+                              fileDate = fileDate.split("-");
+                              fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+                              data.format_file_date = fileDate;
+                              this.returnData = data;
+                              this.closeDialog("Successfully added file");
+                            }
+                        );
+                  }else{
+                    // Link file
+                    fileSubmission.site_id = this.site.site_id;
+                    fileSubmission.source_id = response.source_id;
 
-          //           // Remove extra photo fields
-          //           // delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd; delete fileSubmission.photo_direction; delete fileSubmission.path; delete fileSubmission.photo_date;
-          //           if(fileSubmission.script_parent === null) {
-          //             delete fileSubmission.script_parent;
-          //           }
+                    // Remove instrument, hwm or op id from fileSubmission
+                    if(this.data.type === 'Sensor File'){
+                      delete fileSubmission.hwm_id;
+                      delete fileSubmission.objective_point_id;
+                    }else if(this.data.type === 'HWM File'){
+                      delete fileSubmission.instrument_id;
+                      delete fileSubmission.objective_point_id;
+                    }else if(this.data.type === 'Reference Datum File'){
+                      delete fileSubmission.hwm_id;
+                      delete fileSubmission.instrument_id;
+                    }
 
-          //           this.fileEditService.addFile(fileSubmission)
-          //               .subscribe(
-          //                   (data) => {
-          //                     // Add formatted file date for viewing in table
-          //                     let fileDate = data.file_date.split("T")[0];
-          //                     fileDate = fileDate.split("-");
-          //                     fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-          //                     data.format_file_date = fileDate;
-          //                     this.returnData = data;
-          //                     this.closeDialog("Successfully added file");
-          //                   }
-          //               );
-          //         }
-          //       }else{
-          //         this.closeDialog("Error saving source")
-          //       }
-          //   })
+                    delete fileSubmission.data_file_id; delete fileSubmission.is_nwis;
+                    // Remove extra photo fields
+                    delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd; delete fileSubmission.photo_direction; delete fileSubmission.path; delete fileSubmission.photo_date;
+                    if(fileSubmission.script_parent === null) {
+                      delete fileSubmission.script_parent;
+                    }
+                    this.fileEditService.addFile(fileSubmission)
+                        .subscribe(
+                            (data) => {
+                              // Add formatted file date for viewing in table
+                              let fileDate = data.file_date.split("T")[0];
+                              fileDate = fileDate.split("-");
+                              fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
+                              data.format_file_date = fileDate;
+                              this.returnData = data;
+                              this.closeDialog("Successfully added file");
+                            }
+                        );
+                  }
+                }else{
+                  this.closeDialog("Error saving source")
+                }
+            })
       }
   }
+
+  postApprovalForNWISfile(data_file_id) {
+    this.fileEditService.approveNWISDF(data_file_id).subscribe(approvalResponse => {
+        this.nwisFile.approval_id = approvalResponse.approval_id;
+    },
+    error => {
+        this.closeDialog("Error approving NWIS data file");
+    })
+  };
 
   closeDialog(message) {
     this.dialogRef.close(this.returnData);

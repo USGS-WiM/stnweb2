@@ -79,7 +79,9 @@
             <div *ngIf="(file.is_nwis !== undefined && file.is_nwis === 1) || file.filetype_id === 8">
                 <mat-form-field appearance="fill">
                     <mat-label>File URL</mat-label>
-                    <input aria-label="File URL" matInput formControlName="name" [value]="file.name"/>
+                    <input *ngIf="file.is_nwis !== 1" required aria-label="File URL" matInput formControlName="name" [value]="file.name"/>
+                    <!-- NWIS URL -->
+                    <input *ngIf="file.is_nwis === 1" required aria-label="File URL" matInput formControlName="name" [value]="file.name"/>
                     <mat-icon *ngIf="file.is_nwis === 1" class="info-icon" matTooltip="Auto generated from USGS Station ID. Correct if necessary.">info</mat-icon>
                 </mat-form-field>
             </div>
