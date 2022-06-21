@@ -1989,6 +1989,7 @@ export class SiteDetailsComponent implements OnInit {
     }
 
     deleteFile(row, type): void {
+        console.log(row)
         this.clickedFileRows.clear();
         this.clickedFileRows.add(row);
         let self = this;
