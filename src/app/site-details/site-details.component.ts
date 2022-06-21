@@ -1902,6 +1902,12 @@ export class SiteDetailsComponent implements OnInit {
                         }
                     })
                 }else if(type === "Sensor File") {
+                    // Add sensor serial_number
+                    self.sensorDataSource.data.forEach(sensor => { 
+                        if(sensor.instrument_id === result.instrument_id){
+                            result.details = {serial_number: sensor.serial_number};
+                        }
+                    })
                     // Update files data source and sensor
                     self.sensorFilesDataSource.data.forEach(function(file, i){
                         if(file.file_id === result.file_id){
