@@ -1083,6 +1083,9 @@ export class SiteDetailsComponent implements OnInit {
                 files: this.refMarkFilesDataSource.data,
                 site_id: this.site.site_id,
                 rdSite: this.site,
+                siteRefDatums: this.refMarkDataSource.data,
+                siteHWMs: this.hwmDataSource.data,
+                siteSensors: this.sensorDataSource.data,
             },
             width: '100%',
             autoFocus: false
@@ -1112,6 +1115,26 @@ export class SiteDetailsComponent implements OnInit {
                     self.refMarkDataSource.paginator.length = self.refMarkDataSource.data.length;
                     self.refMarkDataSource.paginator.lastPage();
                 }
+            }
+            if(result.result.returnFiles.length > 0){
+                // Update files data source and hwm
+                result.result.returnFiles.forEach(file => {
+                    self.refMarkFilesDataSource.data.push(file);
+                    self.fileLength ++;
+                })
+                self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                // Go to last page if not already there
+                if(self.refMarkFilesDataSource.paginator){
+                    self.refMarkFilesDataSource.paginator.length = self.refMarkFilesDataSource.data.length;
+                    self.refMarkFilesDataSource.paginator.lastPage();
+                }
+
+                // Fade out active highlighting
+                this.clickedFileRows.add(result);
+                setTimeout(() => {
+                    this.fadeOutFileRows.add(result);
+                    this.clickedFileRows.clear();
+                }, 7000)
             }
         });
     }

@@ -14,12 +14,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Active highlighting on hover, button click and row add to site page tables
  -  When new row item is added and table page is full, jump to next page
  -  Active highlighting on hover and details button click to map filter results table
+ -  Ability to add Reference Datum files in Reference Datum Edit dialog
  
 ### Changed
 
  -  Disabled sensor retrieve button when no event is selected
  -  Active highlighting style
  -  Fade out active highlight when row is added
+ -  Reference datum files can be added when no event is selected
  
  ### Fixed
  

@@ -1442,21 +1442,17 @@
                             <mat-expansion-panel hideToggle [expanded]="refDatumFilesExpanded" (opened)="refDatumFilesExpanded = true" (closed)="refDatumFilesExpanded = false">
                                 <mat-expansion-panel-header class="panel-headers">
                                     <mat-panel-title *ngIf="!refDatumFilesExpanded" style="color: grey; font-weight: 500">
-                                        Reference Datum Files ({{datumLocFiles.length}})
+                                        Reference Datum Files ({{refMarkFilesDataSource.data.length}})
                                     </mat-panel-title>
                                     <mat-panel-title *ngIf="refDatumFilesExpanded" style="color: #FFF; font-weight: 550">
-                                        Reference Datum Files ({{datumLocFiles.length}})
+                                        Reference Datum Files ({{refMarkFilesDataSource.data.length}})
                                     </mat-panel-title>
-                                    <button *ngIf="currentEvent !== null" mat-button (click)="addFile('Reference Datum File', $event)"
+                                    <button mat-button (click)="addFile('Reference Datum File', $event)"
                                         aria-label="Add File"><mat-icon  matTooltip="Add a Reference Datum File" class="add-buttons">add</mat-icon>
                                     </button>
-                                    <!-- Disabled -->
-                                    <button *ngIf="currentEvent === null" mat-button disabled class="disabled-icon"
-                                        aria-label="Add File"><mat-icon  matTooltip="Select an event to add a Reference Datum File">add</mat-icon>
-                                    </button>
                                 </mat-expansion-panel-header>
-                                <div class="tableContainer" *ngIf="datumLocFiles !== undefined; else noDatumFileTable">
-                                    <table *ngIf="datumLocFiles.length > 0; else noDatumFileTable"
+                                <div class="tableContainer" *ngIf="refMarkFilesDataSource.data !== undefined; else noDatumFileTable">
+                                    <table *ngIf="refMarkFilesDataSource.data.length > 0; else noDatumFileTable"
                                         mat-table
                                         id="datumLocFilesTable"
                                         [dataSource]="refMarkFilesDataSource"
@@ -1614,11 +1610,7 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
-                                <button *ngIf="currentEvent !== null" mat-stroked-button (click)="addFile('Reference Datum File', $event)" class="add"
-                                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
-                                </button>
-                                <!-- Disabled -->
-                                <button *ngIf="currentEvent === null" disabled mat-stroked-button class="disabled-border"
+                                <button mat-stroked-button (click)="addFile('Reference Datum File', $event)" class="add"
                                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
                                 </button>
                                 <mat-paginator [hidden]="datumLocFiles === undefined || datumLocFiles.length === 0" #refMarkFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>

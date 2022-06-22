@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { SiteService } from '@app/services/site.service';
 import { OpEditService } from '@app/services/op-edit.service';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { FileEditComponent } from '@app/file-edit/file-edit.component';
 
 @Component({
   selector: 'app-ref-datum-edit',
@@ -43,6 +44,7 @@ export class RefDatumEditComponent implements OnInit {
   public returnData = {
     referenceDatums: null,
     opControlID: [],
+    returnFiles: [],
   };
 
   displayedFileColumns: string[] = [
@@ -430,6 +432,31 @@ export class RefDatumEditComponent implements OnInit {
             this.form.controls['lonsec'].setValue(longDMSarray[2]);
         }
     }
+  }
+
+  /* istanbul ignore next */
+  openAddFileDialog() {
+    let self = this;
+    // Open File Edit Dialog
+    const dialogRef = this.dialog.open(FileEditComponent, {
+      data: {
+          row_data: null,
+          type: 'Reference Datum File',
+          siteInfo: this.data.rdSite,
+          siteRefDatums: this.data.siteRefDatums,
+          siteHWMs: this.data.siteHWMs,
+          siteSensors: this.data.siteSensors,
+          addOrEdit: 'Add'
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result) {
+        // Update files data source and hwm
+        self.initDatumFiles.push(result);
+        self.initDatumFiles = [...self.initDatumFiles];
+        self.returnData.returnFiles.push(result);
+      }
+    });
   }
 
   submit() {
