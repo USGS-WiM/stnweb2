@@ -410,52 +410,52 @@
                                                 <p id="landownerTitle">Land Owner Contact</p>
                                                 <div class="cell-container">
                                                     <p class="content-left">First Name</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.fname !== '' && landownerContact.fname !== undefined; else nullLandownerFname">{{landownerContact.fname}}</p>    
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.fname !== '' && landownerContact.fname !== undefined; else nullLandownerFname">{{landownerContact.fname}}</p>    
                                                     <ng-template #nullLandownerFname><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Last Name</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.lname !== '' && landownerContact.lname !== undefined; else nullLandownerLname">{{landownerContact.lname}}</p>             
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.lname !== '' && landownerContact.lname !== undefined; else nullLandownerLname">{{landownerContact.lname}}</p>             
                                                     <ng-template #nullLandownerLname><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Affiliation/Title</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.title !== '' && landownerContact.title !== undefined; else nullLandownerTitle">{{landownerContact.title}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.title !== '' && landownerContact.title !== undefined; else nullLandownerTitle">{{landownerContact.title}}</p>
                                                     <ng-template #nullLandownerTitle><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Address</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.address !== '' && landownerContact.address !== undefined; else nullLandownerAddress">{{landownerContact.address}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.address !== '' && landownerContact.address !== undefined; else nullLandownerAddress">{{landownerContact.address}}</p>
                                                     <ng-template #nullLandownerAddress><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">City</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.city !== '' && landownerContact.city !== undefined; else nullLandownerCity">{{landownerContact.city}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.city !== '' && landownerContact.city !== undefined; else nullLandownerCity">{{landownerContact.city}}</p>
                                                     <ng-template #nullLandownerCity><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">State</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.state !== '' && landownerContact.state !== undefined; else nullLandownerState">{{landownerContact.state}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.state !== '' && landownerContact.state !== undefined; else nullLandownerState">{{landownerContact.state}}</p>
                                                     <ng-template #nullLandownerState><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Zip</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.zip !== '' && landownerContact.zip !== undefined; else nullLandownerZip">{{landownerContact.zip}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.zip !== '' && landownerContact.zip !== undefined; else nullLandownerZip">{{landownerContact.zip}}</p>
                                                     <ng-template #nullLandownerZip><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Primary Phone</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.primaryphone !== '' && landownerContact.primaryphone !== undefined; else nullLandownerPrimaryphone">{{landownerContact.primaryphone}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.primaryphone !== '' && landownerContact.primaryphone !== undefined; else nullLandownerPrimaryphone">{{landownerContact.primaryphone}}</p>
                                                     <ng-template #nullLandownerPrimaryphone><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Secondary Phone</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.secondaryphone !== '' && landownerContact.secondaryphone !== undefined; else nullLandownerSecondaryphone">{{landownerContact.secondaryphone}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.secondaryphone !== '' && landownerContact.secondaryphone !== undefined; else nullLandownerSecondaryphone">{{landownerContact.secondaryphone}}</p>
                                                     <ng-template #nullLandownerSecondaryphone><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Email</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.email !== '' && landownerContact.email !== undefined; else nullLandownerEmail">{{landownerContact.email}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.email !== '' && landownerContact.email !== undefined; else nullLandownerEmail">{{landownerContact.email}}</p>
                                                     <ng-template #nullLandownerEmail><p class="content-right">---</p></ng-template>
                                                 </div>
                                             </div>

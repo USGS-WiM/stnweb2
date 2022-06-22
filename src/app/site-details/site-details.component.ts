@@ -2141,8 +2141,10 @@ export class SiteDetailsComponent implements OnInit {
                     }
 
                     // Landowner
-                    if(result.landowner !== null){
+                    if(result.landowner !== null && result.landowner !== 'deleted'){
                         this.landownerContact = result.landowner;
+                    }else if(result.landowner === 'deleted'){
+                        this.landownerContact = null;
                     }
                 }
             });

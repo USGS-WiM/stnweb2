@@ -1070,51 +1070,44 @@ export class SiteEditComponent implements OnInit {
           if(this.data.site.landownercontact_id !== undefined && this.data.site.landownercontact_id !== "---" && this.data.site.landownercontact_id !== ""){
             if(this.addLandownerCheck){
               if(this.deleteLandownerCheck){
-                console.log("delete + add")
-                console.log(this.data.site.landownercontact_id)
-                console.log(this.landownerForm.value)
                 // Delete existing and add new one (Delete + add clicked)
-                // this.siteEditService.deleteLandowner(this.data.site.landownercontact_id).subscribe((response) => {
-                //   this.siteForm.controls["landownercontact_id"].setValue(null);
-                //   this.putSite();
-                // });
-                // this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
-                //   this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
-                //   this.putSite();
-                //   this.returnData.landowner = response;
-                // })
+                this.siteEditService.deleteLandowner(this.data.site.landownercontact_id).subscribe((response) => {
+                  this.siteForm.controls["landownercontact_id"].setValue(null);
+                  // Remove landowner contact id before post
+                  delete this.landownerForm.value.landownercontactid;
+                  this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
+                    this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
+                    this.putSite();
+                    this.returnData.landowner = response;
+                  })
+                });
               }else if(this.landownerForm.dirty){
                 // Edit existing landowner
-                console.log("put")
-                console.log(this.landownerForm.controls.landownercontactid.value)
-                console.log(this.landownerForm.value)
-                // this.siteEditService.putLandowner(this.landownerForm.controls.landownercontactid.value, this.landownerForm.value).subscribe((response) => {
-                //   this.putSite();
-                //   this.returnData.landowner = response;
-                // });
+                this.siteEditService.putLandowner(this.landownerForm.controls.landownercontactid.value, this.landownerForm.value).subscribe((response) => {
+                  this.putSite();
+                  this.returnData.landowner = response;
+                });
               }else{
-                console.log("put site")
                 // Landowner exists but hasn't been touched at all
-                // this.putSite();
+                this.putSite();
               }
             }else{
-              console.log("delete")
-              console.log(this.data.site.landownercontact_id)
               // Delete existing and do not add new one (Delete landowner clicked)
-              // this.siteEditService.deleteLandowner(this.data.site.landownercontact_id).subscribe((response) => {
-              //   this.siteForm.controls["landownercontact_id"].setValue(null);
-              //   this.putSite();
-              // });
+              this.siteEditService.deleteLandowner(this.data.site.landownercontact_id).subscribe((response) => {
+                this.siteForm.get("landownercontact_id").setValue(null);
+                this.putSite();
+                this.returnData.landowner = 'deleted';
+              });
             }
           }else{
-            console.log("post")
-            console.log(this.landownerForm.value)
             // No existing landowner, new landowner added (Add Landowner clicked)
-            // this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
-            //   this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
-            //   this.putSite();
-            //   this.returnData.landowner = response;
-            // })
+            // Remove landowner contact id before post
+            delete this.landownerForm.value.landownercontactid;
+            this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
+              this.siteForm.get("landownercontact_id").setValue(response.landownercontactid);
+              this.putSite();
+              this.returnData.landowner = response;
+            })
           }
         }else{
           this.landownerValid = false;
@@ -1130,7 +1123,7 @@ export class SiteEditComponent implements OnInit {
           });
         }
       }else{
-        // this.putSite();
+        this.putSite();
       }
     }else{
       this.valid = false;
