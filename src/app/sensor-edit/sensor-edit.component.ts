@@ -4,6 +4,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, V
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { FileEditComponent } from '@app/file-edit/file-edit.component';
 import { EventService } from '@app/services/event.service';
 import { SensorEditService } from '@app/services/sensor-edit.service';
 import { SiteService } from '@app/services/site.service';
@@ -53,6 +54,7 @@ export class SensorEditComponent implements OnInit {
   public initStatusID;
   public role = Number(localStorage.role);
   public returnData;
+  public returnFiles = [];
 
   constructor(
     private dialogRef: MatDialogRef<SensorEditComponent>,
@@ -878,6 +880,56 @@ export class SensorEditComponent implements OnInit {
     })
   }
 
+  /* istanbul ignore next */
+  openAddFileDialog() {
+    let self = this;
+    // Open File Edit Dialog
+    const dialogRef = this.dialog.open(FileEditComponent, {
+      data: {
+          row_data: {instrument_id: this.form.get("instrument_id").value},
+          type: 'Sensor File',
+          siteInfo: this.data.siteInfo,
+          siteRefDatums: this.data.siteRefDatums,
+          siteHWMs: this.data.siteHWMs,
+          siteSensors: this.data.siteSensors,
+          addOrEdit: 'Add'
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result) {
+        // Update files data source and hwm
+        self.initSensorFiles.push(result);
+        self.initSensorFiles = [...self.initSensorFiles];
+        self.returnFiles.push(result);
+      }
+    });
+  }
+
+  /* istanbul ignore next */
+  openAddNWISFileDialog() {
+    let self = this;
+    // Open File Edit Dialog
+    const dialogRef = this.dialog.open(FileEditComponent, {
+      data: {
+          row_data: {instrument_id: this.form.get("instrument_id").value, is_nwis: 1, filetype_id: 2},
+          type: 'Sensor File',
+          siteInfo: this.data.siteInfo,
+          siteRefDatums: this.data.siteRefDatums,
+          siteHWMs: this.data.siteHWMs,
+          siteSensors: this.data.siteSensors,
+          addOrEdit: 'Add'
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result) {
+        // Update files data source and hwm
+        self.initNWISFiles.push(result);
+        self.initNWISFiles = [...self.initNWISFiles];
+        self.returnFiles.push(result);
+      }
+    });
+  }
+
   submit(statusID) {
     this.form.markAllAsTouched();
     if(this.form.valid){
@@ -1049,7 +1101,7 @@ export class SensorEditComponent implements OnInit {
 
       updateInstrument.then(() => {
         this.loading = false;
-        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
         this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
@@ -1141,7 +1193,7 @@ export class SensorEditComponent implements OnInit {
       /* istanbul ignore next */
       deployInstrument.then(() => {
         this.loading = false;
-        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
         this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {

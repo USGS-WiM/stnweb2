@@ -61,7 +61,7 @@ export class FileEditComponent implements OnInit {
     this.getFileTypes();
     this.getAgencies();
     // Edit file
-    if(this.data.row_data !== null){
+    if(this.data.addOrEdit === 'Edit'){
       this.file = JSON.parse(JSON.stringify(this.data.row_data));
       this.getFile();
       this.setFileType();
@@ -101,9 +101,13 @@ export class FileEditComponent implements OnInit {
       if (this.file.photo_date === undefined || this.file.photo_date == ''){
         this.previewCaption.photo_date = '(photo date)'
       }
-    }else{
+    }else if(this.data.addOrEdit === 'Add'){
       // Add file
-      this.file = {};
+      if(this.data.row_data.instrument_id !== null){
+        this.file = JSON.parse(JSON.stringify(this.data.row_data));
+      }else{
+        this.file = {};
+      }
     }
 
     this.initForm();
