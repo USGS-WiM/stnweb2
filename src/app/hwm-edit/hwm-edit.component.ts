@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { FileEditComponent } from '@app/file-edit/file-edit.component';
 import { EventService } from '@app/services/event.service';
 import { HwmEditService } from '@app/services/hwm-edit.service';
 import { SiteService } from '@app/services/site.service';
@@ -45,6 +46,7 @@ export class HwmEditComponent implements OnInit {
     lonsec: null,
   }
   public returnData;
+  public returnFiles = [];
 
   displayedFileColumns: string[] = [
     'FileName',
@@ -521,6 +523,31 @@ export class HwmEditComponent implements OnInit {
     return dateWOtime;
   };
 
+  /* istanbul ignore next */
+  openAddFileDialog() {
+    let self = this;
+    // Open File Edit Dialog
+    const dialogRef = this.dialog.open(FileEditComponent, {
+      data: {
+          row_data: null,
+          type: 'HWM File',
+          siteInfo: this.data.hwmSite,
+          siteRefDatums: this.data.siteRefDatums,
+          siteHWMs: this.data.siteHWMs,
+          siteSensors: this.data.siteSensors,
+          addOrEdit: 'Add'
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result) {
+        // Update files data source and hwm
+        self.initHWMFiles.push(result);
+        self.initHWMFiles = [...self.initHWMFiles];
+        self.returnFiles.push(result);
+      }
+    });
+  }
+
   submit() {
     this.form.markAllAsTouched();
     if(this.form.valid){
@@ -601,7 +628,7 @@ export class HwmEditComponent implements OnInit {
 
       updateHWM.then(() => {
         this.loading = false;
-        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
         this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
@@ -644,7 +671,7 @@ export class HwmEditComponent implements OnInit {
 
       createHWM.then(() => {
         this.loading = false;
-        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
         this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
