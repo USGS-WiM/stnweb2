@@ -235,7 +235,21 @@ table {
     vertical-align: top;
     text-align: right;
     align-self: stretch;
-} 
+}
+
+.mat-column-Description{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
+
+.mat-column-Destroyed{
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    align-self: stretch;
+}
 
 .mat-column-button{
     padding: 10px;
@@ -257,6 +271,20 @@ table {
 
 .mat-cell, .mat-header-cell, .mat-footer-cell {
     overflow: auto;
+}
+
+.mat-row:hover .mat-cell {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.row-is-clicked {
+    background-color: #99c8ef;
+}
+
+.row-fade {
+    -webkit-transition: background-color 2s linear;
+    -ms-transition: background-color 2s linear;
+    transition: background-color 2s linear;
 }
 
 // Site information
@@ -300,6 +328,11 @@ table {
 
 .edit-details-btn {
     margin: 5px 5px;
+}
+
+.retrieve-btn {
+    text-decoration: underline;
+    color: blue;
 }
 
 .edit-icon {
@@ -515,6 +548,11 @@ table {
     .edit-details-btn { display: none; }
     
     .edit-details-mobile { display: block; }
+    
+    .retrieve-btn { 
+        display: none; 
+        margin: 5px 5px; 
+    }
   }
 
 @media (min-width: 1000px) {
@@ -525,4 +563,9 @@ table {
     .edit-details-btn { display: inline-block; }
     
     .edit-details-mobile { display: none; }
+    
+    .retrieve-btn { 
+        display: inline-block;
+        padding: 0px;
+    }
   }

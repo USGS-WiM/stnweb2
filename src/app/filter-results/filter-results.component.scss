@@ -90,6 +90,14 @@ table {
     overflow: auto;
 }
 
+.mat-row:hover .mat-cell {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.row-is-clicked {
+    background-color: #99c8ef;
+}
+
 .view-details-btn {
     margin: 5px 5px;
     border: 1px solid #404040;

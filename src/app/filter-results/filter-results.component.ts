@@ -20,6 +20,7 @@ export class FilterResultsComponent implements OnInit {
     @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     dataSource = new MatTableDataSource([]);
+    clickedRows = new Set<any>();
     sortedData = [];
     currentSites;
     resultsPanelOpen: boolean = true;
@@ -60,6 +61,8 @@ export class FilterResultsComponent implements OnInit {
     // opening result-details dialog and passing relevant data
     /* istanbul ignore next */
     openDetailsDialog(row): void {
+        this.clickedRows.clear();
+        this.clickedRows.add(row);
         let dialogWidth;
         if (window.matchMedia('(max-width: 768px)').matches) {
             dialogWidth = '80%';

@@ -81,6 +81,10 @@ export class SensorDialogComponent implements OnInit {
         else if(instrument.status === "Lost"){
           self.lostSensors ++;
         }
+
+        if(instrument.vdatum === undefined){
+          self.setVDatum(instrument);
+        }
       });
     }
 
@@ -133,6 +137,14 @@ export class SensorDialogComponent implements OnInit {
         }
       })
     })
+  }
+
+  setVDatum(instrument) {
+    this.siteService
+    .getVDatum(instrument.vdatum_id)
+    .subscribe((results) => {
+      instrument.vdatum = results.datum_name;
+    });
   }
 
   sortSensorFilesData(sort: Sort) {
