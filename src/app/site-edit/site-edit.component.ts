@@ -44,7 +44,6 @@ export class SiteEditComponent implements OnInit {
   public latLngUnit = 'decdeg';
   public agencies = [];
   public agencyNameForCap;
-  public formattedPhotoDate;
   public fileSource;
   public addFileType;
   public valid;
@@ -580,9 +579,7 @@ export class SiteEditComponent implements OnInit {
     this.showFileForm = true;
     this.addFileType = "New";
     this.siteFiles.FileEntity.file_date = new Date();
-    this.siteFiles.FileEntity.photo_date = new Date();
     this.siteFileForm.controls["file_date"].setValue(this.siteFiles.FileEntity.file_date);
-    this.siteFileForm.controls["photo_date"].setValue(this.siteFiles.FileEntity.photo_date);
     
     // Set source name and agency automatically
     // Member id
@@ -602,6 +599,14 @@ export class SiteEditComponent implements OnInit {
 
   getFileTypeSelection(event) {
     this.siteFiles.FileEntity.filetype_id = event.value;
+
+    if(this.siteFiles.FileEntity.filetype_id === 1){
+      this.siteFiles.FileEntity.photo_date = new Date();
+      this.siteFileForm.controls["photo_date"].setValue(this.siteFiles.FileEntity.photo_date);
+    }else{
+      this.siteFiles.FileEntity.photo_date = null;
+      this.siteFileForm.controls["photo_date"].setValue(this.siteFiles.FileEntity.photo_date);
+    }
   }
 
   initSiteForm() {
@@ -720,10 +725,6 @@ export class SiteEditComponent implements OnInit {
       longitude_dd: new FormControl(this.siteFiles.FileEntity.longitude_dd, [this.checkLonValue()]),
       is_nwis: new FormControl(null),
     })
-  }
-
-  formatDate(event){
-    this.formattedPhotoDate = (event.value.getMonth() + 1) + '/' + event.value.getDate() + '/' + event.value.getFullYear();
   }
 
   changeLatLngUnit(event) {
@@ -892,7 +893,6 @@ export class SiteEditComponent implements OnInit {
     this.siteFileForm.controls['longitude_dd'].setValue(this.siteFiles.FileEntity.longitude_dd);
     this.siteFileForm.controls['site_id'].setValue(this.siteFiles.FileEntity.site_id);
     this.siteFileForm.controls['name'].setValue(this.siteFiles.FileEntity.name);
-
     this.getFile();
   }
 
@@ -956,12 +956,31 @@ export class SiteEditComponent implements OnInit {
     });
   }
 
+  formatUTCDates(date) {
+    let hour = (date.split('T')[1]).split(':')[0];
+    // minute
+    let minute = date.split('T')[1].split(':')[1];
+    let timestamp = date.split("T")[0];
+    timestamp = timestamp.split("-");
+    let day = timestamp[0];
+    let month = timestamp[1];
+    let year = timestamp[2];
+    let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(hour), Number(minute)));
+    let formatted_date = new Date(utcPreview).toUTCString();
+    return formatted_date;
+  }
+
   // Re-upload file or add missing file
   saveFileUpload() {
     let self = this;
     // update this.siteFiles
     // update siteFilesForm
     let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+
     let formatFileSubmission = {
       file_id: fileSubmission.file_id,
       description: fileSubmission.description,
@@ -986,10 +1005,6 @@ export class SiteEditComponent implements OnInit {
               this.returnData.files.forEach(function(file, i){
                 if(file.file_id === data.file_id){
                   self.returnData.files[i] = data;
-                  let fileDate = self.returnData.files[i].file_date.split("T")[0];
-                  fileDate = fileDate.split("-");
-                  fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                  self.returnData.files[i].format_file_date = fileDate;
                   self.initSiteFiles = self.returnData.files;
                   self.initSiteFiles = [...self.initSiteFiles];
                   self.showFileForm = false;
@@ -1395,6 +1410,11 @@ export class SiteEditComponent implements OnInit {
     let self = this;
     this.siteFileForm.markAllAsTouched();
     let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+    
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+
     if(this.siteFileForm.valid){
       this.fileValid = true;
       if(fileSubmission.source_id !== null){
@@ -1414,10 +1434,6 @@ export class SiteEditComponent implements OnInit {
                       this.returnData.files.forEach(function(file, i){
                         if(file.file_id === data.file_id){
                           self.returnData.files[i] = data;
-                          let fileDate = self.returnData.files[i].file_date.split("T")[0];
-                          fileDate = fileDate.split("-");
-                          fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                          self.returnData.files[i].format_file_date = fileDate;
                           self.initSiteFiles = self.returnData.files;
                           self.initSiteFiles = [...self.initSiteFiles];
                           self.showFileForm = false;
@@ -1537,12 +1553,6 @@ export class SiteEditComponent implements OnInit {
                     (data) => {
                       if(data !== []){
                         this.returnData.files.push(data);
-                        this.returnData.files.forEach(function(file){
-                          let fileDate = file.file_date.split("T")[0];
-                          fileDate = fileDate.split("-");
-                          fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                          file.format_file_date = fileDate;
-                        })
                         this.initSiteFiles = this.returnData.files;
                         this.initSiteFiles = [...this.initSiteFiles];
                       }
@@ -1562,13 +1572,6 @@ export class SiteEditComponent implements OnInit {
                 .subscribe(
                     (data) => {
                       this.returnData.files.push(data);
-                      this.returnData.files.forEach(function(file){
-                        let fileDate = file.file_date.split("T")[0];
-                        fileDate = fileDate.split("-");
-                        fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                        file.format_file_date = fileDate;
-                      })
-                      
                       this.initSiteFiles = this.returnData.files;
                       this.initSiteFiles = [...this.initSiteFiles];
                       this.loading = false;

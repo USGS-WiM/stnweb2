@@ -114,8 +114,8 @@
                         <p class="content-left">Deploy Date and Time</p>
                         <div *ngIf="sensor.instrument_status.length > 0; else nullTimestampDeployed">
                             <div *ngFor="let instrument of sensor.instrument_status">
-                                <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.format_time_stamp !== undefined && instrument.format_time_stamp !== ''">{{instrument.format_time_stamp}} {{instrument.time_zone}}</p>
-                                <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.format_time_stamp === undefined || instrument.format_time_stamp === ''">---</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_stamp !== undefined && instrument.time_stamp !== ''">{{instrument.time_stamp | date: 'MM/dd/yyyy hh:mm a'}} {{instrument.time_zone}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_stamp === undefined || instrument.time_stamp === ''">---</p>
                             </div>
                         </div>
                         <ng-template #nullTimestampDeployed><p class="content-right">---</p></ng-template>
