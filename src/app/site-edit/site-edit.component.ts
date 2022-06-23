@@ -126,6 +126,7 @@ export class SiteEditComponent implements OnInit {
 
   public hasLandownerContact = false;
   public addLandownerCheck = false;
+  public deleteLandownerCheck = false;
   public useSiteAddress = false;
   public showFileForm = false;
   public incorrectDMS = false;
@@ -393,7 +394,7 @@ export class SiteEditComponent implements OnInit {
     this.site.city = this.data.site.city !== undefined && this.data.site.city !== "" ? this.data.site.city : null;
     this.site.zip = this.data.site.zip !== undefined && this.data.site.zip !== "" ? this.data.site.zip : null;
     this.site.memberName = this.data.memberName !== undefined && this.data.memberName !== "---" && this.data.memberName !== "" ? this.data.memberName : null;
-    this.hasLandownerContact = this.data.site.landownercontact_id !== undefined && this.data.site.landownercontact_id !== "---" && this.data.site.landownercontact_id !== "" ? true : null;
+    this.hasLandownerContact = this.data.site.landownercontact_id !== undefined && this.data.site.landownercontact_id !== "---" && this.data.site.landownercontact_id !== "" ? true : false;
     this.landownerContact = this.data.landowner !== "" && this.data.landowner !== undefined && this.data.landowner !== null ? JSON.parse(JSON.stringify(this.data.landowner)) : this.landownerContact;
     this.addLandownerCheck = this.data.landowner !== "" && this.data.landowner !== undefined && this.data.landowner !== null ? true: false;
     this.data.siteHousing.forEach(function(type){
@@ -473,6 +474,38 @@ export class SiteEditComponent implements OnInit {
 
   addLandownerContact() {
     this.addLandownerCheck = true;
+    this.landownerForm.get("fname").setValidators([Validators.required]);
+    this.landownerForm.get("fname").updateValueAndValidity();
+    if(this.data.site.landownercontact_id === undefined || this.data.site.landownercontact_id === "---" || this.data.site.landownercontact_id === ""){
+      this.deleteLandownerCheck = false;
+    }
+  }
+
+  removeLandownerContact() {
+    this.addLandownerCheck = false;
+    this.deleteLandownerCheck = true;
+    if(!this.hasLandownerContact){
+      this.landownerForm.reset();
+    }else{
+      this.landownerForm.get("lname").setValue(null);
+      this.landownerForm.get("fname").setValue(null);
+      this.landownerForm.get("title").setValue(null);
+      this.landownerForm.get("address").setValue(null);
+      this.landownerForm.get("city").setValue(null);
+      this.landownerForm.get("state").setValue(null);
+      this.landownerForm.get("zip").setValue(null);
+      this.landownerForm.get("primaryphone").setValue(null);
+      this.landownerForm.get("secondaryphone").setValue(null);
+      this.landownerForm.get("email").setValue(null);
+      this.landownerForm.get("landownercontactid").setValue(null);
+      this.hasLandownerContact = false;
+    }
+    this.landownerForm.get("fname").setErrors(null);
+    this.landownerForm.get("fname").clearValidators();
+    this.landownerForm.get("fname").updateValueAndValidity();
+    if(this.data.site.landownercontact_id === undefined || this.data.site.landownercontact_id === "---" || this.data.site.landownercontact_id === ""){
+      this.deleteLandownerCheck = false;
+    }
   }
 
   initLandownerForm() {
@@ -487,7 +520,7 @@ export class SiteEditComponent implements OnInit {
       email: new FormControl(this.landownerContact.email, Validators.email),
       primaryphone: new FormControl(this.landownerContact.primaryphone, Validators.pattern(this.phonePattern)),
       secondaryphone: new FormControl(this.landownerContact.secondaryphone, Validators.pattern(this.phonePattern)),
-      landownercontact_id: new FormControl(this.landownerContact.landownercontactid)
+      landownercontactid: new FormControl(this.landownerContact.landownercontactid)
     })
   }
 
@@ -1030,17 +1063,48 @@ export class SiteEditComponent implements OnInit {
       this.loading = true;
       this.valid = true;
       // Post landowner if added/changed
-      if(this.landownerForm.dirty){
+      if(this.landownerForm.dirty || this.deleteLandownerCheck || this.addLandownerCheck){
         if(this.landownerForm.valid){
           this.landownerValid = true;
-          if(this.landownerForm.controls.landownercontact_id.value !== undefined && this.landownerForm.controls.landownercontact_id.value !== null && this.landownerForm.controls.landownercontact_id.value > 0){
-            this.siteEditService.putLandowner(this.landownerForm.controls.landownercontact_id.value, this.landownerForm.value).subscribe((response) => {
-              this.putSite();
-              this.returnData.landowner = response;
-            })
+          // Existing landowner was edited (add/delete landowner not clicked)
+          if(this.data.site.landownercontact_id !== undefined && this.data.site.landownercontact_id !== "---" && this.data.site.landownercontact_id !== ""){
+            if(this.addLandownerCheck){
+              if(this.deleteLandownerCheck){
+                // Delete existing and add new one (Delete + add clicked)
+                this.siteEditService.deleteLandowner(this.data.site.landownercontact_id).subscribe((response) => {
+                  this.siteForm.controls["landownercontact_id"].setValue(null);
+                  // Remove landowner contact id before post
+                  delete this.landownerForm.value.landownercontactid;
+                  this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
+                    this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
+                    this.putSite();
+                    this.returnData.landowner = response;
+                  })
+                });
+              }else if(this.landownerForm.dirty){
+                // Edit existing landowner
+                this.siteEditService.putLandowner(this.landownerForm.controls.landownercontactid.value, this.landownerForm.value).subscribe((response) => {
+                  this.putSite();
+                  this.returnData.landowner = response;
+                });
+              }else{
+                // Landowner exists but hasn't been touched at all
+                this.putSite();
+              }
+            }else{
+              // Delete existing and do not add new one (Delete landowner clicked)
+              this.siteEditService.deleteLandowner(this.data.site.landownercontact_id).subscribe((response) => {
+                this.siteForm.get("landownercontact_id").setValue(null);
+                this.putSite();
+                this.returnData.landowner = 'deleted';
+              });
+            }
           }else{
+            // No existing landowner, new landowner added (Add Landowner clicked)
+            // Remove landowner contact id before post
+            delete this.landownerForm.value.landownercontactid;
             this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
-              this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
+              this.siteForm.get("landownercontact_id").setValue(response.landownercontactid);
               this.putSite();
               this.returnData.landowner = response;
             })
@@ -1316,7 +1380,7 @@ export class SiteEditComponent implements OnInit {
       this.fileUploading = false;
       this.dialog.open(ConfirmComponent, {
         data: {
-          title: "Successfully updated Site",
+          title: "Successfully updated Site " + this.data.site.site_id,
           titleIcon: "check",
           message: null,
           confirmButtonText: "OK",
