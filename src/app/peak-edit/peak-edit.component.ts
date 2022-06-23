@@ -127,11 +127,6 @@ export class PeakEditComponent implements OnInit {
             if (!this.determineDFPresent(this.sensors[s].files)) this.sensors[s].needsDF = true;
         }
       }
-      // Format time/date
-      sensorStatuses.forEach(function(status, i){
-        let timestamp = self.setTimeAndDate(status.time_stamp);
-        self.sensors[s].instrument_status[i].format_time_stamp = timestamp;
-      })
     }
   }
 
@@ -149,20 +144,6 @@ export class PeakEditComponent implements OnInit {
         return {ampm: "AM", hour: hour};
       }
     }
-  }
-
-  setTimeAndDate(time_stamp) {
-      let hour = (time_stamp.split('T')[1]).split(':')[0];
-      let hourampmObj = this.calcAMPM(hour);
-      hour = hourampmObj.hour;
-      let ampm = hourampmObj.ampm;
-      // minute
-      let minute = time_stamp.split('T')[1].split(':')[1];
-      minute = String(minute).padStart(2, '0');
-      let timestamp = time_stamp.split("T")[0];
-      timestamp = timestamp.split("-");
-      timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + hour + ":" + minute + " " + ampm;
-      return timestamp;
   }
 
   setPeakTimeAndDate() {
@@ -507,13 +488,6 @@ export class PeakEditComponent implements OnInit {
       this.df.fileDesc = file.description;
       this.df.nwisFile = file.is_nwis == 1 ? true : false;
       this.df.fileURL = file.name;
-      // Format dates and times
-      let good_start = self.setTimeAndDate(this.df.good_start);
-      this.df.format_good_start = good_start;
-      let good_end = self.setTimeAndDate(this.df.good_end);
-      this.df.format_good_end = good_end;
-      let collect_date = self.setTimeAndDate(this.df.collect_date);
-      this.df.format_collect_date = collect_date;
       this.hideAllSensorDetails();
       this.hideAllHWMDetails();
       this.siteService

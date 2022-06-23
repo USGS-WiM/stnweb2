@@ -148,14 +148,6 @@ describe('FileEditComponent', () => {
     expect(component.file.FULLname).toEqual("John Smith");
     expect(component.form.get('FULLname').value).toEqual("John Smith");
   });
-  
-  it('should format date', () => {
-    const testDate = {value: new Date("November 20, 2021 11:00:00")};
-
-    component.formatDate(testDate);
-    fixture.detectChanges();
-    expect(component.file.format_photo_date).toEqual("11/20/2021");
-  });
 
   it('should change value of is_nwis', () => {
     const value = {checked: true};
@@ -249,7 +241,7 @@ describe('FileEditComponent', () => {
     fixture.detectChanges();
     expect(memberSpy).toHaveBeenCalledTimes(2);
     expect(component.datafile).toEqual(dfResponse);
-    expect(component.approvedOn).toEqual('02/09/2022');
+    expect(component.approvedOn).toEqual('2022-02-09T12:00:00.000');
     expect(component.approvedBy).toEqual("John Doe");
     expect(component.collectDate).toEqual(dfResponse.collect_date);
     expect(component.processorName).toEqual("John Doe");
@@ -297,7 +289,7 @@ describe('FileEditComponent', () => {
     component.saveFile(fileSubmission);
     fixture.detectChanges();
 
-    expect(component.returnData).toEqual({filetype_id: 8, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999, format_file_date: '12/30/2022'});
+    expect(component.returnData).toEqual({filetype_id: 8, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999});
   });
 
   it('should add new file (not link)', () => {
@@ -316,7 +308,7 @@ describe('FileEditComponent', () => {
     component.createFile(fileSubmission);
     fixture.detectChanges();
 
-    expect(component.returnData).toEqual({filetype_id: 1, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999, format_file_date: '12/30/2022'});
+    expect(component.returnData).toEqual({filetype_id: 1, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999});
   });
 
   it('should add new file (link)', () => {
@@ -335,7 +327,7 @@ describe('FileEditComponent', () => {
     component.createFile(fileSubmission);
     fixture.detectChanges();
 
-    expect(component.returnData).toEqual({filetype_id: 8, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999, format_file_date: '12/30/2022'});
+    expect(component.returnData).toEqual({filetype_id: 8, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999});
   });
 
   it('should cancel loading and show alert if file update form is invalid', () => {

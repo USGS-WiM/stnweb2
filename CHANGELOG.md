@@ -14,20 +14,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Active highlighting on hover, button click and row add to site page tables
  -  When new row item is added and table page is full, jump to next page
  -  Active highlighting on hover and details button click to map filter results table
+ -  Ability to delete landowner when editing a site
  -  Ability to add sensor file, datafile and NWIS file in files tab
+
  
 ### Changed
 
  -  Disabled sensor retrieve button when no event is selected
  -  Active highlighting style
  -  Fade out active highlight when row is added
+ -  Site edit modal arrangement and styling
  
  ### Fixed
  
  -  Fields not populating in details modals
  -  Unedited rows removed from reference datum table after edit
  -  Update counts in site page tabs on edit/add/delete
+<<<<<<< HEAD
  -  Validation error incorrectly shown when date changed in sensor retrieve modal
+=======
+ -  UTC Preview not updating when minutes changed in Sensor add/edit
+ -  Update counts in file tab and site file expansion panel when files added/deleted
+ -  Date/time formatting and time zone conversion for all entities
+>>>>>>> a46bd2b20b4d6c6d36aaae2dcdcf6bedee1a8adf
 
 ## [v0.8.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.0) - 2022-06-05
 

@@ -52,7 +52,7 @@
             </div>
             <div class="cell-container">
                 <p class="content-left">Peak Date</p>
-                <p class="content-right" *ngIf="peak.peak_date !== undefined && peak.peak_date !== ''; else nullPeakDate">{{peak.format_peak_date}}</p>
+                <p class="content-right" *ngIf="peak.peak_date !== undefined && peak.peak_date !== ''; else nullPeakDate">{{peak.peak_date | date: 'MM/dd/yyyy'}}</p>
                 <ng-template #nullPeakDate><p class="content-right">---</p></ng-template>
             </div>
             <div class="cell-container">
