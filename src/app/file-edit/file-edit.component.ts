@@ -293,7 +293,7 @@ export class FileEditComponent implements OnInit {
       photo_direction: new FormControl(this.file.photo_direction !== undefined ? this.file.photo_direction : null),
       latitude_dd: new FormControl(this.file.latitude_dd !== undefined ? this.file.latitude_dd : null, [this.checkLatValue()]),
       longitude_dd: new FormControl(this.file.longitude_dd !== undefined ? this.file.longitude_dd : null, [this.checkLonValue()]),
-      is_nwis: new FormControl({value: this.file.is_nwis !== undefined ? this.file.is_nwis : null, disabled: this.currentUser.role_id !== 1 && this.currentUser.role_id !== 2}),
+      is_nwis: new FormControl({value: this.file.is_nwis !== undefined ? this.file.is_nwis : null, disabled: this.currentUser !== null && this.currentUser.role_id !== 1 && this.currentUser.role_id !== 2}),
       collectDate: new FormControl(this.collectDate !== undefined ? this.collectDate : null),
       elevation_status: new FormControl(this.file.elevation_status !== undefined ? this.file.elevation_status : ""),
     })
