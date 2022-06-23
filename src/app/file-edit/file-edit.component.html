@@ -130,7 +130,7 @@
             <div *ngIf="file.filetype_id === 1">
                 <mat-form-field appearance="fill">
                     <mat-label>Photo Date</mat-label>
-                    <input aria-label="Photo Date" required matInput formControlName="photo_date" [value]="file.photo_date" [matDatepicker]="photoDatePicker" (dateChange)="formatDate($event)" required placeholder="Choose a date">
+                    <input aria-label="Photo Date" required matInput formControlName="photo_date" [value]="file.photo_date" [matDatepicker]="photoDatePicker" required placeholder="Choose a date">
                     <mat-datepicker-toggle matSuffix [for]="photoDatePicker"></mat-datepicker-toggle>
                     <mat-datepicker [value]="file.photo_date" #photoDatePicker></mat-datepicker>
                 </mat-form-field>
@@ -168,7 +168,7 @@
                 <label class="form-header">Approved By:</label> {{approvedBy || '---'}}
             </div>
             <div class="row" *ngIf="file.filetype_id === 2 && file.file_id !== undefined && (file.is_nwis === undefined || file.is_nwis !== 1) && approvedOn">
-                <label class="form-header">Approval Date:</label> {{approvedOn || '---'}}
+                <label class="form-header">Approval Date:</label> {{approvedOn | date: 'MM/dd/yyyy' || '---'}}
             </div>
 
             <!--Photo Direction (photo)-->
@@ -213,7 +213,7 @@
                 <label class="form-header" for="Caption">Preview Caption</label>
                 <div>
                     <span>
-                        Photo of {{form.value.description || ' (Description HERE) '}} at {{site.site_description}}, {{site.county}}, {{site.state}}, {{file.format_photo_date || ' Date taken HERE '}}. Photograph by {{form.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
+                        Photo of {{form.value.description || ' (Description HERE) '}} at {{site.site_description}}, {{site.county}}, {{site.state}}, {{file.photo_date | date: 'MM/dd/yyyy' || ' Date taken HERE '}}. Photograph by {{form.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
                     </span>
                 </div>
             </div>

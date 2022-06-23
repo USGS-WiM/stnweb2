@@ -80,9 +80,9 @@ describe('FileDetailsDialogComponent', () => {
     fixture.detectChanges();
     expect(component.fileType).toEqual("Data");
     expect(component.approvedBy).toEqual("John Smith");
-    expect(component.approvedOn).toEqual("09/16/2020");
+    expect(component.approvedOn).toEqual("2020-09-16T16:05:04");
     expect(component.elevation).toEqual("Final");
-    expect(component.collectDate).toEqual("09/16/2020");
+    expect(component.collectDate).toEqual("2020-09-16T16:05:04");
     expect(component.processorName).toEqual("John Smith");
   });
 

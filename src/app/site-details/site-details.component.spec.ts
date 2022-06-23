@@ -316,7 +316,6 @@ describe('SiteDetailsComponent', () => {
         fixture.detectChanges();
         expect(peakSpy).toHaveBeenCalled();
         expect(component.peaks.length).toEqual(1);
-        expect(component.peaks[0].format_peak_date).toEqual("09/16/2020 04:05 PM");
     });
 
     it('siteHousing should be populated if site housing results are returned', () => {
@@ -379,7 +378,6 @@ describe('SiteDetailsComponent', () => {
         expect(component.siteFullInstruments[0].statusType).not.toEqual(undefined);
         expect(hwmSpy).toHaveBeenCalled();
         expect(component.hwm.length).toEqual(3);
-        expect(component.hwm[0].format_flag_date).toContain("/");
         expect(component.fileLength).toEqual(responseSiteFiles.length);
     });
 
@@ -415,7 +413,6 @@ describe('SiteDetailsComponent', () => {
         expect(component.sensorFiles.length).toEqual(1);
         expect(component.sensorFilesDone).toBeTrue;
         expect(siteFilesSpy).toHaveBeenCalled();
-        expect(component.files[0].format_file_date).toContain("/");
         expect(component.files[2].details).not.toEqual(undefined);
     });
 
@@ -471,7 +468,6 @@ describe('SiteDetailsComponent', () => {
         expect(component.siteFullInstruments.length).toEqual(3);
         expect(hwmSpy).toHaveBeenCalled();
         expect(component.hwm.length).toEqual(3);
-        expect(component.hwm[0].format_flag_date).toContain("/");
         expect(siteFilesSpy).toHaveBeenCalled();
         expect(siteEventFilesSpy).toHaveBeenCalled();
         expect(fullSensorSpy).toHaveBeenCalled();
@@ -562,7 +558,6 @@ describe('SiteDetailsComponent', () => {
         expect(component.sensorFiles.length).toEqual(1);
         expect(component.sensorFilesDone).toBeTrue;
         expect(siteEventFilesSpy).toHaveBeenCalled();
-        expect(component.files[0].format_file_date).toContain("/");
         expect(component.files[2].details).not.toEqual(undefined);
     });
 

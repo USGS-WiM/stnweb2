@@ -93,13 +93,6 @@ export class FileDetailsDialogComponent implements OnInit {
           .subscribe((approvalResults) => {
               if(approvalResults !== null){
                 this.approvedOn = approvalResults.approval_date;
-                // Format approval date
-                if(this.approvedOn !== undefined && !this.approvedOn.includes("/")){
-                  let approvalDate = this.approvedOn.split("T")[0];
-                  approvalDate = approvalDate.split("-");
-                  approvalDate = approvalDate[1] + "/" + approvalDate[2] + "/" + approvalDate[0];
-                  this.approvedOn = approvalDate;
-                }
                 if(approvalResults.member_id !== undefined && approvalResults.member_id !== 0){
                   this.siteService
                   .getMemberName(approvalResults.member_id)
@@ -116,13 +109,6 @@ export class FileDetailsDialogComponent implements OnInit {
           .subscribe((datafileResults) => {
               this.elevation = datafileResults.elevation_status;
               this.collectDate = datafileResults.collect_date;
-              // Format surveyed date
-              if(this.collectDate !== undefined && !this.collectDate.includes("/")){
-                let collectDate = this.collectDate.split("T")[0];
-                collectDate = collectDate.split("-");
-                collectDate = collectDate[1] + "/" + collectDate[2] + "/" + collectDate[0];
-                this.collectDate = collectDate;
-              }
               if(datafileResults.processor_id !== undefined && datafileResults.processor_id !== 0){
                 this.siteService
                 .getMemberName(datafileResults.processor_id)

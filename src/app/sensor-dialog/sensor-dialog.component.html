@@ -110,8 +110,8 @@
                 <p class="content-left">Deploy Date</p>
                 <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampDeployed">
                     <div *ngFor="let instrument of data.row_data.instrument_status">
-                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.format_time_stamp !== undefined && instrument.format_time_stamp !== ''">{{instrument.format_time_stamp}}</p>
-                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.format_time_stamp === undefined || instrument.format_time_stamp === ''">---</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_stamp !== undefined && instrument.time_stamp !== ''">{{instrument.time_stamp | date: 'MM/dd/yyyy hh:mm a'}}</p>
+                        <p class="content-right" *ngIf="instrument.status === 'Deployed' && instrument.time_stamp === undefined || instrument.time_stamp === ''">---</p>
                     </div>
                 </div>
                 <ng-template #nullTimestampDeployed><p class="content-right">---</p></ng-template>
@@ -192,8 +192,8 @@
                         <p class="content-left">Retrieve Date</p>
                         <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampRetrieved">
                             <div *ngFor="let instrument of data.row_data.instrument_status">
-                                <p class="content-right" *ngIf="instrument !== undefined && instrument.status !== undefined && instrument.status === 'Retrieved'">{{instrument.format_time_stamp}}</p>
-                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.format_time_stamp === undefined || instrument.format_time_stamp === '')">---</p>
+                                <p class="content-right" *ngIf="instrument !== undefined && instrument.status !== undefined && instrument.status === 'Retrieved'">{{instrument.time_stamp | date: 'MM/dd/yyyy hh:mm a'}}</p>
+                                <p class="content-right" *ngIf="instrument.status === 'Retrieved' && (instrument.time_stamp === undefined || instrument.time_stamp === '')">---</p>
                             </div>
                         </div>
                         <ng-template #nullTimestampRetrieved><p class="content-right">---</p></ng-template>
@@ -295,8 +295,8 @@
                     <p class="content-left">Retrieve Date</p>
                     <div *ngIf="data.row_data.instrument_status.length > 0; else nullTimestampLost">
                         <div class="content-right" *ngFor="let instrument of data.row_data.instrument_status">
-                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.format_time_stamp !== undefined && instrument.format_time_stamp !== '')">{{instrument.format_time_stamp}}</p>
-                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.format_time_stamp === undefined || instrument.format_time_stamp === '')">---</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_stamp !== undefined && instrument.time_stamp !== '')">{{instrument.time_stamp | date: 'MM/dd/yyyy hh:mm a'}}</p>
+                            <p class="content-right" *ngIf="instrument.status === 'Lost' && (instrument.time_stamp === undefined || instrument.time_stamp === '')">---</p>
                         </div>
                     </div>
                     <ng-template #nullTimestampLost><p class="content-right">---</p></ng-template>
@@ -389,7 +389,7 @@
                                 ---
                             </div>
                             <ng-template #displaySensorFileDate>
-                                {{ file.file_date }}
+                                {{ file.file_date | date: 'MM/dd/yyyy'}}
                             </ng-template>
                         </td>
                     </ng-container>
@@ -474,7 +474,7 @@
                             ---
                         </div>
                         <ng-template #displayNWISFileDate>
-                            {{ file.file_date }}
+                            {{ file.file_date | date: 'MM/dd/yyyy'}}
                         </ng-template>
                     </td>
                 </ng-container>
