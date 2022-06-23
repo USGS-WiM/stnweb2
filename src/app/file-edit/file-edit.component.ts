@@ -693,6 +693,7 @@ export class FileEditComponent implements OnInit {
       }
   }
 
+  /* istanbul ignore next */
   postApprovalForNWISfile(data_file_id) {
     this.fileEditService.approveNWISDF(data_file_id).subscribe(approvalResponse => {
         this.nwisFile.approval_id = approvalResponse.approval_id;
@@ -702,6 +703,7 @@ export class FileEditComponent implements OnInit {
     })
   };
 
+  /* istanbul ignore next */
   closeDialog(message) {
     this.dialogRef.close(this.returnData);
     this.loading = false;
