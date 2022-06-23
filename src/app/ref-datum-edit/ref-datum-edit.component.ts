@@ -19,8 +19,6 @@ export class RefDatumEditComponent implements OnInit {
   public vdatums;
   public opQualities;
   public types;
-  public formattedEstDate;
-  public formattedRecDate;
   public unquantified = false;
   public elev_unit = "ft";
   public uncertainty_unit = "ft";
@@ -275,8 +273,8 @@ export class RefDatumEditComponent implements OnInit {
     }
   }
 
-  // Create a date without time
-  makeAdate(d) {
+   // Create a date without time
+   makeAdate(d) {
     var aDate = new Date();
     if (d !== "" && d !== undefined) {
         //provided date
