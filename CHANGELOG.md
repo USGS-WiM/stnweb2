@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Active highlighting on hover and details button click to map filter results table
  -  Ability to delete landowner when editing a site
  -  Ability to add sensor file, datafile and NWIS file in files tab
- -  Ability to delete sensor, data and NWIS files in file tab
+ -  Ability to delete sensor, data and NWIS files in files tab
 
  
 ### Changed
