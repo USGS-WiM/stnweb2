@@ -1631,13 +1631,13 @@
                                     <mat-panel-title *ngIf="sensorFilesExpanded" style="color: #FFF; font-weight: 550">
                                         Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
-                                    <!-- <button *ngIf="currentEvent !== null" mat-button (click)="addFile('Sensor File', $event)"
+                                    <button *ngIf="currentEvent !== null" mat-button (click)="addFile('Sensor File', $event)"
                                         aria-label="Add File"><mat-icon matTooltip="Add a Sensor File" class="add-buttons">add</mat-icon>
-                                    </button> -->
+                                    </button>
                                     <!-- Disabled -->
-                                    <!-- <button *ngIf="currentEvent === null" disabled mat-button class="disabled-icon"
+                                    <button *ngIf="currentEvent === null" disabled mat-button class="disabled-icon"
                                         aria-label="Add File"><mat-icon matTooltip="Select an event to add a Sensor File">add</mat-icon>
-                                    </button> -->
+                                    </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="sensorFiles !== undefined; else noSensorFileTable">
                                     <table *ngIf="sensorFilesDataSource.data.length > 0 && sensorFilesDone; else noSensorFileTable"
@@ -1798,13 +1798,13 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
-                                <!-- <button *ngIf="currentEvent !== null" mat-stroked-button (click)="addFile('Sensor File', $event)" class="add"
+                                <button *ngIf="currentEvent !== null" mat-stroked-button (click)="addFile('Sensor File', $event)" class="add"
                                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
-                                </button> -->
-                                    <!-- Disabled -->
-                                <!-- <button *ngIf="currentEvent === null" disabled mat-stroked-button class="disabled-border"
+                                </button>
+                                <!-- Disabled -->
+                                <button *ngIf="currentEvent === null" disabled mat-stroked-button class="disabled-border"
                                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
-                                </button> -->
+                                </button>
                                 <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                             </mat-expansion-panel>
                             <mat-expansion-panel hideToggle [expanded]="hwmFilesExpanded" (opened)="hwmFilesExpanded = true" (closed)="hwmFilesExpanded = false">

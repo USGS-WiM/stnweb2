@@ -1890,6 +1890,12 @@ export class SiteDetailsComponent implements OnInit {
                         self.refMarkFilesDataSource.paginator.lastPage();
                     }
                 }else if(type === "Sensor File") {
+                    // Add sensor serial_number
+                    self.sensorDataSource.data.forEach(sensor => { 
+                        if(sensor.instrument_id === result.instrument_id){
+                            result.details = {serial_number: sensor.serial_number};
+                        }
+                    })
                     // Update files data source and sensor
                     self.sensorFilesDataSource.data.push(result);
                     self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];

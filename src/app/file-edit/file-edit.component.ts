@@ -17,6 +17,7 @@ import { SiteService } from '@app/services/site.service';
 export class FileEditComponent implements OnInit {
   public file;
   public datafile;
+  public nwisFile;
   public site;
   public form;
   public fileType;
@@ -36,6 +37,7 @@ export class FileEditComponent implements OnInit {
   public previewCaption;
   public agencyNameForCap;
   public returnData;
+  private selectedSensor = {sensor_type_id: null};
   
   currentUser;
   loading = false;
@@ -109,6 +111,17 @@ export class FileEditComponent implements OnInit {
     this.initForm();
   }
 
+  /* istanbul ignore next */
+  // Get selected sensor to get sensor_type_id and show "Is NWIS" checkbox if necessary
+  selectSensor(instrument_id) {
+    this.data.siteSensors.forEach(sensor => {
+      if(sensor.instrument_id === instrument_id){
+        this.selectedSensor = sensor;
+      }
+    })
+  }
+
+  /* istanbul ignore next */
   formatUTCDates(date) {
     let hour = (date.split('T')[1]).split(':')[0];
     // minute
@@ -198,7 +211,7 @@ export class FileEditComponent implements OnInit {
               return ft.filetype === 'Photo' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' || ft.filetype === 'Other' || ft.filetype === 'Sketch' ||
                 ft.filetype === 'NGS Datasheet';
             else if(self.fileCategory === 'Sensor File')
-              return ft.filetype === 'Photo' || ft.filetype === 'Data' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' ||
+              return ft.filetype === 'Photo' || ft.filetype === 'Data' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' || ft.filetype === 'Link' ||
                 ft.filetype === 'Other' || ft.filetype === 'Sketch' || ft.filetype === 'Hydrograph';
         });
       }else{
@@ -263,7 +276,7 @@ export class FileEditComponent implements OnInit {
       File: new FormControl(this.file.File !== undefined ? this.file.File : null),
       file_id: new FormControl(this.file.file_id !== undefined ? this.file.file_id : null),
       name: new FormControl(this.file.name !== undefined ? this.file.name : null, Validators.required),
-      FULLname: new FormControl(this.file.FULLname !== undefined ? this.file.FULLname : null, Validators.required),
+      FULLname: new FormControl(this.file.FULLname !== undefined ? this.file.FULLname : null),
       source_id: new FormControl(this.file.source_id !== undefined ? this.file.source_id : null),
       description: new FormControl(this.file.description !== undefined ? this.file.description : null, Validators.required),
       file_date: new FormControl(this.file.file_date !== undefined ? this.file.file_date : null, Validators.required),
@@ -280,7 +293,7 @@ export class FileEditComponent implements OnInit {
       photo_direction: new FormControl(this.file.photo_direction !== undefined ? this.file.photo_direction : null),
       latitude_dd: new FormControl(this.file.latitude_dd !== undefined ? this.file.latitude_dd : null, [this.checkLatValue()]),
       longitude_dd: new FormControl(this.file.longitude_dd !== undefined ? this.file.longitude_dd : null, [this.checkLonValue()]),
-      is_nwis: new FormControl(this.file.is_nwis !== undefined ? this.file.is_nwis : null),
+      is_nwis: new FormControl({value: this.file.is_nwis !== undefined ? this.file.is_nwis : null, disabled: this.currentUser !== null && this.currentUser.role_id !== 1 && this.currentUser.role_id !== 2}),
       collectDate: new FormControl(this.collectDate !== undefined ? this.collectDate : null),
       elevation_status: new FormControl(this.file.elevation_status !== undefined ? this.file.elevation_status : ""),
     })
@@ -301,8 +314,10 @@ export class FileEditComponent implements OnInit {
   checkIfNWIS(event) {
     if(event.checked){
       this.file.is_nwis = 1;
+      this.form.get("name").setValue("https://waterdata.usgs.gov/nwis/uv?site_no=" + this.site.usgs_sid);
     }else{
       this.file.is_nwis = undefined;
+      this.form.get("name").setValue(null);
     }
   }
 
@@ -331,6 +346,8 @@ export class FileEditComponent implements OnInit {
 
     // All other files
     if(this.file.filetype_id !== 2){
+      // Set required validator for source name
+      this.form.get("FULLname").setValidators([Validators.required]);
       this.file.FULLname = this.currentUser.fname + ' ' + this.currentUser.lname;
       this.form.controls.FULLname.setValue(this.file.FULLname);
     }
@@ -341,6 +358,7 @@ export class FileEditComponent implements OnInit {
       this.collectDate = new Date();
       this.form.controls.collectDate.setValue(new Date());
       this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
+      this.datafile = {};
     }
   }
 
@@ -407,7 +425,11 @@ export class FileEditComponent implements OnInit {
         fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
         fileSubmission.collectDate = fileSubmission.collectDate ? this.formatUTCDates(fileSubmission.collectDate) : fileSubmission.collectDate;
         this.saveFile(fileSubmission);
-      }else{
+      }else{                
+        // Convert dates to correct format
+        fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+        fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+        fileSubmission.collectDate = fileSubmission.collectDate ? this.formatUTCDates(fileSubmission.collectDate) : fileSubmission.collectDate;
         this.createFile(fileSubmission);
       }
     }else{
@@ -493,73 +515,97 @@ export class FileEditComponent implements OnInit {
   createFile(fileSubmission) {
     ///// TODO - In progress to add sensor/data files 
     // Create new file
-    // if (fileSubmission.filetype_id == 2) {
-    //   // Create new data file
-    //   let valid = false;
-    //   //make sure end date is after start date
-    //   var s = fileSubmission.good_start;//need to get dep status date in same format as retrieved to compare
-    //   var e = fileSubmission.good_end; //stupid comma in there making it not the same
-    //   if (new Date(e) < new Date(s)) {
-    //       valid = false;
-    //       this.loading = false;
-    //       this.dialog.open(ConfirmComponent, {
-    //         data: {
-    //           title: "",
-    //           titleIcon: "close",
-    //           message: "The good end date must be after the good start date.",
-    //           confirmButtonText: "OK",
-    //           showCancelButton: false,
-    //         },
-    //       });
-    //   }else if(s === undefined || e === undefined) {
-    //     valid = false;
-    //       this.loading = false;
-    //       this.dialog.open(ConfirmComponent, {
-    //         data: {
-    //           title: "Error",
-    //           titleIcon: "close",
-    //           message: "The good data start date or good data end date is missing. Either choose a date, or click Preview Data to get a chart of the data, where you can choose the dates.",
-    //           confirmButtonText: "OK",
-    //           showCancelButton: false,
-    //         },
-    //       });
-    //   }else{
-    //     valid = true;
-    //     if (this.datafile.data_file_id !== undefined) {
-    //       //has DATA_FILE
-    //       //check timezone and make sure date stays utc
-    //       this.datafile.instrument_id = fileSubmission.instrument_id;
-    //       // Get id of current user
-    //       // this.datafile.processor_id = localStorage.currentUser.member_id;
-    //       this.fileEditService.addDataFile(this.datafile).subscribe((dfresults) => {
-    //         //then POST fileParts (Services populate PATH)
-    //         var fileParts = {
-    //             FileEntity: {
-    //                 filetype_id: fileSubmission.filetype_id,
-    //                 name: fileSubmission.File.name,
-    //                 file_date: fileSubmission.file_date,
-    //                 description: fileSubmission.description,
-    //                 site_id: this.site.site_id,
-    //                 data_file_id: dfresults.data_file_id,
-    //                 photo_direction: fileSubmission.photo_direction,
-    //                 latitude_dd: fileSubmission.latitude_dd,
-    //                 longitude_dd: fileSubmission.longitude_dd,
-    //                 instrument_id: fileSubmission.instrument_id
-    //             },
-    //             File: fileSubmission.File
-    //         };
-    //         //need to put the fileParts into correct format for post
-    //         var fd = new FormData();
-    //         fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
-    //         fd.append("File", fileParts.File);
-    //         this.fileEditService.uploadFile(fd).subscribe((fresults) => {
-    //           this.returnData = fresults;
-    //         });
-    //         // Error handling - if file did not get created, delete data file
-    //       })
-    //     }
-    //   }
-    // }else {
+    // If not NWIS
+    if (fileSubmission.filetype_id == 2 && !fileSubmission.is_nwis) {
+      // Data files don't submit a source
+      // Create new data file
+      //check timezone and make sure date stays utc
+      this.datafile.instrument_id = fileSubmission.instrument_id;
+      // Get id of current user
+      this.datafile.processor_id = this.currentUser.member_id;
+      // Set good_start and good_end to now in UTC
+      this.datafile.good_start = new Date().toUTCString();
+      this.datafile.good_end = new Date().toUTCString();
+      this.datafile.time_zone = "UTC";
+      this.datafile.collect_date = fileSubmission.collectDate;
+      this.datafile.elevation_status = fileSubmission.elevation_status ? fileSubmission.elevation_status : null;
+      this.fileEditService.addDataFile(this.datafile).subscribe((dfresults) => {
+        //then POST fileParts (Services populate PATH)
+        let fileParts = {
+            FileEntity: {
+                filetype_id: fileSubmission.filetype_id,
+                name: fileSubmission.name,
+                file_date: fileSubmission.file_date,
+                description: fileSubmission.description,
+                site_id: this.site.site_id,
+                data_file_id: dfresults.data_file_id,
+                photo_direction: fileSubmission.photo_direction,
+                latitude_dd: fileSubmission.latitude_dd,
+                longitude_dd: fileSubmission.longitude_dd,
+                instrument_id: fileSubmission.instrument_id
+            },
+            File: this.form.controls['File'].value
+        };
+        //need to put the fileParts into correct format for post
+        var fd = new FormData();
+        fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
+        fd.append("File", fileParts.File);
+        this.fileEditService.uploadFile(fd).subscribe((fresults) => {
+          this.returnData = fresults;
+          this.closeDialog("Successfully added data file");
+        },
+        error => {
+          // Error handling - if file did not get created, delete data file
+          this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
+            this.closeDialog("Error creating file");
+          })
+        });
+      },
+      error => {
+          this.closeDialog("Error creating file");
+      })
+    }else if (fileSubmission.filetype_id == 2 && fileSubmission.is_nwis) {
+      // If NWIS
+      let nwisDFFile = {
+        good_start: new Date().toUTCString(),
+        good_end: new Date().toUTCString(),
+        time_zone: 'UTC',
+        processor_id: this.currentUser.member_id,
+        instrument_id: fileSubmission.instrument_id,
+        collect_date: fileSubmission.collectDate,
+      };
+      nwisDFFile["elevation_status"] = fileSubmission.elevation_status ? fileSubmission.elevation_status : null;
+      this.fileEditService.addDataFile(nwisDFFile).subscribe((dfresults) => {
+        //then POST fileParts (Services populate PATH)
+        this.nwisFile = {
+                filetype_id: fileSubmission.filetype_id,
+                name: fileSubmission.name,
+                file_date: fileSubmission.file_date,
+                description: fileSubmission.description,
+                site_id: this.site.site_id,
+                data_file_id: dfresults.data_file_id,
+                instrument_id: fileSubmission.instrument_id,
+                is_nwis: 1,
+                path: '<link>',
+        }
+        // NWIS approval sent automatically when created
+        this.postApprovalForNWISfile(dfresults.data_file_id);
+        this.fileEditService.addFile(this.nwisFile).subscribe((fresults) => {
+          this.returnData = fresults;
+          this.closeDialog("Successfully added data file");
+        },
+        error => {
+          // Error handling - if file did not get created, delete data file
+          this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
+            this.closeDialog("Error creating file");
+          })
+        });
+      },
+      error => {
+          this.closeDialog("Error creating file");
+      })
+
+    }else {
           // Create new file (not data file)
           let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
           this.siteEditService.postSource(theSource)
@@ -580,6 +626,8 @@ export class FileEditComponent implements OnInit {
                             site_id: this.site.site_id,
                             source_id: response.source_id,
                             photo_direction: fileSubmission.photo_direction,
+                            latitude_dd: fileSubmission.latitude_dd,
+                            longitude_dd: fileSubmission.longitude_dd,
                             instrument_id: fileSubmission.instrument_id,
                             hwm_id: fileSubmission.hwm_id,
                             objective_point_id: fileSubmission.objective_point_id,
@@ -612,12 +660,24 @@ export class FileEditComponent implements OnInit {
                     fileSubmission.site_id = this.site.site_id;
                     fileSubmission.source_id = response.source_id;
 
+                    // Remove instrument, hwm or op id from fileSubmission
+                    if(this.data.type === 'Sensor File'){
+                      delete fileSubmission.hwm_id;
+                      delete fileSubmission.objective_point_id;
+                    }else if(this.data.type === 'HWM File'){
+                      delete fileSubmission.instrument_id;
+                      delete fileSubmission.objective_point_id;
+                    }else if(this.data.type === 'Reference Datum File'){
+                      delete fileSubmission.hwm_id;
+                      delete fileSubmission.instrument_id;
+                    }
+
+                    delete fileSubmission.data_file_id; delete fileSubmission.is_nwis;
                     // Remove extra photo fields
-                    // delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd; delete fileSubmission.photo_direction; delete fileSubmission.path; delete fileSubmission.photo_date;
+                    delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd; delete fileSubmission.photo_direction; delete fileSubmission.path; delete fileSubmission.photo_date;
                     if(fileSubmission.script_parent === null) {
                       delete fileSubmission.script_parent;
                     }
-
                     this.fileEditService.addFile(fileSubmission)
                         .subscribe(
                             (data) => {
@@ -630,9 +690,20 @@ export class FileEditComponent implements OnInit {
                   this.closeDialog("Error saving source")
                 }
             })
-      // }
+      }
   }
 
+  /* istanbul ignore next */
+  postApprovalForNWISfile(data_file_id) {
+    this.fileEditService.approveNWISDF(data_file_id).subscribe(approvalResponse => {
+        this.nwisFile.approval_id = approvalResponse.approval_id;
+    },
+    error => {
+        this.closeDialog("Error approving NWIS data file");
+    })
+  };
+
+  /* istanbul ignore next */
   closeDialog(message) {
     this.dialogRef.close(this.returnData);
     this.loading = false;
