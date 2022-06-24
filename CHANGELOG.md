@@ -17,8 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Ability to delete landowner when editing a site
  -  Ability to add sensor file, datafile and NWIS file in files tab
  -  Ability to delete sensor, data and NWIS files in files tab
+ -  Ability to edit sensor, data and nwis files in file tab
 
- 
 ### Changed
 
  -  Disabled sensor retrieve button when no event is selected

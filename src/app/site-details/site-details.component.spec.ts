@@ -79,6 +79,26 @@ describe('SiteDetailsComponent', () => {
         expect(component.rowHeight).toEqual("1:0.8");
         expect(component.rowspan).toEqual("2");
         expect(component.lowerHeight).toEqual("1:1");
+        
+        mockEvent = {target: {innerWidth: 770}}
+
+        component.onResize(mockEvent);
+        fixture.detectChanges();
+        expect(component.gridListWidth).toEqual(1);
+        expect(component.lowerColumns).toEqual(1);
+        expect(component.rowHeight).toEqual("1:1");
+        expect(component.rowspan).toEqual("2");
+        expect(component.lowerHeight).toEqual("1:0.8");
+        
+        mockEvent = {target: {innerWidth: 880}}
+
+        component.onResize(mockEvent);
+        fixture.detectChanges();
+        expect(component.gridListWidth).toEqual(1);
+        expect(component.lowerColumns).toEqual(2);
+        expect(component.rowHeight).toEqual("1:0.3");
+        expect(component.rowspan).toEqual("2");
+        expect(component.lowerHeight).toEqual("1:0.4");
     });
 
     it('should call getCurrentFilters and return current event', () => {

@@ -167,10 +167,10 @@
             </div>
 
             <!-- Approval Info -->
-            <div class="row" *ngIf="file.filetype_id === 2 && file.file_id !== undefined && (file.is_nwis === undefined || file.is_nwis !== 1)">
+            <div class="row" *ngIf="file.filetype_id === 2 && file.file_id !== undefined && (file.is_nwis === undefined || file.is_nwis !== 1) && approvedBy">
                 <label class="form-header">Approved By:</label> {{approvedBy || '---'}}
             </div>
-            <div class="row" *ngIf="file.filetype_id === 2 && file.file_id !== undefined && (file.is_nwis === undefined || file.is_nwis !== 1)">
+            <div class="row" *ngIf="file.filetype_id === 2 && file.file_id !== undefined && (file.is_nwis === undefined || file.is_nwis !== 1) && approvedOn">
                 <label class="form-header">Approval Date:</label> {{approvedOn | date: 'MM/dd/yyyy' || '---'}}
             </div>
 

@@ -159,11 +159,13 @@ export class FileEditComponent implements OnInit {
         .subscribe((datafileResults) => {
             this.datafile = datafileResults;
             this.collectDate = datafileResults.collect_date;
+            this.form.get("collectDate").setValue(this.collectDate);
             if(datafileResults.processor_id !== undefined && datafileResults.processor_id !== 0){
               this.siteService
               .getMemberName(datafileResults.processor_id)
               .subscribe((memberResult) => {
                 this.processorName = memberResult.fname + " " + memberResult.lname;
+                this.file.processor_id = datafileResults.processor_id;
               });
             }
         });
@@ -281,7 +283,7 @@ export class FileEditComponent implements OnInit {
       description: new FormControl(this.file.description !== undefined ? this.file.description : null, Validators.required),
       file_date: new FormControl(this.file.file_date !== undefined ? this.file.file_date : null, Validators.required),
       photo_date: new FormControl(this.file.photo_date !== undefined ? this.file.photo_date : null),
-      agency_id: new FormControl(this.file.agency_id !== undefined ? this.file.agency_id : null, Validators.required),
+      agency_id: new FormControl(this.file.agency_id !== undefined ? this.file.agency_id : null),
       site_id: new FormControl(this.file.site_id !== undefined ? this.file.site_id : null),
       hwm_id: new FormControl(this.file.hwm_id !== undefined ? this.file.hwm_id : null),
       data_file_id: new FormControl(this.file.data_file_id !== undefined ? this.file.data_file_id : null),
@@ -308,6 +310,13 @@ export class FileEditComponent implements OnInit {
 
     if(this.form.controls.filetype_id.value === 1){
       this.form.controls["photo_date"].setValidators([Validators.required]);
+    }
+
+    if(this.file.filetype_id !== 2){
+      // Set required validator for source name
+      this.form.get("FULLname").setValidators([Validators.required]);
+      // Set required validator for agency
+      this.form.get("agency_id").setValidators([Validators.required]);
     }
   }
 
@@ -346,6 +355,8 @@ export class FileEditComponent implements OnInit {
 
     // All other files
     if(this.file.filetype_id !== 2){
+      // Set required validator for agency
+      this.form.get("agency_id").setValidators([Validators.required]);
       // Set required validator for source name
       this.form.get("FULLname").setValidators([Validators.required]);
       this.file.FULLname = this.currentUser.fname + ' ' + this.currentUser.lname;
@@ -453,63 +464,123 @@ export class FileEditComponent implements OnInit {
   }
 
   saveFile(fileSubmission) {
-    ///// TODO - In progress to edit sensor/data files 
     // Edit existing file
     // If data file
-    // if (fileSubmission.filetype_id == 2) {
-    //   let valid = false;
-    //   //make sure end date is after start date
-    //   var s = fileSubmission.good_start;//need to get dep status date in same format as retrieved to compare
-    //   var e = fileSubmission.good_end; //stupid comma in there making it not the same
-    //   if (new Date(e) < new Date(s)) {
-    //     valid = false;
-    //     this.loading = false;
-    //     this.dialog.open(ConfirmComponent, {
-    //       data: {
-    //         title: "Error",
-    //         titleIcon: "close",
-    //         message: "The good end date must be after the good start date.",
-    //         confirmButtonText: "OK",
-    //         showCancelButton: false,
-    //       },
-    //     });
-    //   }else{
-    //     valid = true;
-    //     if(fileSubmission.is_nwis === 1){
-    //       fileSubmission.path = '<link>';
-    //     }
-    //     if (this.datafile.data_file_id !== undefined) {
-    //       //has DATA_FILE
-    //       //check timezone and make sure date stays utc
-    //       this.fileEditService.updateDataFile(this.datafile.data_file_id, this.datafile).subscribe((dfresults) => {
-    //         this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
-    //           this.returnData = fresults;
-    //         });
-    //       })
-    //     }
-    //   }
-    // }else {
+    if (fileSubmission.filetype_id == 2 && !fileSubmission.is_nwis) {
+        // Data files don't submit a source
+        this.datafile.instrument_id = fileSubmission.instrument_id;
+        // Get id of current user
+        this.datafile.processor_id = this.file.processor_id;
+        // Set good_start and good_end to now in UTC
+        this.datafile.good_start = this.datafile.good_start ? this.formatUTCDates(this.datafile.good_start) : this.datafile.good_start;
+        this.datafile.good_end = this.datafile.good_end ? this.formatUTCDates(this.datafile.good_end) : this.datafile.good_end;
+        this.datafile.time_zone = "UTC";
+        this.datafile.collect_date = fileSubmission.collectDate;
+        this.datafile.elevation_status = fileSubmission.elevation_status ? fileSubmission.elevation_status : null;
+        // Delete extra fields
+        delete fileSubmission.File; delete fileSubmission.agency_id; delete fileSubmission.source_id;
+        delete fileSubmission.FULLname; delete fileSubmission.collectDate;
+        if(fileSubmission.script_parent === null) {
+          delete fileSubmission.script_parent;
+        }
+        // Remove instrument, hwm or op id from fileSubmission
+        if(this.data.type === 'Sensor File'){
+          delete fileSubmission.hwm_id;
+          delete fileSubmission.objective_point_id;
+        }else if(this.data.type === 'HWM File'){
+          delete fileSubmission.instrument_id;
+          delete fileSubmission.objective_point_id;
+        }else if(this.data.type === 'Reference Datum File'){
+          delete fileSubmission.hwm_id;
+          delete fileSubmission.instrument_id;
+        }
+        this.fileEditService.updateDataFile(this.datafile.data_file_id, this.datafile).subscribe((dfresults) => {
+          this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
+            this.returnData = fresults;
+            this.closeDialog("Successfully updated file");
+          }, error => {
+            this.closeDialog("Error saving file");
+          });
+        }, error => {
+          this.closeDialog("Error saving file's data file");
+        })
+    }else if (fileSubmission.filetype_id == 2 && fileSubmission.is_nwis) {
+      // Data files don't submit a source
+      this.datafile.instrument_id = fileSubmission.instrument_id;
+      // Get id of current user
+      this.datafile.processor_id = this.file.processor_id;
+      // Set good_start and good_end to now in UTC
+      this.datafile.good_start = this.datafile.good_start ? this.formatUTCDates(this.datafile.good_start) : this.datafile.good_start;
+      this.datafile.good_end = this.datafile.good_end ? this.formatUTCDates(this.datafile.good_end) : this.datafile.good_end;
+      this.datafile.time_zone = "UTC";
+      this.datafile.collect_date = fileSubmission.collectDate;
+      this.datafile.elevation_status = fileSubmission.elevation_status ? fileSubmission.elevation_status : null;
+      // Delete extra fields
+      delete fileSubmission.File; delete fileSubmission.agency_id; delete fileSubmission.source_id;
+      delete fileSubmission.FULLname; delete fileSubmission.collectDate;
+      if(fileSubmission.script_parent === null) {
+        delete fileSubmission.script_parent;
+      }
+      // Remove instrument, hwm or op id from fileSubmission
+      if(this.data.type === 'Sensor File'){
+        delete fileSubmission.hwm_id;
+        delete fileSubmission.objective_point_id;
+      }else if(this.data.type === 'HWM File'){
+        delete fileSubmission.instrument_id;
+        delete fileSubmission.objective_point_id;
+      }else if(this.data.type === 'Reference Datum File'){
+        delete fileSubmission.hwm_id;
+        delete fileSubmission.instrument_id;
+      }
+      // If NWIS datafile
+      this.fileEditService.updateDataFile(this.datafile.data_file_id, this.datafile).subscribe((dfresults) => {
+          this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
+            this.returnData = fresults;
+            this.closeDialog("Successfully updated file");
+          }, error => {
+            this.closeDialog("Error saving file");
+          });
+      }, error => {
+        this.closeDialog("Error saving file's data file");
+      })
+    }else {
       let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
       this.siteEditService.postSource(theSource)
       .subscribe(
           (response) => {
-            fileSubmission.source_id = response.source_id;
-            // Delete extra fields
-            delete fileSubmission.File; delete fileSubmission.agency_id; delete fileSubmission.elevation_status;
-            delete fileSubmission.FULLname; delete fileSubmission.collectDate;
-            if(fileSubmission.script_parent === null) {
-              delete fileSubmission.script_parent;
+            if(response !== []){
+              fileSubmission.source_id = response.source_id;
+              // Delete extra fields
+              delete fileSubmission.File; delete fileSubmission.agency_id; delete fileSubmission.elevation_status;
+              delete fileSubmission.FULLname; delete fileSubmission.collectDate;
+              if(fileSubmission.script_parent === null) {
+                delete fileSubmission.script_parent;
+              }
+              delete fileSubmission.data_file_id; delete fileSubmission.is_nwis;
+              // Remove instrument, hwm or op id from fileSubmission
+              if(this.data.type === 'Sensor File'){
+                delete fileSubmission.hwm_id;
+                delete fileSubmission.objective_point_id;
+              }else if(this.data.type === 'HWM File'){
+                delete fileSubmission.instrument_id;
+                delete fileSubmission.objective_point_id;
+              }else if(this.data.type === 'Reference Datum File'){
+                delete fileSubmission.hwm_id;
+                delete fileSubmission.instrument_id;
+              }
+              this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission)
+                .subscribe(
+                    (data) => {
+                      this.returnData = data;
+                      this.closeDialog("Successfully updated file");
+                    }
+                );
+            }else{
+              this.closeDialog("Error saving source");
             }
-            this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission)
-              .subscribe(
-                  (data) => {
-                    this.returnData = data;
-                    this.closeDialog("Successfully updated file");
-                  }
-              );
           }
       )
-    // }
+    }
   }
 
   createFile(fileSubmission) {

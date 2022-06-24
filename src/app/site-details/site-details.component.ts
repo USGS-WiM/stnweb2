@@ -760,6 +760,7 @@ export class SiteDetailsComponent implements OnInit {
             });
     }
 
+    /* istanbul ignore next */
     // Create a date without time
     makeAdate(d) {
         var aDate = new Date(d);
@@ -771,6 +772,7 @@ export class SiteDetailsComponent implements OnInit {
         return dateWOtime;
     };
 
+    /* istanbul ignore next */
     setTimeAndDate(time_stamp) {
         let hour = (time_stamp.split('T')[1]).split(':')[0];
         let ampm;
@@ -1756,6 +1758,7 @@ export class SiteDetailsComponent implements OnInit {
         });
     }
 
+    /* istanbul ignore next */
     openFileDetailsDialog(row, type): void {
         this.clickedFileRows.clear();
         this.clickedFileRows.add(row);
@@ -1817,6 +1820,12 @@ export class SiteDetailsComponent implements OnInit {
                         }
                     })
                 }else if(type === "Sensor File") {
+                    // Add sensor serial_number
+                    self.sensorDataSource.data.forEach(sensor => { 
+                        if(sensor.instrument_id === result.instrument_id){
+                            result.details = {serial_number: sensor.serial_number};
+                        }
+                    })
                     // Update files data source and sensor
                     self.sensorFilesDataSource.data.forEach(function(file, i){
                         if(file.file_id === result.file_id){
@@ -2093,6 +2102,7 @@ export class SiteDetailsComponent implements OnInit {
     // fired when user clicks a sortable header
     sortSensorData(sort: Sort) {
         const data = this.sensorDataSource.data.slice();
+        /* istanbul ignore next */
         if (!sort.active || sort.direction === '') {
             this.sortedSensorData = data;
             return;
@@ -2122,6 +2132,7 @@ export class SiteDetailsComponent implements OnInit {
     // fired when user clicks a sortable header
     sortHWMData(sort: Sort) {
         const data = this.hwmDataSource.data.slice();
+        /* istanbul ignore next */
         if (!sort.active || sort.direction === '') {
             this.sortedHWMData = data;
             return;
@@ -2151,6 +2162,7 @@ export class SiteDetailsComponent implements OnInit {
      // fired when user clicks a sortable header
      sortPeaksData(sort: Sort) {
         const data = this.peaksDataSource.data.slice();
+        /* istanbul ignore next */
         if (!sort.active || sort.direction === '') {
             this.sortedPeaksData = data;
             return;
@@ -2177,6 +2189,7 @@ export class SiteDetailsComponent implements OnInit {
 
     sortRefMarkData(sort: Sort) {
         const data = this.refMarkDataSource.data.slice();
+        /* istanbul ignore next */
         if (!sort.active || sort.direction === '') {
             this.sortedRefMarkData = data;
             return;
@@ -2204,6 +2217,7 @@ export class SiteDetailsComponent implements OnInit {
 
     sortRefMarkFilesData(sort: Sort) {
         const data = this.refMarkFilesDataSource.data.slice();
+        /* istanbul ignore next */
         if (!sort.active || sort.direction === '') {
             this.sortedRefMarkFilesData = data;
             return;
@@ -2231,6 +2245,7 @@ export class SiteDetailsComponent implements OnInit {
 
     sortSiteFilesData(sort: Sort) {
         const data = this.siteFilesDataSource.data.slice();
+        /* istanbul ignore next */
         if (!sort.active || sort.direction === '') {
             this.sortedSiteFilesData = data;
             return;
@@ -2256,6 +2271,7 @@ export class SiteDetailsComponent implements OnInit {
 
     sortSensorFilesData(sort: Sort) {
         const data = this.sensorFilesDataSource.data.slice();
+        /* istanbul ignore next */
         if (!sort.active || sort.direction === '') {
             this.sortedSensorFilesData = data;
             return;
@@ -2283,6 +2299,7 @@ export class SiteDetailsComponent implements OnInit {
 
     sortHWMFilesData(sort: Sort) {
         const data = this.hwmFilesDataSource.data.slice();
+        /* istanbul ignore next */
         if (!sort.active || sort.direction === '') {
             this.sortedHWMFilesData = data;
             return;
