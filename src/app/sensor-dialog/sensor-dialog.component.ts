@@ -140,13 +140,13 @@ export class SensorDialogComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   sortSensorFilesData(sort: Sort) {
     const data = this.sensorFilesDataSource.data.slice();
     if (!sort.active || sort.direction === '') {
         this.sortedSensorFilesData = data;
         return;
     }
-    /* istanbul ignore next */
     this.sortedSensorFilesData = data.sort((a, b) => {
         const isAsc = sort.direction === 'asc';
         switch (sort.active) {
@@ -165,13 +165,13 @@ export class SensorDialogComponent implements OnInit {
     this.sensorFilesDataSource.data = this.sortedSensorFilesData;
   }
 
+  /* istanbul ignore next */
   sortNWISFilesData(sort: Sort) {
     const data = this.nwisFilesDataSource.data.slice();
     if (!sort.active || sort.direction === '') {
         this.sortedNWISFilesData = data;
         return;
     }
-    /* istanbul ignore next */
     this.sortedNWISFilesData = data.sort((a, b) => {
         const isAsc = sort.direction === 'asc';
         switch (sort.active) {
