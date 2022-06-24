@@ -480,6 +480,7 @@ export class SiteEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   removeLandownerContact() {
     this.addLandownerCheck = false;
     this.deleteLandownerCheck = true;

@@ -30,7 +30,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <div *ngIf="data.type === 'Sensor File' && file.filetype_id === 2">
+                <div *ngIf="data.type === 'Sensor File' && file.filetype_id === 2 && ((selectedSensor.sensor_type_id == 2 || selectedSensor.sensor_type_id == 5) || selectedSensor.sensor_type_id == 6)">
                     <mat-checkbox
                         aria-checked="false"
                         class="checkbox-margin"
@@ -67,7 +67,7 @@
             <div *ngIf="data.addOrEdit === 'Add' && data.type === 'Sensor File'">
                 <mat-form-field appearance="fill">
                     <mat-label>Sensor</mat-label>
-                    <mat-select aria-label="Sensor" required formControlName="instrument_id">
+                    <mat-select aria-label="Sensor" required formControlName="instrument_id" (selectionChange)="selectSensor($event.value)">
                         <mat-option *ngFor="let instrument of data.siteSensors" [value]="instrument.instrument_id">
                         {{instrument.statusType}} - {{instrument.deploymentType || instrument.sensorType}} - {{instrument.instrument_id}}
                         </mat-option>
@@ -76,10 +76,13 @@
             </div>
 
             <!-- File URL* (Link) -->
-            <div *ngIf="file.is_nwis !== undefined && file.is_nwis === 1 || file.filetype_id === 8">
+            <div *ngIf="(file.is_nwis !== undefined && file.is_nwis === 1) || file.filetype_id === 8">
                 <mat-form-field appearance="fill">
                     <mat-label>File URL</mat-label>
-                    <input aria-label="File URL" matInput formControlName="name" [value]="file.name"/>
+                    <input *ngIf="file.is_nwis !== 1" required aria-label="File URL" matInput formControlName="name" [value]="file.name"/>
+                    <!-- NWIS URL -->
+                    <input *ngIf="file.is_nwis === 1" required aria-label="File URL" matInput formControlName="name" [value]="file.name"/>
+                    <mat-icon *ngIf="file.is_nwis === 1" class="info-icon" matTooltip="Auto generated from USGS Station ID. Correct if necessary.">info</mat-icon>
                 </mat-form-field>
             </div>
 
@@ -219,7 +222,7 @@
             </div>
 
             <!--Upload Single Image with validations* - add-->
-            <div *ngIf="data.addOrEdit === 'Add' && file.filetype_id !== 8">
+            <div *ngIf="data.addOrEdit === 'Add' && file.filetype_id !== 8 && file.is_nwis !== 1">
                 <label class="custom-file-input-add" for="addFile">
                     <p class="required">*</p> {{ file.name || ' None Chosen' }}
                 </label>
