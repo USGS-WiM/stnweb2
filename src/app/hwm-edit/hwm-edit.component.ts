@@ -84,6 +84,15 @@ export class HwmEditComponent implements OnInit {
     File: null
   };
   private fileTypes = [];
+  private fileType;
+  private sourceName;
+  private sourceAgency;
+  private previewCaption;
+  private approvedBy;
+  private approvedOn;
+  private collectDate;
+  private processorName;
+  private elevation;
   public fileValid;
   public fileUploading;
   public fileSource;
@@ -101,6 +110,7 @@ export class HwmEditComponent implements OnInit {
   expandedElement: any;
   showFileForm = false;
   showFileCreateForm = false;
+  showDetails = false;
 
   infoExpanded = true;
   filesExpanded = false;
@@ -703,22 +713,34 @@ export class HwmEditComponent implements OnInit {
     this.hwmFileForm.get('hwm_id').setValue(this.hwm.hwm_id);
   }
 
-  setFileSourceAgency(){
+  setFileSourceAgency(source_id){
     this.siteService
-    .getFileSource(this.selectedFile.FileEntity.source_id)
+    .getFileSource(source_id)
     .subscribe((results) => {
         this.selectedFile.FileEntity.agency_id = results.agency_id;
         this.agencyNameForCap = results.agency_name;
-        this.hwmFileForm.get('agency_id').setValue(this.selectedFile.FileEntity.agency_id);
+        this.hwmFileForm.controls['agency_id'].setValue(this.selectedFile.FileEntity.agency_id);
+        this.sourceAgency = results.agency_name
+        if (this.sourceAgency === undefined || this.sourceAgency === ''){
+          this.previewCaption["sourceAgency"] = '(source agency)'
+        }else{
+          this.previewCaption["sourceAgency"] = this.sourceAgency;
+        }
     });
   }
 
-  setFileSource(){
+  setFileSource(source_id){
     this.siteService
-    .getSourceName(this.selectedFile.FileEntity.source_id)
+    .getSourceName(source_id)
     .subscribe((results) => {
         this.selectedFile.FileEntity.FULLname = results.source_name;
-        this.hwmFileForm.get('FULLname').setValue(this.selectedFile.FileEntity.FULLname);
+        this.hwmFileForm.controls['FULLname'].setValue(this.selectedFile.FileEntity.FULLname);
+        this.sourceName = results.source_name;
+        if (this.sourceName === undefined || this.sourceName === ''){
+          this.previewCaption["sourceName"] = '(source name)'
+        }else{
+          this.previewCaption["sourceName"] = this.sourceName;
+        }
     });
   }
 
@@ -736,16 +758,60 @@ export class HwmEditComponent implements OnInit {
           this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.selectedFile.FileEntity.file_id + '/item';
           this.selectedFile.FileEntity.name = results.FileName;
           this.hwmFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
-          this.setFileSourceAgency();
-          this.setFileSource();
+          this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
+          this.setFileSource(this.selectedFile.FileEntity.source_id);
         }else{
           this.fileItemExists = false;
-          this.setFileSourceAgency();
-          this.setFileSource();
+          this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
+          this.setFileSource(this.selectedFile.FileEntity.source_id);
         }
       });
     }else{
       this.fileItemExists = false;
+    }
+  }
+
+  showFileDetails(row) {
+    if(row) {
+      this.expandedElement = row;
+      this.showDetails = true;
+      this.showFileForm = false;
+      // Get filetype name
+      this.fileType = this.fileTypeLookup(row.filetype_id);
+      // Get source name and preview caption
+      this.setFileSource(row.source_id);
+      // Get agency ID
+      this.setFileSourceAgency(row.source_id);
+
+      this.previewCaption = {
+        description: row.description,
+        site_description: this.data.hwmSite.site_description,
+        county: this.data.hwmSite.county,
+        state: this.data.hwmSite.state,
+        photo_date: row.photo_date,
+        sourceName: this.sourceName,
+        sourceAgency: this.sourceAgency,
+      }
+
+      // Replace any undefined preview caption info with placeholder
+      if (row.description === undefined || row.description == ''){
+        this.previewCaption.description = "(description)";
+      }
+      if (this.data.hwmSite.site_description === undefined || this.data.hwmSite.site_description == ''){
+        this.previewCaption.site_description = '(site description)'
+      }
+      if (this.data.hwmSite.county === undefined || this.data.hwmSite.county == ''){
+        this.previewCaption.county = '(county)'
+      }
+      if (this.data.hwmSite.state === undefined || this.data.hwmSite.state == ''){
+        this.previewCaption.state = '(state)'
+      }
+      if (row.photo_date === undefined || row.photo_date == ''){
+        this.previewCaption.photo_date = '(photo date)'
+      }
+    }else{
+      this.expandedElement = null;
+      this.showDetails = false;
     }
   }
 
@@ -755,6 +821,7 @@ export class HwmEditComponent implements OnInit {
       this.cancelFile();
       this.setInitFileEditForm(row);
       this.expandedElement = row;
+      this.showDetails = false;
       this.showFileForm = true;
       this.selectedFile.FileEntity.file_id = row.file_id;
       this.selectedFile.FileEntity.filetype_id = row.filetype_id;

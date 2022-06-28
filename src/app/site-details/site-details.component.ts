@@ -1246,12 +1246,12 @@ export class SiteDetailsComponent implements OnInit {
                         self.hwmFilesDataSource.data.push(file.file);
                         self.fileLength ++;
                     }else if(file.type === "update"){
+                        console.log("update")
                         self.hwmFilesDataSource.data.forEach((hwmFile, j) => {
-                            if(hwmFile.file_id === file.file_id){
+                            if(hwmFile.file_id === file.file.file_id){
                                 self.hwmFilesDataSource.data[j] = file.file;
                             }
                         });
-                        self.fileLength ++;
                     }
                 })
                 self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
