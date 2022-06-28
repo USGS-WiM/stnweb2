@@ -44,7 +44,6 @@ export class SiteEditComponent implements OnInit {
   public latLngUnit = 'decdeg';
   public agencies = [];
   public agencyNameForCap;
-  public formattedPhotoDate;
   public fileSource;
   public addFileType;
   public valid;
@@ -126,6 +125,7 @@ export class SiteEditComponent implements OnInit {
 
   public hasLandownerContact = false;
   public addLandownerCheck = false;
+  public deleteLandownerCheck = false;
   public useSiteAddress = false;
   public showFileForm = false;
   public incorrectDMS = false;
@@ -393,7 +393,7 @@ export class SiteEditComponent implements OnInit {
     this.site.city = this.data.site.city !== undefined && this.data.site.city !== "" ? this.data.site.city : null;
     this.site.zip = this.data.site.zip !== undefined && this.data.site.zip !== "" ? this.data.site.zip : null;
     this.site.memberName = this.data.memberName !== undefined && this.data.memberName !== "---" && this.data.memberName !== "" ? this.data.memberName : null;
-    this.hasLandownerContact = this.data.site.landownercontact_id !== undefined && this.data.site.landownercontact_id !== "---" && this.data.site.landownercontact_id !== "" ? true : null;
+    this.hasLandownerContact = this.data.site.landownercontact_id !== undefined && this.data.site.landownercontact_id !== "---" && this.data.site.landownercontact_id !== "" ? true : false;
     this.landownerContact = this.data.landowner !== "" && this.data.landowner !== undefined && this.data.landowner !== null ? JSON.parse(JSON.stringify(this.data.landowner)) : this.landownerContact;
     this.addLandownerCheck = this.data.landowner !== "" && this.data.landowner !== undefined && this.data.landowner !== null ? true: false;
     this.data.siteHousing.forEach(function(type){
@@ -473,6 +473,39 @@ export class SiteEditComponent implements OnInit {
 
   addLandownerContact() {
     this.addLandownerCheck = true;
+    this.landownerForm.get("fname").setValidators([Validators.required]);
+    this.landownerForm.get("fname").updateValueAndValidity();
+    if(this.data.site.landownercontact_id === undefined || this.data.site.landownercontact_id === "---" || this.data.site.landownercontact_id === ""){
+      this.deleteLandownerCheck = false;
+    }
+  }
+
+  /* istanbul ignore next */
+  removeLandownerContact() {
+    this.addLandownerCheck = false;
+    this.deleteLandownerCheck = true;
+    if(!this.hasLandownerContact){
+      this.landownerForm.reset();
+    }else{
+      this.landownerForm.get("lname").setValue(null);
+      this.landownerForm.get("fname").setValue(null);
+      this.landownerForm.get("title").setValue(null);
+      this.landownerForm.get("address").setValue(null);
+      this.landownerForm.get("city").setValue(null);
+      this.landownerForm.get("state").setValue(null);
+      this.landownerForm.get("zip").setValue(null);
+      this.landownerForm.get("primaryphone").setValue(null);
+      this.landownerForm.get("secondaryphone").setValue(null);
+      this.landownerForm.get("email").setValue(null);
+      this.landownerForm.get("landownercontactid").setValue(null);
+      this.hasLandownerContact = false;
+    }
+    this.landownerForm.get("fname").setErrors(null);
+    this.landownerForm.get("fname").clearValidators();
+    this.landownerForm.get("fname").updateValueAndValidity();
+    if(this.data.site.landownercontact_id === undefined || this.data.site.landownercontact_id === "---" || this.data.site.landownercontact_id === ""){
+      this.deleteLandownerCheck = false;
+    }
   }
 
   initLandownerForm() {
@@ -487,7 +520,7 @@ export class SiteEditComponent implements OnInit {
       email: new FormControl(this.landownerContact.email, Validators.email),
       primaryphone: new FormControl(this.landownerContact.primaryphone, Validators.pattern(this.phonePattern)),
       secondaryphone: new FormControl(this.landownerContact.secondaryphone, Validators.pattern(this.phonePattern)),
-      landownercontact_id: new FormControl(this.landownerContact.landownercontactid)
+      landownercontactid: new FormControl(this.landownerContact.landownercontactid)
     })
   }
 
@@ -547,9 +580,7 @@ export class SiteEditComponent implements OnInit {
     this.showFileForm = true;
     this.addFileType = "New";
     this.siteFiles.FileEntity.file_date = new Date();
-    this.siteFiles.FileEntity.photo_date = new Date();
     this.siteFileForm.controls["file_date"].setValue(this.siteFiles.FileEntity.file_date);
-    this.siteFileForm.controls["photo_date"].setValue(this.siteFiles.FileEntity.photo_date);
     
     // Set source name and agency automatically
     // Member id
@@ -569,6 +600,14 @@ export class SiteEditComponent implements OnInit {
 
   getFileTypeSelection(event) {
     this.siteFiles.FileEntity.filetype_id = event.value;
+
+    if(this.siteFiles.FileEntity.filetype_id === 1){
+      this.siteFiles.FileEntity.photo_date = new Date();
+      this.siteFileForm.controls["photo_date"].setValue(this.siteFiles.FileEntity.photo_date);
+    }else{
+      this.siteFiles.FileEntity.photo_date = null;
+      this.siteFileForm.controls["photo_date"].setValue(this.siteFiles.FileEntity.photo_date);
+    }
   }
 
   initSiteForm() {
@@ -687,10 +726,6 @@ export class SiteEditComponent implements OnInit {
       longitude_dd: new FormControl(this.siteFiles.FileEntity.longitude_dd, [this.checkLonValue()]),
       is_nwis: new FormControl(null),
     })
-  }
-
-  formatDate(event){
-    this.formattedPhotoDate = (event.value.getMonth() + 1) + '/' + event.value.getDate() + '/' + event.value.getFullYear();
   }
 
   changeLatLngUnit(event) {
@@ -859,7 +894,6 @@ export class SiteEditComponent implements OnInit {
     this.siteFileForm.controls['longitude_dd'].setValue(this.siteFiles.FileEntity.longitude_dd);
     this.siteFileForm.controls['site_id'].setValue(this.siteFiles.FileEntity.site_id);
     this.siteFileForm.controls['name'].setValue(this.siteFiles.FileEntity.name);
-
     this.getFile();
   }
 
@@ -923,12 +957,31 @@ export class SiteEditComponent implements OnInit {
     });
   }
 
+  formatUTCDates(date) {
+    let hour = (date.split('T')[1]).split(':')[0];
+    // minute
+    let minute = date.split('T')[1].split(':')[1];
+    let timestamp = date.split("T")[0];
+    timestamp = timestamp.split("-");
+    let day = timestamp[0];
+    let month = timestamp[1];
+    let year = timestamp[2];
+    let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(hour), Number(minute)));
+    let formatted_date = new Date(utcPreview).toUTCString();
+    return formatted_date;
+  }
+
   // Re-upload file or add missing file
   saveFileUpload() {
     let self = this;
     // update this.siteFiles
     // update siteFilesForm
     let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+
     let formatFileSubmission = {
       file_id: fileSubmission.file_id,
       description: fileSubmission.description,
@@ -953,10 +1006,6 @@ export class SiteEditComponent implements OnInit {
               this.returnData.files.forEach(function(file, i){
                 if(file.file_id === data.file_id){
                   self.returnData.files[i] = data;
-                  let fileDate = self.returnData.files[i].file_date.split("T")[0];
-                  fileDate = fileDate.split("-");
-                  fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                  self.returnData.files[i].format_file_date = fileDate;
                   self.initSiteFiles = self.returnData.files;
                   self.initSiteFiles = [...self.initSiteFiles];
                   self.showFileForm = false;
@@ -1030,17 +1079,48 @@ export class SiteEditComponent implements OnInit {
       this.loading = true;
       this.valid = true;
       // Post landowner if added/changed
-      if(this.landownerForm.dirty){
+      if(this.landownerForm.dirty || this.deleteLandownerCheck || this.addLandownerCheck){
         if(this.landownerForm.valid){
           this.landownerValid = true;
-          if(this.landownerForm.controls.landownercontact_id.value !== undefined && this.landownerForm.controls.landownercontact_id.value !== null && this.landownerForm.controls.landownercontact_id.value > 0){
-            this.siteEditService.putLandowner(this.landownerForm.controls.landownercontact_id.value, this.landownerForm.value).subscribe((response) => {
-              this.putSite();
-              this.returnData.landowner = response;
-            })
+          // Existing landowner was edited (add/delete landowner not clicked)
+          if(this.data.site.landownercontact_id !== undefined && this.data.site.landownercontact_id !== "---" && this.data.site.landownercontact_id !== ""){
+            if(this.addLandownerCheck){
+              if(this.deleteLandownerCheck){
+                // Delete existing and add new one (Delete + add clicked)
+                this.siteEditService.deleteLandowner(this.data.site.landownercontact_id).subscribe((response) => {
+                  this.siteForm.controls["landownercontact_id"].setValue(null);
+                  // Remove landowner contact id before post
+                  delete this.landownerForm.value.landownercontactid;
+                  this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
+                    this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
+                    this.putSite();
+                    this.returnData.landowner = response;
+                  })
+                });
+              }else if(this.landownerForm.dirty){
+                // Edit existing landowner
+                this.siteEditService.putLandowner(this.landownerForm.controls.landownercontactid.value, this.landownerForm.value).subscribe((response) => {
+                  this.putSite();
+                  this.returnData.landowner = response;
+                });
+              }else{
+                // Landowner exists but hasn't been touched at all
+                this.putSite();
+              }
+            }else{
+              // Delete existing and do not add new one (Delete landowner clicked)
+              this.siteEditService.deleteLandowner(this.data.site.landownercontact_id).subscribe((response) => {
+                this.siteForm.get("landownercontact_id").setValue(null);
+                this.putSite();
+                this.returnData.landowner = 'deleted';
+              });
+            }
           }else{
+            // No existing landowner, new landowner added (Add Landowner clicked)
+            // Remove landowner contact id before post
+            delete this.landownerForm.value.landownercontactid;
             this.siteEditService.postLandowner(this.landownerForm.value).subscribe((response) => {
-              this.siteForm.controls["landownercontact_id"].setValue(response.landownercontactid);
+              this.siteForm.get("landownercontact_id").setValue(response.landownercontactid);
               this.putSite();
               this.returnData.landowner = response;
             })
@@ -1316,7 +1396,7 @@ export class SiteEditComponent implements OnInit {
       this.fileUploading = false;
       this.dialog.open(ConfirmComponent, {
         data: {
-          title: "Successfully updated Site",
+          title: "Successfully updated Site " + this.data.site.site_id,
           titleIcon: "check",
           message: null,
           confirmButtonText: "OK",
@@ -1331,6 +1411,11 @@ export class SiteEditComponent implements OnInit {
     let self = this;
     this.siteFileForm.markAllAsTouched();
     let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
+    
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+
     if(this.siteFileForm.valid){
       this.fileValid = true;
       if(fileSubmission.source_id !== null){
@@ -1350,10 +1435,6 @@ export class SiteEditComponent implements OnInit {
                       this.returnData.files.forEach(function(file, i){
                         if(file.file_id === data.file_id){
                           self.returnData.files[i] = data;
-                          let fileDate = self.returnData.files[i].file_date.split("T")[0];
-                          fileDate = fileDate.split("-");
-                          fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                          self.returnData.files[i].format_file_date = fileDate;
                           self.initSiteFiles = self.returnData.files;
                           self.initSiteFiles = [...self.initSiteFiles];
                           self.showFileForm = false;
@@ -1473,12 +1554,6 @@ export class SiteEditComponent implements OnInit {
                     (data) => {
                       if(data !== []){
                         this.returnData.files.push(data);
-                        this.returnData.files.forEach(function(file){
-                          let fileDate = file.file_date.split("T")[0];
-                          fileDate = fileDate.split("-");
-                          fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                          file.format_file_date = fileDate;
-                        })
                         this.initSiteFiles = this.returnData.files;
                         this.initSiteFiles = [...this.initSiteFiles];
                       }
@@ -1498,13 +1573,6 @@ export class SiteEditComponent implements OnInit {
                 .subscribe(
                     (data) => {
                       this.returnData.files.push(data);
-                      this.returnData.files.forEach(function(file){
-                        let fileDate = file.file_date.split("T")[0];
-                        fileDate = fileDate.split("-");
-                        fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-                        file.format_file_date = fileDate;
-                      })
-                      
                       this.initSiteFiles = this.returnData.files;
                       this.initSiteFiles = [...this.initSiteFiles];
                       this.loading = false;

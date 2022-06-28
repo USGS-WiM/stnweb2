@@ -228,10 +228,24 @@ export class HwmEditComponent implements OnInit {
       })
   }
 
+  formatUTCDates(date) {
+    let hour = (date.split('T')[1]).split(':')[0];
+    // minute
+    let minute = date.split('T')[1].split(':')[1];
+    let timestamp = date.split("T")[0];
+    timestamp = timestamp.split("-");
+    let day = timestamp[0];
+    let month = timestamp[1];
+    let year = timestamp[2];
+    let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(hour), Number(minute)));
+    let formatted_date = utcPreview.toUTCString();
+    return formatted_date;
+  }
+
   getApproval() {
     this.hwmEditService.getApproval(this.hwm.approval_id)
       .subscribe((results) => {
-        this.approvalDate = new Date(results.approval_date);
+        this.approvalDate = this.formatUTCDates(results.approval_date);
         if(results.member_id !== undefined){
           // Approval member
           this.siteService
@@ -1124,11 +1138,6 @@ export class HwmEditComponent implements OnInit {
       const updateHWM = new Promise<string>((resolve, reject) => this.hwmEditService.putHWM(hwmSubmission.hwm_id, hwmSubmission).subscribe(results => {
         if(results.length !== 0){
           this.returnData = results;
-          // Add formatted date
-          let flagDate = this.returnData.flag_date.split("T")[0];
-          flagDate = flagDate.split("-");
-          flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
-          this.returnData.format_flag_date = flagDate;
           resolve("Success");
         }else{
           // Error
@@ -1167,11 +1176,6 @@ export class HwmEditComponent implements OnInit {
       const createHWM = new Promise<string>((resolve, reject) => this.hwmEditService.postHWM(hwmSubmission).subscribe(results => {
         if(results.length !== 0){
           this.returnData = results;
-          // Add formatted date
-          let flagDate = this.returnData.flag_date.split("T")[0];
-          flagDate = flagDate.split("-");
-          flagDate = flagDate[1] + "/" + flagDate[2] + "/" + flagDate[0];
-          this.returnData.format_flag_date = flagDate;
           resolve("Success");
         }else{
           // Error
