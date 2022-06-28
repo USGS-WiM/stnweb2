@@ -1288,9 +1288,21 @@ export class SiteDetailsComponent implements OnInit {
             }
             if(result.returnFiles.length > 0) {
                 // Update files data source and hwm
-                result.returnFiles.forEach(file => {
-                    self.hwmFilesDataSource.data.push(file);
-                    self.fileLength ++;
+                result.returnFiles.forEach((file, i) => {
+                    if(file.type === "delete"){
+                        self.hwmFilesDataSource.data.splice(i, 1);
+                        self.fileLength --;
+                    }else if(file.type === "add"){
+                        self.hwmFilesDataSource.data.push(file.file);
+                        self.fileLength ++;
+                    }else if(file.type === "update"){
+                        self.hwmFilesDataSource.data.forEach((hwmFile, j) => {
+                            if(hwmFile.file_id === file.file_id){
+                                self.hwmFilesDataSource.data[j] = file.file;
+                            }
+                        });
+                        self.fileLength ++;
+                    }
                 })
                 self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
                 // Go to last page if not already there
