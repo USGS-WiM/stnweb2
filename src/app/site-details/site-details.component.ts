@@ -1080,13 +1080,16 @@ export class SiteDetailsComponent implements OnInit {
                     if(file.type === "delete"){
                         self.refMarkFilesDataSource.data.splice(i, 1);
                         self.fileLength --;
-                    }else if(file.type === "add"){
-                        self.refMarkFilesDataSource.data.push(file);
+                    }else if(file.type === "add"){ 
+                        // Add rd name to result
+                        file.file.rd_name = row.name;
+                        self.refMarkFilesDataSource.data.push(file.file);
                         self.fileLength ++;
                     }else if(file.type === "update"){
                         self.refMarkFilesDataSource.data.forEach((rdFile, j) => {
                             if(rdFile.file_id === file.file.file_id){
-                                self.hwmFilesDataSource.data[j] = file.file;
+                                file.file.rd_name = row.name;
+                                self.refMarkFilesDataSource.data[j] = file.file;
                             }
                         });
                     }

@@ -58,7 +58,6 @@ export class RefDatumEditComponent implements OnInit {
     opControlID: [],
     returnFiles: [],
   };
-  public returnFiles = [];
   private selectedFile = {
     FileEntity: {
       file_id: null,
@@ -373,9 +372,10 @@ export class RefDatumEditComponent implements OnInit {
   getFileTypeSelection(event) {
     this.selectedFile.FileEntity.filetype_id = event.value;
     if(this.selectedFile.FileEntity.filetype_id === 1){
-      this.rdFileForm.controls["photo_date"].setValidators([Validators.required]);
+      this.rdFileForm.get("photo_date").setValidators([Validators.required]);
     }else{
-      this.rdFileForm.controls["photo_date"].clearValidators();
+      this.rdFileForm.get("photo_date").clearValidators();
+      this.rdFileForm.get("photo_date").setErrors(null);
     }
   }
 
@@ -825,6 +825,21 @@ export class RefDatumEditComponent implements OnInit {
   }
 
   /* istanbul ignore next */
+  formatUTCDates(date) {
+    let hour = (date.split('T')[1]).split(':')[0];
+    // minute
+    let minute = date.split('T')[1].split(':')[1];
+    let timestamp = date.split("T")[0];
+    timestamp = timestamp.split("-");
+    let day = timestamp[0];
+    let month = timestamp[1];
+    let year = timestamp[2];
+    let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(hour), Number(minute)));
+    let formatted_date = new Date(utcPreview).toUTCString();
+    return formatted_date;
+  }
+
+  /* istanbul ignore next */
   // Delete file
   deleteFile(row) {
     let dialogRef = this.dialog.open(ConfirmComponent, {
@@ -857,7 +872,7 @@ export class RefDatumEditComponent implements OnInit {
                   for(let file of this.initDatumFiles){
                     if(file.file_id === row.file_id){
                       index = this.initDatumFiles.indexOf(file);
-                      this.returnFiles.push({file: file, type: "delete"});
+                      this.returnData.returnFiles.push({file: file, type: "delete"});
                     }
                   }
                   this.initDatumFiles.splice(index, 1);
@@ -889,6 +904,9 @@ export class RefDatumEditComponent implements OnInit {
     let self = this;
     // update rdFilesForm
     let fileSubmission = JSON.parse(JSON.stringify(this.rdFileForm.value));
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
     let formatFileSubmission = {
       file_id: fileSubmission.file_id,
       description: fileSubmission.description,
@@ -913,7 +931,7 @@ export class RefDatumEditComponent implements OnInit {
             if(data.length !== []){
               this.initDatumFiles.forEach(function(file, i){
                 if(file.file_id === data.file_id){
-                  self.returnFiles.push({file: file, type: "update"});
+                  self.returnData.returnFiles.push({file: file, type: "update"});
                   self.initDatumFiles[i] = data;
                   self.initDatumFiles = [...self.initDatumFiles];
                   self.showFileForm = false;
@@ -934,6 +952,9 @@ export class RefDatumEditComponent implements OnInit {
     let self = this;
     this.rdFileForm.markAllAsTouched();
     let fileSubmission = JSON.parse(JSON.stringify(this.rdFileForm.value));
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
     if(this.rdFileForm.valid){
       this.fileValid = true;
       if(fileSubmission.source_id !== null){
@@ -952,7 +973,7 @@ export class RefDatumEditComponent implements OnInit {
                     (data) => {
                       self.initDatumFiles.forEach(function(file, i){
                         if(file.file_id === data.file_id){
-                          self.returnFiles.push({file: data, type: "update"});
+                          self.returnData.returnFiles.push({file: data, type: "update"});
                           self.initDatumFiles[i] = data;
                           self.initDatumFiles = [...self.initDatumFiles];
                           self.showFileForm = false;
@@ -985,7 +1006,11 @@ export class RefDatumEditComponent implements OnInit {
     this.loading = true;
     this.rdFileForm.markAllAsTouched();
     let fileSubmission = JSON.parse(JSON.stringify(this.rdFileForm.value));
-    console.log(this.rdFileForm)
+    
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+
     if(this.rdFileForm.valid){
       this.fileValid = true;
       // check if source already exists?
@@ -1020,7 +1045,7 @@ export class RefDatumEditComponent implements OnInit {
                 .subscribe(
                     (data) => {
                       if(data !== []){
-                        self.returnFiles.push({file: data, type: "add"});
+                        self.returnData.returnFiles.push({file: data, type: "add"});
                         self.initDatumFiles.push(data);
                         self.initDatumFiles = [...self.initDatumFiles];
                       }
@@ -1036,12 +1061,11 @@ export class RefDatumEditComponent implements OnInit {
               // Link FileTypes
               delete fileSubmission.File; delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd;
               delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.photo_direction; delete fileSubmission.path;
-
               this.siteEditService.saveFile(fileSubmission)
                 .subscribe(
                     (data) => {
                       if(data !== []){
-                        self.returnFiles.push({file: data, type: "add"});
+                        self.returnData.returnFiles.push({file: data, type: "add"});
                         self.initDatumFiles.push(data);
                         self.initDatumFiles = [...self.initDatumFiles];
                       }
