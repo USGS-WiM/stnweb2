@@ -342,6 +342,8 @@ export class HwmEditComponent implements OnInit {
     this.setLatLngValidators();
   }
 
+  
+  /* istanbul ignore next */
   initHWMFileForm() {
     this.hwmFileForm = new FormGroup({
       File: new FormControl(this.selectedFile.File),
@@ -366,10 +368,12 @@ export class HwmEditComponent implements OnInit {
     })
   }
 
+  /* istanbul ignore next */
   getFileTypeSelection(event) {
     this.selectedFile.FileEntity.filetype_id = event.value;
   }
 
+  /* istanbul ignore next */
   getFileTypes() {
     let self = this;
     this.siteService.getFileTypeLookup().subscribe((results) => {
@@ -382,6 +386,7 @@ export class HwmEditComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   // Set file attributes
   getFileName(event) {
     this.selectedFile.FileEntity.name = event.target.files[0].name;
@@ -396,6 +401,7 @@ export class HwmEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   updateAgencyForCaption() {
     let self = this;
     this.agencyNameForCap = this.agencies.filter(function (a) { return a.agency_id == self.hwmFileForm.controls['agency_id'].value; })[0].agency_name;
@@ -661,6 +667,7 @@ export class HwmEditComponent implements OnInit {
     return dateWOtime;
   };
 
+  /* istanbul ignore next */
   showFileCreate() {
     // Reset form
     this.cancelFile();
@@ -691,6 +698,7 @@ export class HwmEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   setInitFileEditForm(data) {
     this.hwmFileForm.get('file_id').setValue(data.file_id);
     this.hwmFileForm.get('name').setValue(data.name);
@@ -712,6 +720,7 @@ export class HwmEditComponent implements OnInit {
     this.hwmFileForm.get('hwm_id').setValue(this.hwm.hwm_id);
   }
 
+  /* istanbul ignore next */
   setFileSourceAgency(source_id){
     this.siteService
     .getFileSource(source_id)
@@ -730,6 +739,7 @@ export class HwmEditComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   setFileSource(source_id){
     this.siteService
     .getSourceName(source_id)
@@ -747,12 +757,14 @@ export class HwmEditComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   getAgencies() {
     this.siteService.getAgencyLookup().subscribe((results) => {
       this.agencies = results;
     });
   }
 
+  /* istanbul ignore next */
   getFile() {
     if(this.selectedFile.FileEntity.file_id !== null && this.selectedFile.FileEntity.file_id !== undefined){
       this.siteService.getFileItem(this.selectedFile.FileEntity.file_id).subscribe((results) => {
@@ -774,6 +786,7 @@ export class HwmEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   showFileDetails(row) {
     if(row) {
       this.expandedElement = row;
@@ -819,6 +832,7 @@ export class HwmEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   showFileEdit(row) {
     // Reset form
     if(row){
@@ -857,6 +871,7 @@ export class HwmEditComponent implements OnInit {
     }
   }
   
+  /* istanbul ignore next */
   fileTypeLookup(response) {
     for(let filetype of this.fileTypes){
       if(filetype.filetype_id === response){
@@ -865,6 +880,7 @@ export class HwmEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   cancelFile() {
     // Reset file inputs
     this.changeDetector.detectChanges();
@@ -904,6 +920,7 @@ export class HwmEditComponent implements OnInit {
     };
   }
 
+  /* istanbul ignore next */
   // Delete file
   deleteFile(row) {
     let dialogRef = this.dialog.open(ConfirmComponent, {
@@ -962,6 +979,7 @@ export class HwmEditComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   // Re-upload file or add missing file
   saveFileUpload() {
     let self = this;
@@ -1007,6 +1025,7 @@ export class HwmEditComponent implements OnInit {
     this.fileItemExists = true;
   }
 
+  /* istanbul ignore next */
   saveFile() {
     let self = this;
     this.hwmFileForm.markAllAsTouched();
@@ -1056,6 +1075,7 @@ export class HwmEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
   createFile() {
     let self = this;
     this.loading = true;

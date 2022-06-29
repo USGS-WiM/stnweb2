@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule } from '@angular/material/menu';
 import { of } from 'rxjs';
 
 import { HwmEditComponent } from './hwm-edit.component';
@@ -43,7 +44,7 @@ describe('HwmEditComponent', () => {
         { provide: MatDialogRef, useValue: dialogMock },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
-      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule],
+      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule, MatMenuModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
