@@ -1028,6 +1028,7 @@ export class SiteDetailsComponent implements OnInit {
     openRefDatumEditDialog(row): void {
         this.clickedRMRows.clear();
         this.fadeOutRMRows.clear();
+        this.clickedFileRows.clear();
         if(row !== null){
             this.clickedRMRows.add(row);
         }
@@ -1075,9 +1076,20 @@ export class SiteDetailsComponent implements OnInit {
             }
             if(result.result.returnFiles.length > 0){
                 // Update files data source and hwm
-                result.result.returnFiles.forEach(file => {
-                    self.refMarkFilesDataSource.data.push(file);
-                    self.fileLength ++;
+                result.result.returnFiles.forEach((file, i) => {
+                    if(file.type === "delete"){
+                        self.refMarkFilesDataSource.data.splice(i, 1);
+                        self.fileLength --;
+                    }else if(file.type === "add"){
+                        self.refMarkFilesDataSource.data.push(file);
+                        self.fileLength ++;
+                    }else if(file.type === "update"){
+                        self.refMarkFilesDataSource.data.forEach((rdFile, j) => {
+                            if(rdFile.file_id === file.file.file_id){
+                                self.hwmFilesDataSource.data[j] = file.file;
+                            }
+                        });
+                    }
                 })
                 self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
                 // Go to last page if not already there
