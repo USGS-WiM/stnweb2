@@ -6,7 +6,9 @@
     Create HWM
     <button class="close-button" mat-button [mat-dialog-close]="{returnFiles: returnFiles}" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
-
+<div [hidden]="!loading" class="loading">
+    <mat-spinner style="margin:0 auto; top: 50%" mode="indeterminate" diameter="20"></mat-spinner>
+</div>
 <form [formGroup]="form" (ngSubmit)="submit()">
     <mat-dialog-content>
         <mat-accordion multi="true">
