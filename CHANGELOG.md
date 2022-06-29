@@ -37,11 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Disabled sensor retrieve button when no event is selected
  -  Active highlighting style
  -  Fade out active highlight when row is added
-<<<<<<< HEAD
- -  Reference datum files can be added when no event is selected
-=======
  -  Site edit modal arrangement and styling
->>>>>>> 004ba96e810e465856187f8cd8f5823e4ff4f859
  
  ### Fixed
  
