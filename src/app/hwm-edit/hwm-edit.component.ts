@@ -1086,7 +1086,6 @@ export class HwmEditComponent implements OnInit {
     let self = this;
     this.loading = true;
     this.hwmFileForm.markAllAsTouched();
-    console.log(this.hwmFileForm)
     let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
     if(this.hwmFileForm.valid){
       this.fileValid = true;
