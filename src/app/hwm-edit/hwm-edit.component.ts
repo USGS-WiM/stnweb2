@@ -371,6 +371,12 @@ export class HwmEditComponent implements OnInit {
   /* istanbul ignore next */
   getFileTypeSelection(event) {
     this.selectedFile.FileEntity.filetype_id = event.value;
+    if(this.selectedFile.FileEntity.filetype_id === 1){
+      this.hwmFileForm.get("photo_date").setValidators([Validators.required]);
+    }else{
+      this.hwmFileForm.get("photo_date").clearValidators();
+      this.hwmFileForm.get("photo_date").setErrors(null);
+    }
   }
 
   /* istanbul ignore next */
@@ -1080,6 +1086,7 @@ export class HwmEditComponent implements OnInit {
     let self = this;
     this.loading = true;
     this.hwmFileForm.markAllAsTouched();
+    console.log(this.hwmFileForm)
     let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
     if(this.hwmFileForm.valid){
       this.fileValid = true;
