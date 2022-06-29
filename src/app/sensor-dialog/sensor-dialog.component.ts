@@ -103,13 +103,6 @@ export class SensorDialogComponent implements OnInit {
     .subscribe((results) => {
       if(results.length > 0){
         results.forEach(function(result){
-          // Format file date
-          if(result.file_date !== undefined && !result.file_date.includes("/")){
-              let fileDate = result.file_date.split("T")[0];
-              fileDate = fileDate.split("-");
-              fileDate = fileDate[1] + "/" + fileDate[2] + "/" + fileDate[0];
-              result.file_date = fileDate;
-          }
           if(result.is_nwis !== undefined && result.is_nwis === 1){
             self.nwisFiles.push(result);
           }else{
@@ -147,13 +140,13 @@ export class SensorDialogComponent implements OnInit {
     });
   }
 
+  /* istanbul ignore next */
   sortSensorFilesData(sort: Sort) {
     const data = this.sensorFilesDataSource.data.slice();
     if (!sort.active || sort.direction === '') {
         this.sortedSensorFilesData = data;
         return;
     }
-    /* istanbul ignore next */
     this.sortedSensorFilesData = data.sort((a, b) => {
         const isAsc = sort.direction === 'asc';
         switch (sort.active) {
@@ -172,13 +165,13 @@ export class SensorDialogComponent implements OnInit {
     this.sensorFilesDataSource.data = this.sortedSensorFilesData;
   }
 
+  /* istanbul ignore next */
   sortNWISFilesData(sort: Sort) {
     const data = this.nwisFilesDataSource.data.slice();
     if (!sort.active || sort.direction === '') {
         this.sortedNWISFilesData = data;
         return;
     }
-    /* istanbul ignore next */
     this.sortedNWISFilesData = data.sort((a, b) => {
         const isAsc = sort.direction === 'asc';
         switch (sort.active) {

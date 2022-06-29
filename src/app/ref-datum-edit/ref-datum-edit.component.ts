@@ -20,8 +20,6 @@ export class RefDatumEditComponent implements OnInit {
   public vdatums;
   public opQualities;
   public types;
-  public formattedEstDate;
-  public formattedRecDate;
   public unquantified = false;
   public elev_unit = "ft";
   public uncertainty_unit = "ft";
@@ -199,6 +197,7 @@ export class RefDatumEditComponent implements OnInit {
     } as FormArray["value"];
   }
 
+  /* istanbul ignore next */
   unquantifiedChanged(event) {
     this.unquantified = !this.unquantified;
     if(event.checked){
@@ -242,11 +241,13 @@ export class RefDatumEditComponent implements OnInit {
     this.form.controls["op_control_identifier"] = new FormArray(this.controlsToAdd.map((control) => new FormGroup(this.createControlArray(control))));
   }
 
+  /* istanbul ignore next */
   changeControlID(event, i, control) {
     this.form.controls["op_control_identifier"].controls[i].controls.identifier_type.setValue(control.identifier_type);
     this.controlsToAdd[i].identifier_type = control.identifier_type;
   }
 
+  /* istanbul ignore next */
   addControlToList(i) {
     let self = this;
     this.controlsToAdd = [];
@@ -277,8 +278,9 @@ export class RefDatumEditComponent implements OnInit {
     }
   }
 
-  // Create a date without time
-  makeAdate(d) {
+  /* istanbul ignore next */
+   // Create a date without time
+   makeAdate(d) {
     var aDate = new Date();
     if (d !== "" && d !== undefined) {
         //provided date

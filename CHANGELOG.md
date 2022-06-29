@@ -4,8 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased](https://github.com/USGS-WiM/stnweb2/tree/dev)
+
+### Added
+
+ -   
+
+### Changed
+
+ -   
+ 
+ ### Fixed
+ 
+ -   
+
+## [v0.8.1](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.1) - 2022-06-24
 
 ### Added
 
@@ -14,20 +27,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Active highlighting on hover, button click and row add to site page tables
  -  When new row item is added and table page is full, jump to next page
  -  Active highlighting on hover and details button click to map filter results table
- -  Ability to add Reference Datum files in Reference Datum Edit dialog
- 
+ -  Ability to delete landowner when editing a site
+ -  Ability to add sensor file, datafile and NWIS file in files tab
+ -  Ability to delete sensor, data and NWIS files in files tab
+ -  Ability to edit sensor, data and nwis files in file tab
+
 ### Changed
 
  -  Disabled sensor retrieve button when no event is selected
  -  Active highlighting style
  -  Fade out active highlight when row is added
+<<<<<<< HEAD
  -  Reference datum files can be added when no event is selected
+=======
+ -  Site edit modal arrangement and styling
+>>>>>>> 004ba96e810e465856187f8cd8f5823e4ff4f859
  
  ### Fixed
  
  -  Fields not populating in details modals
  -  Unedited rows removed from reference datum table after edit
  -  Update counts in site page tabs on edit/add/delete
+ -  Validation error incorrectly shown when date changed in sensor retrieve modal
+ -  UTC Preview not updating when minutes changed in Sensor add/edit
+ -  Update counts in file tab and site file expansion panel when files added/deleted
+ -  Date/time formatting and time zone conversion for all entities
+ -  Broken USWDS banner images
 
 ## [v0.8.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.0) - 2022-06-05
 

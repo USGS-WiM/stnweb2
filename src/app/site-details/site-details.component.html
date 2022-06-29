@@ -410,52 +410,52 @@
                                                 <p id="landownerTitle">Land Owner Contact</p>
                                                 <div class="cell-container">
                                                     <p class="content-left">First Name</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.fname !== '' && landownerContact.fname !== undefined; else nullLandownerFname">{{landownerContact.fname}}</p>    
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.fname !== '' && landownerContact.fname !== undefined; else nullLandownerFname">{{landownerContact.fname}}</p>    
                                                     <ng-template #nullLandownerFname><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Last Name</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.lname !== '' && landownerContact.lname !== undefined; else nullLandownerLname">{{landownerContact.lname}}</p>             
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.lname !== '' && landownerContact.lname !== undefined; else nullLandownerLname">{{landownerContact.lname}}</p>             
                                                     <ng-template #nullLandownerLname><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Affiliation/Title</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.title !== '' && landownerContact.title !== undefined; else nullLandownerTitle">{{landownerContact.title}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.title !== '' && landownerContact.title !== undefined; else nullLandownerTitle">{{landownerContact.title}}</p>
                                                     <ng-template #nullLandownerTitle><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Address</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.address !== '' && landownerContact.address !== undefined; else nullLandownerAddress">{{landownerContact.address}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.address !== '' && landownerContact.address !== undefined; else nullLandownerAddress">{{landownerContact.address}}</p>
                                                     <ng-template #nullLandownerAddress><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">City</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.city !== '' && landownerContact.city !== undefined; else nullLandownerCity">{{landownerContact.city}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.city !== '' && landownerContact.city !== undefined; else nullLandownerCity">{{landownerContact.city}}</p>
                                                     <ng-template #nullLandownerCity><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">State</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.state !== '' && landownerContact.state !== undefined; else nullLandownerState">{{landownerContact.state}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.state !== '' && landownerContact.state !== undefined; else nullLandownerState">{{landownerContact.state}}</p>
                                                     <ng-template #nullLandownerState><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Zip</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.zip !== '' && landownerContact.zip !== undefined; else nullLandownerZip">{{landownerContact.zip}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.zip !== '' && landownerContact.zip !== undefined; else nullLandownerZip">{{landownerContact.zip}}</p>
                                                     <ng-template #nullLandownerZip><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Primary Phone</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.primaryphone !== '' && landownerContact.primaryphone !== undefined; else nullLandownerPrimaryphone">{{landownerContact.primaryphone}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.primaryphone !== '' && landownerContact.primaryphone !== undefined; else nullLandownerPrimaryphone">{{landownerContact.primaryphone}}</p>
                                                     <ng-template #nullLandownerPrimaryphone><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Secondary Phone</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.secondaryphone !== '' && landownerContact.secondaryphone !== undefined; else nullLandownerSecondaryphone">{{landownerContact.secondaryphone}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.secondaryphone !== '' && landownerContact.secondaryphone !== undefined; else nullLandownerSecondaryphone">{{landownerContact.secondaryphone}}</p>
                                                     <ng-template #nullLandownerSecondaryphone><p class="content-right">---</p></ng-template>
                                                 </div>
                                                 <div class="cell-container">
                                                     <p class="content-left">Email</p>
-                                                    <p class="content-right" *ngIf="landownerContact !== undefined && landownerContact.email !== '' && landownerContact.email !== undefined; else nullLandownerEmail">{{landownerContact.email}}</p>
+                                                    <p class="content-right" *ngIf="landownerContact && landownerContact.email !== '' && landownerContact.email !== undefined; else nullLandownerEmail">{{landownerContact.email}}</p>
                                                     <ng-template #nullLandownerEmail><p class="content-right">---</p></ng-template>
                                                 </div>
                                             </div>
@@ -664,7 +664,7 @@
                     <mat-tab label="Sensors ({{sensorDataSource.data.length}})">
                         <mat-card class="mat-elevation-z0 header-card">
                             <p>Sensors ({{sensorDataSource.data.length}})</p>
-                            <button *ngIf="currentEvent !== null && role === '1' || role === '2' || role === '3'" mat-button (click)="openSensorEditDialog(null)"
+                            <button *ngIf="currentEvent !== null && (role === '1' || role === '2' || role === '3')" mat-button (click)="openSensorEditDialog(null)"
                                 aria-label="Add Sensor"><mat-icon class="add-buttons" matTooltip="Deploy a new Sensor" matTooltipPosition="before">add</mat-icon>
                             </button>
                             <!-- Disabled button with tooltip -->
@@ -945,11 +945,11 @@
                                 <ng-container matColumnDef="flag_date">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header="flag_date">Flag Date</th>
                                     <td mat-cell *matCellDef="let mark">
-                                        <div *ngIf="mark.format_flag_date === '' || mark.format_flag_date === undefined; else displayFlagDate">
+                                        <div *ngIf="mark.flag_date === '' || mark.flag_date === undefined; else displayFlagDate">
                                             ---
                                         </div>
                                         <ng-template #displayFlagDate>
-                                            {{ mark.format_flag_date }}
+                                            {{ mark.flag_date | date: 'MM/dd/yyyy'}}
                                         </ng-template>
                                     </td>
                                 </ng-container>
@@ -1144,7 +1144,7 @@
                                             ---
                                         </div>
                                         <ng-template #displayPeakDate>
-                                            {{ peak.format_peak_date }}
+                                            {{ peak.peak_date | date: 'MM/dd/yyyy'}}
                                         </ng-template>
                                     </td>
                                 </ng-container>
@@ -1309,11 +1309,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displaySiteFileDate">
+                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySiteFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displaySiteFileDate>
-                                                    {{ file.format_file_date }}
+                                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1383,7 +1383,7 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                {{file.format_file_date}}
+                                                {{file.file_date}}
                                             </td>
                                         </ng-container>
 
@@ -1464,11 +1464,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displayDatumFileDate">
+                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayDatumFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displayDatumFileDate>
-                                                    {{ file.format_file_date }}
+                                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1551,7 +1551,7 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                {{file.format_file_date}}
+                                                {{file.file_date}}
                                             </td>
                                         </ng-container>
 
@@ -1623,13 +1623,13 @@
                                     <mat-panel-title *ngIf="sensorFilesExpanded" style="color: #FFF; font-weight: 550">
                                         Sensor Files ({{sensorFilesDataSource.data.length}})
                                     </mat-panel-title>
-                                    <!-- <button *ngIf="currentEvent !== null" mat-button (click)="addFile('Sensor File', $event)"
+                                    <button *ngIf="currentEvent !== null" mat-button (click)="addFile('Sensor File', $event)"
                                         aria-label="Add File"><mat-icon matTooltip="Add a Sensor File" class="add-buttons">add</mat-icon>
-                                    </button> -->
+                                    </button>
                                     <!-- Disabled -->
-                                    <!-- <button *ngIf="currentEvent === null" disabled mat-button class="disabled-icon"
+                                    <button *ngIf="currentEvent === null" disabled mat-button class="disabled-icon"
                                         aria-label="Add File"><mat-icon matTooltip="Select an event to add a Sensor File">add</mat-icon>
-                                    </button> -->
+                                    </button>
                                 </mat-expansion-panel-header>
                                 <div class="tableContainer" *ngIf="sensorFiles !== undefined; else noSensorFileTable">
                                     <table *ngIf="sensorFilesDataSource.data.length > 0 && sensorFilesDone; else noSensorFileTable"
@@ -1644,11 +1644,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displaySensorFileDate">
+                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displaySensorFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displaySensorFileDate>
-                                                    {{ file.format_file_date }}
+                                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1687,9 +1687,9 @@
                                                 <button mat-stroked-button class="view-details-btn secondary" (click)="openFileDetailsDialog(row, 'Sensor File')"
                                                     aria-label="View Details">View Details
                                                 </button>
-                                                <!-- <button mat-stroked-button class="edit-details-btn secondary" (click)="openFileEditDialog(row, 'Sensor File')"
+                                                <button mat-stroked-button class="edit-details-btn secondary" (click)="openFileEditDialog(row, 'Sensor File')"
                                                     aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon> Edit
-                                                </button> -->
+                                                </button>
                                                 <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
                                                     <mat-icon>more_vert</mat-icon>
                                                 </button>
@@ -1698,14 +1698,14 @@
                                                         aria-label="View Details"><mat-icon>search</mat-icon>
                                                         <span> View Details</span>
                                                     </button>
-                                                    <!-- <button mat-menu-item class="edit-details-mobile" (click)="openFileEditDialog(row, 'Sensor File')"
+                                                    <button mat-menu-item class="edit-details-mobile" (click)="openFileEditDialog(row, 'Sensor File')"
                                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                                         <span> Edit</span>
-                                                    </button>
+                                                    </button> -->
                                                     <button mat-menu-item class="delete-borderless" (click)="deleteFile(row, 'Sensor File')"
                                                         aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                                         <span>Delete</span>
-                                                    </button> -->
+                                                    </button>
                                                 </mat-menu>
                                             </td>
                                         </ng-container>
@@ -1731,7 +1731,7 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                {{file.format_file_date}}
+                                                {{file.file_date}}
                                             </td>
                                         </ng-container>
 
@@ -1773,11 +1773,11 @@
                                                     <!-- <button mat-menu-item disabled class="edit-details-mobile"
                                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>
                                                         <span> Edit</span>
-                                                    </button>
+                                                    </button> -->
                                                     <button mat-menu-item disabled class="delete-borderless"
                                                         aria-label="Delete"><mat-icon class="delete-borderless">delete_forever</mat-icon>
                                                         <span>Delete</span>
-                                                    </button> -->
+                                                    </button>
                                                 </mat-menu>
                                             </td>
                                         </ng-container>
@@ -1790,13 +1790,13 @@
                                         ></tr>
                                     </table>
                                 </ng-template>
-                                <!-- <button *ngIf="currentEvent !== null" mat-stroked-button (click)="addFile('Sensor File', $event)" class="add"
+                                <button *ngIf="currentEvent !== null" mat-stroked-button (click)="addFile('Sensor File', $event)" class="add"
                                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
-                                </button> -->
-                                    <!-- Disabled -->
-                                <!-- <button *ngIf="currentEvent === null" disabled mat-stroked-button class="disabled-border"
+                                </button>
+                                <!-- Disabled -->
+                                <button *ngIf="currentEvent === null" disabled mat-stroked-button class="disabled-border"
                                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
-                                </button> -->
+                                </button>
                                 <mat-paginator [hidden]="sensorFiles === undefined || sensorFiles.length === 0" #sensorFilesPaginator [pageSizeOptions]="[5, 10, 25]" class="results-paginator"></mat-paginator>
                             </mat-expansion-panel>
                             <mat-expansion-panel hideToggle [expanded]="hwmFilesExpanded" (opened)="hwmFilesExpanded = true" (closed)="hwmFilesExpanded = false">
@@ -1828,11 +1828,11 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header="file_date">File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                <div *ngIf="file.format_file_date === '' || file.format_file_date === undefined; else displayHWMFileDate">
+                                                <div *ngIf="file.file_date === '' || file.file_date === undefined; else displayHWMFileDate">
                                                     ---
                                                 </div>
                                                 <ng-template #displayHWMFileDate>
-                                                    {{ file.format_file_date }}
+                                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                                 </ng-template>
                                             </td>
                                         </ng-container>
@@ -1902,7 +1902,7 @@
                                         <ng-container matColumnDef="FileDate">
                                             <th mat-header-cell *matHeaderCellDef>File Date</th>
                                             <td mat-cell *matCellDef="let file">
-                                                {{file.format_file_date}}
+                                                {{file.file_date}}
                                             </td>
                                         </ng-container>
 
