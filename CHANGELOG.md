@@ -8,8 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
- -   Add ability to add, edit, delete, reupload and view file details in HWM Edit modal
- -   Add ability to add, edit, delete, reupload and view file details in Reference Datum Edit modal
+ -  Add ability to add, edit, delete, reupload and view file details in HWM Edit modal
+ -  Loading spinner in HWM edit modal when files are submitted
+ -  Add ability to add, edit, delete, reupload and view file details in Reference Datum Edit modal
 
 ### Changed
 
