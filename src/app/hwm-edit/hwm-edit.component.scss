@@ -43,8 +43,16 @@ table {
 .mat-column-FileDate{
     padding: 10px;
     vertical-align: middle;
+    border-right: 1px solid #e0e0e0;
     align-self: stretch;
 }
+
+.mat-column-expand{
+    padding: 10px;
+    vertical-align: top;
+    text-align: right;
+    align-self: stretch;
+} 
 
 .mat-header-cell {
     font-weight: bold;
@@ -57,7 +65,7 @@ table {
 
 .mat-cell, .mat-header-cell, .mat-footer-cell {
     overflow: auto;
-    column-width: 170px;
+    // column-width: 170px;
 }
 
 .radio-button {
@@ -106,4 +114,155 @@ table {
 
 .close-button {
     float: right;
+}
+
+.element-detail {
+    overflow: hidden;
+}
+
+tr.detail-row {
+    height: 0;
+}
+  
+.expanded-body {
+    min-width: 80px;
+    padding: 8px;
+    margin: 8px 0;
+    max-height: 600px;
+    overflow: auto;
+}
+
+@media (max-width: 1000px) {
+    .view-details-btn { display: none; }
+    
+    .view-details-mobile { display: block; }
+    
+    .edit-details-btn { display: none; }
+    
+    .edit-details-mobile { display: block; }
+  }
+
+@media (min-width: 1000px) {
+    .view-details-btn { display: inline-block; }
+    
+    .view-details-mobile { display: none; }
+    
+    .edit-details-btn { display: inline-block; }
+    
+    .edit-details-mobile { display: none; }
+  }
+
+.cancel-btn {
+    margin-left: 10px;
+}
+
+.delete-btn {
+    margin-left: 10px;
+}
+
+.file-button-group {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.upload-file {
+    margin-left: 20px;
+}
+
+.invalid {
+    padding: 15px;
+}
+
+.custom-file-input::-webkit-file-upload-button, .custom-file-inputChange::-webkit-file-upload-button, .custom-file-input-add::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+.custom-file-input-add::before {
+    content: 'Choose File';
+    display: inline-block;
+    background: #FFF;
+    border: 1px solid #404040 !important;
+    border-radius: 4px;
+    padding: 0px 16px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    line-height: 36px;
+    margin-top: 10px;
+}
+
+.custom-file-input::before {
+    content: 'Re-Upload File';
+    display: inline-block;
+    background: #FFF;
+    border: 1px solid #404040 !important;
+    border-radius: 4px;
+    padding: 0px 16px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    line-height: 36px;
+    margin-top: 10px;
+}
+
+.custom-file-inputChange::before {
+    content: 'Replace Associated File';
+    display: inline-block;
+    background: #FFF;
+    border: 1px solid #404040 !important;
+    border-radius: 4px;
+    padding: 0px 16px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    line-height: 36px;
+    margin-top: 10px;
+}
+
+.required {
+    margin-left: 5px !important;
+    color: #E70000 !important;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: top;
+    line-height: 36px !important;
+    height: 36px;
+}
+
+.file-upload-span {
+    padding-top: 10px;
+}
+
+.table-container {
+    display: table;
+    margin: 0 auto;
+}
+
+.content-right {
+    display: table-cell;
+    width: 50%;
+    text-align: left;
+}
+
+.content-left {
+    display: table-cell;
+    width: 50%;
+    padding-right: 5px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.cell-container {
+    display: table-row;
+}
+
+.cell-container p{
+    padding: 5px;
+    font-size: 15px;
 }

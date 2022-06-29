@@ -1,19 +1,33 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { FileEditComponent } from '@app/file-edit/file-edit.component';
+import { FileEditService } from '@app/services/file-edit.service';
+import { SiteEditService } from '@app/services/site-edit.service';
 import { EventService } from '@app/services/event.service';
 import { HwmEditService } from '@app/services/hwm-edit.service';
 import { SiteService } from '@app/services/site.service';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import { APP_SETTINGS } from '@app/app.settings';
 
 @Component({
   selector: 'app-hwm-edit',
   templateUrl: './hwm-edit.component.html',
-  styleUrls: ['./hwm-edit.component.scss']
+  styleUrls: ['./hwm-edit.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class HwmEditComponent implements OnInit {
+  @ViewChild('upload', {static: false}) upload: ElementRef;
 
   public form;
+  public hwmFileForm;
   public hwm;
   public events;
   public vdatums;
@@ -45,11 +59,58 @@ export class HwmEditComponent implements OnInit {
     lonsec: null,
   }
   public returnData;
+  public returnFiles = [];
+  private selectedFile = {
+    FileEntity: {
+      file_id: null,
+      name: null,
+      FULLname: null,
+      source_id: null,
+      description: null,
+      file_date: null,
+      photo_date: null,
+      agency_id: null,
+      site_id: null,
+      filetype_id: null,
+      path: null,
+      last_updated: null,
+      last_updated_by: null,
+      site_description: null,
+      photo_direction: null,
+      latitude_dd: null,
+      longitude_dd: null,
+      hwm_id: null,
+    },
+    File: null
+  };
+  private fileTypes = [];
+  private fileType;
+  private sourceName;
+  private sourceAgency;
+  private previewCaption;
+  private approvedBy;
+  private approvedOn;
+  private collectDate;
+  private processorName;
+  private elevation;
+  public fileValid;
+  public fileUploading;
+  public fileSource;
+  public addFileType;
+  public fileItemExists = false;
+  public agencies = [];
+  public agencyNameForCap;
 
   displayedFileColumns: string[] = [
     'FileName',
     'FileDate',
+    'expand',
   ];
+  
+  expandedElement: any;
+  showFileForm = false;
+  showFileCreateForm = false;
+  showDetails = false;
 
   infoExpanded = true;
   filesExpanded = false;
@@ -61,9 +122,12 @@ export class HwmEditComponent implements OnInit {
     private dialogRef: MatDialogRef<HwmEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public siteService: SiteService,
+    public siteEditService: SiteEditService,
+    public fileEditService: FileEditService,
     public eventService: EventService,
     public hwmEditService: HwmEditService,
     public dialog: MatDialog,
+    private changeDetector : ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -86,6 +150,8 @@ export class HwmEditComponent implements OnInit {
         this.getEventList();
       }
 
+      this.getFileTypes();
+      this.getAgencies();
       this.getInitFiles();
       if(this.hwm.approval_id){
         this.getApproval();
@@ -94,6 +160,7 @@ export class HwmEditComponent implements OnInit {
         this.approved = false;
       }
       this.initForm();
+      this.initHWMFileForm();
     }else{
       // Add hwm
       this.editOrCreate = "Create";
@@ -273,6 +340,77 @@ export class HwmEditComponent implements OnInit {
     })
 
     this.setLatLngValidators();
+  }
+
+  
+  /* istanbul ignore next */
+  initHWMFileForm() {
+    this.hwmFileForm = new FormGroup({
+      File: new FormControl(this.selectedFile.File),
+      file_id: new FormControl(this.selectedFile.FileEntity.file_id),
+      name: new FormControl(this.selectedFile.FileEntity.name, Validators.required),
+      FULLname: new FormControl(this.selectedFile.FileEntity.FULLname, Validators.required),
+      source_id: new FormControl(this.selectedFile.FileEntity.source_id),
+      description: new FormControl(this.selectedFile.FileEntity.description, Validators.required),
+      file_date: new FormControl(this.selectedFile.FileEntity.file_date, Validators.required),
+      photo_date: new FormControl(this.selectedFile.FileEntity.photo_date),
+      agency_id: new FormControl(this.selectedFile.FileEntity.agency_id, Validators.required),
+      hwm_id: new FormControl(this.hwm.hwm_id),
+      site_id: new FormControl(this.selectedFile.FileEntity.site_id),
+      filetype_id: new FormControl(this.selectedFile.FileEntity.filetype_id, Validators.required),
+      path: new FormControl(this.selectedFile.FileEntity.path),
+      last_updated: new FormControl(this.selectedFile.FileEntity.last_updated),
+      last_updated_by: new FormControl(this.selectedFile.FileEntity.last_updated_by),
+      site_description: new FormControl(this.selectedFile.FileEntity.site_description),
+      photo_direction: new FormControl(this.selectedFile.FileEntity.photo_direction),
+      latitude_dd: new FormControl(this.selectedFile.FileEntity.latitude_dd, [this.checkLatValue()]),
+      longitude_dd: new FormControl(this.selectedFile.FileEntity.longitude_dd, [this.checkLonValue()]),
+    })
+  }
+
+  /* istanbul ignore next */
+  getFileTypeSelection(event) {
+    this.selectedFile.FileEntity.filetype_id = event.value;
+    if(this.selectedFile.FileEntity.filetype_id === 1){
+      this.hwmFileForm.get("photo_date").setValidators([Validators.required]);
+    }else{
+      this.hwmFileForm.get("photo_date").clearValidators();
+      this.hwmFileForm.get("photo_date").setErrors(null);
+    }
+  }
+
+  /* istanbul ignore next */
+  getFileTypes() {
+    let self = this;
+    this.siteService.getFileTypeLookup().subscribe((results) => {
+      results.forEach(function(results){
+        if (results.filetype === 'Photo' || results.filetype === 'Historic Citation' || results.filetype === 'Field Sheets' || results.filetype === 'Level Notes' ||
+        results.filetype === 'Other' || results.filetype === 'Sketch' || results.filetype === 'Hydrograph'){
+          self.fileTypes.push(results);
+        }
+      })
+    });
+  }
+
+  /* istanbul ignore next */
+  // Set file attributes
+  getFileName(event) {
+    this.selectedFile.FileEntity.name = event.target.files[0].name;
+    this.hwmFileForm.controls['name'].setValue(this.selectedFile.FileEntity.name);
+    this.selectedFile.File = event.target.files[0];
+    this.hwmFileForm.controls['File'].setValue(this.selectedFile.File);
+    this.fileUploading = true;
+    if(this.selectedFile.FileEntity.filetype_id === 1){
+      this.hwmFileForm.controls["photo_date"].setValidators([Validators.required]);
+    }else{
+      this.hwmFileForm.controls["photo_date"].clearValidators();
+    }
+  }
+
+  /* istanbul ignore next */
+  updateAgencyForCaption() {
+    let self = this;
+    this.agencyNameForCap = this.agencies.filter(function (a) { return a.agency_id == self.hwmFileForm.controls['agency_id'].value; })[0].agency_name;
   }
 
   changeHWMEnvironment(value) {
@@ -535,6 +673,503 @@ export class HwmEditComponent implements OnInit {
     return dateWOtime;
   };
 
+  /* istanbul ignore next */
+  showFileCreate() {
+    // Reset form
+    this.cancelFile();
+    this.showFileCreateForm = true;
+    this.addFileType = "New";
+    this.selectedFile.FileEntity.file_date = new Date();
+    this.hwmFileForm.get("file_date").setValue(this.selectedFile.FileEntity.file_date);
+    this.hwmFileForm.get("hwm_id").setValue(this.hwm.hwm_id);
+
+    if(this.selectedFile.FileEntity.filetype_id === 1){
+      this.selectedFile.FileEntity.photo_date = new Date();
+      this.hwmFileForm.get("photo_date").setValue(this.selectedFile.FileEntity.photo_date);
+    }
+    
+    // Set source name and agency automatically
+    // Member id
+    if(JSON.parse(localStorage.getItem('currentUser'))){
+      let member_id = JSON.parse(localStorage.getItem('currentUser')).member_id;
+      this.selectedFile.FileEntity.source_id = member_id;
+      this.hwmFileForm.get('source_id').setValue(member_id);
+      // FULLname
+      this.selectedFile.FileEntity.FULLname = JSON.parse(localStorage.getItem('currentUser')).fname + " " +  JSON.parse(localStorage.getItem('currentUser')).lname;
+      this.hwmFileForm.get('FULLname').setValue(this.selectedFile.FileEntity.FULLname);
+      // Agency
+      this.selectedFile.FileEntity.agency_id = JSON.parse(localStorage.getItem('currentUser')).agency_id;
+      this.hwmFileForm.get('agency_id').setValue(this.selectedFile.FileEntity.agency_id);
+      this.updateAgencyForCaption();
+    }
+  }
+
+  /* istanbul ignore next */
+  setInitFileEditForm(data) {
+    this.hwmFileForm.get('file_id').setValue(data.file_id);
+    this.hwmFileForm.get('name').setValue(data.name);
+    this.hwmFileForm.get('FULLname').setValue(data.FULLname);
+    this.hwmFileForm.get('description').setValue(data.description);
+    this.hwmFileForm.get('file_date').setValue(data.file_date);
+    this.hwmFileForm.get('photo_date').setValue(data.photo_date);
+    this.hwmFileForm.get('agency_id').setValue(data.agency_id);
+    this.hwmFileForm.get('source_id').setValue(data.source_id);
+    this.hwmFileForm.get('site_id').setValue(data.site_id);
+    this.hwmFileForm.get('filetype_id').setValue(data.filetype_id);
+    this.hwmFileForm.get('path').setValue(data.path);
+    this.hwmFileForm.get('last_updated').setValue(data.last_updated);
+    this.hwmFileForm.get('last_updated_by').setValue(data.last_updated_by);
+    this.hwmFileForm.get('site_description').setValue(data.site_description);
+    this.hwmFileForm.get('photo_direction').setValue(data.photo_direction);
+    this.hwmFileForm.get('latitude_dd').setValue(data.latitude_dd);
+    this.hwmFileForm.get('longitude_dd').setValue(data.longitude_dd);
+    this.hwmFileForm.get('hwm_id').setValue(this.hwm.hwm_id);
+  }
+
+  /* istanbul ignore next */
+  setFileSourceAgency(source_id){
+    this.siteService
+    .getFileSource(source_id)
+    .subscribe((results) => {
+        this.selectedFile.FileEntity.agency_id = results.agency_id;
+        this.agencyNameForCap = results.agency_name;
+        this.hwmFileForm.controls['agency_id'].setValue(this.selectedFile.FileEntity.agency_id);
+        this.sourceAgency = results.agency_name;
+        if(this.previewCaption){
+          if (this.sourceAgency === undefined || this.sourceAgency === ''){
+            this.previewCaption["sourceAgency"] = '(source agency)';
+          }else{
+            this.previewCaption["sourceAgency"] = this.sourceAgency;
+          }
+        }
+    });
+  }
+
+  /* istanbul ignore next */
+  setFileSource(source_id){
+    this.siteService
+    .getSourceName(source_id)
+    .subscribe((results) => {
+        this.selectedFile.FileEntity.FULLname = results.source_name;
+        this.hwmFileForm.controls['FULLname'].setValue(this.selectedFile.FileEntity.FULLname);
+        this.sourceName = results.source_name;
+        if(this.previewCaption){
+          if (this.sourceName === undefined || this.sourceName === ''){
+            this.previewCaption["sourceName"] = '(source name)'
+          }else{
+            this.previewCaption["sourceName"] = this.sourceName;
+          }
+        }
+    });
+  }
+
+  /* istanbul ignore next */
+  getAgencies() {
+    this.siteService.getAgencyLookup().subscribe((results) => {
+      this.agencies = results;
+    });
+  }
+
+  /* istanbul ignore next */
+  getFile() {
+    if(this.selectedFile.FileEntity.file_id !== null && this.selectedFile.FileEntity.file_id !== undefined){
+      this.siteService.getFileItem(this.selectedFile.FileEntity.file_id).subscribe((results) => {
+        if(results.Length > 0) {
+          this.fileItemExists = true;
+          this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.selectedFile.FileEntity.file_id + '/item';
+          this.selectedFile.FileEntity.name = results.FileName;
+          this.hwmFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
+          this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
+          this.setFileSource(this.selectedFile.FileEntity.source_id);
+        }else{
+          this.fileItemExists = false;
+          this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
+          this.setFileSource(this.selectedFile.FileEntity.source_id);
+        }
+      });
+    }else{
+      this.fileItemExists = false;
+    }
+  }
+
+  /* istanbul ignore next */
+  showFileDetails(row) {
+    if(row) {
+      this.expandedElement = row;
+      this.showDetails = true;
+      this.showFileForm = false;
+      // Get filetype name
+      this.fileType = this.fileTypeLookup(row.filetype_id);
+      // Get source name and preview caption
+      this.setFileSource(row.source_id);
+      // Get agency ID
+      this.setFileSourceAgency(row.source_id);
+
+      this.previewCaption = {
+        description: row.description,
+        site_description: this.data.hwmSite.site_description,
+        county: this.data.hwmSite.county,
+        state: this.data.hwmSite.state,
+        photo_date: row.photo_date,
+        sourceName: this.sourceName,
+        sourceAgency: this.sourceAgency,
+      }
+
+      // Replace any undefined preview caption info with placeholder
+      if (row.description === undefined || row.description == ''){
+        this.previewCaption.description = "(description)";
+      }
+      if (this.data.hwmSite.site_description === undefined || this.data.hwmSite.site_description == ''){
+        this.previewCaption.site_description = '(site description)'
+      }
+      if (this.data.hwmSite.county === undefined || this.data.hwmSite.county == ''){
+        this.previewCaption.county = '(county)'
+      }
+      if (this.data.hwmSite.state === undefined || this.data.hwmSite.state == ''){
+        this.previewCaption.state = '(state)'
+      }
+      if (row.photo_date === undefined || row.photo_date == ''){
+        this.previewCaption.photo_date = '(photo date)'
+      }
+      this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + row.file_id + '/item';
+    }else{
+      this.expandedElement = null;
+      this.showDetails = false;
+    }
+  }
+
+  /* istanbul ignore next */
+  showFileEdit(row) {
+    // Reset form
+    if(row){
+      this.cancelFile();
+      this.setInitFileEditForm(row);
+      this.expandedElement = row;
+      this.showDetails = false;
+      this.showFileForm = true;
+      this.selectedFile.FileEntity.file_id = row.file_id;
+      this.selectedFile.FileEntity.filetype_id = row.filetype_id;
+      this.addFileType = "Existing";
+      this.selectedFile.FileEntity.source_id = row.source_id;
+      this.selectedFile.FileEntity.file_date = row.file_date;
+      this.selectedFile.FileEntity.photo_date = row.photo_date !== undefined ? row.photo_date : null;
+      this.selectedFile.FileEntity.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
+      this.selectedFile.FileEntity.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
+      this.selectedFile.FileEntity.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
+      this.selectedFile.FileEntity.site_id = this.data.site_id;
+      this.selectedFile.FileEntity.name = row.name !== undefined && row.name !== "" ? row.name : null;
+      this.selectedFile.FileEntity.hwm_id = this.hwm.hwm_id;
+      
+      this.hwmFileForm.get('file_date').setValue(this.selectedFile.FileEntity.file_date);
+      this.hwmFileForm.get('photo_date').setValue(this.selectedFile.FileEntity.photo_date);
+      this.hwmFileForm.get('file_id').setValue(this.selectedFile.FileEntity.file_id);
+      this.hwmFileForm.get('photo_direction').setValue(this.selectedFile.FileEntity.photo_direction);
+      this.hwmFileForm.get('latitude_dd').setValue(this.selectedFile.FileEntity.latitude_dd);
+      this.hwmFileForm.get('longitude_dd').setValue(this.selectedFile.FileEntity.longitude_dd);
+      this.hwmFileForm.get('site_id').setValue(this.selectedFile.FileEntity.site_id);
+      this.hwmFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
+      this.hwmFileForm.get('hwm_id').setValue(this.selectedFile.FileEntity.hwm_id);
+  
+      this.getFile();
+    }else{
+      this.expandedElement = null;
+      this.showFileForm = false;
+    }
+  }
+  
+  /* istanbul ignore next */
+  fileTypeLookup(response) {
+    for(let filetype of this.fileTypes){
+      if(filetype.filetype_id === response){
+        return filetype.filetype;
+      }
+    }
+  }
+
+  /* istanbul ignore next */
+  cancelFile() {
+    // Reset file inputs
+    this.changeDetector.detectChanges();
+    if(this.upload !== undefined){
+      this.upload.nativeElement.value = '';
+    }
+
+    this.showFileForm = false;
+    this.showFileCreateForm = false;
+    this.expandedElement = null;
+    this.fileUploading = false;
+
+    this.hwmFileForm.reset();
+
+    this.selectedFile = {
+      FileEntity: {
+        file_id: null,
+        name: null,
+        FULLname: null,
+        source_id: null,
+        description: null,
+        file_date: null,
+        photo_date: null,
+        agency_id: null,
+        site_id: null,
+        filetype_id: null,
+        path: null,
+        last_updated: null,
+        last_updated_by: null,
+        site_description: null,
+        photo_direction: null,
+        latitude_dd: null,
+        longitude_dd: null,
+        hwm_id: null,
+      },
+      File: null
+    };
+  }
+
+  /* istanbul ignore next */
+  // Delete file
+  deleteFile(row) {
+    let dialogRef = this.dialog.open(ConfirmComponent, {
+      data: {
+        title: "Remove File",
+        titleIcon: "close",
+        message: "Are you sure you want to remove this file?",
+        confirmButtonText: "OK",
+        showCancelButton: true,
+      },
+    });
+    
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result){
+        this.fileEditService.deleteFile(row.file_id)
+          .subscribe(
+              (data) => {
+                if(data === null){
+                  // success
+                  this.dialog.open(ConfirmComponent, {
+                      data: {
+                      title: "",
+                      titleIcon: "close",
+                      message: "Successfully removed file",
+                      confirmButtonText: "OK",
+                      showCancelButton: false,
+                      },
+                  });
+                  let index;
+                  for(let file of this.initHWMFiles){
+                    if(file.file_id === row.file_id){
+                      index = this.initHWMFiles.indexOf(file);
+                      this.returnFiles.push({file: file, type: "delete"});
+                    }
+                  }
+                  this.initHWMFiles.splice(index, 1);
+                  this.initHWMFiles = [...this.initHWMFiles];
+                  this.cancelFile();
+                  this.showFileForm = false;
+                  this.expandedElement = null;
+              }else{
+                  // error
+                  this.dialog.open(ConfirmComponent, {
+                      data: {
+                      title: "Error",
+                      titleIcon: "close",
+                      message: "Error removing file",
+                      confirmButtonText: "OK",
+                      showCancelButton: false,
+                      },
+                  });
+              }
+            }
+          );
+      }
+    });
+  }
+
+  /* istanbul ignore next */
+  // Re-upload file or add missing file
+  saveFileUpload() {
+    let self = this;
+    // update hwmFilesForm
+    let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
+    let formatFileSubmission = {
+      file_id: fileSubmission.file_id,
+      description: fileSubmission.description,
+      source_id: fileSubmission.source_id,
+      filetype_id: fileSubmission.filetype_id,
+      latitude_dd: fileSubmission.latitude_dd,
+      longitude_dd: fileSubmission.longitude_dd,
+      file_date: fileSubmission.file_date,
+      name: fileSubmission.name,
+      photo_date: fileSubmission.photo_date,
+      photo_direction: fileSubmission.photo_direction,
+      site_id: this.data.site_id,
+      hwm_id: this.hwm.hwm_id,
+    }
+    let fd = new FormData();
+    fd.append("FileEntity", JSON.stringify(formatFileSubmission));
+    fd.append("File", this.hwmFileForm.controls["File"].value);
+    // post file
+    this.fileEditService.uploadFile(fd)
+      .subscribe(
+          (data) => {
+            if(data.length !== []){
+              this.initHWMFiles.forEach(function(file, i){
+                if(file.file_id === data.file_id){
+                  self.returnFiles.push({file: file, type: "update"});
+                  self.initHWMFiles[i] = data;
+                  self.initHWMFiles = [...self.initHWMFiles];
+                  self.showFileForm = false;
+                  self.showFileCreateForm = false;
+                  self.expandedElement = null;
+                }
+              });
+              this.loading = false;
+            }
+          }
+      );
+    this.fileUploading = false;
+    this.fileItemExists = true;
+  }
+
+  /* istanbul ignore next */
+  saveFile() {
+    let self = this;
+    this.hwmFileForm.markAllAsTouched();
+    let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
+    if(this.hwmFileForm.valid){
+      this.fileValid = true;
+      if(fileSubmission.source_id !== null){
+        let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
+        this.siteEditService.postSource(theSource)
+        .subscribe(
+            (response) => {
+              fileSubmission.source_id = response.source_id;
+              fileSubmission.fileBelongsTo = "HWM File";
+              fileSubmission.fileType = this.fileTypeLookup(fileSubmission.filetype_id);
+              
+              delete fileSubmission.is_nwis; delete fileSubmission.FULLname;
+              delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.File; delete fileSubmission.agency_id;
+              this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission)
+                .subscribe(
+                    (data) => {
+                      self.initHWMFiles.forEach(function(file, i){
+                        if(file.file_id === data.file_id){
+                          self.returnFiles.push({file: data, type: "update"});
+                          self.initHWMFiles[i] = data;
+                          self.initHWMFiles = [...self.initHWMFiles];
+                          self.showFileForm = false;
+                          self.expandedElement = null;
+                        }
+                      });
+                    }
+                );
+            }
+        )
+      }
+    }else{
+      this.loading = false;
+      this.fileValid = false;
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required HWM file fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
+    }
+  }
+
+  /* istanbul ignore next */
+  createFile() {
+    let self = this;
+    this.loading = true;
+    this.hwmFileForm.markAllAsTouched();
+    let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
+    if(this.hwmFileForm.valid){
+      this.fileValid = true;
+      // check if source already exists?
+      let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
+      
+      //post source first to get source_id
+      this.siteEditService.postSource(theSource)
+      .subscribe(
+          (response) => {
+            fileSubmission.source_id = response.source_id;
+            delete fileSubmission.FULLname; delete fileSubmission.agency_id; delete fileSubmission.site_description; delete fileSubmission.path;
+            if (fileSubmission.filetype_id !== 8) {
+              let formatFileSubmission = {
+                  description: fileSubmission.description,
+                  source_id: fileSubmission.source_id,
+                  filetype_id: fileSubmission.filetype_id,
+                  latitude_dd: fileSubmission.latitude_dd,
+                  longitude_dd: fileSubmission.longitude_dd,
+                  file_date: fileSubmission.file_date,
+                  name: fileSubmission.name,
+                  photo_date: fileSubmission.photo_date,
+                  photo_direction: fileSubmission.photo_direction,
+                  site_id: this.data.site_id,
+                  hwm_id: this.hwm.hwm_id,
+              }
+              let fd = new FormData();
+              fd.append("FileEntity", JSON.stringify(formatFileSubmission));
+              fd.append("File", this.hwmFileForm.controls["File"].value);
+              
+              //then POST fileParts (Services populate PATH)
+              this.siteEditService.uploadFile(fd)
+                .subscribe(
+                    (data) => {
+                      if(data !== []){
+                        self.returnFiles.push({file: data, type: "add"});
+                        self.initHWMFiles.push(data);
+                        self.initHWMFiles = [...self.initHWMFiles];
+                      }
+                        this.showFileForm = false;
+                        this.showFileCreateForm = false;
+                        this.expandedElement = null;
+                        this.loading = false;
+                    }
+                );
+            }
+            else{
+              fileSubmission.site_id = this.data.site_id;
+              // Link FileTypes
+              delete fileSubmission.File; delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd;
+              delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.photo_direction; delete fileSubmission.path;
+              
+              this.siteEditService.saveFile(fileSubmission)
+                .subscribe(
+                    (data) => {
+                      if(data !== []){
+                        self.returnFiles.push({file: data, type: "add"});
+                        self.initHWMFiles.push(data);
+                        self.initHWMFiles = [...self.initHWMFiles];
+                      }
+                      this.loading = false;
+                      this.showFileForm = false;
+                      this.showFileCreateForm = false;
+                      this.expandedElement = null;
+                    }
+                );
+            }
+          }
+      );
+    }else{
+      this.fileValid = false;
+      this.loading = false;
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required HWM file fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
+    }
+  }
+
   submit() {
     this.form.markAllAsTouched();
     if(this.form.valid){
@@ -565,9 +1200,9 @@ export class HwmEditComponent implements OnInit {
         if (this.form.get("survey_member_id").value === undefined || this.form.get("survey_member_id").value === null){
           this.form.get("survey_member_id").setValue(JSON.parse(localStorage.getItem('currentUser')).member_id);
         }
-    }
-
+      }
       this.sendRequests();
+
     }else{
       this.loading = false;
       this.dialog.open(ConfirmComponent, {
@@ -610,7 +1245,7 @@ export class HwmEditComponent implements OnInit {
 
       updateHWM.then(() => {
         this.loading = false;
-        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
         this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
@@ -648,7 +1283,7 @@ export class HwmEditComponent implements OnInit {
 
       createHWM.then(() => {
         this.loading = false;
-        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
         this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {

@@ -1802,10 +1802,10 @@
                             <mat-expansion-panel hideToggle [expanded]="hwmFilesExpanded" (opened)="hwmFilesExpanded = true" (closed)="hwmFilesExpanded = false">
                                 <mat-expansion-panel-header class="panel-headers">
                                     <mat-panel-title *ngIf="!hwmFilesExpanded" style="color: grey; font-weight: 500">
-                                        HWM Files ({{hwmFiles.length}})
+                                        HWM Files ({{hwmFilesDataSource.data.length}})
                                     </mat-panel-title>
                                     <mat-panel-title *ngIf="hwmFilesExpanded" style="color: #FFF; font-weight: 550">
-                                        HWM Files ({{hwmFiles.length}})
+                                        HWM Files ({{hwmFilesDataSource.data.length}})
                                     </mat-panel-title>
                                     <button mat-button *ngIf="currentEvent !== null" (click)="addFile('HWM File', $event)"
                                         aria-label="Add File"><mat-icon matTooltip="Add a HWM File" class="add-buttons">add</mat-icon>
@@ -1815,8 +1815,8 @@
                                         aria-label="Add File"><mat-icon class="disabled-icon" matTooltip="Select an event to add a HWM File">add</mat-icon>
                                     </button>
                                 </mat-expansion-panel-header>
-                                <div class="tableContainer" *ngIf="hwmFiles !== undefined; else noHWMFileTable">
-                                    <table *ngIf="hwmFiles.length > 0; else noHWMFileTable"
+                                <div class="tableContainer" *ngIf="hwmFilesDataSource.data !== undefined; else noHWMFileTable">
+                                    <table *ngIf="hwmFilesDataSource.data.length > 0; else noHWMFileTable"
                                         mat-table
                                         id="hwmFilesTable"
                                         [dataSource]="hwmFilesDataSource"
