@@ -1192,6 +1192,7 @@ export class SiteDetailsComponent implements OnInit {
     openHWMEditDialog(row): void {
         this.clickedHWMRows.clear();
         this.fadeOutHWMRows.clear();
+        this.clickedFileRows.clear();
         if(row !== null){
             this.clickedHWMRows.add(row);
         }
@@ -1205,6 +1206,9 @@ export class SiteDetailsComponent implements OnInit {
                 event_id: this.currentEvent,
                 event: this.event,
                 hwmSite: this.site,
+                siteRefDatums: this.refMarkDataSource.data,
+                siteHWMs: this.hwmDataSource.data,
+                siteSensors: this.sensorDataSource.data,
             },
         });
         dialogRef.afterClosed().subscribe((result) => {
@@ -1231,6 +1235,37 @@ export class SiteDetailsComponent implements OnInit {
                     self.hwmDataSource.paginator.length = self.hwmDataSource.data.length;
                     self.hwmDataSource.paginator.lastPage();
                 }
+            }
+            if(result.returnFiles.length > 0) {
+                // Update files data source and hwm
+                result.returnFiles.forEach((file, i) => {
+                    if(file.type === "delete"){
+                        self.hwmFilesDataSource.data.splice(i, 1);
+                        self.fileLength --;
+                    }else if(file.type === "add"){
+                        self.hwmFilesDataSource.data.push(file.file);
+                        self.fileLength ++;
+                    }else if(file.type === "update"){
+                        self.hwmFilesDataSource.data.forEach((hwmFile, j) => {
+                            if(hwmFile.file_id === file.file.file_id){
+                                self.hwmFilesDataSource.data[j] = file.file;
+                            }
+                        });
+                    }
+                })
+                self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
+                // Go to last page if not already there
+                if(self.hwmFilesDataSource.paginator){
+                    self.hwmFilesDataSource.paginator.length = self.hwmFilesDataSource.data.length;
+                    self.hwmFilesDataSource.paginator.lastPage();
+                }
+                
+                // Fade out active highlighting
+                this.clickedFileRows.add(result);
+                setTimeout(() => {
+                    this.fadeOutFileRows.add(result);
+                    this.clickedFileRows.clear();
+                }, 7000)
             }
         });
     }
@@ -1859,7 +1894,6 @@ export class SiteDetailsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if(result){
-                console.log(result)
                 if(type === "Site File") {
                     // Update files data source and site
                     self.siteFilesDataSource.data.push(result);
