@@ -398,8 +398,7 @@ export class HwmEditComponent implements OnInit {
 
   updateAgencyForCaption() {
     let self = this;
-    if (this.hwmFileForm.controls['filetype_id'].value == 1)
-        this.agencyNameForCap = this.agencies.filter(function (a) { return a.agency_id == self.hwmFileForm.controls['agency_id'].value; })[0].agency_name;
+    this.agencyNameForCap = this.agencies.filter(function (a) { return a.agency_id == self.hwmFileForm.controls['agency_id'].value; })[0].agency_name;
   }
 
   changeHWMEnvironment(value) {
@@ -687,8 +686,8 @@ export class HwmEditComponent implements OnInit {
       this.hwmFileForm.get('FULLname').setValue(this.selectedFile.FileEntity.FULLname);
       // Agency
       this.selectedFile.FileEntity.agency_id = JSON.parse(localStorage.getItem('currentUser')).agency_id;
-      this.agencyNameForCap = JSON.parse(localStorage.getItem('currentUser')).agency_name;
       this.hwmFileForm.get('agency_id').setValue(this.selectedFile.FileEntity.agency_id);
+      this.updateAgencyForCaption();
     }
   }
 
@@ -720,11 +719,13 @@ export class HwmEditComponent implements OnInit {
         this.selectedFile.FileEntity.agency_id = results.agency_id;
         this.agencyNameForCap = results.agency_name;
         this.hwmFileForm.controls['agency_id'].setValue(this.selectedFile.FileEntity.agency_id);
-        this.sourceAgency = results.agency_name
-        if (this.sourceAgency === undefined || this.sourceAgency === ''){
-          this.previewCaption["sourceAgency"] = '(source agency)'
-        }else{
-          this.previewCaption["sourceAgency"] = this.sourceAgency;
+        this.sourceAgency = results.agency_name;
+        if(this.previewCaption){
+          if (this.sourceAgency === undefined || this.sourceAgency === ''){
+            this.previewCaption["sourceAgency"] = '(source agency)';
+          }else{
+            this.previewCaption["sourceAgency"] = this.sourceAgency;
+          }
         }
     });
   }
@@ -736,10 +737,12 @@ export class HwmEditComponent implements OnInit {
         this.selectedFile.FileEntity.FULLname = results.source_name;
         this.hwmFileForm.controls['FULLname'].setValue(this.selectedFile.FileEntity.FULLname);
         this.sourceName = results.source_name;
-        if (this.sourceName === undefined || this.sourceName === ''){
-          this.previewCaption["sourceName"] = '(source name)'
-        }else{
-          this.previewCaption["sourceName"] = this.sourceName;
+        if(this.previewCaption){
+          if (this.sourceName === undefined || this.sourceName === ''){
+            this.previewCaption["sourceName"] = '(source name)'
+          }else{
+            this.previewCaption["sourceName"] = this.sourceName;
+          }
         }
     });
   }
@@ -809,6 +812,7 @@ export class HwmEditComponent implements OnInit {
       if (row.photo_date === undefined || row.photo_date == ''){
         this.previewCaption.photo_date = '(photo date)'
       }
+      this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + row.file_id + '/item';
     }else{
       this.expandedElement = null;
       this.showDetails = false;
@@ -980,7 +984,6 @@ export class HwmEditComponent implements OnInit {
     let fd = new FormData();
     fd.append("FileEntity", JSON.stringify(formatFileSubmission));
     fd.append("File", this.hwmFileForm.controls["File"].value);
-    console.log(fd)
     // post file
     this.fileEditService.uploadFile(fd)
       .subscribe(
@@ -1012,7 +1015,6 @@ export class HwmEditComponent implements OnInit {
       this.fileValid = true;
       if(fileSubmission.source_id !== null){
         let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
-        console.log(theSource)
         this.siteEditService.postSource(theSource)
         .subscribe(
             (response) => {
@@ -1022,13 +1024,12 @@ export class HwmEditComponent implements OnInit {
               
               delete fileSubmission.is_nwis; delete fileSubmission.FULLname;
               delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.File; delete fileSubmission.agency_id;
-              console.log(fileSubmission)
               this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission)
                 .subscribe(
                     (data) => {
                       self.initHWMFiles.forEach(function(file, i){
                         if(file.file_id === data.file_id){
-                          self.returnFiles.push({file: file, type: "update"});
+                          self.returnFiles.push({file: data, type: "update"});
                           self.initHWMFiles[i] = data;
                           self.initHWMFiles = [...self.initHWMFiles];
                           self.showFileForm = false;
@@ -1059,7 +1060,6 @@ export class HwmEditComponent implements OnInit {
     let self = this;
     this.loading = true;
     this.hwmFileForm.markAllAsTouched();
-    console.log(this.hwmFileForm)
     let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
     if(this.hwmFileForm.valid){
       this.fileValid = true;
@@ -1089,8 +1089,6 @@ export class HwmEditComponent implements OnInit {
               let fd = new FormData();
               fd.append("FileEntity", JSON.stringify(formatFileSubmission));
               fd.append("File", this.hwmFileForm.controls["File"].value);
-              console.log(formatFileSubmission)
-              console.log(this.hwmFileForm.controls["File"].value)
               
               //then POST fileParts (Services populate PATH)
               this.siteEditService.uploadFile(fd)
@@ -1114,7 +1112,6 @@ export class HwmEditComponent implements OnInit {
               delete fileSubmission.File; delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd;
               delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.photo_direction; delete fileSubmission.path;
               
-              console.log(fileSubmission)
               this.siteEditService.saveFile(fileSubmission)
                 .subscribe(
                     (data) => {
@@ -1177,10 +1174,9 @@ export class HwmEditComponent implements OnInit {
         if (this.form.get("survey_member_id").value === undefined || this.form.get("survey_member_id").value === null){
           this.form.get("survey_member_id").setValue(JSON.parse(localStorage.getItem('currentUser')).member_id);
         }
-    }
-    console.log("submit")
+      }
+      this.sendRequests();
 
-      // this.sendRequests();
     }else{
       this.loading = false;
       this.dialog.open(ConfirmComponent, {

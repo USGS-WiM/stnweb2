@@ -93,7 +93,7 @@
             </div>
             <div class="cell-container" *ngIf="fileType === 'Photo'">
                 <p class="content-left">Preview Caption</p>
-                <p class="content-right">Photo of {{previewCaption.description}} at {{previewCaption.site_description}}, {{previewCaption.county}}, {{previewCaption.state}}, {{previewCaption.photo_date}}.  Photograph by {{previewCaption.sourceName}}, {{previewCaption.sourceAgency}}</p>
+                <p class="content-right">Photo of {{previewCaption.description}} at {{previewCaption.site_description}}, {{previewCaption.county}}, {{previewCaption.state}}, {{previewCaption.photo_date | date: 'MM/dd/yyyy'}}.  Photograph by {{previewCaption.sourceName}}, {{previewCaption.sourceAgency}}</p>
             </div>
             <div class="cell-container" *ngIf="data.row_data.is_nwis === undefined || data.row_data.is_nwis !== 1">
                 <p class="content-left">Associated File</p>

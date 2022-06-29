@@ -392,7 +392,7 @@
                 <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                     <mat-form-field appearance="fill">
                         <mat-label>Photo Date</mat-label>
-                        <input aria-label="Photo Date" matInput formControlName="photo_date" [value]="selectedFile.FileEntity.photo_date" [matDatepicker]="photoDatePicker" (dateChange)="formatDate($event)" required placeholder="Choose a date">
+                        <input aria-label="Photo Date" matInput formControlName="photo_date" [value]="selectedFile.FileEntity.photo_date" [matDatepicker]="photoDatePicker" required placeholder="Choose a date">
                         <mat-datepicker-toggle matSuffix [for]="photoDatePicker"></mat-datepicker-toggle>
                         <mat-datepicker [value]="selectedFile.FileEntity.photo_date" #photoDatePicker></mat-datepicker>
                     </mat-form-field>
@@ -402,7 +402,7 @@
                 <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
                     <mat-form-field appearance="fill">
                         <mat-label>Date Uploaded</mat-label>
-                        <input aria-label="Date Uploaded" matInput formControlName="file_date" [value]="selectedFile.FileEntity.file_date" [matDatepicker]="fileDatePicker" required placeholder="Choose a date" (dateChange)="formatDate($event)">
+                        <input aria-label="Date Uploaded" matInput formControlName="file_date" [value]="selectedFile.FileEntity.file_date" [matDatepicker]="fileDatePicker" required placeholder="Choose a date">
                         <mat-datepicker-toggle matSuffix [for]="fileDatePicker"></mat-datepicker-toggle>
                         <mat-datepicker #fileDatePicker></mat-datepicker>
                     </mat-form-field>
@@ -457,11 +457,11 @@
                     </div>
                 </div>
 
-                <div *ngIf="selectedFile.FileEntity.filetype_id === 11">
+                <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                     <label class="form-header" for="Caption">Preview Caption</label>
                     <div>
                         <span>
-                            Photo of {{hwmFileForm.value.description || ' (Description HERE) '}} at {{siteForm.value.site_description}}, {{siteForm.value.county}}, {{siteForm.value.state}}, {{formattedPhotoDate || ' Date taken HERE '}}. Photograph by {{hwmFileForm.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
+                            Photo of {{hwmFileForm.value.description || ' (Description HERE) '}} at {{data.hwmSite.site_description}}, {{data.hwmSite.county}}, {{data.hwmSite.state}}, {{hwmFileForm.value.photo_date | date: 'MM/dd/yyyy' || ' Date taken HERE '}}. Photograph by {{hwmFileForm.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
                         </span>
                     </div>
                 </div>
@@ -644,7 +644,7 @@
                                         <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                                             <mat-form-field appearance="fill">
                                                 <mat-label>Photo Date</mat-label>
-                                                <input aria-label="Photo Date" matInput formControlName="photo_date" [value]="selectedFile.FileEntity.photo_date" [matDatepicker]="photoDatePicker" (dateChange)="formatDate($event)" required placeholder="Choose a date">
+                                                <input aria-label="Photo Date" matInput formControlName="photo_date" [value]="selectedFile.FileEntity.photo_date" [matDatepicker]="photoDatePicker" required placeholder="Choose a date">
                                                 <mat-datepicker-toggle matSuffix [for]="photoDatePicker"></mat-datepicker-toggle>
                                                 <mat-datepicker [value]="selectedFile.FileEntity.photo_date" #photoDatePicker></mat-datepicker>
                                             </mat-form-field>
@@ -654,7 +654,7 @@
                                         <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
                                             <mat-form-field appearance="fill">
                                                 <mat-label>Date Uploaded</mat-label>
-                                                <input aria-label="Date Uploaded" matInput formControlName="file_date" [value]="selectedFile.FileEntity.file_date" [matDatepicker]="fileDatePicker" required placeholder="Choose a date" (dateChange)="formatDate($event)">
+                                                <input aria-label="Date Uploaded" matInput formControlName="file_date" [value]="selectedFile.FileEntity.file_date" [matDatepicker]="fileDatePicker" required placeholder="Choose a date">
                                                 <mat-datepicker-toggle matSuffix [for]="fileDatePicker"></mat-datepicker-toggle>
                                                 <mat-datepicker #fileDatePicker></mat-datepicker>
                                             </mat-form-field>
@@ -709,11 +709,11 @@
                                             </div>
                                         </div>
 
-                                        <div *ngIf="selectedFile.FileEntity.filetype_id === 11">
+                                        <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                                             <label class="form-header" for="Caption">Preview Caption</label>
                                             <div>
                                                 <span>
-                                                    Photo of {{hwmFileForm.value.description || ' (Description HERE) '}} at {{siteForm.value.site_description}}, {{siteForm.value.county}}, {{siteForm.value.state}}, {{formattedPhotoDate || ' Date taken HERE '}}. Photograph by {{hwmFileForm.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
+                                                    Photo of {{hwmFileForm.value.description || ' (Description HERE) '}} at {{data.hwmSite.site_description}}, {{data.hwmSite.county}}, {{data.hwmSite.state}}, {{hwmFileForm.value.photo_date | date: 'MM/dd/yyyy' || ' Date taken HERE '}}. Photograph by {{hwmFileForm.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
                                                 </span>
                                             </div>
                                         </div>
@@ -822,12 +822,11 @@
                                             </div>
                                             <div class="cell-container" *ngIf="fileType === 'Photo'">
                                                 <p class="content-left">Preview Caption</p>
-                                                <p class="content-right">Photo of {{previewCaption.description}} at {{previewCaption.site_description}}, {{previewCaption.county}}, {{previewCaption.state}}, {{previewCaption.photo_date}}.  Photograph by {{previewCaption.sourceName}}, {{previewCaption.sourceAgency}}</p>
+                                                <p class="content-right">Photo of {{previewCaption.description}} at {{previewCaption.site_description}}, {{previewCaption.county}}, {{previewCaption.state}}, {{previewCaption.photo_date | date: 'MM/dd/yyyy'}}.  Photograph by {{previewCaption.sourceName}}, {{previewCaption.sourceAgency}}</p>
                                             </div>
                                             <div class="cell-container" *ngIf="element.is_nwis === undefined || element.is_nwis !== 1">
                                                 <p class="content-left">Associated File</p>
-                                                <p class="content-right" *ngIf="fileItemExists; else nullAssociatedFile"><a id="associatedFile" href="{{associatedFileUrl}}" target="_blank">{{element.name}}</a></p>
-                                                <ng-template #nullAssociatedFile><p class="content-right">---Missing---</p></ng-template>
+                                                <p class="content-right"><a id="associatedFile" href="{{fileSource}}" target="_blank">{{element.name}}</a></p>
                                             </div>
                                         </div>
                                     </div>

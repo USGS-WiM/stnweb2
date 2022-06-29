@@ -1246,7 +1246,6 @@ export class SiteDetailsComponent implements OnInit {
                         self.hwmFilesDataSource.data.push(file.file);
                         self.fileLength ++;
                     }else if(file.type === "update"){
-                        console.log("update")
                         self.hwmFilesDataSource.data.forEach((hwmFile, j) => {
                             if(hwmFile.file_id === file.file.file_id){
                                 self.hwmFilesDataSource.data[j] = file.file;
@@ -1895,7 +1894,6 @@ export class SiteDetailsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if(result){
-                console.log(result)
                 if(type === "Site File") {
                     // Update files data source and site
                     self.siteFilesDataSource.data.push(result);

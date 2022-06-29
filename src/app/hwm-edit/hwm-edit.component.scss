@@ -43,8 +43,16 @@ table {
 .mat-column-FileDate{
     padding: 10px;
     vertical-align: middle;
+    border-right: 1px solid #e0e0e0;
     align-self: stretch;
 }
+
+.mat-column-expand{
+    padding: 10px;
+    vertical-align: top;
+    text-align: right;
+    align-self: stretch;
+} 
 
 .mat-header-cell {
     font-weight: bold;
