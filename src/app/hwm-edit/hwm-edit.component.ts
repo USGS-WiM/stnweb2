@@ -991,6 +991,9 @@ export class HwmEditComponent implements OnInit {
     let self = this;
     // update hwmFilesForm
     let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
     let formatFileSubmission = {
       file_id: fileSubmission.file_id,
       description: fileSubmission.description,
@@ -1036,6 +1039,9 @@ export class HwmEditComponent implements OnInit {
     let self = this;
     this.hwmFileForm.markAllAsTouched();
     let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
     if(this.hwmFileForm.valid){
       this.fileValid = true;
       if(fileSubmission.source_id !== null){
@@ -1087,6 +1093,9 @@ export class HwmEditComponent implements OnInit {
     this.loading = true;
     this.hwmFileForm.markAllAsTouched();
     let fileSubmission = JSON.parse(JSON.stringify(this.hwmFileForm.value));
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
     if(this.hwmFileForm.valid){
       this.fileValid = true;
       // check if source already exists?
