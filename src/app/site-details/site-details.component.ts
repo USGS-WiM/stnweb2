@@ -217,6 +217,7 @@ export class SiteDetailsComponent implements OnInit {
     displayedHWMFileColumns: string[] = [
         'FileDate',
         'FileName',
+        'HWMLabel',
         'button',
     ];
 
@@ -535,6 +536,12 @@ export class SiteDetailsComponent implements OnInit {
                                         }
                                     });
                                 }else if (file.hwm_id !== undefined){
+                                    // Add hwm label to result
+                                    self.hwmDataSource.data.forEach(function(hwm){
+                                        if(hwm.hwm_id === file.hwm_id){
+                                            file.hwm_label = hwm.hwm_label;
+                                        }
+                                    })
                                     self.hwmFiles.push(file);
                                 }else if (file.objective_point_id !== undefined){
                                     // Add rd name to result
@@ -659,6 +666,12 @@ export class SiteDetailsComponent implements OnInit {
                                         }
                                     });
                                 }else if (file.hwm_id !== undefined){
+                                    // Add hwm label to result
+                                    self.hwmDataSource.data.forEach(function(hwm){
+                                        if(hwm.hwm_id === file.hwm_id){
+                                            file.hwm_label = hwm.hwm_label;
+                                        }
+                                    })
                                     self.hwmFiles.push(file);
                                     self.fileLength ++;
                                 }
@@ -1281,9 +1294,13 @@ export class SiteDetailsComponent implements OnInit {
                         self.hwmFilesDataSource.data.splice(i, 1);
                         self.fileLength --;
                     }else if(file.type === "add"){
+                        // Add hwm label to result
+                        file.file.hwm_label = row.hwm_label;
                         self.hwmFilesDataSource.data.push(file.file);
                         self.fileLength ++;
                     }else if(file.type === "update"){
+                        // Add hwm label to result
+                        file.file.hwm_label = row.hwm_label;
                         self.hwmFilesDataSource.data.forEach((hwmFile, j) => {
                             if(hwmFile.file_id === file.file.file_id){
                                 self.hwmFilesDataSource.data[j] = file.file;
@@ -1945,6 +1962,12 @@ export class SiteDetailsComponent implements OnInit {
                         self.siteFilesDataSource.paginator.lastPage();
                     }
                 }else if(type === "HWM File") {
+                    // Add hwm label to result
+                    self.hwmDataSource.data.forEach(function(hwm){
+                        if(hwm.hwm_id === result.hwm_id){
+                            result.hwm_label = hwm.hwm_label;
+                        }
+                    })
                     // Update files data source and hwm
                     self.hwmFilesDataSource.data.push(result);
                     self.hwmFilesDataSource.data = [...self.hwmFilesDataSource.data];
@@ -2386,6 +2409,8 @@ export class SiteDetailsComponent implements OnInit {
                     let aDate = this.checkDate(a.file_date);
                     let bDate = this.checkDate(b.file_date);
                     return this.compare(aDate, bDate, isAsc);
+                case 'hwm_label':
+                    return this.compare(a.hwm_label, b.hwm_label, isAsc);
                 default:
                     return 0;
             }
