@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule } from '@angular/material/menu';
 import { of } from 'rxjs';
 
 import { HwmEditComponent } from './hwm-edit.component';
@@ -43,7 +44,7 @@ describe('HwmEditComponent', () => {
         { provide: MatDialogRef, useValue: dialogMock },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
-      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule],
+      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule, MatMenuModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
@@ -161,7 +162,7 @@ describe('HwmEditComponent', () => {
     component.getApproval();
     fixture.detectChanges();
     expect(component.approvalMember).toEqual("John Smith");
-    expect(component.approvalDate).toEqual(new Date(response.approval_date));
+    expect(component.approvalDate).toEqual('Sat, 01 Jan 2022 21:20:00 GMT');
   });
 
   it('should set the initial file list for table', () => {
@@ -431,7 +432,6 @@ describe('HwmEditComponent', () => {
       hwm_label: "test",
       hwm_locationdescription: "test",
       hwm_id: 0,
-      format_flag_date: "01/01/2022",
     }
 
     spyOn(component.hwmEditService, 'putHWM').and.returnValue(
@@ -460,7 +460,6 @@ describe('HwmEditComponent', () => {
       hwm_label: "test",
       hwm_locationdescription: "test",
       hwm_id: 0,
-      format_flag_date: "01/01/2022",
     }
 
     spyOn(component.hwmEditService, 'postHWM').and.returnValue(

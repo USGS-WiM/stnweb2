@@ -104,7 +104,7 @@ export class FileEditService {
   // Add data file
   public addDataFile(datafile): Observable<any> {
     return this.httpClient
-        .put(APP_SETTINGS.API_ROOT + 'DataFiles.json', datafile, {
+        .post(APP_SETTINGS.API_ROOT + 'DataFiles.json', datafile, {
           headers: APP_SETTINGS.AUTH_JSON_HEADERS,
       })
         .pipe(
@@ -116,6 +116,43 @@ export class FileEditService {
                 return response;
             }),
             catchError(this.handleError<any>('addDataFile', []))
+        );
+  }
+
+  // Delete data file
+  public deleteDataFile(datafile_id): Observable<any> {
+    return this.httpClient
+        .delete(APP_SETTINGS.API_ROOT + 'DataFiles/' + datafile_id + '.json', {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'deleteDataFile response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('deleteDataFile', []))
+        );
+  }
+
+  /* istanbul ignore next */
+  // Approve NWIS data file
+  public approveNWISDF(datafile_id): Observable<any> {
+    return this.httpClient
+        .post(APP_SETTINGS.API_ROOT + 'datafiles/' + datafile_id + '/NWISApprove.json', {id: datafile_id}, {
+          headers: APP_SETTINGS.AUTH_JSON_HEADERS,
+      })
+        .pipe(
+            tap((response) => {
+                console.log(
+                    'approveNWISDF response received' //: ' +
+                    // JSON.stringify(response)
+                );
+                return response;
+            }),
+            catchError(this.handleError<any>('approveNWISDF', []))
         );
   }
 

@@ -4,8 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased](https://github.com/USGS-WiM/stnweb2/tree/dev)
+
+### Added
+
+ -  Add ability to add, edit, delete, reupload and view file details in HWM Edit modal
+ -  Loading spinner in HWM edit modal when files are submitted
+ -  Add ability to add, edit, delete, reupload and view file details in Reference Datum Edit modal
+
+### Changed
+
+ -   
+ 
+ ### Fixed
+ 
+ -   Unable to upload file after clicking one file type then switching to another type in HWM Edit modal
+
+## [v0.8.1](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.1) - 2022-06-24
 
 ### Added
 
@@ -14,19 +29,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Active highlighting on hover, button click and row add to site page tables
  -  When new row item is added and table page is full, jump to next page
  -  Active highlighting on hover and details button click to map filter results table
- -  Ability to add Sensor files in Sensor Edit dialog
- 
+ -  Ability to delete landowner when editing a site
+ -  Ability to add sensor file, datafile and NWIS file in files tab
+ -  Ability to delete sensor, data and NWIS files in files tab
+ -  Ability to edit sensor, data and nwis files in file tab
+
 ### Changed
 
  -  Disabled sensor retrieve button when no event is selected
  -  Active highlighting style
  -  Fade out active highlight when row is added
+ -  Site edit modal arrangement and styling
  
  ### Fixed
  
  -  Fields not populating in details modals
  -  Unedited rows removed from reference datum table after edit
  -  Update counts in site page tabs on edit/add/delete
+ -  Validation error incorrectly shown when date changed in sensor retrieve modal
+ -  UTC Preview not updating when minutes changed in Sensor add/edit
+ -  Update counts in file tab and site file expansion panel when files added/deleted
+ -  Date/time formatting and time zone conversion for all entities
+ -  Broken USWDS banner images
 
 ## [v0.8.0](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.0) - 2022-06-05
 

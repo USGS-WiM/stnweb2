@@ -9,6 +9,7 @@ import { OpEditService } from '@app/services/op-edit.service';
 import { of } from 'rxjs';
 import { compileComponentFromMetadata } from '@angular/compiler';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule } from '@angular/material/menu';
 
 describe('RefDatumEditComponent', () => {
   let component: RefDatumEditComponent;
@@ -44,7 +45,7 @@ describe('RefDatumEditComponent', () => {
         { provide: MatDialogRef, useValue: dialogMock },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
-      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule],
+      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule, MatMenuModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();

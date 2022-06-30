@@ -152,7 +152,7 @@ export class SensorRetrieveComponent implements OnInit {
     // UTC Preview
     let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(utchour), Number(minute)));
     this.instrument.utc_preview = new Date(utcPreview).toUTCString();
-    let incorrect = this.instrument.utc_preview < this.initUTCDate.utc_preview;
+    let incorrect = Date.parse(this.instrument.utc_preview) <= Date.parse(this.initUTCDate.utc_preview);
     // Validate date
     if(incorrect){
       self.form.controls["instrument_status"].controls["time_stamp"].setErrors({'incorrectValue': true});

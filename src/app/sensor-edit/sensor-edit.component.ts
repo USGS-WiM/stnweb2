@@ -748,7 +748,7 @@ export class SensorEditComponent implements OnInit {
           let year = timestamp[2]
           timestamp = timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + utchour + ":" + minute;
           // UTC Preview
-          let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(utchour), Number(self.sensor.instrument_status[i].minute)));
+          let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(utchour), Number(minute)));
           instrument.utc_preview = new Date(utcPreview).toUTCString();
         }
       }
