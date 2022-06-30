@@ -1041,6 +1041,7 @@ export class SiteDetailsComponent implements OnInit {
     openRefDatumEditDialog(row): void {
         this.clickedRMRows.clear();
         this.fadeOutRMRows.clear();
+        this.clickedFileRows.clear();
         if(row !== null){
             this.clickedRMRows.add(row);
         }
@@ -1053,6 +1054,9 @@ export class SiteDetailsComponent implements OnInit {
                 files: this.refMarkFilesDataSource.data,
                 site_id: this.site.site_id,
                 rdSite: this.site,
+                siteRefDatums: this.refMarkDataSource.data,
+                siteHWMs: this.hwmDataSource.data,
+                siteSensors: this.sensorDataSource.data,
             },
             width: '100%',
             autoFocus: false
@@ -1082,6 +1086,40 @@ export class SiteDetailsComponent implements OnInit {
                     self.refMarkDataSource.paginator.length = self.refMarkDataSource.data.length;
                     self.refMarkDataSource.paginator.lastPage();
                 }
+            }
+            if(result.result.returnFiles.length > 0){
+                // Update files data source and hwm
+                result.result.returnFiles.forEach((file, i) => {
+                    if(file.type === "delete"){
+                        self.refMarkFilesDataSource.data.splice(i, 1);
+                        self.fileLength --;
+                    }else if(file.type === "add"){ 
+                        // Add rd name to result
+                        file.file.rd_name = row.name;
+                        self.refMarkFilesDataSource.data.push(file.file);
+                        self.fileLength ++;
+                    }else if(file.type === "update"){
+                        self.refMarkFilesDataSource.data.forEach((rdFile, j) => {
+                            if(rdFile.file_id === file.file.file_id){
+                                file.file.rd_name = row.name;
+                                self.refMarkFilesDataSource.data[j] = file.file;
+                            }
+                        });
+                    }
+                })
+                self.refMarkFilesDataSource.data = [...self.refMarkFilesDataSource.data];
+                // Go to last page if not already there
+                if(self.refMarkFilesDataSource.paginator){
+                    self.refMarkFilesDataSource.paginator.length = self.refMarkFilesDataSource.data.length;
+                    self.refMarkFilesDataSource.paginator.lastPage();
+                }
+
+                // Fade out active highlighting
+                this.clickedFileRows.add(result);
+                setTimeout(() => {
+                    this.fadeOutFileRows.add(result);
+                    this.clickedFileRows.clear();
+                }, 7000)
             }
         });
     }
