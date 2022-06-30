@@ -1858,6 +1858,19 @@
                                             </td>
                                         </ng-container>
 
+                                        <!-- HWM label column -->
+                                        <ng-container matColumnDef="HWMLabel">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header="hwm_label">HWM Label</th>
+                                            <td mat-cell *matCellDef="let file">
+                                                <div *ngIf="file.hwm_label === '' || file.hwm_label === undefined; else displayHWMFileLabel">
+                                                    ---
+                                                </div>
+                                                <ng-template #displayHWMFileLabel>
+                                                    {{ file.hwm_label }}
+                                                </ng-template>
+                                            </td>
+                                        </ng-container>
+
                                         <!-- Button Column -->
                                         <ng-container matColumnDef="button">
                                             <th mat-header-cell *matHeaderCellDef>
@@ -1919,6 +1932,14 @@
                                             <th mat-header-cell *matHeaderCellDef>File Name</th>
                                             <td mat-cell *matCellDef="let file">
                                                 {{file.name}}
+                                            </td>
+                                        </ng-container>
+
+                                        <!-- hwm label column -->
+                                        <ng-container matColumnDef="HWMLabel">
+                                            <th mat-header-cell *matHeaderCellDef>HWM Label</th>
+                                            <td mat-cell *matCellDef="let file">
+                                                {{file.hwm_label}}
                                             </td>
                                         </ng-container>
 
