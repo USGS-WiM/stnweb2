@@ -16,7 +16,7 @@
                 <p class="content-right" *ngIf="fileType !== undefined && fileType !== ''; else nullFileType">{{fileType}}</p>
                 <ng-template #nullFileType><p class="content-right">---</p></ng-template>
             </div>
-            <div class="cell-container" *ngIf="data.row_data.is_nwis !== undefined && data.row_data.is_nwis === 1">
+            <div class="cell-container" *ngIf="data.row_data.is_nwis !== undefined && data.row_data.is_nwis === 1 || data.row_data.filetype_id === 8">
                 <p class="content-left">File URL</p>
                 <p class="content-right" *ngIf="data.row_data.name !== undefined && data.row_data.name !== ''; else nullFileURL">{{data.row_data.name}}</p>
                 <ng-template #nullFileURL><p class="content-right">---</p></ng-template>

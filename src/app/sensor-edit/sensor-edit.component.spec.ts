@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatTableModule } from '@angular/material/table';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -92,7 +93,7 @@ describe('SensorEditComponent', () => {
         { provide: MatDialogRef, useValue: dialogMock },
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
-      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule,],      
+      imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule, MatMenuModule],      
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();

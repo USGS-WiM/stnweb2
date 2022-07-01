@@ -1075,7 +1075,7 @@ export class SiteDetailsComponent implements OnInit {
                 }
             }
             if(result.result.returnFiles.length > 0){
-                // Update files data source and hwm
+                // Update files data source
                 result.result.returnFiles.forEach((file, i) => {
                     if(file.type === "delete"){
                         self.refMarkFilesDataSource.data.splice(i, 1);
@@ -1473,6 +1473,37 @@ export class SiteDetailsComponent implements OnInit {
                         self.sensorDataSource.paginator.length = self.sensorDataSource.data.length;
                         self.sensorDataSource.paginator.lastPage();
                     }
+                }
+                if(result.returnFiles.length > 0){
+                    // Update files data source and sensor
+                    result.returnFiles.forEach((file, i) => {
+                        if(file.type === "delete"){
+                            self.sensorFilesDataSource.data.splice(i, 1);
+                            self.fileLength --;
+                        }else if(file.type === "add"){ 
+                            self.sensorFilesDataSource.data.push(file.file);
+                            self.fileLength ++;
+                        }else if(file.type === "update"){
+                            self.sensorFilesDataSource.data.forEach((rdFile, j) => {
+                                if(rdFile.file_id === file.file.file_id){
+                                    self.sensorFilesDataSource.data[j] = file.file;
+                                }
+                            });
+                        }
+                    })
+                    self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                    // Go to last page if not already there
+                    if(self.sensorFilesDataSource.paginator){
+                        self.sensorFilesDataSource.paginator.length = self.sensorFilesDataSource.data.length;
+                        self.sensorFilesDataSource.paginator.lastPage();
+                    }
+    
+                    // Fade out active highlighting
+                    this.clickedFileRows.add(result);
+                    setTimeout(() => {
+                        this.fadeOutFileRows.add(result);
+                        this.clickedFileRows.clear();
+                    }, 7000)
                 }
             }
         });
