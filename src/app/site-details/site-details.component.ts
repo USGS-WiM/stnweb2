@@ -344,6 +344,13 @@ export class SiteDetailsComponent implements OnInit {
         let self = this;
         this.filtersService.getCurrentFilters().subscribe(result => this.currentEvent = result.event_id)
 
+        // incase page is refreshed checking to see if an event had been selected
+        if ((localStorage.getItem('eventId') !== 'null')) {
+            let eventID = localStorage.getItem('eventId');
+            let number = Number(eventID);
+            this.currentEvent = number;
+        }
+
         // Get event name
         this.siteService
             .getSiteEvents(this.siteID)

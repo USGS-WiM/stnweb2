@@ -12,22 +12,29 @@ export class SessionEventComponent implements OnInit {
   public eventName;
   sessionevent: Array<Object> = [];
 
+
   constructor(
     private filtersService: FiltersService,
     private eventService: EventService,
-  ) { 
+  ) {
     this.filtersService.getCurrentFilters().subscribe(result => {
       this.eventID = result.event_id;
     })
-    if(this.eventID !== null){
+    if (this.eventID !== null) {
       this.eventService.getEvent(this.eventID).subscribe(result => {
         this.eventName = result.event_name;
       })
-    }else{
+    }
+    else if ((localStorage.getItem('eventId') !== 'null')) {
+      this.eventID = localStorage.getItem('eventId');
+      this.eventService.getEvent(this.eventID).subscribe(result => {
+        this.eventName = result.event_name;
+      })
+    } else {
       this.eventName = "All Events";
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
 }

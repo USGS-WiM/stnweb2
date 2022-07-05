@@ -9,7 +9,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {RouterModule, Router} from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -238,8 +238,8 @@ export class MapComponent implements OnInit {
     });
 
     //for NOAA station layer
-    tideIcon = L.divIcon({ 
-        className: 'wmm-diamond wmm-lime wmm-icon-triangle wmm-icon-black wmm-size-15 wmm-borderless', 
+    tideIcon = L.divIcon({
+        className: 'wmm-diamond wmm-lime wmm-icon-triangle wmm-icon-black wmm-size-15 wmm-borderless',
     });
 
     //for the Stream Gage layer
@@ -411,9 +411,9 @@ export class MapComponent implements OnInit {
         return formValue === null
             ? matches
             : matches.filter(
-                  (x) =>
-                      !formValue.find((y) => y.state_abbrev === x.state_abbrev)
-              );
+                (x) =>
+                    !formValue.find((y) => y.state_abbrev === x.state_abbrev)
+            );
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -449,11 +449,11 @@ export class MapComponent implements OnInit {
                 formValue === null
                     ? matches
                     : matches.filter(
-                          (x) =>
-                              !formValue.find(
-                                  (y) => y.state_abbrev === x.state_abbrev
-                              )
-                      );
+                        (x) =>
+                            !formValue.find(
+                                (y) => y.state_abbrev === x.state_abbrev
+                            )
+                    );
             if (matchesNotYetSelected.length === 1) {
                 this.selectedStates.push(matchesNotYetSelected[0]);
                 this.mapFilterForm
@@ -488,6 +488,16 @@ export class MapComponent implements OnInit {
             : APP_SETTINGS.DEFAULT_FILTER_QUERY;
     }
 
+    setEventInLocalStorage(id) {
+        let eventId = id;
+        if ((eventId !== null) || (eventId !== undefined)) {
+            localStorage.setItem('eventId', eventId);
+        } else if ((eventId === null) || eventId === undefined) {
+            localStorage.setItem('eventId', null);
+        }
+
+    }
+
     /* istanbul ignore next */
     getData() {
         //Get all events, populate the event filter, get most recent event
@@ -517,9 +527,9 @@ export class MapComponent implements OnInit {
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
-                                  state_name,
-                                  this.eventStates
-                              )
+                                state_name,
+                                this.eventStates
+                            )
                             : this.eventStates
                     )
                 );
@@ -531,9 +541,9 @@ export class MapComponent implements OnInit {
                     map((state_name) =>
                         state_name
                             ? APP_UTILITIES.FILTER_STATE(
-                                  state_name,
-                                  this.states
-                              )
+                                state_name,
+                                this.states
+                            )
                             : this.states
                     )
                 );
@@ -566,14 +576,14 @@ export class MapComponent implements OnInit {
                 eventResults,
                 'event_start_date',
                 'descend'
-            ); 
-            this.noaaService.getTides().subscribe((results) => {
-            this.stations = results;
-            this.mapNoaaResults(
-                this.stations,
-                this.tideIcon,
-                eventResults[0]
             );
+            this.noaaService.getTides().subscribe((results) => {
+                this.stations = results;
+                this.mapNoaaResults(
+                    this.stations,
+                    this.tideIcon,
+                    eventResults[0]
+                );
             });
         });
         this.mapFilterForm
@@ -627,11 +637,11 @@ export class MapComponent implements OnInit {
             .filterEvents({
                 eventType: this.mapFilterForm.get('eventTypeControl').value
                     ? this.mapFilterForm.get('eventTypeControl').value
-                          .event_type_id
+                        .event_type_id
                     : null,
                 state: this.mapFilterForm.get('eventStateControl').value
                     ? this.mapFilterForm.get('eventStateControl').value
-                          .state_abbrev
+                        .state_abbrev
                     : null,
             })
             .subscribe((filterResponse) => {
@@ -668,12 +678,12 @@ export class MapComponent implements OnInit {
     displayMostRecentEvent() {
         let self = this;
         // Get current map filters - use first to end subscription after first event
-        this.filtersService.getCurrentFilters().first().subscribe(function(result) {
+        this.filtersService.getCurrentFilters().first().subscribe(function (result) {
             // Check if any map filters besides event exist
             let hasFilters = self.getMapFilters(result);
             // If the current event id is null, event not filtered
             // If other filters exist, don't set event to most recent
-            if(result.event_id === null && result.networks === undefined && self.events.length > 0 && !hasFilters){
+            if (result.event_id === null && result.networks === undefined && self.events.length > 0 && !hasFilters) {
                 self.currentEvent = self.events[0].event_id;
                 self.currentEventName = self.events[0].event_name;
                 self.submittedEvent = self.events[0];
@@ -681,11 +691,11 @@ export class MapComponent implements OnInit {
                 self.filtersService.setCurrentFilters({
                     "event_id": self.currentEvent
                 });
-            }else if(result.event_id !== null && self.events.length > 0){
+            } else if (result.event_id !== null && self.events.length > 0) {
                 self.currentEvent = result.event_id;
                 self.submittedEvent = self.events.filter((event) => event.event_id === self.currentEvent)[0];
                 self.currentEventName = self.submittedEvent.event_name;
-            }else{
+            } else {
                 self.currentEvent = null;
                 self.currentEventName = null;
             }
@@ -694,7 +704,9 @@ export class MapComponent implements OnInit {
             //Reset the layer
             self.siteService.siteMarkers = L.featureGroup([]);
             
-            if(self.currentEvent !== null){
+            self.setEventInLocalStorage(self.currentEvent);
+
+            if (self.currentEvent !== null) {
                 // Set inital event in filter form
                 self.mapFilterForm.get('eventsControl').setValue(self.submittedEvent);
 
@@ -714,19 +726,19 @@ export class MapComponent implements OnInit {
                         if (self.filterComponent !== undefined) {
                             self.filterComponent.eventPanelState = true;
                         }
-                        if(hasFilters){
+                        if (hasFilters) {
                             self.submitMapFilter();
                         }
                         setTimeout(() => {
                             // setting filter-results table to default display
-                            if (self.filterResultsComponent !== undefined){
+                            if (self.filterResultsComponent !== undefined) {
                                 self.filterResultsComponent.refreshDataSource();
                             }
                         }, 1000);
                     });
-            }else{
+            } else {
                 // If event is null, map could still have other filters
-                if(hasFilters){
+                if (hasFilters) {
                     self.submitMapFilter();
                 }
             }
@@ -735,52 +747,52 @@ export class MapComponent implements OnInit {
 
     getMapFilters(filters) {
         let hasFilters = false;
-        if(filters.networks !== '' && filters.networks !== null && filters.networks !== undefined && filters.networks.length > 0){
+        if (filters.networks !== '' && filters.networks !== null && filters.networks !== undefined && filters.networks.length > 0) {
             hasFilters = true;
             this.mapFilterForm.get('networkControl').setValue(filters.networks);
             this.filterComponent.networksPanelState = true;
         }
-        if(filters.sensorTypes !== '' && filters.sensorTypes !== null && filters.sensorTypes !== undefined){
+        if (filters.sensorTypes !== '' && filters.sensorTypes !== null && filters.sensorTypes !== undefined) {
             hasFilters = true;
             this.mapFilterForm.get('sensorTypeControl').setValue(filters.sensorTypes);
             this.filterComponent.sensorPanelState = true;
         }
-        if(filters.states !== '' && filters.states !== null && filters.states !== undefined && filters.states.length > 0){
+        if (filters.states !== '' && filters.states !== null && filters.states !== undefined && filters.states.length > 0) {
             hasFilters = true;
             this.mapFilterForm.get('stateControl').setValue(filters.states);
             this.filterComponent.statesPanelState = true;
         }
-        if(filters.HWMOnly && filters.HWMOnly !== '' && filters.HWMOnly !== undefined){
+        if (filters.HWMOnly && filters.HWMOnly !== '' && filters.HWMOnly !== undefined) {
             hasFilters = true;
             this.mapFilterForm.get('HWMOnlyControl').setValue(filters.HWMOnly);
             this.filterComponent.additionalFiltersPanelState = true;
         }
-        if(filters.HWMSurveyed !== null && filters.HWMSurveyed !== '' && filters.HWMSurveyed !== undefined){
+        if (filters.HWMSurveyed !== null && filters.HWMSurveyed !== '' && filters.HWMSurveyed !== undefined) {
             hasFilters = true;
             this.mapFilterForm.get('surveyedControl').setValue(filters.HWMSurveyed);
             this.filterComponent.hmwPanelState = true;
         }
-        if(filters.HousingTypeOne && filters.HousingTypeOne !== '' && filters.HousingTypeOne !== undefined){
+        if (filters.HousingTypeOne && filters.HousingTypeOne !== '' && filters.HousingTypeOne !== undefined) {
             hasFilters = true;
             this.mapFilterForm.get('bracketSiteOnlyControl').setValue(filters.HousingTypeOne);
             this.filterComponent.additionalFiltersPanelState = true;
         }
-        if(filters.RDGOnly && filters.RDGOnly !== '' && filters.RDGOnly !== undefined){
+        if (filters.RDGOnly && filters.RDGOnly !== '' && filters.RDGOnly !== undefined) {
             hasFilters = true;
             this.mapFilterForm.get('RDGOnlyControl').setValue(filters.RDGOnly);
             this.filterComponent.additionalFiltersPanelState = true;
         }
-        if(filters.opDefinedTrue && filters.opDefinedTrue !== '' && filters.opDefinedTrue !== undefined){
+        if (filters.opDefinedTrue && filters.opDefinedTrue !== '' && filters.opDefinedTrue !== undefined) {
             hasFilters = true;
             this.mapFilterForm.get('OPDefinedControl').setValue(filters.opDefinedTrue);
             this.filterComponent.additionalFiltersPanelState = true;
         }
-        if(filters.sensorOnly && filters.sensorOnly !== '' && filters.sensorOnly !== undefined){
+        if (filters.sensorOnly && filters.sensorOnly !== '' && filters.sensorOnly !== undefined) {
             hasFilters = true;
             this.mapFilterForm.get('sensorOnlyControl').setValue(filters.sensorOnly);
             this.filterComponent.additionalFiltersPanelState = true;
         }
-        if(filters.surveyedOnly && filters.surveyedOnly !== '' && filters.surveyedOnly !== undefined){
+        if (filters.surveyedOnly && filters.surveyedOnly !== '' && filters.surveyedOnly !== undefined) {
             hasFilters = true;
             this.mapFilterForm.get('surveyedOnlyControl').setValue(filters.surveyedOnly);
             this.filterComponent.additionalFiltersPanelState = true;
@@ -937,24 +949,24 @@ export class MapComponent implements OnInit {
             this.currentZoom = this.map.getZoom();
 
             //Disable checkbox on zoom < 9
-            if(this.currentZoom < 9){
-                document.querySelectorAll('.leaflet-control-layers.leaflet-control').forEach(control => {control.addEventListener('mouseover', this.disableStreamGage)});
-            }else{
-                document.querySelectorAll('.leaflet-control-layers.leaflet-control').forEach(control => {control.removeEventListener('mouseover', this.disableStreamGage)});
+            if (this.currentZoom < 9) {
+                document.querySelectorAll('.leaflet-control-layers.leaflet-control').forEach(control => { control.addEventListener('mouseover', this.disableStreamGage) });
+            } else {
+                document.querySelectorAll('.leaflet-control-layers.leaflet-control').forEach(control => { control.removeEventListener('mouseover', this.disableStreamGage) });
             }
 
             //Hide stream gages if layer is checked and zoom < 9
             //Need to do this because minzoom cannot be set on L.FeatureGroup
-            if (this.streamgagesVisible && this.currentZoom < 9){
-                if (this.map.hasLayer(this.streamgageService.streamGageMarkers)){
+            if (this.streamgagesVisible && this.currentZoom < 9) {
+                if (this.map.hasLayer(this.streamgageService.streamGageMarkers)) {
                     this.streamgageService.streamGageMarkers.clearLayers();
                 }
-                if(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== undefined){
+                if (document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== undefined) {
                     document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
                 }
                 this.streamgagesVisible = true;
             }
-            else if (this.streamgagesVisible && this.currentZoom >= 9){
+            else if (this.streamgagesVisible && this.currentZoom >= 9) {
                 this.loadStreamGages();
                 document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].disabled = false;
             }
@@ -993,44 +1005,44 @@ export class MapComponent implements OnInit {
         });
     }
 
-    loadStreamGages(){
+    loadStreamGages() {
         let currentZoomLevel = this.map.getZoom();
-        if (document.getElementById('nwisLoadingAlert') !== null){
+        if (document.getElementById('nwisLoadingAlert') !== null) {
             document.getElementById('nwisLoadingAlert').style.display = 'block';
             document.getElementById('nwisLoadingAlert').style.opacity = '0.75';
-        }   
+        }
         // Must load Stream Gage layer after map is created to get bounding box and after event list loads
-            if (this.streamgagesVisible && this.map.getZoom() >= 9) {
-                this.bbox = this.map.getBounds().getSouthWest().lng.toFixed(7) + ',' + this.map.getBounds().getSouthWest().lat.toFixed(7) + ',' + this.map.getBounds().getNorthEast().lng.toFixed(7) + ',' + this.map.getBounds().getNorthEast().lat.toFixed(7);
-                this.streamgageService.getStreamGages(this.bbox).subscribe((results) => {
-                    this.streamGages = results;
-                    // Prevent markers from being added if zoom level changes
-                    if (this.map.getZoom() != currentZoomLevel){
-                        this.fadeLoadingAlert();
-                        return;
-                    }
-                    this.mapStreamGageResults(
-                        this.streamGages,
-                        this.streamGageIcon                    
-                    );
-                });
-            }
+        if (this.streamgagesVisible && this.map.getZoom() >= 9) {
+            this.bbox = this.map.getBounds().getSouthWest().lng.toFixed(7) + ',' + this.map.getBounds().getSouthWest().lat.toFixed(7) + ',' + this.map.getBounds().getNorthEast().lng.toFixed(7) + ',' + this.map.getBounds().getNorthEast().lat.toFixed(7);
+            this.streamgageService.getStreamGages(this.bbox).subscribe((results) => {
+                this.streamGages = results;
+                // Prevent markers from being added if zoom level changes
+                if (this.map.getZoom() != currentZoomLevel) {
+                    this.fadeLoadingAlert();
+                    return;
+                }
+                this.mapStreamGageResults(
+                    this.streamGages,
+                    this.streamGageIcon
+                );
+            });
+        }
     }
 
-    fadeLoadingAlert(){
+    fadeLoadingAlert() {
         //Fade out loading alert
         let opacity = 0.75;
-        if(document.getElementById('nwisLoadingAlert') !== null){
-            let fadeOut = setInterval(function(){
-                if (opacity > 0){
+        if (document.getElementById('nwisLoadingAlert') !== null) {
+            let fadeOut = setInterval(function () {
+                if (opacity > 0) {
                     opacity -= 0.05;
                     let opacityValue = String(opacity);
-                    if(document.getElementById('nwisLoadingAlert') !== null){
+                    if (document.getElementById('nwisLoadingAlert') !== null) {
                         document.getElementById('nwisLoadingAlert').style.opacity = opacityValue;
                     }
-    
-                }else{
-                    if(document.getElementById('nwisLoadingAlert') !== null){
+
+                } else {
+                    if (document.getElementById('nwisLoadingAlert') !== null) {
                         document.getElementById('nwisLoadingAlert').style.opacity = "0"
                         document.getElementById('nwisLoadingAlert').style.display = 'none';
                     }
@@ -1148,8 +1160,8 @@ export class MapComponent implements OnInit {
             if (layer instanceof L.Polygon) {
                 /* istanbul ignore next */
                 const latlngs = layer._defaultShape
-                        ? layer._defaultShape()
-                        : layer.getLatLngs(),
+                    ? layer._defaultShape()
+                    : layer.getLatLngs(),
                     area = L.GeometryUtil.geodesicArea(latlngs);
                 return 'Area: ' + L.GeometryUtil.readableArea(area);
                 // Polyline - distance
@@ -1206,12 +1218,12 @@ export class MapComponent implements OnInit {
         //Otherwise, zoom back to default extent
         if (siteMarkersOnMap) {
             // Check if bounds are valid to avoid fitBounds error in getEventSites unit test
-            if (this.siteService.siteMarkers.getBounds().isValid()){
+            if (this.siteService.siteMarkers.getBounds().isValid()) {
                 this.map.fitBounds(this.siteService.siteMarkers.getBounds());
             }
         } else if (manySiteMarkersOnMap) {
             // Check if bounds are valid to avoid fitBounds error in getEventSites unit test
-            if (this.siteService.manyFilteredSitesMarkers.getBounds().isValid()){
+            if (this.siteService.manyFilteredSitesMarkers.getBounds().isValid()) {
                 this.map.fitBounds(
                     this.siteService.manyFilteredSitesMarkers.getBounds()
                 );
@@ -1238,43 +1250,43 @@ export class MapComponent implements OnInit {
                 let beginDate;
                 let endDate;
                 // If any filters but event are used, event will be a string instead of an object
-                if (typeof(event) == 'string'){
+                if (typeof (event) == 'string') {
                     beginDate = event.split(",")[0];
                     endDate = event.split(",")[1]
-                }else{
+                } else {
                     beginDate = event.event_start_date.substr(0, 10);
                     beginDate = beginDate.replace("-", "");
                     beginDate = beginDate.replace("-", "");
                     // Use last updated date if end date does not exist
-                    if(event.event_end_data !== undefined){
+                    if (event.event_end_data !== undefined) {
                         endDate = event.event_end_date.substr(0, 10);
-                    }else{
+                    } else {
                         endDate = event.last_updated.substr(0, 10);
                     }
                     endDate = endDate.replace("-", "");
                     endDate = endDate.replace("-", "");
                 }
                 let gageUrl =
-                "https://tidesandcurrents.noaa.gov/waterlevels.html?id=" +
-                stationId +
-                "&units=standard&bdate=" +
-                beginDate +
-                "&edate=" +
-                endDate +
-                "&timezone=GMT&datum=MLLW&interval=6&action=";
+                    "https://tidesandcurrents.noaa.gov/waterlevels.html?id=" +
+                    stationId +
+                    "&units=standard&bdate=" +
+                    beginDate +
+                    "&edate=" +
+                    endDate +
+                    "&timezone=GMT&datum=MLLW&interval=6&action=";
                 //create popup with link to NOAA graph
                 let popupContent =
-                '<span><a target="_blank" href=' +
-                gageUrl +
-                ">Graph of Observed Water Levels at site " +
-                stationId +
-                "</a></span>";
+                    '<span><a target="_blank" href=' +
+                    gageUrl +
+                    ">Graph of Observed Water Levels at site " +
+                    stationId +
+                    "</a></span>";
                 if (isNaN(lat) || isNaN(long)) {
                     console.log(
                         'Skipped station ' +
                         station.id +
                         ' in NOAA Station layer due to null lat/lng'
-                );
+                    );
                 } else {
                     //These sites are in the Atlantic Ocean or otherwise clearly out of place
                     L.marker([lat, long], { icon: myIcon })
@@ -1282,13 +1294,13 @@ export class MapComponent implements OnInit {
                         .addTo(this.noaaService.tideMarkers);
                 }
             }
-        }else{
+        } else {
             console.log("No NOAA stations returned")
         }
     }
 
     //queryNWISGraph, USGSrtGages
-    mapStreamGageResults(gageList: any, myIcon: any){
+    mapStreamGageResults(gageList: any, myIcon: any) {
         let NWISmarkers = {};
         const domParser = new DOMParser();
         const xmlElement = domParser.parseFromString(gageList, 'text/xml');
@@ -1300,22 +1312,22 @@ export class MapComponent implements OnInit {
             let siteName = streamGageList[i].getAttribute('sna')
             NWISmarkers[siteID] = L.marker([lat, lng], { icon: myIcon })
                 .addTo(this.streamgageService.streamGageMarkers);
-                NWISmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
-                NWISmarkers[siteID].data.parameters = {};
+            NWISmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
+            NWISmarkers[siteID].data.parameters = {};
         }
         //Fade out loading alert
         this.fadeLoadingAlert();
     }
 
     //Get single streamgage on map click, bind to popup, and create graph
-    queryStreamGageGraph(e){
+    queryStreamGageGraph(e) {
         //Clear out graph div from previous popup if it exists
-        if (document.getElementById('graphDiv') != null){
+        if (document.getElementById('graphDiv') != null) {
             document.getElementById('graphDiv').remove();
         }
         let siteID;
         let siteName;
-        if (e.layer !== undefined){
+        if (e.layer !== undefined) {
             siteID = e.layer.data.siteCode;
             siteName = e.layer.data.siteName;
         }
@@ -1323,19 +1335,19 @@ export class MapComponent implements OnInit {
         let beginDate;
         let initialEndDate;
         let endDate;
-        if(this.submittedEvent.event_end_date !== undefined){
+        if (this.submittedEvent.event_end_date !== undefined) {
             initialEndDate = this.submittedEvent.event_end_date;
-        }else{
+        } else {
             initialEndDate = this.submittedEvent.last_updated;
         }
         // Use last updated date if event end date does not exist
         // If any filters but event are used, event will be a string instead of an object
-        if (typeof(this.submittedEvent) == 'string' || initialEndDate.toString() == "" || (initialEndDate.toString() == "" && this.submittedEvent.event_start_date.toString() == "")){
+        if (typeof (this.submittedEvent) == 'string' || initialEndDate.toString() == "" || (initialEndDate.toString() == "" && this.submittedEvent.event_start_date.toString() == "")) {
             timeQueryRange = "&period=P7D";
-        }else if (initialEndDate.toString() == ""){
+        } else if (initialEndDate.toString() == "") {
             let newDate = new Date();
-            endDate= newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
-        }else{
+            endDate = newDate.getFullYear().toString() + (newDate.getMonth() + 1).toString().padStart(2, '0') + newDate.getDate().toString().padStart(2, '0');
+        } else {
             beginDate = this.submittedEvent.event_start_date.substr(0, 10);
             endDate = initialEndDate.substr(0, 10);
             timeQueryRange =
@@ -1349,73 +1361,73 @@ export class MapComponent implements OnInit {
             this.singleGage = results;
             //Create div to hold chart
             let graphContainer;
-            if (document.getElementById('graphDiv') == null){
+            if (document.getElementById('graphDiv') == null) {
                 graphContainer = document.createElement('div');
                 graphContainer.id = 'graphDiv';
                 graphContainer.style.width = '100%';
                 graphContainer.style.height = '200px';
                 document.body.appendChild(graphContainer);
-            }else{
+            } else {
                 graphContainer = document.getElementById('graphDiv');
             }
-            if (results == undefined || results.data == undefined || results.data[0].time_series_data.length == 0){
+            if (results == undefined || results.data == undefined || results.data[0].time_series_data.length == 0) {
                 console.log("No NWIS data available for this time period");
                 popupContent =
-                '<label class="popup-title">NWIS Site ' + siteID + "</br>" + siteName + '</span></label></br><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
-                siteID +
-                '"><b>Site ' +
-                siteID +
-                ' on NWISWeb <span class="material-icons" style="vertical-align: middle;">link</span></b></a><div id="noDataMessage" style="width:100%;display:block;"><b><span>NWIS water level data not available to graph</span></b></div>', { minWidth: 350 };
-                if(e.layer !== undefined){
+                    '<label class="popup-title">NWIS Site ' + siteID + "</br>" + siteName + '</span></label></br><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
+                    siteID +
+                    '"><b>Site ' +
+                    siteID +
+                    ' on NWISWeb <span class="material-icons" style="vertical-align: middle;">link</span></b></a><div id="noDataMessage" style="width:100%;display:block;"><b><span>NWIS water level data not available to graph</span></b></div>', { minWidth: 350 };
+                if (e.layer !== undefined) {
                     e.layer
                         .bindPopup(popupContent)
                         .openPopup()
                 }
-            }else{
+            } else {
                 this.chartOptions = {
                     title: {
-                    text:
-                        "NWIS Site " +
-                        siteID +
-                        "<br> " +
-                        siteName,
-                    align: "left",
-                    style: {
-                        color: "rgba(0,0,0,0.6)",
-                        fontSize: "small",
-                        fontWeight: "bold",
-                        fontFamily: "Open Sans, sans-serif",
-                    },
+                        text:
+                            "NWIS Site " +
+                            siteID +
+                            "<br> " +
+                            siteName,
+                        align: "left",
+                        style: {
+                            color: "rgba(0,0,0,0.6)",
+                            fontSize: "small",
+                            fontWeight: "bold",
+                            fontFamily: "Open Sans, sans-serif",
+                        },
                     },
                     exporting: {
                         enabled: true,
                         filename: "FEV_NWIS_Site" + siteID,
                     },
                     credits: {
-                    enabled: false,
+                        enabled: false,
                     },
                     xAxis: {
-                    type: "datetime",
-                    labels: {
-                        formatter: function () {
-                        let num = Number(this.value);
-                        return Highcharts.dateFormat("%d %b %y", num);
+                        type: "datetime",
+                        labels: {
+                            formatter: function () {
+                                let num = Number(this.value);
+                                return Highcharts.dateFormat("%d %b %y", num);
+                            },
+                            align: "center",
                         },
-                        align: "center",
-                    },
                     },
                     yAxis: {
-                    title: { text: "Gage Height, feet" },
+                        title: { text: "Gage Height, feet" },
                     },
                     series: [
-                    {
-                        showInLegend: false,
-                        type: "line",
-                        data: results.data[0].time_series_data,
-                        tooltip: {
-                        pointFormat: "Gage height: {point.y} feet",
+                        {
+                            showInLegend: false,
+                            type: "line",
+                            data: results.data[0].time_series_data,
+                            tooltip: {
+                                pointFormat: "Gage height: {point.y} feet",
+                            },
                         },
-                    },
                     ],
                 };
                 exporting(Highcharts);
@@ -1423,18 +1435,18 @@ export class MapComponent implements OnInit {
                 let graphHTML = document.getElementById('graphDiv').outerHTML;
 
                 popupContent =
-                '<div id="graphContainer" style="width:100%; height:200px; display:block;">' + graphHTML + '</div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
-                siteID +
-                '"><b>Site ' +
-                siteID +
-                ' on NWISWeb <span class="material-icons" style="vertical-align: middle;">link</span></b></a>', { minWidth: 350 };
+                    '<div id="graphContainer" style="width:100%; height:200px; display:block;">' + graphHTML + '</div> <div>Gage Height data courtesy of the U.S. Geological Survey</div><a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' +
+                    siteID +
+                    '"><b>Site ' +
+                    siteID +
+                    ' on NWISWeb <span class="material-icons" style="vertical-align: middle;">link</span></b></a>', { minWidth: 350 };
 
                 e.layer
                     .bindPopup(popupContent)
                     .openPopup()
                 //Create chart and render to graphDiv
                 new Highcharts.Chart('graphDiv', this.chartOptions)
-                if(document.getElementById('graphContainer') !== null){
+                if (document.getElementById('graphContainer') !== null) {
                     document.getElementById('graphContainer').style.display = 'block';
                 }
             }
@@ -1464,7 +1476,7 @@ export class MapComponent implements OnInit {
                     let lat = Number(site.latitude_dd);
                     let long = Number(site.longitude_dd);
                     let popupContent =
-                        '<div id="routerLinkDiv"><h3><span class="popup-title">Site Identifier: </span>' + 
+                        '<div id="routerLinkDiv"><h3><span class="popup-title">Site Identifier: </span>' +
                         '</h3></div>' +
                         '<span class="popupLabel"><b>State</b>:</span> ' +
                         site.state +
@@ -1478,12 +1490,12 @@ export class MapComponent implements OnInit {
 
                     site.is_permanent_housing_installed
                         ? (popupContent +=
-                              '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
-                              site.is_permanent_housing_installed +
-                              '<br/>')
+                            '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
+                            site.is_permanent_housing_installed +
+                            '<br/>')
                         : (popupContent +=
-                              '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
-                              'No<br/>');
+                            '<span class="popupLabel"><b>Permanent Housing installed?</b>:</span> ' +
+                            'No<br/>');
 
                     if (site.Events) {
                         if (site.Events.length > 0) {
@@ -1504,8 +1516,8 @@ export class MapComponent implements OnInit {
                     if (isNaN(lat) || isNaN(long)) {
                         console.log(
                             'Skipped site ' +
-                                site.site_no +
-                                ' in All STN Sites layer due to null lat/lng'
+                            site.site_no +
+                            ' in All STN Sites layer due to null lat/lng'
                         );
                     } else {
                         //These sites are in the Atlantic Ocean or otherwise clearly out of place
@@ -1521,7 +1533,7 @@ export class MapComponent implements OnInit {
                         if (
                             layerType == this.siteService.allSiteMarkers ||
                             layerType ===
-                                this.siteService.manyFilteredSitesMarkers
+                            this.siteService.manyFilteredSitesMarkers
                         ) {
                             let marker = L.marker([lat, long], {
                                 icon: myIcon,
@@ -1595,7 +1607,7 @@ export class MapComponent implements OnInit {
     }
 
     /* istanbul ignore next */
-    addRouterLink(e){
+    addRouterLink(e) {
         let data = e.layer.data;
         this.siteID = data.id;
         let siteRouterLink;
@@ -1603,23 +1615,27 @@ export class MapComponent implements OnInit {
         let self = this;
 
         let origSiteRouter = document.querySelector("#siteRouterLink");
-        if (document.querySelector("#clonedSiteRouter") === null){
+        if (document.querySelector("#clonedSiteRouter") === null) {
             siteRouterLink = origSiteRouter.cloneNode(true) as HTMLElement;
             siteRouterLink.id = "clonedSiteRouter";
             routerLinkDiv = document.querySelector("#routerLinkDiv h3");
-        }else{
+        } else {
             siteRouterLink = document.querySelector("#clonedSiteRouter");
             routerLinkDiv = document.querySelectorAll("#routerLinkDiv h3")[1];
         }
         siteRouterLink.innerText = data.name;
         routerLinkDiv.appendChild(siteRouterLink);
-        siteRouterLink.onclick = function(){
+        siteRouterLink.onclick = function () {
             self.router.navigateByUrl('/Site/' + self.siteID + '/SiteDashboard');
         }
     }
 
     public clearMapFilterForm(): void {
-        
+
+        // setting event data to null in local storage
+        localStorage.setItem('eventId', null);
+        localStorage.setItem('eventName', null);
+
         // Close map filters when submitted
         if (this.filterComponent !== undefined) {
             this.filterComponent.eventPanelState = false;
@@ -1643,10 +1659,10 @@ export class MapComponent implements OnInit {
         // Clear stored filters
         this.filtersService.setCurrentFilters({
             "event_id": null,
-            "networks": null, 
-            "sensorTypes": null, 
-            "states": null, 
-            "opDefinedTrue": null, 
+            "networks": null,
+            "sensorTypes": null,
+            "states": null,
+            "opDefinedTrue": null,
             "HWMOnly": null,
             "HWMSurveyed": null,
             "surveyedOnly": null,
@@ -1654,7 +1670,7 @@ export class MapComponent implements OnInit {
             "RDGOnly": null,
             "HousingTypeOne": null,
         });
-        
+
         this.currentEventName = "All Events";
 
         //reset the event options
@@ -1697,9 +1713,9 @@ export class MapComponent implements OnInit {
             this.streamGages,
             this.streamGageIcon
         );
-        if (this.map.hasLayer(this.streamgageService.streamGageMarkers)){
+        if (this.map.hasLayer(this.streamgageService.streamGageMarkers)) {
             this.streamgageService.streamGageMarkers.clearLayers();
-            if(document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== undefined){
+            if (document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4] !== undefined) {
                 document.querySelectorAll<HTMLInputElement>('.leaflet-control input[type="checkbox"]')[4].checked = true;
             }
             this.streamgagesVisible = true;
@@ -1825,15 +1841,18 @@ export class MapComponent implements OnInit {
 
                 // Store map filters in service
                 let event_id = eventId;
-                if(eventId === ''){
+                if (eventId === '') {
                     event_id = null;
                 }
+
+                this.setEventInLocalStorage(event_id);
+                
                 this.filtersService.setCurrentFilters({
                     "event_id": event_id,
-                    "networks": multiNetworkIds, 
-                    "sensorTypes": sensorIds, 
-                    "states": this.mapFilterForm.get('stateControl').value, 
-                    "opDefinedTrue": filterParams.OPDefinedControl, 
+                    "networks": multiNetworkIds,
+                    "sensorTypes": sensorIds,
+                    "states": this.mapFilterForm.get('stateControl').value,
+                    "opDefinedTrue": filterParams.OPDefinedControl,
                     "HWMOnly": filterParams.HWMOnlyControl,
                     "HWMSurveyed": filterParams.surveyedControl,
                     "surveyedOnly": filterParams.surveyedOnlyControl,
@@ -1846,17 +1865,17 @@ export class MapComponent implements OnInit {
                 // Reload NOAA Tide and Current Stations if filters are changed
                 this.eventService.getEvent(eventId).toPromise().then((result) => {
                     // If the event is changed, use event date range in popup
-                    if (result.event_start_date !== undefined){
+                    if (result.event_start_date !== undefined) {
                         this.submittedEvent = result;
                         this.noaaService.getTides().subscribe((results) => {
                             this.stations = results;
                             this.mapNoaaResults(
                                 this.stations,
-                                this.tideIcon, 
+                                this.tideIcon,
                                 result
                             );
                         });
-                    } else{
+                    } else {
                         // Use the previous 2 weeks as date range for link in NOAA layer popup if any filters but event are changed
                         let endDate = new Date();
                         let startDate = new Date();
@@ -1867,7 +1886,7 @@ export class MapComponent implements OnInit {
                         this.submittedEvent = event;
                         this.mapNoaaResults(
                             this.stations,
-                            this.tideIcon, 
+                            this.tideIcon,
                             event
                         );
                     }
@@ -1945,15 +1964,15 @@ export class MapComponent implements OnInit {
 
                     // Store map filters in service
                     let event_id = eventId;
-                    if(eventId === ''){
+                    if (eventId === '') {
                         event_id = null;
                     }
                     this.filtersService.setCurrentFilters({
                         "event_id": event_id,
-                        "networks": multiNetworkIds, 
-                        "sensorTypes": sensorIds, 
-                        "states": this.mapFilterForm.get('stateControl').value, 
-                        "opDefinedTrue": filterParams.OPDefinedControl, 
+                        "networks": multiNetworkIds,
+                        "sensorTypes": sensorIds,
+                        "states": this.mapFilterForm.get('stateControl').value,
+                        "opDefinedTrue": filterParams.OPDefinedControl,
                         "HWMOnly": filterParams.HWMOnlyControl,
                         "HWMSurveyed": filterParams.surveyedControl,
                         "surveyedOnly": filterParams.surveyedOnlyControl,
@@ -1967,19 +1986,19 @@ export class MapComponent implements OnInit {
         }
     }
 
-    openMapFilters(){
+    openMapFilters() {
         // Viewing on mobile, change boolean value to hide or display map filters, map panel, and filter results
         this.isClicked = !this.isClicked;
     }
 
-    onResize(){
+    onResize() {
         // Check screen size on window resize event
         this.isMobile = window.matchMedia('(max-width: 875px)').matches;
-        
+
         // Show or hide mobile minimize map button
-        if (this.isMobile){
+        if (this.isMobile) {
             this.isClicked = this.isClicked;
-        }else{
+        } else {
             this.isClicked = false;
         }
     }
@@ -2017,7 +2036,7 @@ export class MapComponent implements OnInit {
 
         // updating the filter-results table datasource with the new results
         this.filtersService.updateSites(filterResponse);
-        if (this.filterResultsComponent !== undefined){
+        if (this.filterResultsComponent !== undefined) {
             this.filterResultsComponent.refreshDataSource();
         }
     }

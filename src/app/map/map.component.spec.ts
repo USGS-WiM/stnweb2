@@ -576,4 +576,10 @@ describe('MapComponent', () => {
         component.openMapFilters();
         expect(component.isClicked).toBeFalsy();
     });
+
+    it ('setEventInLocalStorage should set eventId to false', () => {
+        localStorage.setItem('eventId', undefined);
+        component.setEventInLocalStorage(null);
+        expect(localStorage.getItem('eventId')).toBe('null');
+    });
 });
