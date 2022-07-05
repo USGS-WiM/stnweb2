@@ -1091,8 +1091,12 @@ export class SiteDetailsComponent implements OnInit {
                 // Update files data source
                 result.result.returnFiles.forEach((file, i) => {
                     if(file.type === "delete"){
-                        self.refMarkFilesDataSource.data.splice(i, 1);
-                        self.fileLength --;
+                        this.refMarkDataSource.data.forEach(function(refMark, i){
+                            if(refMark.instrument_id === result.result.instrument_id){
+                                self.refMarkFilesDataSource.data.splice(i, 1);
+                                self.fileLength --;
+                            }
+                        });
                     }else if(file.type === "add"){ 
                         // Add rd name to result
                         file.file.rd_name = row.name;
@@ -1291,8 +1295,12 @@ export class SiteDetailsComponent implements OnInit {
                 // Update files data source and hwm
                 result.returnFiles.forEach((file, i) => {
                     if(file.type === "delete"){
-                        self.hwmFilesDataSource.data.splice(i, 1);
-                        self.fileLength --;
+                        this.hwmDataSource.data.forEach(function(hwm, i){
+                            if(hwm.instrument_id === result.result.instrument_id){
+                                self.hwmFilesDataSource.data.splice(i, 1);
+                                self.fileLength --;
+                            }
+                        });
                     }else if(file.type === "add"){
                         // Add hwm label to result
                         file.file.hwm_label = row.hwm_label;
@@ -1495,14 +1503,20 @@ export class SiteDetailsComponent implements OnInit {
                     // Update files data source and sensor
                     result.returnFiles.forEach((file, i) => {
                         if(file.type === "delete"){
-                            self.sensorFilesDataSource.data.splice(i, 1);
-                            self.fileLength --;
+                            self.sensorFilesDataSource.data.forEach((rdFile, j) => {
+                                if(rdFile.file_id === file.file.file_id){
+                                    self.sensorFilesDataSource.data.splice(j, 1);
+                                    self.fileLength --;
+                                }
+                            });
                         }else if(file.type === "add"){ 
+                            file.file.details = {serial_number: row.serial_number};
                             self.sensorFilesDataSource.data.push(file.file);
                             self.fileLength ++;
                         }else if(file.type === "update"){
                             self.sensorFilesDataSource.data.forEach((rdFile, j) => {
                                 if(rdFile.file_id === file.file.file_id){
+                                    file.file.details = {serial_number: row.serial_number};
                                     self.sensorFilesDataSource.data[j] = file.file;
                                 }
                             });

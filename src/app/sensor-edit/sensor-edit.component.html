@@ -1569,7 +1569,11 @@
                         NWIS Connection
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <button mat-stroked-button (click)="showFileCreate(true)" class="add" type="button"
+                <button mat-stroked-button *ngIf="this.currentUser !== null && (this.currentUser.role_id === 1 || this.currentUser.role_id === 2)" (click)="showFileCreate(true)" class="add" type="button"
+                    aria-label="Add File"><mat-icon>add</mat-icon> Add File
+                </button> 
+                <!-- Disabled Add -->
+                <button *ngIf="this.currentUser !== null && this.currentUser.role_id !== 1 && this.currentUser.role_id !== 2" disabled mat-stroked-button class="disabled-border"
                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
                 </button>
                 <!-- Create Sensor File Form -->
@@ -1579,7 +1583,7 @@
                     </div>
 
                     <!--File URL (LINK file)-->
-                    <div *ngIf="(selectedFile.FileEntity.is_nwis !== undefined && selectedFile.FileEntity.is_nwis === 1) || selectedFile.FileEntity.filetype_id === 8">
+                    <div *ngIf="(selectedFile.FileEntity.is_nwis === 1)">
                         <mat-form-field appearance="fill">
                             <mat-label>File URL</mat-label>
                             <input aria-label="File URL" formControlName="name" matInput [value]="selectedFile.FileEntity.name"/>
@@ -1676,7 +1680,7 @@
                                     ---
                                 </div>
                                 <ng-template #displayNWISFileDate>
-                                    {{ file.file_date | date: 'MM/dd/yyyy hh:mm a'}}
+                                    {{ file.file_date | date: 'MM/dd/yyyy'}}
                                 </ng-template>
                             </td>
                         </ng-container>
@@ -1691,7 +1695,7 @@
                                 <button mat-stroked-button *ngIf="!showFileForm && expandedElement == element" class="view-details-btn secondary" type="button" (click)="showFileDetails(null)"
                                     aria-label="Close Details">Close Details
                                 </button>
-                                <button *ngIf="showDetails || expandedElement != element" mat-stroked-button class="edit-details-btn secondary" type="button" (click)="showFileEdit(element)"
+                                <button *ngIf="showDetails || expandedElement != element" [disabled]="this.currentUser !== null && this.currentUser.role_id !== 1 && this.currentUser.role_id !== 2" mat-stroked-button class="edit-details-btn secondary" type="button" (click)="showFileEdit(element)"
                                     aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>Edit
                                 </button>
                                 <button *ngIf="!showDetails && expandedElement == element" mat-stroked-button class="edit-details-btn secondary" type="button" (click)="showFileEdit(null)"
@@ -1709,7 +1713,7 @@
                                         aria-label="Close Details"><mat-icon>search</mat-icon>
                                         <span> Close Details</span>
                                     </button>
-                                    <button *ngIf="showDetails || expandedElement != element" mat-menu-item class="edit-details-mobile" type="button" (click)="showFileEdit(element)"
+                                    <button *ngIf="showDetails || expandedElement != element" [disabled]="this.currentUser !== null && this.currentUser.role_id !== 1 && this.currentUser.role_id !== 2" mat-menu-item class="edit-details-mobile" type="button" (click)="showFileEdit(element)"
                                         aria-label="Edit"><mat-icon class="edit-icon">edit</mat-icon>Edit
                                     </button>
                                     <button *ngIf="!showDetails && expandedElement == element" mat-menu-item class="edit-details-mobile" type="button" (click)="showFileEdit(null)"

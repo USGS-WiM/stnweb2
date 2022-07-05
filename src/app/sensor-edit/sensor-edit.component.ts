@@ -11,6 +11,7 @@ import { EventService } from '@app/services/event.service';
 import { FileEditService } from '@app/services/file-edit.service';
 import { SensorEditService } from '@app/services/sensor-edit.service';
 import { SiteEditService } from '@app/services/site-edit.service';
+import { CurrentUserService } from '@app/services/current-user.service';
 import { SiteService } from '@app/services/site.service';
 import { TimezonesService } from '@app/services/timezones.service';
 import { DateTime } from "luxon";
@@ -104,6 +105,7 @@ export class SensorEditComponent implements OnInit {
   private approvedOn;
   private collectDate;
   private processorName;
+  private processorID;
   private elevation;
   private good_start;
   private good_end;
@@ -115,6 +117,7 @@ export class SensorEditComponent implements OnInit {
   public fileItemExists = false;
   public agencies = [];
   public agencyNameForCap;
+  currentUser;
 
   constructor(
     private dialogRef: MatDialogRef<SensorEditComponent>,
@@ -127,7 +130,12 @@ export class SensorEditComponent implements OnInit {
     public timezonesService: TimezonesService,
     public dialog: MatDialog,
     private changeDetector : ChangeDetectorRef,
-  ) { }
+    public currentUserService: CurrentUserService,
+  ) { 
+    currentUserService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
 
   deployedExpanded = false;
   retrievedExpanded = false;
@@ -218,12 +226,12 @@ export class SensorEditComponent implements OnInit {
       this.sensor.instrument_status = [{
         time_stamp: isoDate,
         time_zone: "UTC", //will be converted to utc on post
-        member_id: JSON.parse(localStorage.getItem('currentUser')).member_id, // member logged in is deploying it
+        member_id: this.currentUser.member_id, // member logged in is deploying it
         status: "Deployed",
         status_type_id: 1,
         utc_preview: utcDate,
       }]
-      this.sensor.instrument_status[0].member_name = JSON.parse(localStorage.getItem('currentUser')).fname + " " + JSON.parse(localStorage.getItem('currentUser')).lname; 
+      this.sensor.instrument_status[0].member_name = this.currentUser.fname + " " + this.currentUser.lname; 
       this.deployedExpanded = true;
       this.getSensorTypes();
       this.getSensorBrands();
@@ -608,7 +616,7 @@ export class SensorEditComponent implements OnInit {
       this.sensorFileForm.get("agency_id").setValidators([Validators.required]);
       // Set required validator for source name
       this.sensorFileForm.get("FULLname").setValidators([Validators.required]);
-      this.selectedFile.FileEntity.FULLname = JSON.parse(localStorage.getItem('currentUser')).fname + ' ' + JSON.parse(localStorage.getItem('currentUser')).lname;
+      this.selectedFile.FileEntity.FULLname = this.currentUser.fname + ' ' + this.currentUser.lname;
       this.sensorFileForm.get("FULLname").setValue(this.selectedFile.FileEntity.FULLname);
     }
 
@@ -622,7 +630,7 @@ export class SensorEditComponent implements OnInit {
       this.sensorFileForm.get("FULLname").setErrors(null);
       this.collectDate = new Date();
       this.sensorFileForm.get("collect_date").setValue(new Date());
-      this.processorName = JSON.parse(localStorage.getItem('currentUser')).fname + ' ' + JSON.parse(localStorage.getItem('currentUser')).lname;
+      this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
     }
   }
 
@@ -680,6 +688,7 @@ export class SensorEditComponent implements OnInit {
                 .getMemberName(datafileResults.processor_id)
                 .subscribe((memberResult) => {
                   this.processorName = memberResult.fname + " " + memberResult.lname;
+                  this.processorID = datafileResults.processor_id;
                 });
               }
           });
@@ -1115,31 +1124,6 @@ export class SensorEditComponent implements OnInit {
         self.setTimeAndDate();
       }
     })
-  }
-
-  /* istanbul ignore next */
-  openAddFileDialog() {
-    let self = this;
-    // Open File Edit Dialog
-    const dialogRef = this.dialog.open(FileEditComponent, {
-      data: {
-          row_data: {instrument_id: this.form.get("instrument_id").value},
-          type: 'Sensor File',
-          siteInfo: this.data.siteInfo,
-          siteRefDatums: this.data.siteRefDatums,
-          siteHWMs: this.data.siteHWMs,
-          siteSensors: this.data.siteSensors,
-          addOrEdit: 'Add'
-      },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if(result) {
-        // Update files data source and hwm
-        self.initSensorFiles.push(result);
-        self.initSensorFiles = [...self.initSensorFiles];
-        self.returnFiles.push(result);
-      }
-    });
   }
 
   /* istanbul ignore next */
@@ -1594,42 +1578,43 @@ export class SensorEditComponent implements OnInit {
       this.sensorFileForm.get("photo_date").setValidators([Validators.required]);
     }
 
-    if(this.selectedFile.FileEntity.filetype_id === 1) {
-      // Set required validator for agency
-      this.sensorFileForm.get("agency_id").clearValidators();
-      this.sensorFileForm.get("agency_id").setErrors(null);
-      // Set required validator for source name
-      this.sensorFileForm.get("FULLname").clearValidators();
-      this.sensorFileForm.get("FULLname").setErrors(null);
-    }
-
     if(is_nwis){
       this.showNWISFileCreateForm = true;
       this.selectedFile.FileEntity.is_nwis = 1;
+      this.sensorFileForm.get("is_nwis").setValue(1);
       this.selectedFile.FileEntity.filetype_id = 2;
       this.fileType = "Data";
       this.sensorFileForm.get("filetype_id").setValue(this.selectedFile.FileEntity.filetype_id);
       this.sensorFileForm.get("name").setValue("https://waterdata.usgs.gov/nwis/uv?site_no=" + this.data.siteInfo.usgs_sid);
       this.collectDate = new Date();
       this.sensorFileForm.get("collect_date").setValue(this.collectDate);
-      this.processorName = JSON.parse(localStorage.getItem('currentUser')).fname + ' ' + JSON.parse(localStorage.getItem('currentUser')).lname;
+      this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
     }else{
       this.showFileCreateForm = true;
 
       // Set source name and agency automatically
       // Member id
-      if(JSON.parse(localStorage.getItem('currentUser'))){
-        let member_id = JSON.parse(localStorage.getItem('currentUser')).member_id;
+      if(this.currentUser){
+        let member_id = this.currentUser.member_id;
         this.selectedFile.FileEntity.source_id = member_id;
         this.sensorFileForm.get('source_id').setValue(member_id);
         // FULLname
-        this.selectedFile.FileEntity.FULLname = JSON.parse(localStorage.getItem('currentUser')).fname + " " +  JSON.parse(localStorage.getItem('currentUser')).lname;
+        this.selectedFile.FileEntity.FULLname = this.currentUser.fname + " " +  this.currentUser.lname;
         this.sensorFileForm.get('FULLname').setValue(this.selectedFile.FileEntity.FULLname);
         // Agency
-        this.selectedFile.FileEntity.agency_id = JSON.parse(localStorage.getItem('currentUser')).agency_id;
+        this.selectedFile.FileEntity.agency_id = this.currentUser.agency_id;
         this.sensorFileForm.get('agency_id').setValue(this.selectedFile.FileEntity.agency_id);
         this.updateAgencyForCaption();
       }
+    }
+
+    if(this.selectedFile.FileEntity.filetype_id === 2) {
+      // Set required validator for agency
+      this.sensorFileForm.get("agency_id").clearValidators();
+      this.sensorFileForm.get("agency_id").setErrors(null);
+      // Set required validator for source name
+      this.sensorFileForm.get("FULLname").clearValidators();
+      this.sensorFileForm.get("FULLname").setErrors(null);
     }
   }
 
@@ -1703,7 +1688,6 @@ export class SensorEditComponent implements OnInit {
   getFile() {
     if(this.selectedFile.FileEntity.file_id !== null && this.selectedFile.FileEntity.file_id !== undefined){
       this.siteService.getFileItem(this.selectedFile.FileEntity.file_id).subscribe((results) => {
-        console.log(this.selectedFile.FileEntity.data_file_id)
         if(results.Length > 0) {
           this.fileItemExists = true;
           this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.selectedFile.FileEntity.file_id + '/item';
@@ -1822,8 +1806,8 @@ export class SensorEditComponent implements OnInit {
 
       this.sensorFileForm.get('file_date').setValue(this.selectedFile.FileEntity.file_date);
       this.sensorFileForm.get('photo_date').setValue(this.selectedFile.FileEntity.photo_date);
-      this.sensorFileForm.get('file_id').setValue(this.selectedFile.FileEntity.data_file_id);
-      this.sensorFileForm.get('data_file_id').setValue(this.selectedFile.FileEntity.file_id);
+      this.sensorFileForm.get('file_id').setValue(this.selectedFile.FileEntity.file_id);
+      this.sensorFileForm.get('data_file_id').setValue(this.selectedFile.FileEntity.data_file_id);
       this.sensorFileForm.get('photo_direction').setValue(this.selectedFile.FileEntity.photo_direction);
       this.sensorFileForm.get('latitude_dd').setValue(this.selectedFile.FileEntity.latitude_dd);
       this.sensorFileForm.get('longitude_dd').setValue(this.selectedFile.FileEntity.longitude_dd);
@@ -1944,8 +1928,19 @@ export class SensorEditComponent implements OnInit {
                       this.returnFiles.push({file: file, type: "delete"});
                     }
                   }
-                  this.initSensorFiles.splice(index, 1);
-                  this.initSensorFiles = [...this.initSensorFiles];
+                  for(let file of this.initNWISFiles){
+                    if(file.file_id === row.file_id){
+                      index = this.initNWISFiles.indexOf(file);
+                      this.returnFiles.push({file: file, type: "delete"});
+                    }
+                  }
+                  if(row.is_nwis === 1){
+                    this.initNWISFiles.splice(index, 1);
+                    this.initNWISFiles = [...this.initNWISFiles];
+                  }else{
+                    this.initSensorFiles.splice(index, 1);
+                    this.initSensorFiles = [...this.initSensorFiles];
+                  }
                   this.cancelFile();
                   this.showFileForm = false;
                   this.expandedElement = null;
@@ -1994,7 +1989,7 @@ export class SensorEditComponent implements OnInit {
           photo_date: fileSubmission.photo_date,
           is_nwis: fileSubmission.is_nwis,
       },
-      File: this.form.controls['File'].value !== null ? this.form.controls['File'].value : this.form.controls['File'].value
+      File: this.sensorFileForm.get('File').value !== null ? this.sensorFileForm.get('File').value : this.sensorFileForm.get('File').value
     };
     let fd = new FormData();
     fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
@@ -2011,7 +2006,7 @@ export class SensorEditComponent implements OnInit {
                   self.initSensorFiles = [...self.initSensorFiles];
                   self.showFileForm = false;
                   self.showFileCreateForm = false;
-                  this.showNWISFileCreateForm = false;
+                  self.showNWISFileCreateForm = false;
                   self.expandedElement = null;
                 }
               });
@@ -2037,7 +2032,7 @@ export class SensorEditComponent implements OnInit {
       if (fileSubmission.filetype_id == 2 && !fileSubmission.is_nwis) {
         let datafile = {
           instrument_id: fileSubmission.instrument_id,
-          processor_id: fileSubmission.processor_id,
+          processor_id: this.processorID,
           good_start: this.good_start ? this.formatUTCDates(this.good_start) : this.good_start,
           good_end: this.good_end ? this.formatUTCDates(this.good_end) : this.good_end,
           time_zone: 'UTC',
@@ -2051,48 +2046,46 @@ export class SensorEditComponent implements OnInit {
         if(fileSubmission.script_parent === null) {
           delete fileSubmission.script_parent;
         }
-        console.log(datafile)
-        console.log(fileSubmission)
-        // this.fileEditService.updateDataFile(datafile.data_file_id, datafile).subscribe((dfresults) => {
-        //   this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
+        this.fileEditService.updateDataFile(datafile.data_file_id, datafile).subscribe((dfresults) => {
+          this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
             this.loading = false;
-            // self.initSensorFiles.forEach(function(file, i){
-            //   if(file.file_id === fresults.file_id){
-            //     self.returnFiles.push({file: fresults, type: "update"});
-            //     self.initSensorFiles[i] = fresults;
-            //     self.initSensorFiles = [...self.initSensorFiles];
-            //     self.showFileForm = false;
-            //     self.expandedElement = null;
-            //   }
-            // });
-          // }, error => {
-          //   this.loading = false;
-          //   this.dialog.open(ConfirmComponent, {
-          //     data: {
-          //       title: "",
-          //       titleIcon: "close",
-          //       message: "Error saving file",
-          //       confirmButtonText: "OK",
-          //       showCancelButton: false,
-          //     },
-          //   });
-          // });
-        // }, error => {
-        //   this.loading = false;
-        //   this.dialog.open(ConfirmComponent, {
-        //     data: {
-        //       title: "",
-        //       titleIcon: "close",
-        //       message: "Error saving file's data file",
-        //       confirmButtonText: "OK",
-        //       showCancelButton: false,
-        //     },
-        //   });
-        // })
+            self.initSensorFiles.forEach(function(file, i){
+              if(file.file_id === fresults.file_id){
+                self.returnFiles.push({file: fresults, type: "update"});
+                self.initSensorFiles[i] = fresults;
+                self.initSensorFiles = [...self.initSensorFiles];
+                self.showFileForm = false;
+                self.expandedElement = null;
+              }
+            });
+          }, error => {
+            this.loading = false;
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "",
+                titleIcon: "close",
+                message: "Error saving file",
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
+          });
+        }, error => {
+          this.loading = false;
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "",
+              titleIcon: "close",
+              message: "Error saving file's data file",
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+        })
       }else if (fileSubmission.filetype_id == 2 && fileSubmission.is_nwis) {
         let nwisfile = {
           instrument_id: fileSubmission.instrument_id,
-          processor_id:  JSON.parse(localStorage.getItem('currentUser')).member_id,
+          processor_id:  this.currentUser.member_id,
           good_start: this.good_start ? this.formatUTCDates(this.good_start) : this.good_start,
           good_end: this.good_end ? this.formatUTCDates(this.good_end) : this.good_end,
           time_zone: 'UTC',
@@ -2110,80 +2103,77 @@ export class SensorEditComponent implements OnInit {
         if(fileSubmission.script_parent === null) {
           delete fileSubmission.script_parent;
         }
-        console.log(nwisfile)
-        console.log(fileSubmission)
         // If NWIS datafile
-        // this.fileEditService.updateDataFile(nwisfile.data_file_id, datafile).subscribe((dfresults) => {
-        //     this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
-        //       self.initSensorFiles.forEach(function(file, i){
-        //         if(file.file_id === fresults.file_id){
-        //           self.returnFiles.push({file: fresults, type: "update"});
-        //           self.initSensorFiles[i] = fresults;
-        //           self.initSensorFiles = [...self.initSensorFiles];
+        this.fileEditService.updateDataFile(nwisfile.data_file_id, nwisfile).subscribe((dfresults) => {
+            this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
+              self.initNWISFiles.forEach(function(file, i){
+                if(file.file_id === fresults.file_id){
+                  self.returnFiles.push({file: fresults, type: "update"});
+                  self.initNWISFiles[i] = fresults;
+                  self.initNWISFiles = [...self.initNWISFiles];
                   self.showFileForm = false;
                   self.expandedElement = null;
                   self.loading = false;
-        //         }
-        //       });
-        //     }, error => {
-        //       this.loading = false;
-        //       this.dialog.open(ConfirmComponent, {
-        //         data: {
-        //           title: "",
-        //           titleIcon: "close",
-        //           message: "Error saving file",
-        //           confirmButtonText: "OK",
-        //           showCancelButton: false,
-        //         },
-        //       });
+                }
+              });
+            }, error => {
+              this.loading = false;
+              this.dialog.open(ConfirmComponent, {
+                data: {
+                  title: "",
+                  titleIcon: "close",
+                  message: "Error saving file",
+                  confirmButtonText: "OK",
+                  showCancelButton: false,
+                },
+              });
                 self.showFileForm = false;
                 self.expandedElement = null;
-        //     });
-        // }, error => {
-        //   this.loading = false;
-        //   this.dialog.open(ConfirmComponent, {
-        //     data: {
-        //       title: "",
-        //       titleIcon: "close",
-        //       message: "Error saving file's data file",
-        //       confirmButtonText: "OK",
-        //       showCancelButton: false,
-        //     },
-        //   });
-            // self.showFileForm = false;
-            // self.expandedElement = null;
-        // })
-      }else{
+            });
+        }, error => {
+          this.loading = false;
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "",
+              titleIcon: "close",
+              message: "Error saving file's data file",
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+            self.showFileForm = false;
+            self.expandedElement = null;
+        })
+      } else{
         if(fileSubmission.source_id !== null){
           let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
-          // this.siteEditService.postSource(theSource)
-          // .subscribe(
-          //     (response) => {
-                // fileSubmission.source_id = response.source_id;
+          this.siteEditService.postSource(theSource)
+          .subscribe(
+              (response) => {
+                fileSubmission.source_id = response.source_id;
                 fileSubmission.fileBelongsTo = "Sensor File";
                 fileSubmission.fileType = this.fileTypeLookup(fileSubmission.filetype_id);
 
                 delete fileSubmission.is_nwis; delete fileSubmission.FULLname;
                 delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.File; delete fileSubmission.agency_id;
                 delete fileSubmission.collect_date; delete fileSubmission.elevation_status; delete fileSubmission.script_parent; delete fileSubmission.data_file_id;
-                console.log(fileSubmission)
-              //   this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission)
-              //     .subscribe(
-              //         (data) => {
-              //           self.initSensorFiles.forEach(function(file, i){
-              //             if(file.file_id === data.file_id){
-              //               self.returnFiles.push({file: data, type: "update"});
-              //               self.initSensorFiles[i] = data;
-              //               self.initSensorFiles = [...self.initSensorFiles];
+                this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission)
+                  .subscribe(
+                      (data) => {
+                        self.initSensorFiles.forEach(function(file, i){
+                          if(file.file_id === data.file_id){
+                            self.returnFiles.push({file: data, type: "update"});
+                            self.initSensorFiles[i] = data;
+                            self.initSensorFiles = [...self.initSensorFiles];
                             self.showFileForm = false;
                             self.expandedElement = null;
                             self.loading = false;
-              //             }
-              //           });
-              //         }
-              //     );
-              // }
-          // )
+                          }
+                        });
+                      }
+                  );
+              }
+          )
         }
       }
     }else{
@@ -2206,7 +2196,6 @@ export class SensorEditComponent implements OnInit {
     let self = this;
     this.loading = true;
     this.sensorFileForm.markAllAsTouched();
-    console.log(this.sensorFileForm)
     let fileSubmission = JSON.parse(JSON.stringify(this.sensorFileForm.value));
 
     // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
@@ -2219,13 +2208,12 @@ export class SensorEditComponent implements OnInit {
     if (fileSubmission.filetype_id == 2 && !fileSubmission.is_nwis) {
       let datafile = {
         instrument_id: fileSubmission.instrument_id,
-        processor_id: JSON.parse(localStorage.getItem('currentUser')).member_id,
+        processor_id: this.currentUser.member_id,
         good_start: new Date().toUTCString(),
         good_end: new Date().toUTCString(),
         time_zone: 'UTC',
         collect_date: fileSubmission.collect_date ? this.formatUTCDates(fileSubmission.collect_date) : fileSubmission.collect_date,
         elevation_status: fileSubmission.elevation_status ? fileSubmission.elevation_status : null,
-        data_file_id: fileSubmission.data_file_id,
       }
       // Delete extra fields
       delete fileSubmission.File; delete fileSubmission.agency_id; delete fileSubmission.source_id;
@@ -2233,9 +2221,7 @@ export class SensorEditComponent implements OnInit {
       if(fileSubmission.script_parent === null) {
         delete fileSubmission.script_parent;
       }
-      console.log(datafile)
-      console.log(fileSubmission)
-      // this.fileEditService.addDataFile(datafile).subscribe((dfresults) => {
+      this.fileEditService.addDataFile(datafile).subscribe((dfresults) => {
         //then POST fileParts (Services populate PATH)
         let fileParts = {
             FileEntity: {
@@ -2243,155 +2229,155 @@ export class SensorEditComponent implements OnInit {
                 name: fileSubmission.name,
                 file_date: fileSubmission.file_date,
                 description: fileSubmission.description,
-                site_id: fileSubmission.site_id,
-                // data_file_id: dfresults.data_file_id,
+                site_id: self.data.site_id,
+                data_file_id: dfresults.data_file_id,
                 photo_direction: fileSubmission.photo_direction,
                 latitude_dd: fileSubmission.latitude_dd,
                 longitude_dd: fileSubmission.longitude_dd,
                 instrument_id: fileSubmission.instrument_id
             },
-            File: this.form.controls['File'].value
+            File: this.sensorFileForm.controls['File'].value
         };
         //need to put the fileParts into correct format for post
         var fd = new FormData();
         fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
         fd.append("File", fileParts.File);
-        console.log(fileParts.FileEntity);
-      //   this.fileEditService.uploadFile(fd).subscribe((fresults) => {
-      //   if(fresults !== []){
-        //     self.returnFiles.push({file: fresults, type: "add"});
-        //     self.initSensorFiles.push(fresults);
-        //     self.initSensorFiles = [...self.initSensorFiles];
-        //   }
+        this.fileEditService.uploadFile(fd).subscribe((fresults) => {
+        if(fresults !== []){
+            self.returnFiles.push({file: fresults, type: "add"});
+            self.initSensorFiles.push(fresults);
+            self.initSensorFiles = [...self.initSensorFiles];
+          }
         this.showFileForm = false;
         this.showFileCreateForm = false;
         this.showNWISFileCreateForm = false;
         this.expandedElement = null;
         this.loading = false;
-      //   },
-      //   error => {
-      //     // Error handling - if file did not get created, delete data file
-      //     this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
-      //       this.dialog.open(ConfirmComponent, {
-      //         data: {
-      //           title: "",
-      //           titleIcon: "close",
-      //           message: "Error creating file",
-      //           confirmButtonText: "OK",
-      //           showCancelButton: false,
-      //         },
-      //       });
-            // this.showFileForm = false;
-            // this.showFileCreateForm = false;
-              // this.showNWISFileCreateForm = false;
-            // this.expandedElement = null;
-            // this.loading = false;
-      //     })
-      //   });
-      // },
-      // error => {
-      //   this.dialog.open(ConfirmComponent, {
-      //     data: {
-      //       title: "",
-      //       titleIcon: "close",
-      //       message: "Error creating file",
-      //       confirmButtonText: "OK",
-      //       showCancelButton: false,
-      //     },
-      //   });
-        // this.showFileForm = false;
-        // this.showFileCreateForm = false;
-        // this.showNWISFileCreateForm = false;
-        // this.expandedElement = null;
-        // this.loading = false;
-      // })
+        },
+        error => {
+          // Error handling - if file did not get created, delete data file
+          this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "",
+                titleIcon: "close",
+                message: "Error creating file",
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
+            this.showFileForm = false;
+            this.showFileCreateForm = false;
+              this.showNWISFileCreateForm = false;
+            this.expandedElement = null;
+            this.loading = false;
+          })
+        });
+      },
+      error => {
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "",
+            titleIcon: "close",
+            message: "Error creating file",
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+        this.showFileForm = false;
+        this.showFileCreateForm = false;
+        this.showNWISFileCreateForm = false;
+        this.expandedElement = null;
+        this.loading = false;
+      })
     }else if (fileSubmission.filetype_id == 2 && fileSubmission.is_nwis) {
       // If NWIS
       let nwisDFFile = {
         good_start: new Date().toUTCString(),
         good_end: new Date().toUTCString(),
         time_zone: 'UTC',
-        processor_id: JSON.parse(localStorage.getItem('currentUser')).member_id,
+        processor_id: this.currentUser.member_id,
         instrument_id: fileSubmission.instrument_id,
-        collect_date: fileSubmission.collectDate,
+        collect_date: fileSubmission.collect_date ? this.formatUTCDates(fileSubmission.collect_date) : fileSubmission.collect_date,
       };
       nwisDFFile["elevation_status"] = fileSubmission.elevation_status ? fileSubmission.elevation_status : null;
-      console.log(nwisDFFile)
-      // this.fileEditService.addDataFile(nwisDFFile).subscribe((dfresults) => {
+      this.fileEditService.addDataFile(nwisDFFile).subscribe((dfresults) => {
         //then POST fileParts (Services populate PATH)
         let nwisFile = {
                 filetype_id: fileSubmission.filetype_id,
                 name: fileSubmission.name,
                 file_date: fileSubmission.file_date,
                 description: fileSubmission.description,
-                site_id: fileSubmission.site_id,
-                // data_file_id: dfresults.data_file_id,
+                site_id: self.data.site_id,
+                data_file_id: dfresults.data_file_id,
                 instrument_id: fileSubmission.instrument_id,
                 is_nwis: 1,
                 path: '<link>',
         }
-        console.log(nwisFile)
         // NWIS approval sent automatically when created
-        // this.postApprovalForNWISfile(dfresults.data_file_id, nwisFile);
-        // this.fileEditService.addFile(nwisFile).subscribe((fresults) => {
-        //   if(fresults !== []){
-        //     self.returnFiles.push({file: fresults, type: "add"});
-        //     self.initSensorFiles.push(fresults);
-        //     self.initSensorFiles = [...self.initSensorFiles];
-        //   }
+        this.postApprovalForNWISfile(dfresults.data_file_id, nwisFile);
+        this.fileEditService.addFile(nwisFile).subscribe((fresults) => {
+          if(fresults !== []){
+            self.returnFiles.push({file: fresults, type: "add"});
+            self.initNWISFiles.push(fresults);
+            self.initNWISFiles = [...self.initNWISFiles];
+          }
           this.showFileForm = false;
           this.showFileCreateForm = false;
           this.showNWISFileCreateForm = false;
           this.expandedElement = null;
           this.loading = false;
-        // },
-        // error => {
-        //   // Error handling - if file did not get created, delete data file
-        //   this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
-        //     this.dialog.open(ConfirmComponent, {
-        //       data: {
-        //         title: "",
-        //         titleIcon: "close",
-        //         message: "Error creating file",
-        //         confirmButtonText: "OK",
-        //         showCancelButton: false,
-        //       },
-        //     });
-            // this.showFileForm = false;
-            // this.showFileCreateForm = false;
-            // this.showNWISFileCreateForm = false;
-            // this.expandedElement = null;
-            // this.loading = false;
-        //   })
-        // });
-      // },
-      // error => {
-      //     this.dialog.open(ConfirmComponent, {
-      //       data: {
-      //         title: "",
-      //         titleIcon: "close",
-      //         message: "Error creating file",
-      //         confirmButtonText: "OK",
-      //         showCancelButton: false,
-      //       },
-      //     });
-            // this.showFileForm = false;
-            // this.showFileCreateForm = false;
-            // this.showNWISFileCreateForm = false;
-            // this.expandedElement = null;
-            // this.loading = false;
-      // })
+        },
+        error => {
+          // Error handling - if file did not get created, delete data file
+          this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "",
+                titleIcon: "close",
+                message: "Error creating file",
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
+            this.showFileForm = false;
+            this.showFileCreateForm = false;
+            this.showNWISFileCreateForm = false;
+            this.expandedElement = null;
+            this.loading = false;
+          })
+        });
+      },
+      error => {
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "",
+              titleIcon: "close",
+              message: "Error creating file",
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+            this.showFileForm = false;
+            this.showFileCreateForm = false;
+            this.showNWISFileCreateForm = false;
+            this.expandedElement = null;
+            this.loading = false;
+      })
 
     }else{
         // check if source already exists?
         let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
 
         //post source first to get source_id
-        // this.siteEditService.postSource(theSource)
-        // .subscribe(
-        //     (response) => {
-        //       fileSubmission.source_id = response.source_id;
+        this.siteEditService.postSource(theSource)
+        .subscribe(
+            (response) => {
+              fileSubmission.source_id = response.source_id;
               delete fileSubmission.FULLname; delete fileSubmission.agency_id; delete fileSubmission.site_description; delete fileSubmission.path;
+              if(fileSubmission.script_parent === null) {
+                delete fileSubmission.script_parent;
+              }
               if (fileSubmission.filetype_id !== 8) {
                 let formatFileSubmission = {
                     description: fileSubmission.description,
@@ -2409,47 +2395,49 @@ export class SensorEditComponent implements OnInit {
                 let fd = new FormData();
                 fd.append("FileEntity", JSON.stringify(formatFileSubmission));
                 fd.append("File", this.sensorFileForm.controls["File"].value);
-                console.log(formatFileSubmission);
                 //then POST fileParts (Services populate PATH)
-                // this.siteEditService.uploadFile(fd)
-                //   .subscribe(
-                //       (data) => {
-                //         if(data !== []){
-                //           self.returnFiles.push({file: data, type: "add"});
-                //           self.initSensorFiles.push(data);
-                //           self.initSensorFiles = [...self.initSensorFiles];
-                //         }
+                this.siteEditService.uploadFile(fd)
+                  .subscribe(
+                      (data) => {
+                        if(data !== []){
+                          self.returnFiles.push({file: data, type: "add"});
+                          self.initSensorFiles.push(data);
+                          self.initSensorFiles = [...self.initSensorFiles];
+                        }
                           this.showFileForm = false;
                           this.showFileCreateForm = false;
                           this.showNWISFileCreateForm = false;
                           this.expandedElement = null;
                           this.loading = false;
-              //         }
-              //     );
+                      }
+                  );
               }
               else{
                 fileSubmission.site_id = this.data.site_id;
-                // Link FileTypes
+                // Link FileTypes 
+                if(fileSubmission.script_parent === null) {
+                  delete fileSubmission.script_parent;
+                }
                 delete fileSubmission.File; delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd;
                 delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.photo_direction; delete fileSubmission.path;
-                // this.siteEditService.saveFile(fileSubmission)
-                //   .subscribe(
-                //       (data) => {
-                //         if(data !== []){
-                //           self.returnFiles.push({file: data, type: "add"});
-                //           self.initSensorFiles.push(data);
-                //           self.initSensorFiles = [...self.initSensorFiles];
-                //         }
+                this.siteEditService.saveFile(fileSubmission)
+                  .subscribe(
+                      (data) => {
+                        if(data !== []){
+                          self.returnFiles.push({file: data, type: "add"});
+                          self.initSensorFiles.push(data);
+                          self.initSensorFiles = [...self.initSensorFiles];
+                        }
                         this.loading = false;
                         this.showFileForm = false;
                         this.showFileCreateForm = false;
                         this.showNWISFileCreateForm = false;
                         this.expandedElement = null;
-                  //     }
-                  // );
+                      }
+                  );
               }
-            // }
-        // );
+            }
+        );
         }
     }else{
       this.fileValid = false;
