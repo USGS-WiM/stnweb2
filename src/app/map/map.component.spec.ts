@@ -577,7 +577,7 @@ describe('MapComponent', () => {
         expect(component.isClicked).toBeFalsy();
     });
 
-    it ('setEventInLocalStorage should set eventId to false', () => {
+    it ('setEventInLocalStorage should set eventId to be null', () => {
         localStorage.setItem('eventId', undefined);
         component.setEventInLocalStorage(null);
         expect(localStorage.getItem('eventId')).toBe('null');
