@@ -6,6 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { SensorEditComponent } from './sensor-edit.component';
+import { CurrentUserService } from '@app/services/current-user.service';
 import { of } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormArray, FormGroup } from '@angular/forms';
@@ -92,6 +93,7 @@ describe('SensorEditComponent', () => {
       providers: [
         { provide: MatDialogRef, useValue: dialogMock },
         { provide: MAT_DIALOG_DATA, useValue: data },
+        CurrentUserService,
       ],
       imports: [MatDialogModule, HttpClientTestingModule, MatTableModule, NoopAnimationsModule, MatMenuModule],      
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

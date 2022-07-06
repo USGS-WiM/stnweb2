@@ -977,16 +977,6 @@
                     </div>
                     <br clear="all" />
 
-                    <!--File URL (LINK file)-->
-                    <div *ngIf="(selectedFile.FileEntity.is_nwis !== undefined && selectedFile.FileEntity.is_nwis === 1) || selectedFile.FileEntity.filetype_id === 8">
-                        <mat-form-field appearance="fill">
-                            <mat-label>File URL</mat-label>
-                            <input aria-label="File URL" formControlName="name" matInput [value]="selectedFile.FileEntity.name"/>
-                            <mat-icon matSuffix class="info-icon" matTooltip="Please link to persistent URLs or digital object identifier (doi) urls." 
-                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>                
-                        </mat-form-field>
-                    </div>
-
                     <!-- Data Process By (Data) -->
                     <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
                         <label class="form-header">Data Process By: </label> {{processorName}}
@@ -1262,16 +1252,6 @@
                                                 <input #upload id="addFile" class="upload-file" type="file" max="500000" [hidden]="true" (change)="getFileName($event)">
                                             </div>
                                             <br clear="all" />
-
-                                            <!--File URL (LINK file)-->
-                                            <div *ngIf="(selectedFile.FileEntity.is_nwis !== undefined && selectedFile.FileEntity.is_nwis === 1) || selectedFile.FileEntity.filetype_id === 8">
-                                                <mat-form-field appearance="fill">
-                                                    <mat-label>File URL</mat-label>
-                                                    <input aria-label="File URL" formControlName="name" matInput [value]="selectedFile.FileEntity.name"/>
-                                                    <mat-icon matSuffix class="info-icon" matTooltip="Please link to persistent URLs or digital object identifier (doi) urls." 
-                                                    aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>                
-                                                </mat-form-field>
-                                            </div>
 
                                             <!-- Data Process By (Data) -->
                                             <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
@@ -1582,7 +1562,7 @@
                         <label class="form-header filetype-header">File Type: </label> {{fileType}}
                     </div>
 
-                    <!--File URL (LINK file)-->
+                    <!--File URL (NWIS file)-->
                     <div *ngIf="(selectedFile.FileEntity.is_nwis === 1)">
                         <mat-form-field appearance="fill">
                             <mat-label>File URL</mat-label>
@@ -1739,7 +1719,7 @@
                                                 <label class="form-header">File Type: </label> {{fileType}}
                                             </div>
 
-                                            <!--File URL (LINK file)-->
+                                            <!--File URL (NWIS file)-->
                                             <div *ngIf="(selectedFile.FileEntity.is_nwis !== undefined && selectedFile.FileEntity.is_nwis === 1) || selectedFile.FileEntity.filetype_id === 8">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>File URL</mat-label>

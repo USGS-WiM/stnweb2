@@ -639,7 +639,7 @@ export class SensorEditComponent implements OnInit {
     let self = this;
     this.siteService.getFileTypeLookup().subscribe((results) => {
       results.forEach(function(results){
-        if (results.filetype === 'Photo' || results.filetype === 'Data' || results.filetype === 'Historic Citation' || results.filetype === 'Field Sheets' || results.filetype === 'Level Notes' || results.filetype === 'Link' ||
+        if (results.filetype === 'Photo' || results.filetype === 'Data' || results.filetype === 'Historic Citation' || results.filetype === 'Field Sheets' || results.filetype === 'Level Notes' ||
                 results.filetype === 'Other' || results.filetype === 'Sketch' || results.filetype === 'Hydrograph'){
           self.fileTypes.push(results);
         }
@@ -2409,30 +2409,6 @@ export class SensorEditComponent implements OnInit {
                           this.showNWISFileCreateForm = false;
                           this.expandedElement = null;
                           this.loading = false;
-                      }
-                  );
-              }
-              else{
-                fileSubmission.site_id = this.data.site_id;
-                // Link FileTypes 
-                if(fileSubmission.script_parent === null) {
-                  delete fileSubmission.script_parent;
-                }
-                delete fileSubmission.File; delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd;
-                delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.photo_direction; delete fileSubmission.path;
-                this.siteEditService.saveFile(fileSubmission)
-                  .subscribe(
-                      (data) => {
-                        if(data !== []){
-                          self.returnFiles.push({file: data, type: "add"});
-                          self.initSensorFiles.push(data);
-                          self.initSensorFiles = [...self.initSensorFiles];
-                        }
-                        this.loading = false;
-                        this.showFileForm = false;
-                        this.showFileCreateForm = false;
-                        this.showNWISFileCreateForm = false;
-                        this.expandedElement = null;
                       }
                   );
               }
