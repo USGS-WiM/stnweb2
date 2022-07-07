@@ -1,11 +1,17 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { I } from '@angular/cdk/keycodes';
-import { Component, ComponentFactoryResolver, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ComponentFactoryResolver, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
+import { APP_SETTINGS } from '@app/app.settings';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { FileEditComponent } from '@app/file-edit/file-edit.component';
 import { EventService } from '@app/services/event.service';
+import { FileEditService } from '@app/services/file-edit.service';
 import { SensorEditService } from '@app/services/sensor-edit.service';
+import { SiteEditService } from '@app/services/site-edit.service';
+import { CurrentUserService } from '@app/services/current-user.service';
 import { SiteService } from '@app/services/site.service';
 import { TimezonesService } from '@app/services/timezones.service';
 import { DateTime } from "luxon";
@@ -14,15 +20,24 @@ import { resolve } from 'path';
 @Component({
   selector: 'app-sensor-edit',
   templateUrl: './sensor-edit.component.html',
-  styleUrls: ['./sensor-edit.component.scss']
+  styleUrls: ['./sensor-edit.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class SensorEditComponent implements OnInit {
   @ViewChild('retrievedTable') retrievedTable: MatTable<any>;
   @ViewChild('deployedTable') deployedTable: MatTable<any>;
   @ViewChild('lostTable') lostTable: MatTable<any>;
+  @ViewChild('upload', {static: false}) upload: ElementRef;
 
   public sensor;
   public form;
+  public sensorFileForm;
   public events;
   public sensorTypes;
   public sensorBrands;
@@ -53,6 +68,56 @@ export class SensorEditComponent implements OnInit {
   public initStatusID;
   public role = Number(localStorage.role);
   public returnData;
+  public returnFiles = [];
+  private selectedFile = {
+    FileEntity: {
+      file_id: null,
+      name: null,
+      FULLname: null,
+      source_id: null,
+      description: null,
+      file_date: null,
+      photo_date: null,
+      agency_id: null,
+      site_id: null,
+      filetype_id: null,
+      path: null,
+      last_updated: null,
+      last_updated_by: null,
+      site_description: null,
+      photo_direction: null,
+      latitude_dd: null,
+      longitude_dd: null,
+      instrument_id: null,
+      data_file_id: null,
+      is_nwis: null,
+      collect_date: null,
+      elevation_status: null,
+    },
+    File: null
+  }
+  private fileTypes = [];
+  private fileType;
+  private sourceName;
+  private sourceAgency;
+  private previewCaption;
+  private approvedBy;
+  private approvedOn;
+  private collectDate;
+  private processorName;
+  private processorID;
+  private elevation;
+  private good_start;
+  private good_end;
+  private approval_id;
+  public fileValid;
+  public fileUploading;
+  public fileSource;
+  public addFileType;
+  public fileItemExists = false;
+  public agencies = [];
+  public agencyNameForCap;
+  currentUser;
 
   constructor(
     private dialogRef: MatDialogRef<SensorEditComponent>,
@@ -60,9 +125,17 @@ export class SensorEditComponent implements OnInit {
     public sensorEditService: SensorEditService,
     public siteService: SiteService,
     public eventService: EventService,
+    public siteEditService: SiteEditService,
+    public fileEditService: FileEditService,
     public timezonesService: TimezonesService,
     public dialog: MatDialog,
-  ) { }
+    private changeDetector : ChangeDetectorRef,
+    public currentUserService: CurrentUserService,
+  ) { 
+    currentUserService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
 
   deployedExpanded = false;
   retrievedExpanded = false;
@@ -72,15 +145,22 @@ export class SensorEditComponent implements OnInit {
   nwisExpanded = false;
   loading = false;
   editOrCreate;
+  expandedElement: any;
+  showFileForm = false;
+  showFileCreateForm = false;
+  showNWISFileCreateForm = false;
+  showDetails = false;
 
   displayedFileColumns: string[] = [
     'FileName',
     'FileDate',
+    'expand',
   ];
 
   displayedNWISFileColumns: string[] = [
     'FileName',
     'FileDate',
+    'expand',
   ];
 
   displayedTapedownColumns: string[] = [
@@ -116,6 +196,9 @@ export class SensorEditComponent implements OnInit {
       if(this.role === 1){
         this.getEventList();
       }
+      this.getFileTypes();
+      this.getAgencies();
+      this.initsensorFileForm();
       this.createTapedownTable();
       this.getSensorTypes();
       this.getSensorBrands();
@@ -143,12 +226,12 @@ export class SensorEditComponent implements OnInit {
       this.sensor.instrument_status = [{
         time_stamp: isoDate,
         time_zone: "UTC", //will be converted to utc on post
-        member_id: JSON.parse(localStorage.getItem('currentUser')).member_id, // member logged in is deploying it
+        member_id: this.currentUser.member_id, // member logged in is deploying it
         status: "Deployed",
         status_type_id: 1,
         utc_preview: utcDate,
       }]
-      this.sensor.instrument_status[0].member_name = JSON.parse(localStorage.getItem('currentUser')).fname + " " + JSON.parse(localStorage.getItem('currentUser')).lname; 
+      this.sensor.instrument_status[0].member_name = this.currentUser.fname + " " + this.currentUser.lname; 
       this.deployedExpanded = true;
       this.getSensorTypes();
       this.getSensorBrands();
@@ -467,6 +550,171 @@ export class SensorEditComponent implements OnInit {
       objective_point_id: new FormControl(tapedown.objective_point_id ? tapedown.objective_point_id: null),
       instrument_status_id: new FormControl(tapedown.instrument_status_id ? tapedown.instrument_status_id: null),
     } as FormArray["value"];
+  }
+
+  /* istanbul ignore next */
+  initsensorFileForm() {
+    this.sensorFileForm = new FormGroup({
+      File: new FormControl(this.selectedFile.File),
+      file_id: new FormControl(this.selectedFile.FileEntity.file_id),
+      data_file_id: new FormControl(this.selectedFile.FileEntity.data_file_id),
+      name: new FormControl(this.selectedFile.FileEntity.name, Validators.required),
+      FULLname: new FormControl(this.selectedFile.FileEntity.FULLname, Validators.required),
+      source_id: new FormControl(this.selectedFile.FileEntity.source_id),
+      description: new FormControl(this.selectedFile.FileEntity.description, Validators.required),
+      file_date: new FormControl(this.selectedFile.FileEntity.file_date, Validators.required),
+      photo_date: new FormControl(this.selectedFile.FileEntity.photo_date),
+      agency_id: new FormControl(this.selectedFile.FileEntity.agency_id, Validators.required),
+      instrument_id: new FormControl(this.sensor.instrument_id),
+      site_id: new FormControl(this.selectedFile.FileEntity.site_id),
+      filetype_id: new FormControl(this.selectedFile.FileEntity.filetype_id, Validators.required),
+      path: new FormControl(this.selectedFile.FileEntity.path),
+      last_updated: new FormControl(this.selectedFile.FileEntity.last_updated),
+      last_updated_by: new FormControl(this.selectedFile.FileEntity.last_updated_by),
+      site_description: new FormControl(this.selectedFile.FileEntity.site_description),
+      photo_direction: new FormControl(this.selectedFile.FileEntity.photo_direction),
+      latitude_dd: new FormControl(this.selectedFile.FileEntity.latitude_dd, [this.checkLatValue()]),
+      longitude_dd: new FormControl(this.selectedFile.FileEntity.longitude_dd, [this.checkLonValue()]),
+      is_nwis: new FormControl(this.selectedFile.FileEntity.is_nwis),
+      collect_date: new FormControl(this.collectDate !== undefined ? this.collectDate : null),
+      elevation_status: new FormControl(this.selectedFile.FileEntity.elevation_status !== undefined ? this.selectedFile.FileEntity.elevation_status : ""),
+    })
+  }
+
+  range = function (x, min, max) {
+    return x < min || x > max;
+  }
+
+  // Validate lat/lngs
+  checkLatValue() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const incorrect = this.range(control.value, 0, 73) || this.checkNaN(control.value);
+      return incorrect ? {incorrectValue: {value: control.value}} : null;
+    };
+  }
+
+  checkLonValue() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const incorrect = control.value !== null ? (this.range(control.value, -175, -60) || this.checkNaN(control.value)) : this.checkNaN(control.value);
+      return incorrect ? {incorrectValue: {value: control.value}} : null;
+    };
+  }
+
+  /* istanbul ignore next */
+  getFileTypeSelection(event) {
+    this.selectedFile.FileEntity.filetype_id = event.value;
+    if(this.selectedFile.FileEntity.filetype_id === 1){
+      this.sensorFileForm.get("photo_date").setValidators([Validators.required]);
+    }else{
+      this.sensorFileForm.get("photo_date").clearValidators();
+      this.sensorFileForm.get("photo_date").setErrors(null);
+    }
+
+    // All other files
+    if(this.selectedFile.FileEntity.filetype_id !== 2){
+      // Set required validator for agency
+      this.sensorFileForm.get("agency_id").setValidators([Validators.required]);
+      // Set required validator for source name
+      this.sensorFileForm.get("FULLname").setValidators([Validators.required]);
+      this.selectedFile.FileEntity.FULLname = this.currentUser.fname + ' ' + this.currentUser.lname;
+      this.sensorFileForm.get("FULLname").setValue(this.selectedFile.FileEntity.FULLname);
+    }
+
+    // Data files
+    if(this.selectedFile.FileEntity.filetype_id === 2){
+      // Set required validator for agency
+      this.sensorFileForm.get("agency_id").clearValidators();
+      this.sensorFileForm.get("agency_id").setErrors(null);
+      // Set required validator for source name
+      this.sensorFileForm.get("FULLname").clearValidators();
+      this.sensorFileForm.get("FULLname").setErrors(null);
+      this.collectDate = new Date();
+      this.sensorFileForm.get("collect_date").setValue(new Date());
+      this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
+    }
+  }
+
+  /* istanbul ignore next */
+  getFileTypes() {
+    let self = this;
+    this.siteService.getFileTypeLookup().subscribe((results) => {
+      results.forEach(function(results){
+        if (results.filetype === 'Photo' || results.filetype === 'Data' || results.filetype === 'Historic Citation' || results.filetype === 'Field Sheets' || results.filetype === 'Level Notes' ||
+                results.filetype === 'Other' || results.filetype === 'Sketch' || results.filetype === 'Hydrograph'){
+          self.fileTypes.push(results);
+        }
+      })
+    });
+  }
+  
+  /* istanbul ignore next */
+  getDataFileInfo(row){
+    this.siteService
+    .getFileType(row.filetype_id)
+    .subscribe((results) => {
+        this.fileType = results.filetype;
+        if(this.fileType === 'Data' && row.data_file_id !== undefined){
+          this.siteService
+          .getApproval(row.data_file_id)
+          .subscribe((approvalResults) => {
+              if(approvalResults !== null){
+                this.approvedOn = approvalResults.approval_date;
+                if(approvalResults.member_id !== undefined && approvalResults.member_id !== 0){
+                  this.siteService
+                  .getMemberName(approvalResults.member_id)
+                  .subscribe((member) => {
+                    if(member.length === undefined || member.length > 0){
+                      this.approvedBy = member.fname + " " + member.lname;
+                    }
+                  });
+                }
+              }
+          });
+          this.siteService
+          .getDataFile(row.data_file_id)
+          .subscribe((datafileResults) => {
+              this.elevation = datafileResults.elevation_status;
+              this.collectDate = datafileResults.collect_date;
+              this.selectedFile.FileEntity.collect_date = this.collectDate;
+              this.sensorFileForm.get('collect_date').setValue(this.collectDate);
+              this.selectedFile.FileEntity.elevation_status = this.elevation;
+              this.sensorFileForm.get('elevation_status').setValue(this.elevation);
+              this.good_start = datafileResults.good_start;
+              this.good_end = datafileResults.good_end;
+              this.approval_id = datafileResults.approval_id;
+
+              if(datafileResults.processor_id !== undefined && datafileResults.processor_id !== 0){
+                this.siteService
+                .getMemberName(datafileResults.processor_id)
+                .subscribe((memberResult) => {
+                  this.processorName = memberResult.fname + " " + memberResult.lname;
+                  this.processorID = datafileResults.processor_id;
+                });
+              }
+          });
+        }
+    });
+  }
+
+  /* istanbul ignore next */
+  // Set file attributes
+  getFileName(event) {
+    this.selectedFile.FileEntity.name = event.target.files[0].name;
+    this.sensorFileForm.controls['name'].setValue(this.selectedFile.FileEntity.name);
+    this.selectedFile.File = event.target.files[0];
+    this.sensorFileForm.controls['File'].setValue(this.selectedFile.File);
+    this.fileUploading = true;
+    if(this.selectedFile.FileEntity.filetype_id === 1){
+      this.sensorFileForm.controls["photo_date"].setValidators([Validators.required]);
+    }else{
+      this.sensorFileForm.controls["photo_date"].clearValidators();
+    }
+  }
+
+  /* istanbul ignore next */
+  updateAgencyForCaption() {
+    let self = this;
+    this.agencyNameForCap = this.agencies.filter(function (a) { return a.agency_id == self.sensorFileForm.controls['agency_id'].value; })[0].agency_name;
   }
 
   changeTime(instrument) {
@@ -878,6 +1126,31 @@ export class SensorEditComponent implements OnInit {
     })
   }
 
+  /* istanbul ignore next */
+  openAddNWISFileDialog() {
+    let self = this;
+    // Open File Edit Dialog
+    const dialogRef = this.dialog.open(FileEditComponent, {
+      data: {
+          row_data: {instrument_id: this.form.get("instrument_id").value, is_nwis: 1, filetype_id: 2},
+          type: 'Sensor File',
+          siteInfo: this.data.siteInfo,
+          siteRefDatums: this.data.siteRefDatums,
+          siteHWMs: this.data.siteHWMs,
+          siteSensors: this.data.siteSensors,
+          addOrEdit: 'Add'
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result) {
+        // Update files data source and hwm
+        self.initNWISFiles.push(result);
+        self.initNWISFiles = [...self.initNWISFiles];
+        self.returnFiles.push(result);
+      }
+    });
+  }
+
   submit(statusID) {
     this.form.markAllAsTouched();
     if(this.form.valid){
@@ -1049,7 +1322,7 @@ export class SensorEditComponent implements OnInit {
 
       updateInstrument.then(() => {
         this.loading = false;
-        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
         this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
@@ -1141,7 +1414,7 @@ export class SensorEditComponent implements OnInit {
       /* istanbul ignore next */
       deployInstrument.then(() => {
         this.loading = false;
-        let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+        let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
         this.dialogRef.close(result);
         this.dialog.open(ConfirmComponent, {
           data: {
@@ -1269,5 +1542,891 @@ export class SensorEditComponent implements OnInit {
       }
     }
     return update;
+  }
+
+  /* istanbul ignore next */
+  postApprovalForNWISfile(data_file_id, nwisFile) {
+    this.fileEditService.approveNWISDF(data_file_id).subscribe(approvalResponse => {
+        nwisFile.approval_id = approvalResponse.approval_id;
+    },
+    error => {
+      // error
+      this.dialog.open(ConfirmComponent, {
+        data: {
+        title: "Error",
+        titleIcon: "close",
+        message: "Error approving NWIS data file",
+        confirmButtonText: "OK",
+        showCancelButton: false,
+        },
+      });
+    })
+  };
+
+  /* istanbul ignore next */
+  showFileCreate(is_nwis) {
+    // Reset form
+    this.cancelFile();
+    this.addFileType = "New";
+    this.selectedFile.FileEntity.file_date = new Date();
+    this.sensorFileForm.get("file_date").setValue(this.selectedFile.FileEntity.file_date);
+    this.sensorFileForm.get("instrument_id").setValue(this.sensor.instrument_id);
+
+    if(this.selectedFile.FileEntity.filetype_id === 1){
+      this.selectedFile.FileEntity.photo_date = new Date();
+      this.sensorFileForm.get("photo_date").setValue(this.selectedFile.FileEntity.photo_date);
+      this.sensorFileForm.get("photo_date").setValidators([Validators.required]);
+    }
+
+    if(is_nwis){
+      this.showNWISFileCreateForm = true;
+      this.selectedFile.FileEntity.is_nwis = 1;
+      this.sensorFileForm.get("is_nwis").setValue(1);
+      this.selectedFile.FileEntity.filetype_id = 2;
+      this.fileType = "Data";
+      this.sensorFileForm.get("filetype_id").setValue(this.selectedFile.FileEntity.filetype_id);
+      this.sensorFileForm.get("name").setValue("https://waterdata.usgs.gov/nwis/uv?site_no=" + this.data.siteInfo.usgs_sid);
+      this.collectDate = new Date();
+      this.sensorFileForm.get("collect_date").setValue(this.collectDate);
+      this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
+    }else{
+      this.showFileCreateForm = true;
+
+      // Set source name and agency automatically
+      // Member id
+      if(this.currentUser){
+        let member_id = this.currentUser.member_id;
+        this.selectedFile.FileEntity.source_id = member_id;
+        this.sensorFileForm.get('source_id').setValue(member_id);
+        // FULLname
+        this.selectedFile.FileEntity.FULLname = this.currentUser.fname + " " +  this.currentUser.lname;
+        this.sensorFileForm.get('FULLname').setValue(this.selectedFile.FileEntity.FULLname);
+        // Agency
+        this.selectedFile.FileEntity.agency_id = this.currentUser.agency_id;
+        this.sensorFileForm.get('agency_id').setValue(this.selectedFile.FileEntity.agency_id);
+        this.updateAgencyForCaption();
+      }
+    }
+
+    if(this.selectedFile.FileEntity.filetype_id === 2) {
+      // Set required validator for agency
+      this.sensorFileForm.get("agency_id").clearValidators();
+      this.sensorFileForm.get("agency_id").setErrors(null);
+      // Set required validator for source name
+      this.sensorFileForm.get("FULLname").clearValidators();
+      this.sensorFileForm.get("FULLname").setErrors(null);
+    }
+  }
+
+  /* istanbul ignore next */
+  setInitFileEditForm(data) {
+    this.sensorFileForm.get('file_id').setValue(data.file_id);
+    this.sensorFileForm.get('name').setValue(data.name);
+    this.sensorFileForm.get('FULLname').setValue(data.FULLname);
+    this.sensorFileForm.get('description').setValue(data.description);
+    this.sensorFileForm.get('file_date').setValue(data.file_date);
+    this.sensorFileForm.get('photo_date').setValue(data.photo_date);
+    this.sensorFileForm.get('agency_id').setValue(data.agency_id);
+    this.sensorFileForm.get('source_id').setValue(data.source_id);
+    this.sensorFileForm.get('site_id').setValue(data.site_id);
+    this.sensorFileForm.get('filetype_id').setValue(data.filetype_id);
+    this.sensorFileForm.get('path').setValue(data.path);
+    this.sensorFileForm.get('last_updated').setValue(data.last_updated);
+    this.sensorFileForm.get('last_updated_by').setValue(data.last_updated_by);
+    this.sensorFileForm.get('site_description').setValue(data.site_description);
+    this.sensorFileForm.get('photo_direction').setValue(data.photo_direction);
+    this.sensorFileForm.get('latitude_dd').setValue(data.latitude_dd);
+    this.sensorFileForm.get('longitude_dd').setValue(data.longitude_dd);
+    this.sensorFileForm.get('instrument_id').setValue(this.sensor.instrument_id);
+  }
+
+  /* istanbul ignore next */
+  setFileSourceAgency(source_id){
+    this.siteService
+    .getFileSource(source_id)
+    .subscribe((results) => {
+        this.selectedFile.FileEntity.agency_id = results.agency_id;
+        this.agencyNameForCap = results.agency_name;
+        this.sensorFileForm.controls['agency_id'].setValue(this.selectedFile.FileEntity.agency_id);
+        this.sourceAgency = results.agency_name;
+        if(this.previewCaption){
+          if (this.sourceAgency === undefined || this.sourceAgency === ''){
+            this.previewCaption["sourceAgency"] = '(source agency)';
+          }else{
+            this.previewCaption["sourceAgency"] = this.sourceAgency;
+          }
+        }
+    });
+  }
+
+  /* istanbul ignore next */
+  setFileSource(source_id){
+    this.siteService
+    .getSourceName(source_id)
+    .subscribe((results) => {
+        this.selectedFile.FileEntity.FULLname = results.source_name;
+        this.sensorFileForm.controls['FULLname'].setValue(this.selectedFile.FileEntity.FULLname);
+        this.sourceName = results.source_name;
+        if(this.previewCaption){
+          if (this.sourceName === undefined || this.sourceName === ''){
+            this.previewCaption["sourceName"] = '(source name)'
+          }else{
+            this.previewCaption["sourceName"] = this.sourceName;
+          }
+        }
+    });
+  }
+
+  /* istanbul ignore next */
+  getAgencies() {
+    this.siteService.getAgencyLookup().subscribe((results) => {
+      this.agencies = results;
+    });
+  }
+
+  /* istanbul ignore next */
+  getFile() {
+    if(this.selectedFile.FileEntity.file_id !== null && this.selectedFile.FileEntity.file_id !== undefined){
+      this.siteService.getFileItem(this.selectedFile.FileEntity.file_id).subscribe((results) => {
+        if(results.Length > 0) {
+          this.fileItemExists = true;
+          this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.selectedFile.FileEntity.file_id + '/item';
+          this.selectedFile.FileEntity.name = results.FileName;
+          this.sensorFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
+          if(this.selectedFile.FileEntity.data_file_id === null || !this.selectedFile.FileEntity.data_file_id){
+            this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
+            this.setFileSource(this.selectedFile.FileEntity.source_id);
+          }else{
+            // Set processor name, elevation, df approval, collect date
+            this.getDataFileInfo(this.selectedFile.FileEntity);
+   
+            // Set required validator for agency
+            this.sensorFileForm.get("agency_id").clearValidators();
+            this.sensorFileForm.get("agency_id").setErrors(null);
+            // Set required validator for source name
+            this.sensorFileForm.get("FULLname").clearValidators();
+            this.sensorFileForm.get("FULLname").setErrors(null);
+          }
+        }else{
+          this.fileItemExists = false;
+          if(this.selectedFile.FileEntity.data_file_id === null || !this.selectedFile.FileEntity.data_file_id){
+            this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
+            this.setFileSource(this.selectedFile.FileEntity.source_id);
+          }else{
+            // Set processor name, elevation, df approval, collect date
+            this.getDataFileInfo(this.selectedFile.FileEntity);
+
+            // Set required validator for agency
+            this.sensorFileForm.get("agency_id").clearValidators();
+            this.sensorFileForm.get("agency_id").setErrors(null);
+            // Set required validator for source name
+            this.sensorFileForm.get("FULLname").clearValidators();
+            this.sensorFileForm.get("FULLname").setErrors(null);
+          }
+        }
+      });
+    }else{
+      this.fileItemExists = false;
+    }
+  }
+
+  /* istanbul ignore next */
+  showFileDetails(row) {
+    if(row) {
+      this.expandedElement = row;
+      this.showDetails = true;
+      this.showFileForm = false;
+      // Get filetype name
+      this.fileType = this.fileTypeLookup(row.filetype_id);
+      if(!row.data_file_id){
+        // Get source name and preview caption
+        this.setFileSource(row.source_id);
+        // Get agency ID
+        this.setFileSourceAgency(row.source_id);
+      }else{
+        // Set processor name, elevation, df approval, collect date
+        this.getDataFileInfo(row);
+      }
+      this.previewCaption = {
+        description: row.description,
+        site_description: this.data.siteInfo.site_description,
+        county: this.data.siteInfo.county,
+        state: this.data.siteInfo.state,
+        photo_date: row.photo_date,
+        sourceName: this.sourceName,
+        sourceAgency: this.sourceAgency,
+      }
+
+      // Replace any undefined preview caption info with placeholder
+      if (row.description === undefined || row.description == ''){
+        this.previewCaption.description = "(description)";
+      }
+      if (this.data.siteInfo.site_description === undefined || this.data.siteInfo.site_description == ''){
+        this.previewCaption.site_description = '(site description)'
+      }
+      if (this.data.siteInfo.county === undefined || this.data.siteInfo.county == ''){
+        this.previewCaption.county = '(county)'
+      }
+      if (this.data.siteInfo.state === undefined || this.data.siteInfo.state == ''){
+        this.previewCaption.state = '(state)'
+      }
+      if (row.photo_date === undefined || row.photo_date == ''){
+        this.previewCaption.photo_date = '(photo date)'
+      }
+      this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + row.file_id + '/item';
+    }else{
+      this.expandedElement = null;
+      this.showDetails = false;
+    }
+  }
+
+  /* istanbul ignore next */
+  showFileEdit(row) {
+    // Reset form
+    if(row){
+      this.cancelFile();
+      this.setInitFileEditForm(row);
+      this.expandedElement = row;
+      this.showDetails = false;
+      this.showFileForm = true;
+      this.selectedFile.FileEntity.file_id = row.file_id;
+      this.selectedFile.FileEntity.filetype_id = row.filetype_id;
+      this.addFileType = "Existing";
+      this.selectedFile.FileEntity.source_id = row.source_id;
+      this.selectedFile.FileEntity.data_file_id = row.data_file_id;
+      this.selectedFile.FileEntity.file_date = row.file_date;
+      this.selectedFile.FileEntity.photo_date = row.photo_date !== undefined ? row.photo_date : null;
+      this.selectedFile.FileEntity.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
+      this.selectedFile.FileEntity.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
+      this.selectedFile.FileEntity.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
+      this.selectedFile.FileEntity.site_id = this.data.site_id;
+      this.selectedFile.FileEntity.name = row.name !== undefined && row.name !== "" ? row.name : null;
+      this.selectedFile.FileEntity.instrument_id = this.sensor.instrument_id;
+      this.selectedFile.FileEntity.is_nwis = row.is_nwis;
+
+      this.sensorFileForm.get('file_date').setValue(this.selectedFile.FileEntity.file_date);
+      this.sensorFileForm.get('photo_date').setValue(this.selectedFile.FileEntity.photo_date);
+      this.sensorFileForm.get('file_id').setValue(this.selectedFile.FileEntity.file_id);
+      this.sensorFileForm.get('data_file_id').setValue(this.selectedFile.FileEntity.data_file_id);
+      this.sensorFileForm.get('photo_direction').setValue(this.selectedFile.FileEntity.photo_direction);
+      this.sensorFileForm.get('latitude_dd').setValue(this.selectedFile.FileEntity.latitude_dd);
+      this.sensorFileForm.get('longitude_dd').setValue(this.selectedFile.FileEntity.longitude_dd);
+      this.sensorFileForm.get('site_id').setValue(this.selectedFile.FileEntity.site_id);
+      this.sensorFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
+      this.sensorFileForm.get('instrument_id').setValue(this.selectedFile.FileEntity.instrument_id);
+      this.sensorFileForm.get('is_nwis').setValue(this.selectedFile.FileEntity.is_nwis);
+
+      this.getFile();
+    }else{
+      this.expandedElement = null;
+      this.showFileForm = false;
+    }
+  }
+
+  /* istanbul ignore next */
+  fileTypeLookup(response) {
+    for(let filetype of this.fileTypes){
+      if(filetype.filetype_id === response){
+        return filetype.filetype;
+      }
+    }
+  }
+
+  /* istanbul ignore next */
+  cancelFile() {
+    // Reset file inputs
+    this.changeDetector.detectChanges();
+    if(this.upload !== undefined){
+      this.upload.nativeElement.value = '';
+    }
+
+    this.showFileForm = false;
+    this.showFileCreateForm = false;
+    this.showNWISFileCreateForm = false;
+    this.expandedElement = null;
+    this.fileUploading = false;
+
+    this.sensorFileForm.reset();
+
+    this.selectedFile = {
+      FileEntity: {
+        file_id: null,
+        name: null,
+        FULLname: null,
+        source_id: null,
+        description: null,
+        file_date: null,
+        photo_date: null,
+        agency_id: null,
+        site_id: null,
+        filetype_id: null,
+        path: null,
+        last_updated: null,
+        last_updated_by: null,
+        site_description: null,
+        photo_direction: null,
+        latitude_dd: null,
+        longitude_dd: null,
+        instrument_id: null,
+        data_file_id: null,
+        is_nwis: null,
+        collect_date: null,
+        elevation_status: null,
+      },
+      File: null
+    };
+  }
+
+  /* istanbul ignore next */
+  formatUTCDates(date) {
+    let hour = (date.split('T')[1]).split(':')[0];
+    // minute
+    let minute = date.split('T')[1].split(':')[1];
+    let timestamp = date.split("T")[0];
+    timestamp = timestamp.split("-");
+    let day = timestamp[0];
+    let month = timestamp[1];
+    let year = timestamp[2];
+    let utcPreview = new Date(Date.UTC(Number(day), Number(month) - 1, Number(year), Number(hour), Number(minute)));
+    let formatted_date = new Date(utcPreview).toUTCString();
+    return formatted_date;
+  }
+
+  /* istanbul ignore next */
+  // Delete file
+  deleteFile(row) {
+    let dialogRef = this.dialog.open(ConfirmComponent, {
+      data: {
+        title: "Remove File",
+        titleIcon: "close",
+        message: "Are you sure you want to remove this file?",
+        confirmButtonText: "OK",
+        showCancelButton: true,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result){
+        this.fileEditService.deleteFile(row.file_id)
+          .subscribe(
+              (data) => {
+                if(data === null){
+                  // success
+                  this.dialog.open(ConfirmComponent, {
+                      data: {
+                      title: "",
+                      titleIcon: "close",
+                      message: "Successfully removed file",
+                      confirmButtonText: "OK",
+                      showCancelButton: false,
+                      },
+                  });
+                  let index;
+                  for(let file of this.initSensorFiles){
+                    if(file.file_id === row.file_id){
+                      index = this.initSensorFiles.indexOf(file);
+                      this.returnFiles.push({file: file, type: "delete"});
+                    }
+                  }
+                  for(let file of this.initNWISFiles){
+                    if(file.file_id === row.file_id){
+                      index = this.initNWISFiles.indexOf(file);
+                      this.returnFiles.push({file: file, type: "delete"});
+                    }
+                  }
+                  if(row.is_nwis === 1){
+                    this.initNWISFiles.splice(index, 1);
+                    this.initNWISFiles = [...this.initNWISFiles];
+                  }else{
+                    this.initSensorFiles.splice(index, 1);
+                    this.initSensorFiles = [...this.initSensorFiles];
+                  }
+                  this.cancelFile();
+                  this.showFileForm = false;
+                  this.expandedElement = null;
+              }else{
+                  // error
+                  this.dialog.open(ConfirmComponent, {
+                      data: {
+                      title: "Error",
+                      titleIcon: "close",
+                      message: "Error removing file",
+                      confirmButtonText: "OK",
+                      showCancelButton: false,
+                      },
+                  });
+              }
+            }
+          );
+      }
+    });
+  }
+
+  /* istanbul ignore next */
+  // Re-upload file or add missing file
+  saveFileUpload() {
+    let self = this;
+    // update rdFilesForm
+    let fileSubmission = JSON.parse(JSON.stringify(this.sensorFileForm.value));
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+    var fileParts = {
+      FileEntity: {
+          file_id: fileSubmission.file_id,
+          name: fileSubmission.name,
+          description: fileSubmission.description,
+          photo_direction: fileSubmission.photo_direction,
+          latitude_dd: fileSubmission.latitude_dd,
+          longitude_dd: fileSubmission.longitude_dd,
+          file_date: fileSubmission.file_date,
+          site_id: fileSubmission.site_id,
+          filetype_id: fileSubmission.filetype_id,
+          source_id: fileSubmission.source_id,
+          path: fileSubmission.path,
+          data_file_id: fileSubmission.data_file_id,
+          instrument_id: fileSubmission.instrument_id,
+          photo_date: fileSubmission.photo_date,
+          is_nwis: fileSubmission.is_nwis,
+      },
+      File: this.sensorFileForm.get('File').value !== null ? this.sensorFileForm.get('File').value : this.sensorFileForm.get('File').value
+    };
+    let fd = new FormData();
+    fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
+    fd.append("File", fileParts.File);
+    // post file
+    this.fileEditService.uploadFile(fd)
+      .subscribe(
+          (data) => {
+            if(data.length !== []){
+              this.initSensorFiles.forEach(function(file, i){
+                if(file.file_id === data.file_id){
+                  self.returnFiles.push({file: file, type: "update"});
+                  self.initSensorFiles[i] = data;
+                  self.initSensorFiles = [...self.initSensorFiles];
+                  self.showFileForm = false;
+                  self.showFileCreateForm = false;
+                  self.showNWISFileCreateForm = false;
+                  self.expandedElement = null;
+                }
+              });
+              this.loading = false;
+            }
+          }
+      );
+    this.fileUploading = false;
+    this.fileItemExists = true;
+  }
+
+  /* istanbul ignore next */
+  saveFile() {
+    let self = this;
+    this.sensorFileForm.markAllAsTouched();
+    let fileSubmission = JSON.parse(JSON.stringify(this.sensorFileForm.value));
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+    if(this.sensorFileForm.valid){
+      this.fileValid = true;
+      // If data file
+      if (fileSubmission.filetype_id == 2 && !fileSubmission.is_nwis) {
+        let datafile = {
+          instrument_id: fileSubmission.instrument_id,
+          processor_id: this.processorID,
+          good_start: this.good_start ? this.formatUTCDates(this.good_start) : this.good_start,
+          good_end: this.good_end ? this.formatUTCDates(this.good_end) : this.good_end,
+          time_zone: 'UTC',
+          collect_date: fileSubmission.collect_date ? this.formatUTCDates(fileSubmission.collect_date) : fileSubmission.collect_date,
+          elevation_status: fileSubmission.elevation_status ? fileSubmission.elevation_status : null,
+          data_file_id: fileSubmission.data_file_id,
+        }
+        // Delete extra fields
+        delete fileSubmission.File; delete fileSubmission.agency_id; delete fileSubmission.source_id;
+        delete fileSubmission.FULLname; delete fileSubmission.collect_date; delete fileSubmission.elevation_status;
+        if(fileSubmission.script_parent === null) {
+          delete fileSubmission.script_parent;
+        }
+        this.fileEditService.updateDataFile(datafile.data_file_id, datafile).subscribe((dfresults) => {
+          this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
+            this.loading = false;
+            self.initSensorFiles.forEach(function(file, i){
+              if(file.file_id === fresults.file_id){
+                self.returnFiles.push({file: fresults, type: "update"});
+                self.initSensorFiles[i] = fresults;
+                self.initSensorFiles = [...self.initSensorFiles];
+                self.showFileForm = false;
+                self.expandedElement = null;
+              }
+            });
+          }, error => {
+            this.loading = false;
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "",
+                titleIcon: "close",
+                message: "Error saving file",
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
+          });
+        }, error => {
+          this.loading = false;
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "",
+              titleIcon: "close",
+              message: "Error saving file's data file",
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+        })
+      }else if (fileSubmission.filetype_id == 2 && fileSubmission.is_nwis) {
+        let nwisfile = {
+          instrument_id: fileSubmission.instrument_id,
+          processor_id:  this.currentUser.member_id,
+          good_start: this.good_start ? this.formatUTCDates(this.good_start) : this.good_start,
+          good_end: this.good_end ? this.formatUTCDates(this.good_end) : this.good_end,
+          time_zone: 'UTC',
+          collect_date: fileSubmission.collect_date ? this.formatUTCDates(fileSubmission.collect_date) : fileSubmission.collect_date,
+          elevation_status: fileSubmission.elevation_status ? fileSubmission.elevation_status : null,
+          data_file_id: fileSubmission.data_file_id,
+        }
+        // Add NWIS approval if existing
+        if(this.approval_id){
+          nwisfile["approval_id"] = this.approval_id;
+        }
+        // Delete extra fields
+        delete fileSubmission.File; delete fileSubmission.agency_id; delete fileSubmission.source_id;
+        delete fileSubmission.FULLname; delete fileSubmission.collect_date; delete fileSubmission.elevation_status;
+        if(fileSubmission.script_parent === null) {
+          delete fileSubmission.script_parent;
+        }
+        // If NWIS datafile
+        this.fileEditService.updateDataFile(nwisfile.data_file_id, nwisfile).subscribe((dfresults) => {
+            this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission).subscribe((fresults) => {
+              self.initNWISFiles.forEach(function(file, i){
+                if(file.file_id === fresults.file_id){
+                  self.returnFiles.push({file: fresults, type: "update"});
+                  self.initNWISFiles[i] = fresults;
+                  self.initNWISFiles = [...self.initNWISFiles];
+                  self.showFileForm = false;
+                  self.expandedElement = null;
+                  self.loading = false;
+                }
+              });
+            }, error => {
+              this.loading = false;
+              this.dialog.open(ConfirmComponent, {
+                data: {
+                  title: "",
+                  titleIcon: "close",
+                  message: "Error saving file",
+                  confirmButtonText: "OK",
+                  showCancelButton: false,
+                },
+              });
+                self.showFileForm = false;
+                self.expandedElement = null;
+            });
+        }, error => {
+          this.loading = false;
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "",
+              titleIcon: "close",
+              message: "Error saving file's data file",
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+            self.showFileForm = false;
+            self.expandedElement = null;
+        })
+      } else{
+        if(fileSubmission.source_id !== null){
+          let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
+          this.siteEditService.postSource(theSource)
+          .subscribe(
+              (response) => {
+                fileSubmission.source_id = response.source_id;
+                fileSubmission.fileBelongsTo = "Sensor File";
+                fileSubmission.fileType = this.fileTypeLookup(fileSubmission.filetype_id);
+
+                delete fileSubmission.is_nwis; delete fileSubmission.FULLname;
+                delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.File; delete fileSubmission.agency_id;
+                delete fileSubmission.collect_date; delete fileSubmission.elevation_status; delete fileSubmission.script_parent; delete fileSubmission.data_file_id;
+                this.fileEditService.updateFile(fileSubmission.file_id, fileSubmission)
+                  .subscribe(
+                      (data) => {
+                        self.initSensorFiles.forEach(function(file, i){
+                          if(file.file_id === data.file_id){
+                            self.returnFiles.push({file: data, type: "update"});
+                            self.initSensorFiles[i] = data;
+                            self.initSensorFiles = [...self.initSensorFiles];
+                            self.showFileForm = false;
+                            self.expandedElement = null;
+                            self.loading = false;
+                          }
+                        });
+                      }
+                  );
+              }
+          )
+        }
+      }
+    }else{
+      this.loading = false;
+      this.fileValid = false;
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required Sensor file fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
+    }
+  }
+
+  /* istanbul ignore next */
+  createFile() {
+    let self = this;
+    this.loading = true;
+    this.sensorFileForm.markAllAsTouched();
+    let fileSubmission = JSON.parse(JSON.stringify(this.sensorFileForm.value));
+
+    // Convert dates to correct format - dates should already be in UTC, don't want to convert UTC dates to UTC again
+    fileSubmission.photo_date = fileSubmission.photo_date ? this.formatUTCDates(fileSubmission.photo_date) : fileSubmission.photo_date;
+    fileSubmission.file_date = fileSubmission.file_date ? this.formatUTCDates(fileSubmission.file_date) : fileSubmission.file_date;
+
+    if(this.sensorFileForm.valid){
+      this.fileValid = true;
+      // If not NWIS
+    if (fileSubmission.filetype_id == 2 && !fileSubmission.is_nwis) {
+      let datafile = {
+        instrument_id: fileSubmission.instrument_id,
+        processor_id: this.currentUser.member_id,
+        good_start: new Date().toUTCString(),
+        good_end: new Date().toUTCString(),
+        time_zone: 'UTC',
+        collect_date: fileSubmission.collect_date ? this.formatUTCDates(fileSubmission.collect_date) : fileSubmission.collect_date,
+        elevation_status: fileSubmission.elevation_status ? fileSubmission.elevation_status : null,
+      }
+      // Delete extra fields
+      delete fileSubmission.File; delete fileSubmission.agency_id; delete fileSubmission.source_id;
+      delete fileSubmission.FULLname; delete fileSubmission.collect_date; delete fileSubmission.elevation_status;
+      if(fileSubmission.script_parent === null) {
+        delete fileSubmission.script_parent;
+      }
+      this.fileEditService.addDataFile(datafile).subscribe((dfresults) => {
+        //then POST fileParts (Services populate PATH)
+        let fileParts = {
+            FileEntity: {
+                filetype_id: fileSubmission.filetype_id,
+                name: fileSubmission.name,
+                file_date: fileSubmission.file_date,
+                description: fileSubmission.description,
+                site_id: self.data.site_id,
+                data_file_id: dfresults.data_file_id,
+                photo_direction: fileSubmission.photo_direction,
+                latitude_dd: fileSubmission.latitude_dd,
+                longitude_dd: fileSubmission.longitude_dd,
+                instrument_id: fileSubmission.instrument_id
+            },
+            File: this.sensorFileForm.controls['File'].value
+        };
+        //need to put the fileParts into correct format for post
+        var fd = new FormData();
+        fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
+        fd.append("File", fileParts.File);
+        this.fileEditService.uploadFile(fd).subscribe((fresults) => {
+        if(fresults !== []){
+            self.returnFiles.push({file: fresults, type: "add"});
+            self.initSensorFiles.push(fresults);
+            self.initSensorFiles = [...self.initSensorFiles];
+          }
+        this.showFileForm = false;
+        this.showFileCreateForm = false;
+        this.showNWISFileCreateForm = false;
+        this.expandedElement = null;
+        this.loading = false;
+        },
+        error => {
+          // Error handling - if file did not get created, delete data file
+          this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "",
+                titleIcon: "close",
+                message: "Error creating file",
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
+            this.showFileForm = false;
+            this.showFileCreateForm = false;
+              this.showNWISFileCreateForm = false;
+            this.expandedElement = null;
+            this.loading = false;
+          })
+        });
+      },
+      error => {
+        this.dialog.open(ConfirmComponent, {
+          data: {
+            title: "",
+            titleIcon: "close",
+            message: "Error creating file",
+            confirmButtonText: "OK",
+            showCancelButton: false,
+          },
+        });
+        this.showFileForm = false;
+        this.showFileCreateForm = false;
+        this.showNWISFileCreateForm = false;
+        this.expandedElement = null;
+        this.loading = false;
+      })
+    }else if (fileSubmission.filetype_id == 2 && fileSubmission.is_nwis) {
+      // If NWIS
+      let nwisDFFile = {
+        good_start: new Date().toUTCString(),
+        good_end: new Date().toUTCString(),
+        time_zone: 'UTC',
+        processor_id: this.currentUser.member_id,
+        instrument_id: fileSubmission.instrument_id,
+        collect_date: fileSubmission.collect_date ? this.formatUTCDates(fileSubmission.collect_date) : fileSubmission.collect_date,
+      };
+      nwisDFFile["elevation_status"] = fileSubmission.elevation_status ? fileSubmission.elevation_status : null;
+      this.fileEditService.addDataFile(nwisDFFile).subscribe((dfresults) => {
+        //then POST fileParts (Services populate PATH)
+        let nwisFile = {
+                filetype_id: fileSubmission.filetype_id,
+                name: fileSubmission.name,
+                file_date: fileSubmission.file_date,
+                description: fileSubmission.description,
+                site_id: self.data.site_id,
+                data_file_id: dfresults.data_file_id,
+                instrument_id: fileSubmission.instrument_id,
+                is_nwis: 1,
+                path: '<link>',
+        }
+        // NWIS approval sent automatically when created
+        this.postApprovalForNWISfile(dfresults.data_file_id, nwisFile);
+        this.fileEditService.addFile(nwisFile).subscribe((fresults) => {
+          if(fresults !== []){
+            self.returnFiles.push({file: fresults, type: "add"});
+            self.initNWISFiles.push(fresults);
+            self.initNWISFiles = [...self.initNWISFiles];
+          }
+          this.showFileForm = false;
+          this.showFileCreateForm = false;
+          this.showNWISFileCreateForm = false;
+          this.expandedElement = null;
+          this.loading = false;
+        },
+        error => {
+          // Error handling - if file did not get created, delete data file
+          this.fileEditService.deleteDataFile(dfresults.data_file_id).subscribe(response => {
+            this.dialog.open(ConfirmComponent, {
+              data: {
+                title: "",
+                titleIcon: "close",
+                message: "Error creating file",
+                confirmButtonText: "OK",
+                showCancelButton: false,
+              },
+            });
+            this.showFileForm = false;
+            this.showFileCreateForm = false;
+            this.showNWISFileCreateForm = false;
+            this.expandedElement = null;
+            this.loading = false;
+          })
+        });
+      },
+      error => {
+          this.dialog.open(ConfirmComponent, {
+            data: {
+              title: "",
+              titleIcon: "close",
+              message: "Error creating file",
+              confirmButtonText: "OK",
+              showCancelButton: false,
+            },
+          });
+            this.showFileForm = false;
+            this.showFileCreateForm = false;
+            this.showNWISFileCreateForm = false;
+            this.expandedElement = null;
+            this.loading = false;
+      })
+
+    }else{
+        // check if source already exists?
+        let theSource = { source_name: fileSubmission.FULLname, agency_id: fileSubmission.agency_id };
+
+        //post source first to get source_id
+        this.siteEditService.postSource(theSource)
+        .subscribe(
+            (response) => {
+              fileSubmission.source_id = response.source_id;
+              delete fileSubmission.FULLname; delete fileSubmission.agency_id; delete fileSubmission.site_description; delete fileSubmission.path;
+              if(fileSubmission.script_parent === null) {
+                delete fileSubmission.script_parent;
+              }
+              if (fileSubmission.filetype_id !== 8) {
+                let formatFileSubmission = {
+                    description: fileSubmission.description,
+                    source_id: fileSubmission.source_id,
+                    filetype_id: fileSubmission.filetype_id,
+                    latitude_dd: fileSubmission.latitude_dd,
+                    longitude_dd: fileSubmission.longitude_dd,
+                    file_date: fileSubmission.file_date,
+                    name: fileSubmission.name,
+                    photo_date: fileSubmission.photo_date,
+                    photo_direction: fileSubmission.photo_direction,
+                    site_id: this.data.site_id,
+                    instrument_id: this.sensor.instrument_id,
+                }
+                let fd = new FormData();
+                fd.append("FileEntity", JSON.stringify(formatFileSubmission));
+                fd.append("File", this.sensorFileForm.controls["File"].value);
+                //then POST fileParts (Services populate PATH)
+                this.siteEditService.uploadFile(fd)
+                  .subscribe(
+                      (data) => {
+                        if(data !== []){
+                          self.returnFiles.push({file: data, type: "add"});
+                          self.initSensorFiles.push(data);
+                          self.initSensorFiles = [...self.initSensorFiles];
+                        }
+                          this.showFileForm = false;
+                          this.showFileCreateForm = false;
+                          this.showNWISFileCreateForm = false;
+                          this.expandedElement = null;
+                          this.loading = false;
+                      }
+                  );
+              }
+            }
+        );
+        }
+    }else{
+      this.fileValid = false;
+      this.loading = false;
+      this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Some required Sensor file fields are missing or incorrect.  Please fix these fields before submitting.",
+          confirmButtonText: "OK",
+          showCancelButton: false,
+        },
+      });
+    }
   }
 }
