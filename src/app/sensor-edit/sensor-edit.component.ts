@@ -154,13 +154,13 @@ export class SensorEditComponent implements OnInit {
   displayedFileColumns: string[] = [
     'FileName',
     'FileDate',
-    'expand',
+    // 'expand',
   ];
 
   displayedNWISFileColumns: string[] = [
     'FileName',
     'FileDate',
-    'expand',
+    // 'expand',
   ];
 
   displayedTapedownColumns: string[] = [
@@ -196,8 +196,8 @@ export class SensorEditComponent implements OnInit {
       if(this.role === 1){
         this.getEventList();
       }
-      this.getFileTypes();
-      this.getAgencies();
+      // this.getFileTypes();
+      // this.getAgencies();
       this.initsensorFileForm();
       this.createTapedownTable();
       this.getSensorTypes();
@@ -635,66 +635,66 @@ export class SensorEditComponent implements OnInit {
   }
 
   /* istanbul ignore next */
-  getFileTypes() {
-    let self = this;
-    this.siteService.getFileTypeLookup().subscribe((results) => {
-      results.forEach(function(results){
-        if (results.filetype === 'Photo' || results.filetype === 'Data' || results.filetype === 'Historic Citation' || results.filetype === 'Field Sheets' || results.filetype === 'Level Notes' ||
-                results.filetype === 'Other' || results.filetype === 'Sketch' || results.filetype === 'Hydrograph'){
-          self.fileTypes.push(results);
-        }
-      })
-    });
-  }
+  // getFileTypes() {
+  //   let self = this;
+  //   this.siteService.getFileTypeLookup().subscribe((results) => {
+  //     results.forEach(function(results){
+  //       if (results.filetype === 'Photo' || results.filetype === 'Data' || results.filetype === 'Historic Citation' || results.filetype === 'Field Sheets' || results.filetype === 'Level Notes' ||
+  //               results.filetype === 'Other' || results.filetype === 'Sketch' || results.filetype === 'Hydrograph'){
+  //         self.fileTypes.push(results);
+  //       }
+  //     })
+  //   });
+  // }
   
   /* istanbul ignore next */
-  getDataFileInfo(row){
-    this.siteService
-    .getFileType(row.filetype_id)
-    .subscribe((results) => {
-        this.fileType = results.filetype;
-        if(this.fileType === 'Data' && row.data_file_id !== undefined){
-          this.siteService
-          .getApproval(row.data_file_id)
-          .subscribe((approvalResults) => {
-              if(approvalResults !== null){
-                this.approvedOn = approvalResults.approval_date;
-                if(approvalResults.member_id !== undefined && approvalResults.member_id !== 0){
-                  this.siteService
-                  .getMemberName(approvalResults.member_id)
-                  .subscribe((member) => {
-                    if(member.length === undefined || member.length > 0){
-                      this.approvedBy = member.fname + " " + member.lname;
-                    }
-                  });
-                }
-              }
-          });
-          this.siteService
-          .getDataFile(row.data_file_id)
-          .subscribe((datafileResults) => {
-              this.elevation = datafileResults.elevation_status;
-              this.collectDate = datafileResults.collect_date;
-              this.selectedFile.FileEntity.collect_date = this.collectDate;
-              this.sensorFileForm.get('collect_date').setValue(this.collectDate);
-              this.selectedFile.FileEntity.elevation_status = this.elevation;
-              this.sensorFileForm.get('elevation_status').setValue(this.elevation);
-              this.good_start = datafileResults.good_start;
-              this.good_end = datafileResults.good_end;
-              this.approval_id = datafileResults.approval_id;
+  // getDataFileInfo(row){
+  //   this.siteService
+  //   .getFileType(row.filetype_id)
+  //   .subscribe((results) => {
+  //       this.fileType = results.filetype;
+  //       if(this.fileType === 'Data' && row.data_file_id !== undefined){
+  //         this.siteService
+  //         .getApproval(row.data_file_id)
+  //         .subscribe((approvalResults) => {
+  //             if(approvalResults !== null){
+  //               this.approvedOn = approvalResults.approval_date;
+  //               if(approvalResults.member_id !== undefined && approvalResults.member_id !== 0){
+  //                 this.siteService
+  //                 .getMemberName(approvalResults.member_id)
+  //                 .subscribe((member) => {
+  //                   if(member.length === undefined || member.length > 0){
+  //                     this.approvedBy = member.fname + " " + member.lname;
+  //                   }
+  //                 });
+  //               }
+  //             }
+  //         });
+  //         this.siteService
+  //         .getDataFile(row.data_file_id)
+  //         .subscribe((datafileResults) => {
+  //             this.elevation = datafileResults.elevation_status;
+  //             this.collectDate = datafileResults.collect_date;
+  //             this.selectedFile.FileEntity.collect_date = this.collectDate;
+  //             this.sensorFileForm.get('collect_date').setValue(this.collectDate);
+  //             this.selectedFile.FileEntity.elevation_status = this.elevation;
+  //             this.sensorFileForm.get('elevation_status').setValue(this.elevation);
+  //             this.good_start = datafileResults.good_start;
+  //             this.good_end = datafileResults.good_end;
+  //             this.approval_id = datafileResults.approval_id;
 
-              if(datafileResults.processor_id !== undefined && datafileResults.processor_id !== 0){
-                this.siteService
-                .getMemberName(datafileResults.processor_id)
-                .subscribe((memberResult) => {
-                  this.processorName = memberResult.fname + " " + memberResult.lname;
-                  this.processorID = datafileResults.processor_id;
-                });
-              }
-          });
-        }
-    });
-  }
+  //             if(datafileResults.processor_id !== undefined && datafileResults.processor_id !== 0){
+  //               this.siteService
+  //               .getMemberName(datafileResults.processor_id)
+  //               .subscribe((memberResult) => {
+  //                 this.processorName = memberResult.fname + " " + memberResult.lname;
+  //                 this.processorID = datafileResults.processor_id;
+  //               });
+  //             }
+  //         });
+  //       }
+  //   });
+  // }
 
   /* istanbul ignore next */
   // Set file attributes
@@ -1127,29 +1127,29 @@ export class SensorEditComponent implements OnInit {
   }
 
   /* istanbul ignore next */
-  openAddNWISFileDialog() {
-    let self = this;
-    // Open File Edit Dialog
-    const dialogRef = this.dialog.open(FileEditComponent, {
-      data: {
-          row_data: {instrument_id: this.form.get("instrument_id").value, is_nwis: 1, filetype_id: 2},
-          type: 'Sensor File',
-          siteInfo: this.data.siteInfo,
-          siteRefDatums: this.data.siteRefDatums,
-          siteHWMs: this.data.siteHWMs,
-          siteSensors: this.data.siteSensors,
-          addOrEdit: 'Add'
-      },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if(result) {
-        // Update files data source and hwm
-        self.initNWISFiles.push(result);
-        self.initNWISFiles = [...self.initNWISFiles];
-        self.returnFiles.push(result);
-      }
-    });
-  }
+  // openAddNWISFileDialog() {
+  //   let self = this;
+  //   // Open File Edit Dialog
+  //   const dialogRef = this.dialog.open(FileEditComponent, {
+  //     data: {
+  //         row_data: {instrument_id: this.form.get("instrument_id").value, is_nwis: 1, filetype_id: 2},
+  //         type: 'Sensor File',
+  //         siteInfo: this.data.siteInfo,
+  //         siteRefDatums: this.data.siteRefDatums,
+  //         siteHWMs: this.data.siteHWMs,
+  //         siteSensors: this.data.siteSensors,
+  //         addOrEdit: 'Add'
+  //     },
+  //   });
+  //   dialogRef.afterClosed().subscribe((result) => {
+  //     if(result) {
+  //       // Update files data source and hwm
+  //       self.initNWISFiles.push(result);
+  //       self.initNWISFiles = [...self.initNWISFiles];
+  //       self.returnFiles.push(result);
+  //     }
+  //   });
+  // }
 
   submit(statusID) {
     this.form.markAllAsTouched();
@@ -1564,264 +1564,264 @@ export class SensorEditComponent implements OnInit {
   };
 
   /* istanbul ignore next */
-  showFileCreate(is_nwis) {
-    // Reset form
-    this.cancelFile();
-    this.addFileType = "New";
-    this.selectedFile.FileEntity.file_date = new Date();
-    this.sensorFileForm.get("file_date").setValue(this.selectedFile.FileEntity.file_date);
-    this.sensorFileForm.get("instrument_id").setValue(this.sensor.instrument_id);
+  // showFileCreate(is_nwis) {
+  //   // Reset form
+  //   this.cancelFile();
+  //   this.addFileType = "New";
+  //   this.selectedFile.FileEntity.file_date = new Date();
+  //   this.sensorFileForm.get("file_date").setValue(this.selectedFile.FileEntity.file_date);
+  //   this.sensorFileForm.get("instrument_id").setValue(this.sensor.instrument_id);
 
-    if(this.selectedFile.FileEntity.filetype_id === 1){
-      this.selectedFile.FileEntity.photo_date = new Date();
-      this.sensorFileForm.get("photo_date").setValue(this.selectedFile.FileEntity.photo_date);
-      this.sensorFileForm.get("photo_date").setValidators([Validators.required]);
-    }
+  //   if(this.selectedFile.FileEntity.filetype_id === 1){
+  //     this.selectedFile.FileEntity.photo_date = new Date();
+  //     this.sensorFileForm.get("photo_date").setValue(this.selectedFile.FileEntity.photo_date);
+  //     this.sensorFileForm.get("photo_date").setValidators([Validators.required]);
+  //   }
 
-    if(is_nwis){
-      this.showNWISFileCreateForm = true;
-      this.selectedFile.FileEntity.is_nwis = 1;
-      this.sensorFileForm.get("is_nwis").setValue(1);
-      this.selectedFile.FileEntity.filetype_id = 2;
-      this.fileType = "Data";
-      this.sensorFileForm.get("filetype_id").setValue(this.selectedFile.FileEntity.filetype_id);
-      this.sensorFileForm.get("name").setValue("https://waterdata.usgs.gov/nwis/uv?site_no=" + this.data.siteInfo.usgs_sid);
-      this.collectDate = new Date();
-      this.sensorFileForm.get("collect_date").setValue(this.collectDate);
-      this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
-    }else{
-      this.showFileCreateForm = true;
+  //   if(is_nwis){
+  //     this.showNWISFileCreateForm = true;
+  //     this.selectedFile.FileEntity.is_nwis = 1;
+  //     this.sensorFileForm.get("is_nwis").setValue(1);
+  //     this.selectedFile.FileEntity.filetype_id = 2;
+  //     this.fileType = "Data";
+  //     this.sensorFileForm.get("filetype_id").setValue(this.selectedFile.FileEntity.filetype_id);
+  //     this.sensorFileForm.get("name").setValue("https://waterdata.usgs.gov/nwis/uv?site_no=" + this.data.siteInfo.usgs_sid);
+  //     this.collectDate = new Date();
+  //     this.sensorFileForm.get("collect_date").setValue(this.collectDate);
+  //     this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
+  //   }else{
+  //     this.showFileCreateForm = true;
 
-      // Set source name and agency automatically
-      // Member id
-      if(this.currentUser){
-        let member_id = this.currentUser.member_id;
-        this.selectedFile.FileEntity.source_id = member_id;
-        this.sensorFileForm.get('source_id').setValue(member_id);
-        // FULLname
-        this.selectedFile.FileEntity.FULLname = this.currentUser.fname + " " +  this.currentUser.lname;
-        this.sensorFileForm.get('FULLname').setValue(this.selectedFile.FileEntity.FULLname);
-        // Agency
-        this.selectedFile.FileEntity.agency_id = this.currentUser.agency_id;
-        this.sensorFileForm.get('agency_id').setValue(this.selectedFile.FileEntity.agency_id);
-        this.updateAgencyForCaption();
-      }
-    }
+  //     // Set source name and agency automatically
+  //     // Member id
+  //     if(this.currentUser){
+  //       let member_id = this.currentUser.member_id;
+  //       this.selectedFile.FileEntity.source_id = member_id;
+  //       this.sensorFileForm.get('source_id').setValue(member_id);
+  //       // FULLname
+  //       this.selectedFile.FileEntity.FULLname = this.currentUser.fname + " " +  this.currentUser.lname;
+  //       this.sensorFileForm.get('FULLname').setValue(this.selectedFile.FileEntity.FULLname);
+  //       // Agency
+  //       this.selectedFile.FileEntity.agency_id = this.currentUser.agency_id;
+  //       this.sensorFileForm.get('agency_id').setValue(this.selectedFile.FileEntity.agency_id);
+  //       this.updateAgencyForCaption();
+  //     }
+  //   }
 
-    if(this.selectedFile.FileEntity.filetype_id === 2) {
-      // Set required validator for agency
-      this.sensorFileForm.get("agency_id").clearValidators();
-      this.sensorFileForm.get("agency_id").setErrors(null);
-      // Set required validator for source name
-      this.sensorFileForm.get("FULLname").clearValidators();
-      this.sensorFileForm.get("FULLname").setErrors(null);
-    }
-  }
+  //   if(this.selectedFile.FileEntity.filetype_id === 2) {
+  //     // Set required validator for agency
+  //     this.sensorFileForm.get("agency_id").clearValidators();
+  //     this.sensorFileForm.get("agency_id").setErrors(null);
+  //     // Set required validator for source name
+  //     this.sensorFileForm.get("FULLname").clearValidators();
+  //     this.sensorFileForm.get("FULLname").setErrors(null);
+  //   }
+  // }
+
+  // /* istanbul ignore next */
+  // setInitFileEditForm(data) {
+  //   this.sensorFileForm.get('file_id').setValue(data.file_id);
+  //   this.sensorFileForm.get('name').setValue(data.name);
+  //   this.sensorFileForm.get('FULLname').setValue(data.FULLname);
+  //   this.sensorFileForm.get('description').setValue(data.description);
+  //   this.sensorFileForm.get('file_date').setValue(data.file_date);
+  //   this.sensorFileForm.get('photo_date').setValue(data.photo_date);
+  //   this.sensorFileForm.get('agency_id').setValue(data.agency_id);
+  //   this.sensorFileForm.get('source_id').setValue(data.source_id);
+  //   this.sensorFileForm.get('site_id').setValue(data.site_id);
+  //   this.sensorFileForm.get('filetype_id').setValue(data.filetype_id);
+  //   this.sensorFileForm.get('path').setValue(data.path);
+  //   this.sensorFileForm.get('last_updated').setValue(data.last_updated);
+  //   this.sensorFileForm.get('last_updated_by').setValue(data.last_updated_by);
+  //   this.sensorFileForm.get('site_description').setValue(data.site_description);
+  //   this.sensorFileForm.get('photo_direction').setValue(data.photo_direction);
+  //   this.sensorFileForm.get('latitude_dd').setValue(data.latitude_dd);
+  //   this.sensorFileForm.get('longitude_dd').setValue(data.longitude_dd);
+  //   this.sensorFileForm.get('instrument_id').setValue(this.sensor.instrument_id);
+  // }
+
+  // /* istanbul ignore next */
+  // setFileSourceAgency(source_id){
+  //   this.siteService
+  //   .getFileSource(source_id)
+  //   .subscribe((results) => {
+  //       this.selectedFile.FileEntity.agency_id = results.agency_id;
+  //       this.agencyNameForCap = results.agency_name;
+  //       this.sensorFileForm.controls['agency_id'].setValue(this.selectedFile.FileEntity.agency_id);
+  //       this.sourceAgency = results.agency_name;
+  //       if(this.previewCaption){
+  //         if (this.sourceAgency === undefined || this.sourceAgency === ''){
+  //           this.previewCaption["sourceAgency"] = '(source agency)';
+  //         }else{
+  //           this.previewCaption["sourceAgency"] = this.sourceAgency;
+  //         }
+  //       }
+  //   });
+  // }
+
+  // /* istanbul ignore next */
+  // setFileSource(source_id){
+  //   this.siteService
+  //   .getSourceName(source_id)
+  //   .subscribe((results) => {
+  //       this.selectedFile.FileEntity.FULLname = results.source_name;
+  //       this.sensorFileForm.controls['FULLname'].setValue(this.selectedFile.FileEntity.FULLname);
+  //       this.sourceName = results.source_name;
+  //       if(this.previewCaption){
+  //         if (this.sourceName === undefined || this.sourceName === ''){
+  //           this.previewCaption["sourceName"] = '(source name)'
+  //         }else{
+  //           this.previewCaption["sourceName"] = this.sourceName;
+  //         }
+  //       }
+  //   });
+  // }
+
+  // /* istanbul ignore next */
+  // getAgencies() {
+  //   this.siteService.getAgencyLookup().subscribe((results) => {
+  //     this.agencies = results;
+  //   });
+  // }
 
   /* istanbul ignore next */
-  setInitFileEditForm(data) {
-    this.sensorFileForm.get('file_id').setValue(data.file_id);
-    this.sensorFileForm.get('name').setValue(data.name);
-    this.sensorFileForm.get('FULLname').setValue(data.FULLname);
-    this.sensorFileForm.get('description').setValue(data.description);
-    this.sensorFileForm.get('file_date').setValue(data.file_date);
-    this.sensorFileForm.get('photo_date').setValue(data.photo_date);
-    this.sensorFileForm.get('agency_id').setValue(data.agency_id);
-    this.sensorFileForm.get('source_id').setValue(data.source_id);
-    this.sensorFileForm.get('site_id').setValue(data.site_id);
-    this.sensorFileForm.get('filetype_id').setValue(data.filetype_id);
-    this.sensorFileForm.get('path').setValue(data.path);
-    this.sensorFileForm.get('last_updated').setValue(data.last_updated);
-    this.sensorFileForm.get('last_updated_by').setValue(data.last_updated_by);
-    this.sensorFileForm.get('site_description').setValue(data.site_description);
-    this.sensorFileForm.get('photo_direction').setValue(data.photo_direction);
-    this.sensorFileForm.get('latitude_dd').setValue(data.latitude_dd);
-    this.sensorFileForm.get('longitude_dd').setValue(data.longitude_dd);
-    this.sensorFileForm.get('instrument_id').setValue(this.sensor.instrument_id);
-  }
-
-  /* istanbul ignore next */
-  setFileSourceAgency(source_id){
-    this.siteService
-    .getFileSource(source_id)
-    .subscribe((results) => {
-        this.selectedFile.FileEntity.agency_id = results.agency_id;
-        this.agencyNameForCap = results.agency_name;
-        this.sensorFileForm.controls['agency_id'].setValue(this.selectedFile.FileEntity.agency_id);
-        this.sourceAgency = results.agency_name;
-        if(this.previewCaption){
-          if (this.sourceAgency === undefined || this.sourceAgency === ''){
-            this.previewCaption["sourceAgency"] = '(source agency)';
-          }else{
-            this.previewCaption["sourceAgency"] = this.sourceAgency;
-          }
-        }
-    });
-  }
-
-  /* istanbul ignore next */
-  setFileSource(source_id){
-    this.siteService
-    .getSourceName(source_id)
-    .subscribe((results) => {
-        this.selectedFile.FileEntity.FULLname = results.source_name;
-        this.sensorFileForm.controls['FULLname'].setValue(this.selectedFile.FileEntity.FULLname);
-        this.sourceName = results.source_name;
-        if(this.previewCaption){
-          if (this.sourceName === undefined || this.sourceName === ''){
-            this.previewCaption["sourceName"] = '(source name)'
-          }else{
-            this.previewCaption["sourceName"] = this.sourceName;
-          }
-        }
-    });
-  }
-
-  /* istanbul ignore next */
-  getAgencies() {
-    this.siteService.getAgencyLookup().subscribe((results) => {
-      this.agencies = results;
-    });
-  }
-
-  /* istanbul ignore next */
-  getFile() {
-    if(this.selectedFile.FileEntity.file_id !== null && this.selectedFile.FileEntity.file_id !== undefined){
-      this.siteService.getFileItem(this.selectedFile.FileEntity.file_id).subscribe((results) => {
-        if(results.Length > 0) {
-          this.fileItemExists = true;
-          this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.selectedFile.FileEntity.file_id + '/item';
-          this.selectedFile.FileEntity.name = results.FileName;
-          this.sensorFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
-          if(this.selectedFile.FileEntity.data_file_id === null || !this.selectedFile.FileEntity.data_file_id){
-            this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
-            this.setFileSource(this.selectedFile.FileEntity.source_id);
-          }else{
-            // Set processor name, elevation, df approval, collect date
-            this.getDataFileInfo(this.selectedFile.FileEntity);
+  // getFile() {
+  //   if(this.selectedFile.FileEntity.file_id !== null && this.selectedFile.FileEntity.file_id !== undefined){
+  //     this.siteService.getFileItem(this.selectedFile.FileEntity.file_id).subscribe((results) => {
+  //       if(results.Length > 0) {
+  //         this.fileItemExists = true;
+  //         this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.selectedFile.FileEntity.file_id + '/item';
+  //         this.selectedFile.FileEntity.name = results.FileName;
+  //         this.sensorFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
+  //         if(this.selectedFile.FileEntity.data_file_id === null || !this.selectedFile.FileEntity.data_file_id){
+  //           this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
+  //           this.setFileSource(this.selectedFile.FileEntity.source_id);
+  //         }else{
+  //           // Set processor name, elevation, df approval, collect date
+  //           this.getDataFileInfo(this.selectedFile.FileEntity);
    
-            // Set required validator for agency
-            this.sensorFileForm.get("agency_id").clearValidators();
-            this.sensorFileForm.get("agency_id").setErrors(null);
-            // Set required validator for source name
-            this.sensorFileForm.get("FULLname").clearValidators();
-            this.sensorFileForm.get("FULLname").setErrors(null);
-          }
-        }else{
-          this.fileItemExists = false;
-          if(this.selectedFile.FileEntity.data_file_id === null || !this.selectedFile.FileEntity.data_file_id){
-            this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
-            this.setFileSource(this.selectedFile.FileEntity.source_id);
-          }else{
-            // Set processor name, elevation, df approval, collect date
-            this.getDataFileInfo(this.selectedFile.FileEntity);
+  //           // Set required validator for agency
+  //           this.sensorFileForm.get("agency_id").clearValidators();
+  //           this.sensorFileForm.get("agency_id").setErrors(null);
+  //           // Set required validator for source name
+  //           this.sensorFileForm.get("FULLname").clearValidators();
+  //           this.sensorFileForm.get("FULLname").setErrors(null);
+  //         }
+  //       }else{
+  //         this.fileItemExists = false;
+  //         if(this.selectedFile.FileEntity.data_file_id === null || !this.selectedFile.FileEntity.data_file_id){
+  //           this.setFileSourceAgency(this.selectedFile.FileEntity.source_id);
+  //           this.setFileSource(this.selectedFile.FileEntity.source_id);
+  //         }else{
+  //           // Set processor name, elevation, df approval, collect date
+  //           this.getDataFileInfo(this.selectedFile.FileEntity);
 
-            // Set required validator for agency
-            this.sensorFileForm.get("agency_id").clearValidators();
-            this.sensorFileForm.get("agency_id").setErrors(null);
-            // Set required validator for source name
-            this.sensorFileForm.get("FULLname").clearValidators();
-            this.sensorFileForm.get("FULLname").setErrors(null);
-          }
-        }
-      });
-    }else{
-      this.fileItemExists = false;
-    }
-  }
-
-  /* istanbul ignore next */
-  showFileDetails(row) {
-    if(row) {
-      this.expandedElement = row;
-      this.showDetails = true;
-      this.showFileForm = false;
-      // Get filetype name
-      this.fileType = this.fileTypeLookup(row.filetype_id);
-      if(!row.data_file_id){
-        // Get source name and preview caption
-        this.setFileSource(row.source_id);
-        // Get agency ID
-        this.setFileSourceAgency(row.source_id);
-      }else{
-        // Set processor name, elevation, df approval, collect date
-        this.getDataFileInfo(row);
-      }
-      this.previewCaption = {
-        description: row.description,
-        site_description: this.data.siteInfo.site_description,
-        county: this.data.siteInfo.county,
-        state: this.data.siteInfo.state,
-        photo_date: row.photo_date,
-        sourceName: this.sourceName,
-        sourceAgency: this.sourceAgency,
-      }
-
-      // Replace any undefined preview caption info with placeholder
-      if (row.description === undefined || row.description == ''){
-        this.previewCaption.description = "(description)";
-      }
-      if (this.data.siteInfo.site_description === undefined || this.data.siteInfo.site_description == ''){
-        this.previewCaption.site_description = '(site description)'
-      }
-      if (this.data.siteInfo.county === undefined || this.data.siteInfo.county == ''){
-        this.previewCaption.county = '(county)'
-      }
-      if (this.data.siteInfo.state === undefined || this.data.siteInfo.state == ''){
-        this.previewCaption.state = '(state)'
-      }
-      if (row.photo_date === undefined || row.photo_date == ''){
-        this.previewCaption.photo_date = '(photo date)'
-      }
-      this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + row.file_id + '/item';
-    }else{
-      this.expandedElement = null;
-      this.showDetails = false;
-    }
-  }
+  //           // Set required validator for agency
+  //           this.sensorFileForm.get("agency_id").clearValidators();
+  //           this.sensorFileForm.get("agency_id").setErrors(null);
+  //           // Set required validator for source name
+  //           this.sensorFileForm.get("FULLname").clearValidators();
+  //           this.sensorFileForm.get("FULLname").setErrors(null);
+  //         }
+  //       }
+  //     });
+  //   }else{
+  //     this.fileItemExists = false;
+  //   }
+  // }
 
   /* istanbul ignore next */
-  showFileEdit(row) {
-    // Reset form
-    if(row){
-      this.cancelFile();
-      this.setInitFileEditForm(row);
-      this.expandedElement = row;
-      this.showDetails = false;
-      this.showFileForm = true;
-      this.selectedFile.FileEntity.file_id = row.file_id;
-      this.selectedFile.FileEntity.filetype_id = row.filetype_id;
-      this.addFileType = "Existing";
-      this.selectedFile.FileEntity.source_id = row.source_id;
-      this.selectedFile.FileEntity.data_file_id = row.data_file_id;
-      this.selectedFile.FileEntity.file_date = row.file_date;
-      this.selectedFile.FileEntity.photo_date = row.photo_date !== undefined ? row.photo_date : null;
-      this.selectedFile.FileEntity.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
-      this.selectedFile.FileEntity.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
-      this.selectedFile.FileEntity.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
-      this.selectedFile.FileEntity.site_id = this.data.site_id;
-      this.selectedFile.FileEntity.name = row.name !== undefined && row.name !== "" ? row.name : null;
-      this.selectedFile.FileEntity.instrument_id = this.sensor.instrument_id;
-      this.selectedFile.FileEntity.is_nwis = row.is_nwis;
+  // showFileDetails(row) {
+  //   if(row) {
+  //     this.expandedElement = row;
+  //     this.showDetails = true;
+  //     this.showFileForm = false;
+  //     // Get filetype name
+  //     this.fileType = this.fileTypeLookup(row.filetype_id);
+  //     if(!row.data_file_id){
+  //       // Get source name and preview caption
+  //       this.setFileSource(row.source_id);
+  //       // Get agency ID
+  //       this.setFileSourceAgency(row.source_id);
+  //     }else{
+  //       // Set processor name, elevation, df approval, collect date
+  //       this.getDataFileInfo(row);
+  //     }
+  //     this.previewCaption = {
+  //       description: row.description,
+  //       site_description: this.data.siteInfo.site_description,
+  //       county: this.data.siteInfo.county,
+  //       state: this.data.siteInfo.state,
+  //       photo_date: row.photo_date,
+  //       sourceName: this.sourceName,
+  //       sourceAgency: this.sourceAgency,
+  //     }
 
-      this.sensorFileForm.get('file_date').setValue(this.selectedFile.FileEntity.file_date);
-      this.sensorFileForm.get('photo_date').setValue(this.selectedFile.FileEntity.photo_date);
-      this.sensorFileForm.get('file_id').setValue(this.selectedFile.FileEntity.file_id);
-      this.sensorFileForm.get('data_file_id').setValue(this.selectedFile.FileEntity.data_file_id);
-      this.sensorFileForm.get('photo_direction').setValue(this.selectedFile.FileEntity.photo_direction);
-      this.sensorFileForm.get('latitude_dd').setValue(this.selectedFile.FileEntity.latitude_dd);
-      this.sensorFileForm.get('longitude_dd').setValue(this.selectedFile.FileEntity.longitude_dd);
-      this.sensorFileForm.get('site_id').setValue(this.selectedFile.FileEntity.site_id);
-      this.sensorFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
-      this.sensorFileForm.get('instrument_id').setValue(this.selectedFile.FileEntity.instrument_id);
-      this.sensorFileForm.get('is_nwis').setValue(this.selectedFile.FileEntity.is_nwis);
+  //     // Replace any undefined preview caption info with placeholder
+  //     if (row.description === undefined || row.description == ''){
+  //       this.previewCaption.description = "(description)";
+  //     }
+  //     if (this.data.siteInfo.site_description === undefined || this.data.siteInfo.site_description == ''){
+  //       this.previewCaption.site_description = '(site description)'
+  //     }
+  //     if (this.data.siteInfo.county === undefined || this.data.siteInfo.county == ''){
+  //       this.previewCaption.county = '(county)'
+  //     }
+  //     if (this.data.siteInfo.state === undefined || this.data.siteInfo.state == ''){
+  //       this.previewCaption.state = '(state)'
+  //     }
+  //     if (row.photo_date === undefined || row.photo_date == ''){
+  //       this.previewCaption.photo_date = '(photo date)'
+  //     }
+  //     this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + row.file_id + '/item';
+  //   }else{
+  //     this.expandedElement = null;
+  //     this.showDetails = false;
+  //   }
+  // }
 
-      this.getFile();
-    }else{
-      this.expandedElement = null;
-      this.showFileForm = false;
-    }
-  }
+  /* istanbul ignore next */
+  // showFileEdit(row) {
+  //   // Reset form
+  //   if(row){
+  //     this.cancelFile();
+  //     this.setInitFileEditForm(row);
+  //     this.expandedElement = row;
+  //     this.showDetails = false;
+  //     this.showFileForm = true;
+  //     this.selectedFile.FileEntity.file_id = row.file_id;
+  //     this.selectedFile.FileEntity.filetype_id = row.filetype_id;
+  //     this.addFileType = "Existing";
+  //     this.selectedFile.FileEntity.source_id = row.source_id;
+  //     this.selectedFile.FileEntity.data_file_id = row.data_file_id;
+  //     this.selectedFile.FileEntity.file_date = row.file_date;
+  //     this.selectedFile.FileEntity.photo_date = row.photo_date !== undefined ? row.photo_date : null;
+  //     this.selectedFile.FileEntity.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
+  //     this.selectedFile.FileEntity.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
+  //     this.selectedFile.FileEntity.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
+  //     this.selectedFile.FileEntity.site_id = this.data.site_id;
+  //     this.selectedFile.FileEntity.name = row.name !== undefined && row.name !== "" ? row.name : null;
+  //     this.selectedFile.FileEntity.instrument_id = this.sensor.instrument_id;
+  //     this.selectedFile.FileEntity.is_nwis = row.is_nwis;
+
+  //     this.sensorFileForm.get('file_date').setValue(this.selectedFile.FileEntity.file_date);
+  //     this.sensorFileForm.get('photo_date').setValue(this.selectedFile.FileEntity.photo_date);
+  //     this.sensorFileForm.get('file_id').setValue(this.selectedFile.FileEntity.file_id);
+  //     this.sensorFileForm.get('data_file_id').setValue(this.selectedFile.FileEntity.data_file_id);
+  //     this.sensorFileForm.get('photo_direction').setValue(this.selectedFile.FileEntity.photo_direction);
+  //     this.sensorFileForm.get('latitude_dd').setValue(this.selectedFile.FileEntity.latitude_dd);
+  //     this.sensorFileForm.get('longitude_dd').setValue(this.selectedFile.FileEntity.longitude_dd);
+  //     this.sensorFileForm.get('site_id').setValue(this.selectedFile.FileEntity.site_id);
+  //     this.sensorFileForm.get('name').setValue(this.selectedFile.FileEntity.name);
+  //     this.sensorFileForm.get('instrument_id').setValue(this.selectedFile.FileEntity.instrument_id);
+  //     this.sensorFileForm.get('is_nwis').setValue(this.selectedFile.FileEntity.is_nwis);
+
+  //     this.getFile();
+  //   }else{
+  //     this.expandedElement = null;
+  //     this.showFileForm = false;
+  //   }
+  // }
 
   /* istanbul ignore next */
   fileTypeLookup(response) {
