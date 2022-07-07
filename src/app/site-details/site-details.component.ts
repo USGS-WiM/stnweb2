@@ -1088,15 +1088,11 @@ export class SiteDetailsComponent implements OnInit {
                 }
             }
             if(result.result.returnFiles.length > 0){
-                // Update files data source
+                // Update files data source and hwm
                 result.result.returnFiles.forEach((file, i) => {
                     if(file.type === "delete"){
-                        this.refMarkDataSource.data.forEach(function(refMark, i){
-                            if(refMark.instrument_id === result.result.instrument_id){
-                                self.refMarkFilesDataSource.data.splice(i, 1);
-                                self.fileLength --;
-                            }
-                        });
+                        self.refMarkFilesDataSource.data.splice(i, 1);
+                        self.fileLength --;
                     }else if(file.type === "add"){ 
                         // Add rd name to result
                         file.file.rd_name = row.name;
@@ -1295,12 +1291,8 @@ export class SiteDetailsComponent implements OnInit {
                 // Update files data source and hwm
                 result.returnFiles.forEach((file, i) => {
                     if(file.type === "delete"){
-                        self.hwmDataSource.data.forEach(function(hwm, i){
-                            if(hwm.instrument_id === result.result.instrument_id){
-                                self.hwmFilesDataSource.data.splice(i, 1);
-                                self.fileLength --;
-                            }
-                        });
+                        self.hwmFilesDataSource.data.splice(i, 1);
+                        self.fileLength --;
                     }else if(file.type === "add"){
                         // Add hwm label to result
                         file.file.hwm_label = row.hwm_label;
@@ -1466,10 +1458,6 @@ export class SiteDetailsComponent implements OnInit {
                 siteRefMarks: this.refMarkDataSource.data,
                 event_id: this.currentEvent,
                 event: this.event,
-                siteInfo: this.site,
-                siteRefDatums: this.refMarkDataSource.data,
-                siteHWMs: this.hwmDataSource.data,
-                siteSensors: this.sensorDataSource.data,
             },
             width: '100%',
             autoFocus: false
