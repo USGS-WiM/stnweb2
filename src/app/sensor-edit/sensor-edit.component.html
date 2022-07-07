@@ -954,9 +954,9 @@
                         Sensor File Information
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <!-- <button mat-stroked-button (click)="showFileCreate(false)" class="add" type="button"
+                <button mat-stroked-button (click)="showFileCreate(false)" class="add" type="button"
                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
-                </button> -->
+                </button>
                 <!-- Create Sensor File Form -->
                 <form *ngIf="showFileCreateForm" [formGroup]="sensorFileForm">
                     <mat-form-field appearance="fill">
@@ -1186,7 +1186,7 @@
                         </ng-container>
 
                         <!-- button column -->
-                        <!-- <ng-container matColumnDef="expand">
+                        <ng-container matColumnDef="expand">
                             <th mat-header-cell *matHeaderCellDef></th>
                             <td mat-cell *matCellDef="let element">
                                 <button mat-stroked-button *ngIf="showFileForm || expandedElement != element" class="view-details-btn secondary" type="button" (click)="showFileDetails(element)"
@@ -1225,7 +1225,7 @@
                                     </button>
                                 </mat-menu>
                             </td>
-                        </ng-container> -->
+                        </ng-container>
 
                         <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
                         <ng-container matColumnDef="expandedDetail">
@@ -1549,9 +1549,9 @@
                         NWIS Connection
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <!-- <button mat-stroked-button *ngIf="this.currentUser !== null && (this.currentUser.role_id === 1 || this.currentUser.role_id === 2)" (click)="showFileCreate(true)" class="add" type="button"
+                <button mat-stroked-button *ngIf="this.currentUser !== null && (this.currentUser.role_id === 1 || this.currentUser.role_id === 2)" (click)="showFileCreate(true)" class="add" type="button"
                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
-                </button>  -->
+                </button> 
                 <!-- Disabled Add -->
                 <button *ngIf="this.currentUser !== null && this.currentUser.role_id !== 1 && this.currentUser.role_id !== 2" disabled mat-stroked-button class="disabled-border"
                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
@@ -1666,7 +1666,7 @@
                         </ng-container>
 
                         <!-- button column -->
-                        <!-- <ng-container matColumnDef="expand">
+                        <ng-container matColumnDef="expand">
                             <th mat-header-cell *matHeaderCellDef></th>
                             <td mat-cell *matCellDef="let element">
                                 <button mat-stroked-button *ngIf="showFileForm || expandedElement != element" class="view-details-btn secondary" type="button" (click)="showFileDetails(element)"
@@ -1705,7 +1705,7 @@
                                     </button>
                                 </mat-menu>
                             </td>
-                        </ng-container> -->
+                        </ng-container>
 
                         <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
                         <ng-container matColumnDef="expandedDetail">
