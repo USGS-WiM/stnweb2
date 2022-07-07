@@ -12,11 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Loading spinner in HWM edit modal when files are submitted
  -  Add ability to add, edit, delete, reupload and view file details in Reference Datum Edit modal
  -  HWM Label column in HWM Files table in files tab
- -  Add ability to add, edit, delete, reupload and view file details in Sensor Edit modal
 
 ### Changed
 
- -  Removed Link filetype options from all file edit/add dialogs 
+ -   
  
  ### Fixed
  
