@@ -200,7 +200,7 @@ export class FileEditComponent implements OnInit {
     let fileTypes;
     this.siteService.getFileTypeLookup().subscribe((results) => {
       fileTypes = results;
-      if(self.data.addOrEdit === 'Add'){
+      // if(self.data.addOrEdit === 'Add'){
         this.fileTypes = fileTypes.filter(function (ft) {
             if(self.fileCategory === 'Site File')
               return ft.filetype === 'Photo' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' ||
@@ -216,19 +216,7 @@ export class FileEditComponent implements OnInit {
               return ft.filetype === 'Photo' || ft.filetype === 'Data' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' || ft.filetype === 'Link' ||
                 ft.filetype === 'Other' || ft.filetype === 'Sketch' || ft.filetype === 'Hydrograph';
         });
-      }else{
-        this.fileTypes = fileTypes;
-        this.fileType = this.fileTypeLookup(this.file.filetype_id);
-      }
     });
-  }
-
-  fileTypeLookup(response) {
-    for(let filetype of this.fileTypes){
-      if(filetype.filetype_id === response){
-        return filetype.filetype;
-      }
-    }
   }
 
   setSourceAgency(){
@@ -351,6 +339,10 @@ export class FileEditComponent implements OnInit {
     if(this.file.filetype_id === 1){
       this.file.photo_date = new Date();
       this.form.controls.photo_date.setValue(this.file.photo_date);
+      this.form.get("photo_date").setValidators([Validators.required]);
+    }else{
+      this.form.get("photo_date").clearValidators();
+      this.form.get("photo_date").setErrors(null);
     }
 
     // All other files
@@ -370,6 +362,13 @@ export class FileEditComponent implements OnInit {
       this.form.controls.collectDate.setValue(new Date());
       this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
       this.datafile = {};
+      
+      // Set required validator for agency
+      this.form.get("agency_id").clearValidators();
+      this.form.get("agency_id").setErrors(null);
+      // Set required validator for source name
+      this.form.get("FULLname").clearValidators();
+      this.form.get("FULLname").setErrors(null);
     }
   }
 

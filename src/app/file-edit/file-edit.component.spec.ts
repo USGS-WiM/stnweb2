@@ -114,14 +114,6 @@ describe('FileEditComponent', () => {
     ]);
   });
 
-  it('should set the file type name', () => {
-    component.fileTypes = [{filetype: "Photo", filetype_id: 1}, {filetype: "Data", filetype_id: 2}];
-
-    let fileType = component.fileTypeLookup(1);
-    fixture.detectChanges();
-    expect(fileType).toEqual('Photo');
-  });
-
   it('should set the source agency', () => {
     const response = {agency_name: "WIM", agency_id: 0};
     
