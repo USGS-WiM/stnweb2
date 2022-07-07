@@ -244,25 +244,6 @@ describe('SiteEditService', () => {
     req.flush(mockFile);
   });
 
-  it('#saveFile() should create a new link file', () => {
-    let mockFile = 
-        {
-            filetype_id: 1,
-            name: "test file"
-        }
-
-    service.saveFile(mockFile).subscribe((results) => {
-        expect(results).not.toBe(null);
-        expect(JSON.stringify(results)).toEqual(
-            JSON.stringify(mockFile)
-        );
-    });
-    const req = httpTestingController.expectOne(
-      APP_SETTINGS.API_ROOT + 'Files.json',
-    );
-    req.flush(mockFile);
-  });
-
   it('#updateFile() should add edit or add file attributes to an existing file', () => {
     let mockFile = 
         {
