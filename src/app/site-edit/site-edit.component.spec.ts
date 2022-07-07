@@ -755,33 +755,6 @@ describe('SiteEditComponent', () => {
     expect(component.showFileForm).toBeFalse();
   });
 
-  it('should create link file and add to page', () => {
-    component.siteFileForm.get("filetype_id").setValue(8);
-    component.siteFileForm.get("file_date").setValue("2018-12-29T22:55:17.129");
-    component.siteFileForm.get("description").setValue("test file");
-    component.siteFileForm.get("FULLname").setValue("test");
-    component.siteFileForm.get("agency_id").setValue(9999);
-    component.returnData.files = [];
-    component.data.site.site_id = 24224;
-
-    let response = {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"};
-    let sourceResponse = { source_name: "test", source_id: 9999}
-    spyOn(component.siteEditService, 'postSource').and.returnValue(
-      of(sourceResponse)
-    );
-    spyOn(component.siteEditService, 'saveFile').and.returnValue(
-      of(response)
-    );
-
-    component.createFile();
-    fixture.detectChanges();
-
-    expect(component.returnData.files).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
-    expect(component.initSiteFiles).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
-    expect(component.loading).toBeFalse();
-    expect(component.showFileForm).toBeFalse();
-  });
-
   it('should cancel loading and show alert if file form is invalid', () => {
     component.siteFileForm.get("filetype_id").setValue(8);
     component.siteFileForm.get("file_date").setValue("2018-12-29T22:55:17.129");
