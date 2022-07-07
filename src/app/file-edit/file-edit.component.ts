@@ -105,7 +105,7 @@ export class FileEditComponent implements OnInit {
       }
     }else{
       // Add file
-      this.file = {};
+        this.file = {};
     }
 
     this.initForm();
@@ -204,7 +204,7 @@ export class FileEditComponent implements OnInit {
         this.fileTypes = fileTypes.filter(function (ft) {
             if(self.fileCategory === 'Site File')
               return ft.filetype === 'Photo' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' ||
-                ft.filetype === 'Level Notes' || ft.filetype === 'Site Sketch' || ft.filetype === 'Other' || ft.filetype === 'Link' || ft.filetype === 'Sketch' ||
+                ft.filetype === 'Level Notes' || ft.filetype === 'Site Sketch' || ft.filetype === 'Other' || ft.filetype === 'Sketch' ||
                 ft.filetype === 'Landowner Permission Form' || ft.filetype === 'Hydrograph';
             else if(self.fileCategory === 'HWM File')
               return ft.filetype === 'Photo' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' ||
@@ -213,7 +213,7 @@ export class FileEditComponent implements OnInit {
               return ft.filetype === 'Photo' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' || ft.filetype === 'Other' || ft.filetype === 'Sketch' ||
                 ft.filetype === 'NGS Datasheet';
             else if(self.fileCategory === 'Sensor File')
-              return ft.filetype === 'Photo' || ft.filetype === 'Data' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' || ft.filetype === 'Link' ||
+              return ft.filetype === 'Photo' || ft.filetype === 'Data' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' ||
                 ft.filetype === 'Other' || ft.filetype === 'Sketch' || ft.filetype === 'Hydrograph';
         });
       }else{
@@ -720,36 +720,6 @@ export class FileEditComponent implements OnInit {
                       fd.append("FileEntity", JSON.stringify(fileParts.FileEntity));
                       fd.append("File", fileParts.File);
                       this.fileEditService.uploadFile(fd)
-                        .subscribe(
-                            (data) => {
-                              this.returnData = data;
-                              this.closeDialog("Successfully added file");
-                            }
-                        );
-                  }else{
-                    // Link file
-                    fileSubmission.site_id = this.site.site_id;
-                    fileSubmission.source_id = response.source_id;
-
-                    // Remove instrument, hwm or op id from fileSubmission
-                    if(this.data.type === 'Sensor File'){
-                      delete fileSubmission.hwm_id;
-                      delete fileSubmission.objective_point_id;
-                    }else if(this.data.type === 'HWM File'){
-                      delete fileSubmission.instrument_id;
-                      delete fileSubmission.objective_point_id;
-                    }else if(this.data.type === 'Reference Datum File'){
-                      delete fileSubmission.hwm_id;
-                      delete fileSubmission.instrument_id;
-                    }
-
-                    delete fileSubmission.data_file_id; delete fileSubmission.is_nwis;
-                    // Remove extra photo fields
-                    delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd; delete fileSubmission.photo_direction; delete fileSubmission.path; delete fileSubmission.photo_date;
-                    if(fileSubmission.script_parent === null) {
-                      delete fileSubmission.script_parent;
-                    }
-                    this.fileEditService.addFile(fileSubmission)
                         .subscribe(
                             (data) => {
                               this.returnData = data;
