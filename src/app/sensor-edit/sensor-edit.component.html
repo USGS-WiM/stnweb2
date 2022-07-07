@@ -958,7 +958,7 @@
                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
                 </button>
                 <!-- Create Sensor File Form -->
-                <!-- <form *ngIf="showFileCreateForm" [formGroup]="sensorFileForm">
+                <form *ngIf="showFileCreateForm" [formGroup]="sensorFileForm">
                     <mat-form-field appearance="fill">
                         <mat-label>File Type</mat-label>
                         <mat-select aria-label="File Type" formControlName="filetype_id" (selectionChange)="getFileTypeSelection($event)">
@@ -966,50 +966,50 @@
                                 {{file.filetype}}
                             </mat-option>
                         </mat-select>
-                    </mat-form-field> -->
+                    </mat-form-field>
 
                     <!--Upload Single Image with validations*-->
-                    <!-- <div *ngIf="addFileType === 'New' && selectedFile.FileEntity.filetype_id !== 8">
+                    <div *ngIf="addFileType === 'New' && selectedFile.FileEntity.filetype_id !== 8">
                         <label class="custom-file-input-add" for="addFile">
                             <p class="required">*</p> {{ selectedFile.FileEntity.name || ' None Chosen' }}
                         </label>
                         <input #upload id="addFile" class="upload-file" type="file" max="500000" [hidden]="true" (change)="getFileName($event)">
                     </div>
-                    <br clear="all" /> -->
+                    <br clear="all" />
 
                     <!-- Data Process By (Data) -->
-                    <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                    <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
                         <label class="form-header">Data Process By: </label> {{processorName}}
-                    </div> -->
+                    </div>
 
                     <!-- Date Collected/Processed* (Data) -->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id === 2">
                         <mat-form-field appearance="fill">
                             <mat-label>Date Collected/Processed</mat-label>
                             <input aria-label="Date Collected/Processed" required matInput formControlName="collect_date" [value]="collectDate" [matDatepicker]="collectedDatePicker" placeholder="Choose a date">
                             <mat-datepicker-toggle matSuffix [for]="collectedDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker [value]="collectDate" #collectedDatePicker></mat-datepicker>
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!--Source Name (photo)-->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                         <mat-form-field appearance="fill">
                             <mat-label>Source Photographer</mat-label>
                             <input aria-label="Source Photographer" formControlName="FULLname" matInput required [value]="selectedFile.FileEntity.FULLname"/>           
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!--Source Name (all other)-->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id  > 2">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id  > 2">
                         <mat-form-field appearance="fill">
                             <mat-label>Source Name</mat-label>
                             <input aria-label="Source Name" formControlName="FULLname" matInput required [value]="selectedFile.FileEntity.FULLname"/>           
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!--Source Agency* (photo, allOther)-->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1 || selectedFile.FileEntity.filetype_id > 2">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id === 1 || selectedFile.FileEntity.filetype_id > 2">
                         <mat-form-field appearance="fill">
                             <mat-label>Source Agency</mat-label>
                             <mat-select aria-label="Source Agency" required formControlName="agency_id" (selectionChange)="updateAgencyForCaption()">
@@ -1018,88 +1018,88 @@
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!-- Photo Date* (photo) -->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                         <mat-form-field appearance="fill">
                             <mat-label>Photo Date</mat-label>
                             <input aria-label="Photo Date" matInput formControlName="photo_date" [value]="selectedFile.FileEntity.photo_date" [matDatepicker]="photoDatePicker" required placeholder="Choose a date">
                             <mat-datepicker-toggle matSuffix [for]="photoDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker [value]="selectedFile.FileEntity.photo_date" #photoDatePicker></mat-datepicker>
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!-- Date Uploaded* (photo, data, allother) -->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
                         <mat-form-field appearance="fill">
                             <mat-label>Date Uploaded</mat-label>
                             <input aria-label="Date Uploaded" matInput formControlName="file_date" [value]="selectedFile.FileEntity.file_date" [matDatepicker]="fileDatePicker" required placeholder="Choose a date">
                             <mat-datepicker-toggle matSuffix [for]="fileDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker #fileDatePicker></mat-datepicker>
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!--Description*(photo, data, allother)-->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
                         <mat-form-field appearance="fill">
                             <mat-label for="description">Description</mat-label>
                             <textarea aria-label="Description" matInput formControlName="description" required id="description" [value]="selectedFile.FileEntity.description"></textarea>
                             <mat-icon [hidden]="selectedFile.FileEntity.filetype_id !== 1" matSuffix class="info-icon" matTooltip="Populates in Photo caption below. If a person or people appear in photo include name(s). If non-USGS personnel, ensure consent to publish name in caption is given." 
                             aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                      <!-- Elevation (Data) -->
-                     <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                     <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
                         <label class="form-header">Elevation:</label>
                         <mat-radio-group class="radio-btn-group" [(value)]="selectedFile.FileEntity.elevation_status" formControlName="elevation_status">
                             <mat-radio-button class="radio-button" value="Final">Final</mat-radio-button>
                             <mat-radio-button class="radio-button" value="Arbitrary">Arbitrary</mat-radio-button>
                         </mat-radio-group>
-                    </div> -->
+                    </div>
 
                     <!-- Approval Info -->
-                    <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedBy">
+                    <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedBy">
                         <label class="form-header">Approved By:</label> {{approvedBy || '---'}}
                     </div>
                     <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedOn">
                         <label class="form-header">Approval Date:</label> {{approvedOn | date: 'MM/dd/yyyy' || '---'}}
-                    </div> -->
+                    </div>
 
                     <!-- This is where Other ends, rest is for Photo -->
                     <!--Photo Direction (photo)-->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                         <mat-form-field appearance="fill">
                             <mat-label>Photo Direction</mat-label>
                             <input aria-label="Photo Direction" formControlName="photo_direction" matInput [value]="selectedFile.FileEntity.photo_direction"/>           
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!-- Photo Latitude (photo)-->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                         <mat-form-field appearance="fill">
                             <mat-label>Photo Latitude (if different)</mat-label>
                             <input aria-label="Photo Latitude (if different)" formControlName="latitude_dd" matInput [value]="selectedFile.FileEntity.latitude_dd"/>           
                         </mat-form-field>
-                    </div> -->
+                    </div>
                     <!-- LatDD Validator -->
-                    <!-- <div *ngIf="sensorFileForm.controls.latitude_dd.invalid && (sensorFileForm.controls.latitude_dd.dirty || sensorFileForm.controls.latitude_dd.touched)"
+                    <div *ngIf="sensorFileForm.controls.latitude_dd.invalid && (sensorFileForm.controls.latitude_dd.dirty || sensorFileForm.controls.latitude_dd.touched)"
                         class="alert alert-danger">
                         <div *ngIf="sensorFileForm.controls.latitude_dd.errors?.['incorrectValue']">
                             The latitude must be between 0 and 73.0.
                         </div>
-                    </div> -->
+                    </div>
 
                     <!--Photo Longitude (photo)-->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                         <mat-form-field appearance="fill">
                             <mat-label>Photo Longitude (if different)</mat-label>
                             <input aria-label="Photo longitude (if different)" formControlName="longitude_dd" matInput [value]="selectedFile.FileEntity.longitude_dd"/>           
                         </mat-form-field>
-                    </div> -->
+                    </div>
                     <!-- LonDD Validator -->
-                    <!-- <div *ngIf="sensorFileForm.controls.longitude_dd.invalid && (sensorFileForm.controls.longitude_dd.dirty || sensorFileForm.controls.longitude_dd.touched)"
+                    <div *ngIf="sensorFileForm.controls.longitude_dd.invalid && (sensorFileForm.controls.longitude_dd.dirty || sensorFileForm.controls.longitude_dd.touched)"
                         class="alert alert-danger">
                         <div *ngIf="sensorFileForm.controls.longitude_dd.errors?.['incorrectValue']">
                             The longitude must be between -175.0 and -60.0.
@@ -1113,18 +1113,18 @@
                                 Photo of {{sensorFileForm.value.description || ' (Description HERE) '}} at {{data.siteInfo.site_description}}, {{data.siteInfo.county}}, {{data.siteInfo.state}}, {{sensorFileForm.value.photo_date | date: 'MM/dd/yyyy' || ' Date taken HERE '}}. Photograph by {{sensorFileForm.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
                             </span>
                         </div>
-                    </div> -->
+                    </div>
 
                     <!-- associated files -->
-                    <!-- <div *ngIf="addFileType === 'Existing' && selectedFile.FileEntity.filetype_id !== 8 && selectedFile.FileEntity.is_nwis !== 1">
+                    <div *ngIf="addFileType === 'Existing' && selectedFile.FileEntity.filetype_id !== 8 && selectedFile.FileEntity.is_nwis !== 1">
                         <label class="form-header">Associated File:</label>
                         <div>
                             <span *ngIf="fileItemExists">
                                 <a target="_blank" title="Download File" href="{{fileSource}}">{{selectedFile.FileEntity.name}}</a>
                             </span>
-                            <span *ngIf="!fileItemExists">-- Missing --</span> -->
+                            <span *ngIf="!fileItemExists">-- Missing --</span>
                             <!--ReUpload Single Image with validations*-->
-                            <!-- <div *ngIf="!fileItemExists">
+                            <div *ngIf="!fileItemExists">
                                 <label class="custom-file-input" for="Upload">
                                     <p class="required">*</p> {{ selectedFile.FileEntity.name || ' None Chosen' }}
                                 </label>
@@ -1133,9 +1133,9 @@
                                     Correct File?
                                     <button aria-label="Upload" mat-button class="primary" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
                                 </span>
-                            </div> -->
+                            </div>
                             <!-- change out the existing fileItem with a different one-->
-                            <!-- <div *ngIf="fileItemExists">
+                            <div *ngIf="fileItemExists">
                                 <div>
                                     <label class="custom-file-inputChange" for="Upload">
                                         <p class="required">*</p> {{ selectedFile.FileEntity.name || ' None Chosen' }}
@@ -1154,7 +1154,7 @@
                         <button aria-label="Create File" mat-button type="button" class="save-btn primary" *ngIf="selectedFile.FileEntity.file_id == null" (click)="createFile()">Create File</button>
                         <button aria-label="Close or Cancel File" mat-stroked-button class="secondary" style="margin-left: 10px" type="button" (click)="cancelFile()">Close/Cancel File</button>
                     </div>
-                </form> -->
+                </form>
                 <div class="tableContainer" [hidden]="initSensorFiles?.length === 0">
                     <table
                         mat-table
@@ -1186,7 +1186,7 @@
                         </ng-container>
 
                         <!-- button column -->
-                        <!-- <ng-container matColumnDef="expand">
+                        <ng-container matColumnDef="expand">
                             <th mat-header-cell *matHeaderCellDef></th>
                             <td mat-cell *matCellDef="let element">
                                 <button mat-stroked-button *ngIf="showFileForm || expandedElement != element" class="view-details-btn secondary" type="button" (click)="showFileDetails(element)"
@@ -1225,7 +1225,7 @@
                                     </button>
                                 </mat-menu>
                             </td>
-                        </ng-container> -->
+                        </ng-container>
 
                         <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
                         <ng-container matColumnDef="expandedDetail">
@@ -1234,7 +1234,7 @@
                                     [@detailExpand]="showFileForm && expandedElement == element ? 'expanded' : 'collapsed'">
                                     <div class="expanded-body">
                                         <!-- Edit Sensor File Form -->
-                                        <!-- <form [formGroup]="sensorFileForm">
+                                        <form [formGroup]="sensorFileForm">
                                             <mat-form-field appearance="fill">
                                                 <mat-label>File Type</mat-label>
                                                 <mat-select aria-label="File Type" formControlName="filetype_id" (selectionChange)="getFileTypeSelection($event)">
@@ -1242,50 +1242,50 @@
                                                         {{file.filetype}}
                                                     </mat-option>
                                                 </mat-select>
-                                            </mat-form-field> -->
+                                            </mat-form-field>
 
                                             <!--Upload Single Image with validations*-->
-                                            <!-- <div *ngIf="addFileType === 'New' && selectedFile.FileEntity.filetype_id !== 8">
+                                            <div *ngIf="addFileType === 'New' && selectedFile.FileEntity.filetype_id !== 8">
                                                 <label class="custom-file-input-add" for="addFile">
                                                     <p class="required">*</p> {{ selectedFile.FileEntity.name || ' None Chosen' }}
                                                 </label>
                                                 <input #upload id="addFile" class="upload-file" type="file" max="500000" [hidden]="true" (change)="getFileName($event)">
                                             </div>
-                                            <br clear="all" /> -->
+                                            <br clear="all" />
 
                                             <!-- Data Process By (Data) -->
-                                            <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                                            <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
                                                 <label class="form-header">Data Process By: </label> {{processorName}}
-                                            </div> -->
+                                            </div>
 
                                             <!-- Date Collected/Processed* (Data) -->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id === 2">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Date Collected/Processed</mat-label>
                                                     <input aria-label="Date Collected/Processed" required matInput formControlName="collect_date" [value]="collectDate" [matDatepicker]="collectedDatePicker" placeholder="Choose a date">
                                                     <mat-datepicker-toggle matSuffix [for]="collectedDatePicker"></mat-datepicker-toggle>
                                                     <mat-datepicker [value]="collectDate" #collectedDatePicker></mat-datepicker>
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
 
                                             <!--Source Name (photo)-->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Source Photographer</mat-label>
                                                     <input aria-label="Source Photographer" formControlName="FULLname" matInput required [value]="selectedFile.FileEntity.FULLname"/>           
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
 
                                             <!--Source Name (all other)-->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id  > 2">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id  > 2">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Source Name</mat-label>
                                                     <input aria-label="Source Name" formControlName="FULLname" matInput required [value]="selectedFile.FileEntity.FULLname"/>           
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
 
                                             <!--Source Agency* (photo, allOther)-->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1 || selectedFile.FileEntity.filetype_id > 2">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id === 1 || selectedFile.FileEntity.filetype_id > 2">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Source Agency</mat-label>
                                                     <mat-select aria-label="Source Agency" required formControlName="agency_id" (selectionChange)="updateAgencyForCaption()">
@@ -1294,88 +1294,88 @@
                                                         </mat-option>
                                                     </mat-select>
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
 
                                             <!-- Photo Date* (photo) -->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Photo Date</mat-label>
                                                     <input aria-label="Photo Date" matInput formControlName="photo_date" [value]="selectedFile.FileEntity.photo_date" [matDatepicker]="photoDatePicker" required placeholder="Choose a date">
                                                     <mat-datepicker-toggle matSuffix [for]="photoDatePicker"></mat-datepicker-toggle>
                                                     <mat-datepicker [value]="selectedFile.FileEntity.photo_date" #photoDatePicker></mat-datepicker>
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
 
                                             <!-- Date Uploaded* (photo, data, allother) -->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Date Uploaded</mat-label>
                                                     <input aria-label="Date Uploaded" matInput formControlName="file_date" [value]="selectedFile.FileEntity.file_date" [matDatepicker]="fileDatePicker" required placeholder="Choose a date">
                                                     <mat-datepicker-toggle matSuffix [for]="fileDatePicker"></mat-datepicker-toggle>
                                                     <mat-datepicker #fileDatePicker></mat-datepicker>
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
 
                                             <!--Description*(photo, data, allother)-->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label for="description">Description</mat-label>
                                                     <textarea aria-label="Description" matInput formControlName="description" required id="description" [value]="selectedFile.FileEntity.description"></textarea>
                                                     <mat-icon [hidden]="selectedFile.FileEntity.filetype_id !== 1" matSuffix class="info-icon" matTooltip="Populates in Photo caption below. If a person or people appear in photo include name(s). If non-USGS personnel, ensure consent to publish name in caption is given." 
                                                     aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
 
                                             <!-- Elevation (Data) -->
-                                            <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                                            <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
                                                 <label class="form-header">Elevation:</label>
                                                 <mat-radio-group class="radio-btn-group" [(value)]="selectedFile.FileEntity.elevation_status" formControlName="elevation_status">
                                                     <mat-radio-button class="radio-button" value="Final">Final</mat-radio-button>
                                                     <mat-radio-button class="radio-button" value="Arbitrary">Arbitrary</mat-radio-button>
                                                 </mat-radio-group>
-                                            </div> -->
+                                            </div>
 
                                             <!-- Approval Info -->
-                                            <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedBy">
+                                            <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedBy">
                                                 <label class="form-header">Approved By:</label> {{approvedBy || '---'}}
                                             </div>
                                             <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedOn">
                                                 <label class="form-header">Approval Date:</label> {{approvedOn | date: 'MM/dd/yyyy' || '---'}}
-                                            </div> -->
+                                            </div>
 
                                             <!-- This is where Other ends, rest is for Photo -->
                                             <!--Photo Direction (photo)-->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Photo Direction</mat-label>
                                                     <input aria-label="Photo Direction" formControlName="photo_direction" matInput [value]="selectedFile.FileEntity.photo_direction"/>           
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
 
                                             <!-- Photo Latitude (photo)-->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Photo Latitude (if different)</mat-label>
                                                     <input aria-label="Photo Latitude (if different)" formControlName="latitude_dd" matInput [value]="selectedFile.FileEntity.latitude_dd"/>           
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
                                             <!-- LatDD Validator -->
-                                            <!-- <div *ngIf="sensorFileForm.controls.latitude_dd.invalid && (sensorFileForm.controls.latitude_dd.dirty || sensorFileForm.controls.latitude_dd.touched)"
+                                            <div *ngIf="sensorFileForm.controls.latitude_dd.invalid && (sensorFileForm.controls.latitude_dd.dirty || sensorFileForm.controls.latitude_dd.touched)"
                                                 class="alert alert-danger">
                                                 <div *ngIf="sensorFileForm.controls.latitude_dd.errors?.['incorrectValue']">
                                                     The latitude must be between 0 and 73.0.
                                                 </div>
-                                            </div> -->
+                                            </div>
 
                                             <!--Photo Longitude (photo)-->
-                                            <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
+                                            <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Photo Longitude (if different)</mat-label>
                                                     <input aria-label="Photo longitude (if different)" formControlName="longitude_dd" matInput [value]="selectedFile.FileEntity.longitude_dd"/>           
                                                 </mat-form-field>
-                                            </div> -->
+                                            </div>
                                             <!-- LonDD Validator -->
-                                            <!-- <div *ngIf="sensorFileForm.controls.longitude_dd.invalid && (sensorFileForm.controls.longitude_dd.dirty || sensorFileForm.controls.longitude_dd.touched)"
+                                            <div *ngIf="sensorFileForm.controls.longitude_dd.invalid && (sensorFileForm.controls.longitude_dd.dirty || sensorFileForm.controls.longitude_dd.touched)"
                                                 class="alert alert-danger">
                                                 <div *ngIf="sensorFileForm.controls.longitude_dd.errors?.['incorrectValue']">
                                                     The longitude must be between -175.0 and -60.0.
@@ -1389,18 +1389,18 @@
                                                         Photo of {{sensorFileForm.value.description || ' (Description HERE) '}} at {{data.siteInfo.site_description}}, {{data.siteInfo.county}}, {{data.siteInfo.state}}, {{sensorFileForm.value.photo_date | date: 'MM/dd/yyyy' || ' Date taken HERE '}}. Photograph by {{sensorFileForm.value.FULLname || ' Source Name HERE ' }}, {{agencyNameForCap || ' Agency HERE '}}.
                                                     </span>
                                                 </div>
-                                            </div> -->
+                                            </div>
 
                                             <!-- associated files -->
-                                            <!-- <div *ngIf="addFileType === 'Existing' && selectedFile.FileEntity.filetype_id !== 8 && selectedFile.FileEntity.is_nwis !== 1">
+                                            <div *ngIf="addFileType === 'Existing' && selectedFile.FileEntity.filetype_id !== 8 && selectedFile.FileEntity.is_nwis !== 1">
                                                 <label class="form-header">Associated File:</label>
                                                 <div>
                                                     <span *ngIf="fileItemExists">
                                                         <a target="_blank" title="Download File" href="{{fileSource}}">{{selectedFile.FileEntity.name}}</a>
                                                     </span>
-                                                    <span *ngIf="!fileItemExists">-- Missing --</span> -->
+                                                    <span *ngIf="!fileItemExists">-- Missing --</span>
                                                     <!--ReUpload Single Image with validations*-->
-                                                    <!-- <div *ngIf="!fileItemExists">
+                                                    <div *ngIf="!fileItemExists">
                                                         <label class="custom-file-input" for="Upload">
                                                             <p class="required">*</p> {{ selectedFile.FileEntity.name || ' None Chosen' }}
                                                         </label>
@@ -1409,9 +1409,9 @@
                                                             Correct File?
                                                             <button aria-label="Upload" mat-button class="primary" *ngIf="fileUploading" type="button" (click)="saveFileUpload()">Upload</button>
                                                         </span>
-                                                    </div> -->
+                                                    </div>
                                                     <!-- change out the existing fileItem with a different one-->
-                                                    <!-- <div *ngIf="fileItemExists">
+                                                    <div *ngIf="fileItemExists">
                                                         <div>
                                                             <label class="custom-file-inputChange" for="Upload">
                                                                 <p class="required">*</p> {{ selectedFile.FileEntity.name || ' None Chosen' }}
@@ -1430,7 +1430,7 @@
                                                 <button aria-label="Create File" mat-button type="button" class="save-btn primary" *ngIf="selectedFile.FileEntity.file_id == null" (click)="createFile()">Create File</button>
                                                 <button aria-label="Close or Cancel File" mat-stroked-button class="secondary" style="margin-left: 10px" type="button" (click)="cancelFile()">Close/Cancel File</button>
                                             </div>
-                                        </form> -->
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="element-detail"
@@ -1557,67 +1557,67 @@
                     aria-label="Add File"><mat-icon>add</mat-icon> Add File
                 </button>
                 <!-- Create Sensor File Form -->
-                <!-- <form *ngIf="showNWISFileCreateForm" [formGroup]="sensorFileForm">
+                <form *ngIf="showNWISFileCreateForm" [formGroup]="sensorFileForm">
                     <div class="row">
                         <label class="form-header filetype-header">File Type: </label> {{fileType}}
-                    </div> -->
+                    </div>
 
                     <!--File URL (NWIS file)-->
-                    <!-- <div *ngIf="(selectedFile.FileEntity.is_nwis === 1)">
+                    <div *ngIf="(selectedFile.FileEntity.is_nwis === 1)">
                         <mat-form-field appearance="fill">
                             <mat-label>File URL</mat-label>
                             <input aria-label="File URL" formControlName="name" matInput [value]="selectedFile.FileEntity.name"/>
                             <mat-icon matSuffix class="info-icon" matTooltip="Please link to persistent URLs or digital object identifier (doi) urls." 
                             aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>                
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!-- Data Process By (Data) -->
-                    <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                    <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
                         <label class="form-header">Data Process By: </label> {{processorName}}
-                    </div> -->
+                    </div>
 
                     <!-- Date Collected/Processed* (Data) -->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id === 2">
                         <mat-form-field appearance="fill">
                             <mat-label>Date Collected/Processed</mat-label>
                             <input aria-label="Date Collected/Processed" required matInput formControlName="collect_date" [value]="collectDate" [matDatepicker]="collectedDatePicker" placeholder="Choose a date">
                             <mat-datepicker-toggle matSuffix [for]="collectedDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker [value]="collectDate" #collectedDatePicker></mat-datepicker>
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!-- Date Uploaded* (photo, data, allother) -->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
                         <mat-form-field appearance="fill">
                             <mat-label>Date Uploaded</mat-label>
                             <input aria-label="Date Uploaded" matInput formControlName="file_date" [value]="selectedFile.FileEntity.file_date" [matDatepicker]="fileDatePicker" required placeholder="Choose a date">
                             <mat-datepicker-toggle matSuffix [for]="fileDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker #fileDatePicker></mat-datepicker>
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                     <!--Description*(photo, data, allother)-->
-                    <!-- <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
+                    <div *ngIf="selectedFile.FileEntity.filetype_id > 0">
                         <mat-form-field appearance="fill">
                             <mat-label for="description">Description</mat-label>
                             <textarea aria-label="Description" matInput formControlName="description" required id="description" [value]="selectedFile.FileEntity.description"></textarea>
                             <mat-icon [hidden]="selectedFile.FileEntity.filetype_id !== 1" matSuffix class="info-icon" matTooltip="Populates in Photo caption below. If a person or people appear in photo include name(s). If non-USGS personnel, ensure consent to publish name in caption is given." 
                             aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>
                         </mat-form-field>
-                    </div> -->
+                    </div>
 
                      <!-- Elevation (Data) -->
-                     <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
+                     <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2">
                         <label class="form-header">Elevation:</label>
                         <mat-radio-group class="radio-btn-group" [(value)]="selectedFile.FileEntity.elevation_status" formControlName="elevation_status">
                             <mat-radio-button class="radio-button" value="Final">Final</mat-radio-button>
                             <mat-radio-button class="radio-button" value="Arbitrary">Arbitrary</mat-radio-button>
                         </mat-radio-group>
-                    </div> -->
+                    </div>
 
                     <!-- Approval Info -->
-                    <!-- <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedBy">
+                    <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedBy">
                         <label class="form-header">Approved By:</label> {{approvedBy || '---'}}
                     </div>
                     <div class="row" *ngIf="selectedFile.FileEntity.filetype_id === 2 && selectedFile.FileEntity.file_id !== undefined && (selectedFile.FileEntity.is_nwis === undefined || selectedFile.FileEntity.is_nwis !== 1) && approvedOn">
@@ -1629,7 +1629,7 @@
                         <button aria-label="Create File" mat-button type="button" class="save-btn primary" *ngIf="selectedFile.FileEntity.file_id == null" (click)="createFile()">Create File</button>
                         <button aria-label="Close or Cancel File" mat-stroked-button class="secondary" style="margin-left: 10px" type="button" (click)="cancelFile()">Close/Cancel File</button>
                     </div>
-                </form> -->
+                </form>
                 <div class="tableContainer">
                     <table *ngIf="initNWISFiles.length > 0"
                         mat-table
@@ -1666,7 +1666,7 @@
                         </ng-container>
 
                         <!-- button column -->
-                        <!-- <ng-container matColumnDef="expand">
+                        <ng-container matColumnDef="expand">
                             <th mat-header-cell *matHeaderCellDef></th>
                             <td mat-cell *matCellDef="let element">
                                 <button mat-stroked-button *ngIf="showFileForm || expandedElement != element" class="view-details-btn secondary" type="button" (click)="showFileDetails(element)"
@@ -1705,7 +1705,7 @@
                                     </button>
                                 </mat-menu>
                             </td>
-                        </ng-container> -->
+                        </ng-container>
 
                         <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
                         <ng-container matColumnDef="expandedDetail">

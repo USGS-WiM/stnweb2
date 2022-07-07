@@ -154,13 +154,13 @@ export class SensorEditComponent implements OnInit {
   displayedFileColumns: string[] = [
     'FileName',
     'FileDate',
-    // 'expand',
+    'expand',
   ];
 
   displayedNWISFileColumns: string[] = [
     'FileName',
     'FileDate',
-    // 'expand',
+    'expand',
   ];
 
   displayedTapedownColumns: string[] = [
@@ -198,7 +198,7 @@ export class SensorEditComponent implements OnInit {
       }
       this.getFileTypes();
       this.getAgencies();
-      // this.initsensorFileForm();
+      this.initsensorFileForm();
       this.createTapedownTable();
       this.getSensorTypes();
       this.getSensorBrands();
@@ -553,33 +553,33 @@ export class SensorEditComponent implements OnInit {
   }
 
   /* istanbul ignore next */
-  // initsensorFileForm() {
-  //   this.sensorFileForm = new FormGroup({
-  //     File: new FormControl(this.selectedFile.File),
-  //     file_id: new FormControl(this.selectedFile.FileEntity.file_id),
-  //     data_file_id: new FormControl(this.selectedFile.FileEntity.data_file_id),
-  //     name: new FormControl(this.selectedFile.FileEntity.name, Validators.required),
-  //     FULLname: new FormControl(this.selectedFile.FileEntity.FULLname, Validators.required),
-  //     source_id: new FormControl(this.selectedFile.FileEntity.source_id),
-  //     description: new FormControl(this.selectedFile.FileEntity.description, Validators.required),
-  //     file_date: new FormControl(this.selectedFile.FileEntity.file_date, Validators.required),
-  //     photo_date: new FormControl(this.selectedFile.FileEntity.photo_date),
-  //     agency_id: new FormControl(this.selectedFile.FileEntity.agency_id, Validators.required),
-  //     instrument_id: new FormControl(this.sensor.instrument_id),
-  //     site_id: new FormControl(this.selectedFile.FileEntity.site_id),
-  //     filetype_id: new FormControl(this.selectedFile.FileEntity.filetype_id, Validators.required),
-  //     path: new FormControl(this.selectedFile.FileEntity.path),
-  //     last_updated: new FormControl(this.selectedFile.FileEntity.last_updated),
-  //     last_updated_by: new FormControl(this.selectedFile.FileEntity.last_updated_by),
-  //     site_description: new FormControl(this.selectedFile.FileEntity.site_description),
-  //     photo_direction: new FormControl(this.selectedFile.FileEntity.photo_direction),
-  //     latitude_dd: new FormControl(this.selectedFile.FileEntity.latitude_dd, [this.checkLatValue()]),
-  //     longitude_dd: new FormControl(this.selectedFile.FileEntity.longitude_dd, [this.checkLonValue()]),
-  //     is_nwis: new FormControl(this.selectedFile.FileEntity.is_nwis),
-  //     collect_date: new FormControl(this.collectDate !== undefined ? this.collectDate : null),
-  //     elevation_status: new FormControl(this.selectedFile.FileEntity.elevation_status !== undefined ? this.selectedFile.FileEntity.elevation_status : ""),
-  //   })
-  // }
+  initsensorFileForm() {
+    this.sensorFileForm = new FormGroup({
+      File: new FormControl(this.selectedFile.File),
+      file_id: new FormControl(this.selectedFile.FileEntity.file_id),
+      data_file_id: new FormControl(this.selectedFile.FileEntity.data_file_id),
+      name: new FormControl(this.selectedFile.FileEntity.name, Validators.required),
+      FULLname: new FormControl(this.selectedFile.FileEntity.FULLname, Validators.required),
+      source_id: new FormControl(this.selectedFile.FileEntity.source_id),
+      description: new FormControl(this.selectedFile.FileEntity.description, Validators.required),
+      file_date: new FormControl(this.selectedFile.FileEntity.file_date, Validators.required),
+      photo_date: new FormControl(this.selectedFile.FileEntity.photo_date),
+      agency_id: new FormControl(this.selectedFile.FileEntity.agency_id, Validators.required),
+      instrument_id: new FormControl(this.sensor.instrument_id),
+      site_id: new FormControl(this.selectedFile.FileEntity.site_id),
+      filetype_id: new FormControl(this.selectedFile.FileEntity.filetype_id, Validators.required),
+      path: new FormControl(this.selectedFile.FileEntity.path),
+      last_updated: new FormControl(this.selectedFile.FileEntity.last_updated),
+      last_updated_by: new FormControl(this.selectedFile.FileEntity.last_updated_by),
+      site_description: new FormControl(this.selectedFile.FileEntity.site_description),
+      photo_direction: new FormControl(this.selectedFile.FileEntity.photo_direction),
+      latitude_dd: new FormControl(this.selectedFile.FileEntity.latitude_dd, [this.checkLatValue()]),
+      longitude_dd: new FormControl(this.selectedFile.FileEntity.longitude_dd, [this.checkLonValue()]),
+      is_nwis: new FormControl(this.selectedFile.FileEntity.is_nwis),
+      collect_date: new FormControl(this.collectDate !== undefined ? this.collectDate : null),
+      elevation_status: new FormControl(this.selectedFile.FileEntity.elevation_status !== undefined ? this.selectedFile.FileEntity.elevation_status : ""),
+    })
+  }
 
   range = function (x, min, max) {
     return x < min || x > max;
