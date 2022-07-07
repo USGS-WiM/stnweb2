@@ -514,6 +514,16 @@
                                     </div>
                                     <br clear="all" />
 
+                                     <!--File URL (LINK file)-->
+                                     <div *ngIf="siteFiles.FileEntity.filetype_id === 8">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>File URL</mat-label>
+                                            <input aria-label="File URL" formControlName="name" matInput [value]="siteFiles.FileEntity.name"/>
+                                            <mat-icon matSuffix class="info-icon" matTooltip="Please link to persistent URLs or digital object identifier (doi) urls." 
+                                            aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>                
+                                        </mat-form-field>
+                                    </div>
+                                    
                                     <!--Source Name (photo)-->
                                     <div *ngIf="siteFiles.FileEntity.filetype_id === 1">
                                         <mat-form-field appearance="fill">
