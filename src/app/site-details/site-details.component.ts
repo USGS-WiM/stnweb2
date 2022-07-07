@@ -1487,6 +1487,43 @@ export class SiteDetailsComponent implements OnInit {
                         self.sensorDataSource.paginator.lastPage();
                     }
                 }
+                if(result.returnFiles.length > 0){
+                    // Update files data source and sensor
+                    result.returnFiles.forEach((file, i) => {
+                        if(file.type === "delete"){
+                            self.sensorFilesDataSource.data.forEach((rdFile, j) => {
+                                if(rdFile.file_id === file.file.file_id){
+                                    self.sensorFilesDataSource.data.splice(j, 1);
+                                    self.fileLength --;
+                                }
+                            });
+                        }else if(file.type === "add"){ 
+                            file.file.details = {serial_number: row.serial_number};
+                            self.sensorFilesDataSource.data.push(file.file);
+                            self.fileLength ++;
+                        }else if(file.type === "update"){
+                            self.sensorFilesDataSource.data.forEach((rdFile, j) => {
+                                if(rdFile.file_id === file.file.file_id){
+                                    file.file.details = {serial_number: row.serial_number};
+                                    self.sensorFilesDataSource.data[j] = file.file;
+                                }
+                            });
+                        }
+                    })
+                    self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                    // Go to last page if not already there
+                    if(self.sensorFilesDataSource.paginator){
+                        self.sensorFilesDataSource.paginator.length = self.sensorFilesDataSource.data.length;
+                        self.sensorFilesDataSource.paginator.lastPage();
+                    }
+    
+                    // Fade out active highlighting
+                    this.clickedFileRows.add(result);
+                    setTimeout(() => {
+                        this.fadeOutFileRows.add(result);
+                        this.clickedFileRows.clear();
+                    }, 7000)
+                }
             }
         });
     }
