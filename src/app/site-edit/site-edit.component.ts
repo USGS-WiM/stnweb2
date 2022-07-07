@@ -246,7 +246,7 @@ export class SiteEditComponent implements OnInit {
     let self = this;
     this.siteService.getFileTypeLookup().subscribe((results) => {
       results.forEach(function(results){
-        if (results.filetype !== 'Data' && results.filetype !== 'NGS Datasheet'){
+        if (results.filetype !== 'Data' && results.filetype !== 'NGS Datasheet' && results.filetype !== "Link"){
           self.fileTypes.push(results);
         }
       })
@@ -1559,24 +1559,6 @@ export class SiteEditComponent implements OnInit {
                       }
                         this.showFileForm = false;
                         this.loading = false;
-                    }
-                );
-            }else{
-              fileSubmission.site_id = this.data.site.site_id;
-              // Link FileTypes
-              delete fileSubmission.File; delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd;
-              delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.photo_direction; delete fileSubmission.path;
-
-              fileSubmission.photo_date = fileSubmission.file_date;
-              this.siteEditService.saveFile(fileSubmission)
-                .subscribe(
-                    (data) => {
-                      this.returnData.files.push(data);
-                      this.initSiteFiles = this.returnData.files;
-                      this.initSiteFiles = [...this.initSiteFiles];
-                      this.loading = false;
-                      this.showFileForm = false;
-                            // Update file list in files tab
                     }
                 );
             }
