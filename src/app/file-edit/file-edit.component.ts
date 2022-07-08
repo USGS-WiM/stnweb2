@@ -328,17 +328,17 @@ export class FileEditComponent implements OnInit {
     this.file.filetype_id = event.value;
 
     // Autopopulate date and source
-    this.file.file_date = new Date();
-    this.file.source_id = this.currentUser.member_id;
-    this.file.agency_id = this.currentUser.agency_id;
-    this.form.controls.file_date.setValue(this.file.file_date);
-    this.form.controls.source_id.setValue(this.file.source_id);
-    this.form.controls.agency_id.setValue(this.file.agency_id);
+    if(this.data.addOrEdit === "Add"){
+      this.file.file_date = new Date();
+      this.file.source_id = this.currentUser.member_id;
+      this.file.agency_id = this.currentUser.agency_id;
+      this.form.controls.file_date.setValue(this.file.file_date);
+      this.form.controls.source_id.setValue(this.file.source_id);
+      this.form.controls.agency_id.setValue(this.file.agency_id);
+    } 
 
     // Photo files
     if(this.file.filetype_id === 1){
-      this.file.photo_date = new Date();
-      this.form.controls.photo_date.setValue(this.file.photo_date);
       this.form.get("photo_date").setValidators([Validators.required]);
     }else{
       this.form.get("photo_date").clearValidators();

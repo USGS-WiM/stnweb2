@@ -167,10 +167,7 @@ describe('FileEditComponent', () => {
     fixture.detectChanges();
     expect(component.file.filetype_id).toEqual(event.value);
     expect(component.file.file_date).not.toBe(undefined);
-    expect(component.file.source_id).toEqual(0);
-    expect(component.file.agency_id).toEqual(0);
-    expect(component.file.photo_date).not.toBe(undefined);
-    expect(component.form.controls.photo_date.value).toEqual(component.file.photo_date);
+    expect(component.file.FULLname).toEqual("John Doe");
   });
 
   it('should set file attributes', () => {
