@@ -13,6 +13,7 @@ import { APP_SETTINGS } from '@app/app.settings';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { normalizeTickInterval } from 'highcharts';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule } from '@angular/material/menu';
 
 describe('SiteEditComponent', () => {
   let component: SiteEditComponent;
@@ -70,7 +71,8 @@ describe('SiteEditComponent', () => {
         HttpClientTestingModule,
         MatTableModule,
         MatSnackBarModule,
-        NoopAnimationsModule
+        NoopAnimationsModule,
+        MatMenuModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
@@ -471,7 +473,7 @@ describe('SiteEditComponent', () => {
         of(response)
     );
 
-    component.setFileSourceAgency();
+    component.setFileSourceAgency(1);
     fixture.detectChanges();
     expect(component.agencyNameForCap).toEqual("WIM");
     expect(component.siteFiles.FileEntity.agency_id).toEqual(0);
@@ -486,7 +488,7 @@ describe('SiteEditComponent', () => {
         of(response)
     );
 
-    component.setFileSource();
+    component.setFileSource(1);
     fixture.detectChanges();
     expect(component.siteFiles.FileEntity.FULLname).toEqual("John Smith");
     expect(component.siteFileForm.get('FULLname').value).toEqual("John Smith");
@@ -610,7 +612,7 @@ describe('SiteEditComponent', () => {
   it('should show blank file form and set default date value', () => {
     component.addSiteFile();
     fixture.detectChanges();
-    expect(component.showFileForm).toBeTrue();
+    expect(component.showFileCreateForm).toBeTrue();
     expect(component.addFileType).toEqual("New");
     expect(component.siteFileForm.get("file_date").value).not.toEqual(null);
   });
@@ -709,17 +711,16 @@ describe('SiteEditComponent', () => {
 
   it('should delete file and remove from page', () => {
     component.returnData.files = [{file_id: 1}, {file_id: 2}];
-    let response = {file_id: 1};
     
     
     spyOn(component.dialog, 'open')
      .and
      .returnValue({afterClosed: () => of(true)} as MatDialogRef<unknown>);
     spyOn(component.siteEditService, 'deleteFile').and.returnValue(
-      of(response)
+      of(null)
     );
 
-    component.deleteFile();
+    component.deleteFile(component.returnData.files[0]);
     fixture.detectChanges();
     
     expect(component.returnData.files.length).toEqual(1);

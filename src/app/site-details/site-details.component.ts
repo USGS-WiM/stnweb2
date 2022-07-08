@@ -2176,6 +2176,7 @@ export class SiteDetailsComponent implements OnInit {
                 disableClose: true,
             });
             dialogRef.afterClosed().subscribe((result) => {
+                console.log(result)
                 if(result){
                     if(result.site !== null){
                         // Update site details page with any edits
@@ -2224,6 +2225,7 @@ export class SiteDetailsComponent implements OnInit {
                     // Files
                     if(result.files.length > 0){
                         this.siteFilesDataSource.data = result.files;
+                        this.siteFilesDataSource.data = [...this.siteFilesDataSource.data];
                         this.fileLength = this.siteFilesDataSource.data.length + this.hwmFilesDataSource.data.length + this.refMarkFilesDataSource.data.length + this.sensorFilesDataSource.data.length;
                     }
 

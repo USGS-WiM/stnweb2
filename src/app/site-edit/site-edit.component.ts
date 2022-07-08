@@ -13,11 +13,19 @@ import { connectableObservableDescriptor } from 'rxjs/internal/observable/Connec
 import { APP_SETTINGS } from '../app.settings';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { ConfirmComponent } from '@app/confirm/confirm.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-site-edit',
   templateUrl: './site-edit.component.html',
-  styleUrls: ['./site-edit.component.scss']
+  styleUrls: ['./site-edit.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class SiteEditComponent implements OnInit {
   @ViewChild('upload', {static: false}) upload: ElementRef;
@@ -45,6 +53,7 @@ export class SiteEditComponent implements OnInit {
   public agencies = [];
   public agencyNameForCap;
   public fileSource;
+  public fileType;
   public addFileType;
   public valid;
   public landownerValid;
@@ -120,6 +129,12 @@ export class SiteEditComponent implements OnInit {
   siteForm;
   landownerForm;
   siteFileForm;
+  showFileCreateForm = false;
+  showDetails = false;
+  expandedElement: any;
+  private previewCaption;
+  private sourceName;
+  private sourceAgency;
 
   loading = false;
 
@@ -152,6 +167,7 @@ export class SiteEditComponent implements OnInit {
   displayedFileColumns: string[] = [
     'FileName',
     'FileDate',
+    'expand',
   ];
   
   // Regular Expression to match phone and zip character strings
@@ -574,10 +590,56 @@ export class SiteEditComponent implements OnInit {
     }
   }
 
+  /* istanbul ignore next */
+  showFileDetails(row) {
+    if(row) {
+      this.expandedElement = row;
+      this.showDetails = true;
+      this.showFileForm = false;
+      // Get filetype name
+      this.fileType = this.fileTypeLookup(row.filetype_id);
+      // Get source name and preview caption
+      this.setFileSource(row.source_id);
+      // Get agency ID
+      this.setFileSourceAgency(row.source_id);
+      this.previewCaption = {
+        description: row.description,
+        site_description: this.site.description,
+        county: this.site.county,
+        state: this.site.state,
+        photo_date: row.photo_date,
+        sourceName: this.sourceName,
+        sourceAgency: this.sourceAgency,
+      }
+
+      // Replace any undefined preview caption info with placeholder
+      if (row.description === undefined || row.description == ''){
+        this.previewCaption.description = "(description)";
+      }
+      if (this.site.description === undefined || this.site.description == ''){
+        this.previewCaption.site_description = '(site description)'
+      }
+      if (this.site.county === undefined || this.site.county == ''){
+        this.previewCaption.county = '(county)'
+      }
+      if (this.site.state === undefined || this.site.state == ''){
+        this.previewCaption.state = '(state)'
+      }
+      if (row.photo_date === undefined || row.photo_date == ''){
+        this.previewCaption.photo_date = '(photo date)'
+      }
+      this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + row.file_id + '/item';
+    }else{
+      this.expandedElement = null;
+      this.showDetails = false;
+    }
+  }
+
   addSiteFile() {
     // Reset form
     this.cancelFile();
-    this.showFileForm = true;
+    this.showFileCreateForm = true;
+    this.expandedElement = null;
     this.addFileType = "New";
     this.siteFiles.FileEntity.file_date = new Date();
     this.siteFileForm.controls["file_date"].setValue(this.siteFiles.FileEntity.file_date);
@@ -607,6 +669,7 @@ export class SiteEditComponent implements OnInit {
     }else{
       this.siteFiles.FileEntity.photo_date = null;
       this.siteFileForm.controls["photo_date"].setValue(this.siteFiles.FileEntity.photo_date);
+      this.siteFileForm.get("photo_date").setErrors(null);
     }
   }
 
@@ -871,30 +934,36 @@ export class SiteEditComponent implements OnInit {
 
   showFileEdit(row) {
     // Reset form
-    this.cancelFile();
-    this.setInitFileEditForm(row);
-    this.showFileForm = true;
-    this.siteFiles.FileEntity.file_id = row.file_id;
-    this.siteFiles.FileEntity.filetype_id = row.filetype_id;
-    this.addFileType = "Existing";
-    this.siteFiles.FileEntity.source_id = row.source_id;
-    this.siteFiles.FileEntity.file_date = row.file_date;
-    this.siteFiles.FileEntity.photo_date = row.photo_date !== undefined ? row.photo_date : null;
-    this.siteFiles.FileEntity.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
-    this.siteFiles.FileEntity.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
-    this.siteFiles.FileEntity.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
-    this.siteFiles.FileEntity.site_id = this.data.site.site_id;
-    this.siteFiles.FileEntity.name = row.name !== undefined && row.name !== "" ? row.name : null;
-    
-    this.siteFileForm.controls['file_date'].setValue(this.siteFiles.FileEntity.file_date);
-    this.siteFileForm.controls['photo_date'].setValue(this.siteFiles.FileEntity.photo_date);
-    this.siteFileForm.controls['file_id'].setValue(this.siteFiles.FileEntity.file_id);
-    this.siteFileForm.controls['photo_direction'].setValue(this.siteFiles.FileEntity.photo_direction);
-    this.siteFileForm.controls['latitude_dd'].setValue(this.siteFiles.FileEntity.latitude_dd);
-    this.siteFileForm.controls['longitude_dd'].setValue(this.siteFiles.FileEntity.longitude_dd);
-    this.siteFileForm.controls['site_id'].setValue(this.siteFiles.FileEntity.site_id);
-    this.siteFileForm.controls['name'].setValue(this.siteFiles.FileEntity.name);
-    this.getFile();
+    if(row){
+      this.cancelFile();
+      this.setInitFileEditForm(row);
+      this.showFileForm = true;
+      this.expandedElement = row;
+      this.siteFiles.FileEntity.file_id = row.file_id;
+      this.siteFiles.FileEntity.filetype_id = row.filetype_id;
+      this.addFileType = "Existing";
+      this.siteFiles.FileEntity.source_id = row.source_id;
+      this.siteFiles.FileEntity.file_date = row.file_date;
+      this.siteFiles.FileEntity.photo_date = row.photo_date !== undefined ? row.photo_date : null;
+      this.siteFiles.FileEntity.photo_direction = row.photo_direction !== undefined && row.photo_direction !== "" ? row.photo_direction : null;
+      this.siteFiles.FileEntity.latitude_dd = row.latitude_dd !== undefined && row.latitude_dd !== "" ? row.latitude_dd : null;
+      this.siteFiles.FileEntity.longitude_dd = row.longitude_dd !== undefined && row.longitude_dd !== "" ? row.longitude_dd : null;
+      this.siteFiles.FileEntity.site_id = this.data.site.site_id;
+      this.siteFiles.FileEntity.name = row.name !== undefined && row.name !== "" ? row.name : null;
+      
+      this.siteFileForm.controls['file_date'].setValue(this.siteFiles.FileEntity.file_date);
+      this.siteFileForm.controls['photo_date'].setValue(this.siteFiles.FileEntity.photo_date);
+      this.siteFileForm.controls['file_id'].setValue(this.siteFiles.FileEntity.file_id);
+      this.siteFileForm.controls['photo_direction'].setValue(this.siteFiles.FileEntity.photo_direction);
+      this.siteFileForm.controls['latitude_dd'].setValue(this.siteFiles.FileEntity.latitude_dd);
+      this.siteFileForm.controls['longitude_dd'].setValue(this.siteFiles.FileEntity.longitude_dd);
+      this.siteFileForm.controls['site_id'].setValue(this.siteFiles.FileEntity.site_id);
+      this.siteFileForm.controls['name'].setValue(this.siteFiles.FileEntity.name);
+      this.getFile();
+    }else{
+      this.expandedElement = null;
+      this.showFileForm = false;
+    }
   }
 
   setInitFileEditForm(data) {
@@ -925,12 +994,12 @@ export class SiteEditComponent implements OnInit {
           this.fileSource = APP_SETTINGS.API_ROOT + 'Files/' + this.siteFiles.FileEntity.file_id + '/item';
           this.siteFiles.FileEntity.name = results.FileName;
           this.siteFileForm.controls['name'].setValue(this.siteFiles.FileEntity.name);
-          this.setFileSourceAgency();
-          this.setFileSource();
+          this.setFileSourceAgency(this.siteFiles.FileEntity.source_id);
+          this.setFileSource(this.siteFiles.FileEntity.source_id);
         }else{
           this.fileItemExists = false;
-          this.setFileSourceAgency();
-          this.setFileSource();
+          this.setFileSourceAgency(this.siteFiles.FileEntity.source_id);
+          this.setFileSource(this.siteFiles.FileEntity.source_id);
         }
       });
     }else{
@@ -938,22 +1007,38 @@ export class SiteEditComponent implements OnInit {
     }
   }
 
-  setFileSourceAgency(){
+  setFileSourceAgency(source_id){
     this.siteService
-    .getFileSource(this.siteFiles.FileEntity.source_id)
+    .getFileSource(source_id)
     .subscribe((results) => {
         this.siteFiles.FileEntity.agency_id = results.agency_id;
         this.agencyNameForCap = results.agency_name;
         this.siteFileForm.controls['agency_id'].setValue(this.siteFiles.FileEntity.agency_id);
+        this.sourceAgency = results.agency_name;
+        if(this.previewCaption){
+          if (this.sourceAgency === undefined || this.sourceAgency === ''){
+            this.previewCaption["sourceAgency"] = '(source agency)';
+          }else{
+            this.previewCaption["sourceAgency"] = this.sourceAgency;
+          }
+        }
     });
   }
 
-  setFileSource(){
+  setFileSource(source_id){
     this.siteService
-    .getSourceName(this.siteFiles.FileEntity.source_id)
+    .getSourceName(source_id)
     .subscribe((results) => {
         this.siteFiles.FileEntity.FULLname = results.source_name;
         this.siteFileForm.controls['FULLname'].setValue(this.siteFiles.FileEntity.FULLname);
+        this.sourceName = results.source_name;
+        if(this.previewCaption){
+          if (this.sourceName === undefined || this.sourceName === ''){
+            this.previewCaption["sourceName"] = '(source name)'
+          }else{
+            this.previewCaption["sourceName"] = this.sourceName;
+          }
+        }
     });
   }
 
@@ -1009,6 +1094,7 @@ export class SiteEditComponent implements OnInit {
                   self.initSiteFiles = self.returnData.files;
                   self.initSiteFiles = [...self.initSiteFiles];
                   self.showFileForm = false;
+                  self.expandedElement = null;
                 }
               });
               this.loading = false;
@@ -1041,6 +1127,8 @@ export class SiteEditComponent implements OnInit {
     }
 
     this.showFileForm = false;
+    this.showFileCreateForm = false;
+    this.showDetails = false;
     this.fileUploading = false;
 
     this.siteFileForm.reset();
@@ -1438,6 +1526,7 @@ export class SiteEditComponent implements OnInit {
                           self.initSiteFiles = self.returnData.files;
                           self.initSiteFiles = [...self.initSiteFiles];
                           self.showFileForm = false;
+                          self.expandedElement = null;
                         }
                       });
                     }
@@ -1478,8 +1567,8 @@ export class SiteEditComponent implements OnInit {
     }
   }
 
-  deleteFile() {
-    let dialogRef = this.dialog.open(ConfirmComponent, {
+  deleteFile(row) {
+    let confirmDialog = this.dialog.open(ConfirmComponent, {
       data: {
         title: "",
         titleIcon: "",
@@ -1489,24 +1578,46 @@ export class SiteEditComponent implements OnInit {
       },
     });
     
-    dialogRef.afterClosed().subscribe((result) => {
+    confirmDialog.afterClosed().subscribe((result) => {
       if(result){
-        this.siteFileForm.markAllAsTouched();
-        let fileSubmission = JSON.parse(JSON.stringify(this.siteFileForm.value));
-        this.siteEditService.deleteFile(fileSubmission.file_id)
+        this.siteEditService.deleteFile(row.file_id)
           .subscribe(
               (data) => {
-                let index;
-                for(let file of this.returnData.files){
-                  if(JSON.stringify(file) === JSON.stringify(data)){
-                    index = this.returnData.files.indexOf(file);
+                if(data === null){
+                  // success
+                  this.dialog.open(ConfirmComponent, {
+                    data: {
+                    title: "",
+                    titleIcon: "close",
+                    message: "Successfully removed file",
+                    confirmButtonText: "OK",
+                    showCancelButton: false,
+                    },
+                });
+                  let index;
+                  for(let file of this.returnData.files){
+                    if(file.file_id === row.file_id){
+                      index = this.returnData.files.indexOf(file);
+                    }
                   }
+                  this.returnData.files.splice(index, 1);
+                  this.initSiteFiles = this.returnData.files;
+                  this.initSiteFiles = [...this.initSiteFiles];
+                  this.cancelFile();
+                  this.showFileForm = false;
+                  this.expandedElement = null;
+                }else{
+                  // error
+                  this.dialog.open(ConfirmComponent, {
+                      data: {
+                      title: "Error",
+                      titleIcon: "close",
+                      message: "Error removing file",
+                      confirmButtonText: "OK",
+                      showCancelButton: false,
+                      },
+                  });
                 }
-                this.returnData.files.splice(index, 1);
-                this.initSiteFiles = this.returnData.files;
-                this.initSiteFiles = [...this.initSiteFiles];
-                this.cancelFile();
-                this.showFileForm = false;
               }
           );
       }
@@ -1557,8 +1668,9 @@ export class SiteEditComponent implements OnInit {
                         this.initSiteFiles = this.returnData.files;
                         this.initSiteFiles = [...this.initSiteFiles];
                       }
-                        this.showFileForm = false;
+                        this.showFileCreateForm = false;
                         this.loading = false;
+                        this.expandedElement = null;
                     }
                 );
             }
@@ -1576,6 +1688,28 @@ export class SiteEditComponent implements OnInit {
           showCancelButton: false,
         },
       });
+    }
+  }
+
+  /* istanbul ignore next */
+  closeDialog() {
+    if(this.showFileForm) {
+      let confirmDialog = this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Are you sure you want to close?  Changes made to this file will not be saved.",
+          confirmButtonText: "OK",
+          showCancelButton: true,
+        },
+      });
+      confirmDialog.afterClosed().subscribe((result) => {
+        if(result){
+          this.dialogRef.close(this.returnData);
+        }
+      });
+    }else {
+      this.dialogRef.close(this.returnData);
     }
   }
 }

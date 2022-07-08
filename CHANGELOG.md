@@ -12,10 +12,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Loading spinner in HWM edit modal when files are submitted
  -  Add ability to add, edit, delete, reupload and view file details in Reference Datum Edit modal
  -  HWM Label column in HWM Files table in files tab
+ -  Ability to view file details in Site Edit modal
+ -  Dialog warning users that changes will not be saved when a file is being edited and cancel is clicked in all entity edit modals
 
 ### Changed
 
  -  Removed Link filetype options from all file edit/add dialogs
+ -  File edit, add and delete styling in Site Edit modal
  
  ### Fixed
  
