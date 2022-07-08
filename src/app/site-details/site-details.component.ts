@@ -2177,7 +2177,6 @@ export class SiteDetailsComponent implements OnInit {
                 disableClose: true,
             });
             dialogRef.afterClosed().subscribe((result) => {
-                console.log(result)
                 if(result){
                     if(result.site !== null){
                         // Update site details page with any edits
