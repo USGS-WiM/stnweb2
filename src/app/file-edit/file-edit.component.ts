@@ -200,7 +200,7 @@ export class FileEditComponent implements OnInit {
     let fileTypes;
     this.siteService.getFileTypeLookup().subscribe((results) => {
       fileTypes = results;
-      if(self.data.addOrEdit === 'Add'){
+      // if(self.data.addOrEdit === 'Add'){
         this.fileTypes = fileTypes.filter(function (ft) {
             if(self.fileCategory === 'Site File')
               return ft.filetype === 'Photo' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' ||
@@ -216,19 +216,7 @@ export class FileEditComponent implements OnInit {
               return ft.filetype === 'Photo' || ft.filetype === 'Data' || ft.filetype === 'Historic Citation' || ft.filetype === 'Field Sheets' || ft.filetype === 'Level Notes' ||
                 ft.filetype === 'Other' || ft.filetype === 'Sketch' || ft.filetype === 'Hydrograph';
         });
-      }else{
-        this.fileTypes = fileTypes;
-        this.fileType = this.fileTypeLookup(this.file.filetype_id);
-      }
     });
-  }
-
-  fileTypeLookup(response) {
-    for(let filetype of this.fileTypes){
-      if(filetype.filetype_id === response){
-        return filetype.filetype;
-      }
-    }
   }
 
   setSourceAgency(){
@@ -340,17 +328,21 @@ export class FileEditComponent implements OnInit {
     this.file.filetype_id = event.value;
 
     // Autopopulate date and source
-    this.file.file_date = new Date();
-    this.file.source_id = this.currentUser.member_id;
-    this.file.agency_id = this.currentUser.agency_id;
-    this.form.controls.file_date.setValue(this.file.file_date);
-    this.form.controls.source_id.setValue(this.file.source_id);
-    this.form.controls.agency_id.setValue(this.file.agency_id);
+    if(this.data.addOrEdit === "Add"){
+      this.file.file_date = new Date();
+      this.file.source_id = this.currentUser.member_id;
+      this.file.agency_id = this.currentUser.agency_id;
+      this.form.controls.file_date.setValue(this.file.file_date);
+      this.form.controls.source_id.setValue(this.file.source_id);
+      this.form.controls.agency_id.setValue(this.file.agency_id);
+    } 
 
     // Photo files
     if(this.file.filetype_id === 1){
-      this.file.photo_date = new Date();
-      this.form.controls.photo_date.setValue(this.file.photo_date);
+      this.form.get("photo_date").setValidators([Validators.required]);
+    }else{
+      this.form.get("photo_date").clearValidators();
+      this.form.get("photo_date").setErrors(null);
     }
 
     // All other files
@@ -370,6 +362,13 @@ export class FileEditComponent implements OnInit {
       this.form.controls.collectDate.setValue(new Date());
       this.processorName = this.currentUser.fname + ' ' + this.currentUser.lname;
       this.datafile = {};
+      
+      // Set required validator for agency
+      this.form.get("agency_id").clearValidators();
+      this.form.get("agency_id").setErrors(null);
+      // Set required validator for source name
+      this.form.get("FULLname").clearValidators();
+      this.form.get("FULLname").setErrors(null);
     }
   }
 

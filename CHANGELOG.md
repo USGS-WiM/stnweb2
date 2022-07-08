@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  -  Loading spinner in HWM edit modal when files are submitted
  -  Add ability to add, edit, delete, reupload and view file details in Reference Datum Edit modal
  -  HWM Label column in HWM Files table in files tab
+ -  Ability to change file type when editing a file in files tab
  -  Ability to view file details in Site Edit modal
  -  Dialog warning users that changes will not be saved when a file is being edited and cancel is clicked in all entity edit modals
 
@@ -22,7 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  
  ### Fixed
  
- -   Unable to upload file after clicking one file type then switching to another type in HWM Edit modal
+ -  Unable to upload file after clicking one file type then switching to another type in HWM Edit modal
+ -  Unable to change file type to photo when editing a file in sensor edit modal
 
 ## [v0.8.1](https://github.com/USGS-WiM/stnweb2/releases/tag/v0.8.1) - 2022-06-24
 

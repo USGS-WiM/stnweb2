@@ -1126,31 +1126,6 @@ export class SensorEditComponent implements OnInit {
     })
   }
 
-  /* istanbul ignore next */
-  openAddNWISFileDialog() {
-    let self = this;
-    // Open File Edit Dialog
-    const dialogRef = this.dialog.open(FileEditComponent, {
-      data: {
-          row_data: {instrument_id: this.form.get("instrument_id").value, is_nwis: 1, filetype_id: 2},
-          type: 'Sensor File',
-          siteInfo: this.data.siteInfo,
-          siteRefDatums: this.data.siteRefDatums,
-          siteHWMs: this.data.siteHWMs,
-          siteSensors: this.data.siteSensors,
-          addOrEdit: 'Add'
-      },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if(result) {
-        // Update files data source and hwm
-        self.initNWISFiles.push(result);
-        self.initNWISFiles = [...self.initNWISFiles];
-        self.returnFiles.push(result);
-      }
-    });
-  }
-
   submit(statusID) {
     this.form.markAllAsTouched();
     if(this.form.valid){

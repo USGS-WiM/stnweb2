@@ -16,29 +16,22 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
     <mat-dialog-content *ngIf="file">
             <!-- File Type* -->
-            <div class="row" *ngIf="data.addOrEdit === 'Edit'">
-                <label class="form-header">File Type: </label> {{fileType}}
-            </div>
-
-            <!-- Let user choose file type if adding a file -->
-            <div *ngIf="data.addOrEdit === 'Add'">
-                <mat-form-field appearance="fill">
-                    <mat-label>File Type</mat-label>
-                    <mat-select aria-label="File Type" required formControlName="filetype_id" (selectionChange)="getFileTypeSelection($event)">
-                        <mat-option *ngFor="let file of fileTypes" [value]="file.filetype_id">
-                            {{file.filetype}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <div *ngIf="data.type === 'Sensor File' && file.filetype_id === 2 && ((selectedSensor.sensor_type_id == 2 || selectedSensor.sensor_type_id == 5) || selectedSensor.sensor_type_id == 6)">
-                    <mat-checkbox
-                        aria-checked="false"
-                        class="checkbox-margin"
-                        formControlName="is_nwis"
-                        (change)="checkIfNWIS($event)"
-                        >Is NWIS?</mat-checkbox
-                    >
-                </div>
+            <mat-form-field appearance="fill">
+                <mat-label>File Type</mat-label>
+                <mat-select aria-label="File Type" required formControlName="filetype_id" (selectionChange)="getFileTypeSelection($event)">
+                    <mat-option *ngFor="let file of fileTypes" [value]="file.filetype_id">
+                        {{file.filetype}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div *ngIf="data.type === 'Sensor File' && file.filetype_id === 2 && ((selectedSensor.sensor_type_id == 2 || selectedSensor.sensor_type_id == 5) || selectedSensor.sensor_type_id == 6)">
+                <mat-checkbox
+                    aria-checked="false"
+                    class="checkbox-margin"
+                    formControlName="is_nwis"
+                    (change)="checkIfNWIS($event)"
+                    >Is NWIS?</mat-checkbox
+                >
             </div>
 
             <!-- Need dropdowns to select associated Reference Datum, Sensor, or HWM -->

@@ -1466,6 +1466,7 @@ export class SiteDetailsComponent implements OnInit {
                 siteRefMarks: this.refMarkDataSource.data,
                 event_id: this.currentEvent,
                 event: this.event,
+                siteInfo: this.site
             },
             width: '100%',
             autoFocus: false
