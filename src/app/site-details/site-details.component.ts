@@ -2225,6 +2225,7 @@ export class SiteDetailsComponent implements OnInit {
                     // Files
                     if(result.files.length > 0){
                         this.siteFilesDataSource.data = result.files;
+                        this.siteFilesDataSource.data = [...this.siteFilesDataSource.data];
                         this.fileLength = this.siteFilesDataSource.data.length + this.hwmFilesDataSource.data.length + this.refMarkFilesDataSource.data.length + this.sensorFilesDataSource.data.length;
                     }
 

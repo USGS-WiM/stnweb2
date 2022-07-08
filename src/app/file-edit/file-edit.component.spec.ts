@@ -166,7 +166,6 @@ describe('FileEditComponent', () => {
     component.getFileTypeSelection(event);
     fixture.detectChanges();
     expect(component.file.filetype_id).toEqual(event.value);
-    expect(component.file.file_date).not.toBe(undefined);
     expect(component.file.FULLname).toEqual("John Doe");
   });
 

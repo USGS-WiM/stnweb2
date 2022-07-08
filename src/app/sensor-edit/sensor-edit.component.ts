@@ -2404,4 +2404,27 @@ export class SensorEditComponent implements OnInit {
       });
     }
   }
+
+  /* istanbul ignore next */
+  closeDialog() {
+    if(this.showFileForm) {
+      let confirmDialog = this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Are you sure you want to close?  Changes made to this file will not be saved.",
+          confirmButtonText: "OK",
+          showCancelButton: true,
+        },
+      });
+      confirmDialog.afterClosed().subscribe((result) => {
+        if(result){
+          let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
+          this.dialogRef.close(result);
+        }
+      });
+    }else {
+      this.dialogRef.close({returnFiles: this.returnFiles});
+    }
+  }
 }

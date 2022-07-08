@@ -1,10 +1,10 @@
 <h2 *ngIf="editOrCreate === 'Edit'" mat-dialog-title>
     Edit Sensor
-    <button class="close-button" mat-button [mat-dialog-close]="{returnFiles: returnFiles}" aria-label="Exit"><mat-icon>close</mat-icon></button>
+    <button class="close-button" mat-button type="button" (click)="closeDialog()" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <h2 *ngIf="editOrCreate === 'Create'" mat-dialog-title>
     Deploy Sensor
-    <button class="close-button" mat-button [mat-dialog-close]="{returnFiles: returnFiles}" aria-label="Exit"><mat-icon>close</mat-icon></button>
+    <button class="close-button" mat-button type="button" (click)="closeDialog()" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <div [hidden]="!loading" class="loading">
     <mat-spinner style="margin:0 auto; top: 50%" mode="indeterminate" diameter="20"></mat-spinner>
@@ -1857,7 +1857,7 @@
     <mat-dialog-actions align="end">
         <div class="detail-section-buttons centered">
             <button *ngIf="editOrCreate === 'Create'" class="primary" mat-button cdkFocusInitial aria-label="Deploy" id="1" type="submit">Deploy</button>
-            <button mat-stroked-button class="secondary" [mat-dialog-close]="{returnFiles: returnFiles}" cdkFocusInitial aria-label="Cancel">Cancel</button>
+            <button mat-stroked-button class="secondary" type="button" (click)="closeDialog()" cdkFocusInitial aria-label="Cancel">Cancel</button>
             <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
         </div>
     </mat-dialog-actions>

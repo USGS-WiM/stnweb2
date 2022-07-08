@@ -842,7 +842,7 @@ export class RefDatumEditComponent implements OnInit {
   /* istanbul ignore next */
   // Delete file
   deleteFile(row) {
-    let dialogRef = this.dialog.open(ConfirmComponent, {
+    let confirmDialog = this.dialog.open(ConfirmComponent, {
       data: {
         title: "Remove File",
         titleIcon: "close",
@@ -852,7 +852,7 @@ export class RefDatumEditComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    confirmDialog.afterClosed().subscribe((result) => {
       if(result){
         this.fileEditService.deleteFile(row.file_id)
           .subscribe(
@@ -1268,6 +1268,29 @@ export class RefDatumEditComponent implements OnInit {
         });
         return;
       })
+    }
+  }
+
+  /* istanbul ignore next */
+  closeDialog() {
+    if(this.showFileForm) {
+      let confirmDialog = this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Are you sure you want to close?  Changes made to this file will not be saved.",
+          confirmButtonText: "OK",
+          showCancelButton: true,
+        },
+      });
+      confirmDialog.afterClosed().subscribe((result) => {
+        if(result){
+          let result = {result: this.returnData, editOrCreate: this.editOrCreate}
+          this.dialogRef.close(result);
+        }
+      });
+    }else {
+      this.dialogRef.close({result: this.returnData});
     }
   }
 

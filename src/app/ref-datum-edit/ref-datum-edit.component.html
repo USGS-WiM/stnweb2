@@ -1,10 +1,10 @@
 <h2 mat-dialog-title *ngIf="editOrCreate === 'Edit'">
     Edit Reference Datum
-    <button class="close-button" mat-button [mat-dialog-close]="{result: returnData}" aria-label="Exit"><mat-icon>close</mat-icon></button>
+    <button class="close-button" mat-button type="button" (click)="closeDialog()" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <h2 mat-dialog-title *ngIf="editOrCreate === 'Create'">
     Create Reference Datum
-    <button class="close-button" mat-button [mat-dialog-close]="{result: returnData}" aria-label="Exit"><mat-icon>close</mat-icon></button>
+    <button class="close-button" mat-button type="button" (click)="closeDialog()" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <div [hidden]="!loading" class="loading">
     <mat-spinner style="margin:0 auto; top: 50%" mode="indeterminate" diameter="20"></mat-spinner>
@@ -798,7 +798,7 @@
             <div class="ref-button-group">
                 <button *ngIf="editOrCreate === 'Edit'" class="primary save-btn" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
                 <button *ngIf="editOrCreate === 'Create'" class="primary save-btn" mat-button cdkFocusInitial aria-label="Create" type="submit">Create</button>
-                <button class="cancel-btn secondary" mat-stroked-button [mat-dialog-close]="{result: returnData}" cdkFocusInitial aria-label="Cancel">Cancel</button>
+                <button class="cancel-btn secondary" mat-stroked-button type="button" (click)="closeDialog()" cdkFocusInitial aria-label="Cancel">Cancel</button>
             </div>
         </div>
     </mat-dialog-actions>
