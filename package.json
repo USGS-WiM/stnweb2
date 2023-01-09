@@ -43,7 +43,7 @@
     "leaflet": "^1.7.1",
     "leaflet-draw": "^1.0.4",
     "leaflet.markercluster": "^1.4.1",
-    "luxon": "^2.0.2",
+    "luxon": "^2.5.2",
     "rx": "^4.1.0",
     "rxjs": "^6.6.3",
     "rxjs-compat": "^6.3.3",
