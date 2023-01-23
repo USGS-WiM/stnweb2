@@ -13,6 +13,7 @@ import { APP_SETTINGS } from '@app/app.settings';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { normalizeTickInterval } from 'highcharts';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule } from '@angular/material/menu';
 
 describe('SiteEditComponent', () => {
   let component: SiteEditComponent;
@@ -70,7 +71,8 @@ describe('SiteEditComponent', () => {
         HttpClientTestingModule,
         MatTableModule,
         MatSnackBarModule,
-        NoopAnimationsModule
+        NoopAnimationsModule,
+        MatMenuModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
@@ -471,7 +473,7 @@ describe('SiteEditComponent', () => {
         of(response)
     );
 
-    component.setFileSourceAgency();
+    component.setFileSourceAgency(1);
     fixture.detectChanges();
     expect(component.agencyNameForCap).toEqual("WIM");
     expect(component.siteFiles.FileEntity.agency_id).toEqual(0);
@@ -486,7 +488,7 @@ describe('SiteEditComponent', () => {
         of(response)
     );
 
-    component.setFileSource();
+    component.setFileSource(1);
     fixture.detectChanges();
     expect(component.siteFiles.FileEntity.FULLname).toEqual("John Smith");
     expect(component.siteFileForm.get('FULLname').value).toEqual("John Smith");
@@ -610,7 +612,7 @@ describe('SiteEditComponent', () => {
   it('should show blank file form and set default date value', () => {
     component.addSiteFile();
     fixture.detectChanges();
-    expect(component.showFileForm).toBeTrue();
+    expect(component.showFileCreateForm).toBeTrue();
     expect(component.addFileType).toEqual("New");
     expect(component.siteFileForm.get("file_date").value).not.toEqual(null);
   });
@@ -709,17 +711,16 @@ describe('SiteEditComponent', () => {
 
   it('should delete file and remove from page', () => {
     component.returnData.files = [{file_id: 1}, {file_id: 2}];
-    let response = {file_id: 1};
     
     
     spyOn(component.dialog, 'open')
      .and
      .returnValue({afterClosed: () => of(true)} as MatDialogRef<unknown>);
     spyOn(component.siteEditService, 'deleteFile').and.returnValue(
-      of(response)
+      of(null)
     );
 
-    component.deleteFile();
+    component.deleteFile(component.returnData.files[0]);
     fixture.detectChanges();
     
     expect(component.returnData.files.length).toEqual(1);
@@ -751,33 +752,6 @@ describe('SiteEditComponent', () => {
 
     expect(component.returnData.files).toEqual([ {filetype_id: 1, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
     expect(component.initSiteFiles).toEqual([ {filetype_id: 1, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
-    expect(component.loading).toBeFalse();
-    expect(component.showFileForm).toBeFalse();
-  });
-
-  it('should create link file and add to page', () => {
-    component.siteFileForm.get("filetype_id").setValue(8);
-    component.siteFileForm.get("file_date").setValue("2018-12-29T22:55:17.129");
-    component.siteFileForm.get("description").setValue("test file");
-    component.siteFileForm.get("FULLname").setValue("test");
-    component.siteFileForm.get("agency_id").setValue(9999);
-    component.returnData.files = [];
-    component.data.site.site_id = 24224;
-
-    let response = {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"};
-    let sourceResponse = { source_name: "test", source_id: 9999}
-    spyOn(component.siteEditService, 'postSource').and.returnValue(
-      of(sourceResponse)
-    );
-    spyOn(component.siteEditService, 'saveFile').and.returnValue(
-      of(response)
-    );
-
-    component.createFile();
-    fixture.detectChanges();
-
-    expect(component.returnData.files).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
-    expect(component.initSiteFiles).toEqual([ {filetype_id: 8, file_date: "2018-12-29T22:55:17.129", site_id: 242224, description: "test file"} ]);
     expect(component.loading).toBeFalse();
     expect(component.showFileForm).toBeFalse();
   });

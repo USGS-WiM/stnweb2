@@ -1141,27 +1141,6 @@ export class HwmEditComponent implements OnInit {
                     }
                 );
             }
-            else{
-              fileSubmission.site_id = this.data.site_id;
-              // Link FileTypes
-              delete fileSubmission.File; delete fileSubmission.file_id; delete fileSubmission.is_nwis; delete fileSubmission.latitude_dd; delete fileSubmission.longitude_dd;
-              delete fileSubmission.last_updated; delete fileSubmission.last_updated_by; delete fileSubmission.photo_direction; delete fileSubmission.path;
-              
-              this.siteEditService.saveFile(fileSubmission)
-                .subscribe(
-                    (data) => {
-                      if(data !== []){
-                        self.returnFiles.push({file: data, type: "add"});
-                        self.initHWMFiles.push(data);
-                        self.initHWMFiles = [...self.initHWMFiles];
-                      }
-                      this.loading = false;
-                      this.showFileForm = false;
-                      this.showFileCreateForm = false;
-                      this.expandedElement = null;
-                    }
-                );
-            }
           }
       );
     }else{
@@ -1307,6 +1286,29 @@ export class HwmEditComponent implements OnInit {
         console.log(error.message);
         self.loading = false;
       });
+    }
+  }
+
+  /* istanbul ignore next */
+  closeDialog() {
+    if(this.showFileForm) {
+      let confirmDialog = this.dialog.open(ConfirmComponent, {
+        data: {
+          title: "",
+          titleIcon: "close",
+          message: "Are you sure you want to close?  Changes made to this file will not be saved.",
+          confirmButtonText: "OK",
+          showCancelButton: true,
+        },
+      });
+      confirmDialog.afterClosed().subscribe((result) => {
+        if(result){
+          let result = {result: this.returnData, editOrCreate: this.editOrCreate, returnFiles: this.returnFiles}
+          this.dialogRef.close(result);
+        }
+      });
+    }else {
+      this.dialogRef.close({returnFiles: this.returnFiles});
     }
   }
 

@@ -345,11 +345,11 @@ export class SiteDetailsComponent implements OnInit {
         this.filtersService.getCurrentFilters().subscribe(result => this.currentEvent = result.event_id)
 
         // incase page is refreshed checking to see if an event had been selected
-        if ((localStorage.getItem('eventId') !== 'null')) {
+        /* if ((localStorage.getItem('eventId') !== 'null')) {
             let eventID = localStorage.getItem('eventId');
             let number = Number(eventID);
             this.currentEvent = number;
-        }
+        } */
 
         // Get event name
         this.siteService
@@ -1098,8 +1098,12 @@ export class SiteDetailsComponent implements OnInit {
                 // Update files data source and hwm
                 result.result.returnFiles.forEach((file, i) => {
                     if(file.type === "delete"){
-                        self.refMarkFilesDataSource.data.splice(i, 1);
-                        self.fileLength --;
+                        self.refMarkDataSource.data.forEach(function(refMark, i){
+                            if(refMark.instrument_id === result.result.instrument_id){
+                                self.refMarkFilesDataSource.data.splice(i, 1);
+                                self.fileLength --;
+                            }
+                        });
                     }else if(file.type === "add"){ 
                         // Add rd name to result
                         file.file.rd_name = row.name;
@@ -1298,8 +1302,12 @@ export class SiteDetailsComponent implements OnInit {
                 // Update files data source and hwm
                 result.returnFiles.forEach((file, i) => {
                     if(file.type === "delete"){
-                        self.hwmFilesDataSource.data.splice(i, 1);
-                        self.fileLength --;
+                        self.hwmDataSource.data.forEach(function(hwm, i){
+                            if(hwm.instrument_id === result.result.instrument_id){
+                                self.hwmFilesDataSource.data.splice(i, 1);
+                                self.fileLength --;
+                            }
+                        });
                     }else if(file.type === "add"){
                         // Add hwm label to result
                         file.file.hwm_label = row.hwm_label;
@@ -1465,6 +1473,7 @@ export class SiteDetailsComponent implements OnInit {
                 siteRefMarks: this.refMarkDataSource.data,
                 event_id: this.currentEvent,
                 event: this.event,
+                siteInfo: this.site
             },
             width: '100%',
             autoFocus: false
@@ -1493,6 +1502,43 @@ export class SiteDetailsComponent implements OnInit {
                         self.sensorDataSource.paginator.length = self.sensorDataSource.data.length;
                         self.sensorDataSource.paginator.lastPage();
                     }
+                }
+                if(result.returnFiles.length > 0){
+                    // Update files data source and sensor
+                    result.returnFiles.forEach((file, i) => {
+                        if(file.type === "delete"){
+                            self.sensorFilesDataSource.data.forEach((rdFile, j) => {
+                                if(rdFile.file_id === file.file.file_id){
+                                    self.sensorFilesDataSource.data.splice(j, 1);
+                                    self.fileLength --;
+                                }
+                            });
+                        }else if(file.type === "add"){ 
+                            file.file.details = {serial_number: row.serial_number};
+                            self.sensorFilesDataSource.data.push(file.file);
+                            self.fileLength ++;
+                        }else if(file.type === "update"){
+                            self.sensorFilesDataSource.data.forEach((rdFile, j) => {
+                                if(rdFile.file_id === file.file.file_id){
+                                    file.file.details = {serial_number: row.serial_number};
+                                    self.sensorFilesDataSource.data[j] = file.file;
+                                }
+                            });
+                        }
+                    })
+                    self.sensorFilesDataSource.data = [...self.sensorFilesDataSource.data];
+                    // Go to last page if not already there
+                    if(self.sensorFilesDataSource.paginator){
+                        self.sensorFilesDataSource.paginator.length = self.sensorFilesDataSource.data.length;
+                        self.sensorFilesDataSource.paginator.lastPage();
+                    }
+    
+                    // Fade out active highlighting
+                    this.clickedFileRows.add(result);
+                    setTimeout(() => {
+                        this.fadeOutFileRows.add(result);
+                        this.clickedFileRows.clear();
+                    }, 7000)
                 }
             }
         });
@@ -2186,6 +2232,7 @@ export class SiteDetailsComponent implements OnInit {
                     // Files
                     if(result.files.length > 0){
                         this.siteFilesDataSource.data = result.files;
+                        this.siteFilesDataSource.data = [...this.siteFilesDataSource.data];
                         this.fileLength = this.siteFilesDataSource.data.length + this.hwmFilesDataSource.data.length + this.refMarkFilesDataSource.data.length + this.sensorFilesDataSource.data.length;
                     }
 

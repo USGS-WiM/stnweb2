@@ -486,6 +486,7 @@ export class MapComponent implements OnInit {
         this.currentFilter = localStorage.getItem('currentFilter')
             ? JSON.parse(localStorage.getItem('currentFilter'))
             : APP_SETTINGS.DEFAULT_FILTER_QUERY;
+            
     }
 
     setEventInLocalStorage(id) {
@@ -510,7 +511,14 @@ export class MapComponent implements OnInit {
                 'descend'
             );
             //set up call to get sites for specific event
-            this.displayMostRecentEvent();
+            if (localStorage.getItem('currentMapFilters') === 'null') {
+                this.displayMostRecentEvent();
+            } else {
+                let filters = localStorage.getItem('currentMapFilters')
+                console.log(filters);
+            }
+
+
             // allow user to type into the event selector to view matching events
             this.getEventList();
         });

@@ -71,7 +71,7 @@ describe('FileEditComponent', () => {
   it('should set the file type lookup to all types returned', () => {
     const response: any[] = [
       {filetype: "Photo"}, 
-      {filetype: "Link"},
+      {filetype: "Other"},
     ];
     
     spyOn(component.siteService, 'getFileTypeLookup').and.returnValue(
@@ -112,14 +112,6 @@ describe('FileEditComponent', () => {
       {filetype: "Sketch"}, 
       {filetype: "Hydrograph"},
     ]);
-  });
-
-  it('should set the file type name', () => {
-    component.fileTypes = [{filetype: "Photo", filetype_id: 1}, {filetype: "Data", filetype_id: 2}];
-
-    let fileType = component.fileTypeLookup(1);
-    fixture.detectChanges();
-    expect(fileType).toEqual('Photo');
   });
 
   it('should set the source agency', () => {
@@ -174,11 +166,7 @@ describe('FileEditComponent', () => {
     component.getFileTypeSelection(event);
     fixture.detectChanges();
     expect(component.file.filetype_id).toEqual(event.value);
-    expect(component.file.file_date).not.toBe(undefined);
-    expect(component.file.source_id).toEqual(0);
-    expect(component.file.agency_id).toEqual(0);
-    expect(component.file.photo_date).not.toBe(undefined);
-    expect(component.form.controls.photo_date.value).toEqual(component.file.photo_date);
+    expect(component.file.FULLname).toEqual("John Doe");
   });
 
   it('should set file attributes', () => {
@@ -309,25 +297,6 @@ describe('FileEditComponent', () => {
     fixture.detectChanges();
 
     expect(component.returnData).toEqual({filetype_id: 1, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999});
-  });
-
-  it('should add new file (link)', () => {
-    let fileSubmission = {File: {}, FULLname: "test", agency_id: 1, elevation_status: "test", filetype_id: 8, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test", file_id: 9999, collectDate: "2022-12-30T22:55:17.129" };
-
-    let response = {filetype_id: 8, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999};
-    let sourceResponse = { source_name: "test", source_id: 9999}
-    spyOn(component.siteEditService, 'postSource').and.returnValue(
-      of(sourceResponse)
-    );
-    spyOn(component.fileEditService, 'addFile').and.returnValue(
-      of(response)
-    );
-    spyOn(component, 'closeDialog');
-
-    component.createFile(fileSubmission);
-    fixture.detectChanges();
-
-    expect(component.returnData).toEqual({filetype_id: 8, file_date: "2022-12-30T22:55:17.129", site_id: 24224, description: "test file", file_id: 9999});
   });
 
   it('should cancel loading and show alert if file update form is invalid', () => {

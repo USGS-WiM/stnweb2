@@ -1,10 +1,10 @@
 <h2 *ngIf="editOrCreate === 'Edit'" mat-dialog-title>
     HWM Edit
-    <button class="close-button" mat-button [mat-dialog-close]="{returnFiles: returnFiles}" aria-label="Exit"><mat-icon>close</mat-icon></button>
+    <button class="close-button" mat-button type="button" (click)="closeDialog()" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <h2 *ngIf="editOrCreate === 'Create'" mat-dialog-title>
     Create HWM
-    <button class="close-button" mat-button [mat-dialog-close]="{returnFiles: returnFiles}" aria-label="Exit"><mat-icon>close</mat-icon></button>
+    <button class="close-button" mat-button type="button" (click)="closeDialog()" aria-label="Exit"><mat-icon>close</mat-icon></button>
 </h2>
 <div [hidden]="!loading" class="loading">
     <mat-spinner style="margin:0 auto; top: 50%" mode="indeterminate" diameter="20"></mat-spinner>
@@ -352,16 +352,6 @@
                 </div>
                 <br clear="all" />
 
-                <!--File URL (LINK file)-->
-                <div *ngIf="selectedFile.FileEntity.filetype_id === 8">
-                    <mat-form-field appearance="fill">
-                        <mat-label>File URL</mat-label>
-                        <input aria-label="File URL" formControlName="name" matInput [value]="selectedFile.FileEntity.name"/>
-                        <mat-icon matSuffix class="info-icon" matTooltip="Please link to persistent URLs or digital object identifier (doi) urls." 
-                        aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>                
-                    </mat-form-field>
-                </div>
-
                 <!--Source Name (photo)-->
                 <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                     <mat-form-field appearance="fill">
@@ -604,16 +594,6 @@
                                         </div>
                                         <br clear="all" />
 
-                                        <!--File URL (LINK file)-->
-                                        <div *ngIf="selectedFile.FileEntity.filetype_id === 8">
-                                            <mat-form-field appearance="fill">
-                                                <mat-label>File URL</mat-label>
-                                                <input aria-label="File URL" formControlName="name" matInput [value]="selectedFile.FileEntity.name"/>
-                                                <mat-icon matSuffix class="info-icon" matTooltip="Please link to persistent URLs or digital object identifier (doi) urls." 
-                                                aria-label="Displays a tooltip when focused or hovered over">info</mat-icon>                
-                                            </mat-form-field>
-                                        </div>
-
                                         <!--Source Name (photo)-->
                                         <div *ngIf="selectedFile.FileEntity.filetype_id === 1">
                                             <mat-form-field appearance="fill">
@@ -851,7 +831,7 @@
             <div class="ref-button-group">
                 <button *ngIf="editOrCreate === 'Edit'" class="primary" mat-button cdkFocusInitial aria-label="Save" type="submit">Save</button>
                 <button *ngIf="editOrCreate === 'Create'" class="primary" mat-button cdkFocusInitial aria-label="Create" type="submit">Create</button>
-                <button class="secondary cancel-btn" mat-stroked-button [mat-dialog-close]="{returnFiles: returnFiles}" cdkFocusInitial aria-label="Cancel">Cancel</button>
+                <button class="secondary cancel-btn" mat-stroked-button type="button" (click)="closeDialog()" cdkFocusInitial aria-label="Cancel">Cancel</button>
             </div>
         </div>
     </mat-dialog-actions>
