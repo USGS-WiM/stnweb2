@@ -1,3 +1,5 @@
+## This project has been archived and is now available along with all documentation at https://code.usgs.gov/WiM/stnweb2.
+
 # Short Term Network Web (STNWeb) v2
 
 [![build status](https://github.com/USGS-WiM/stnweb2/workflows/Build/badge.svg)](https://github.com/coryrylan/angular-github-actions/actions) [![GitHub Super-Linter](https://github.com/USGS-WiM/stnweb2/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
